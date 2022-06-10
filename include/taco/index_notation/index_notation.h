@@ -180,6 +180,11 @@ public:
   /// Returns the schedule of the index expression.
   const Schedule& getSchedule() const;
 
+  template <typename SubType>
+  SubType as() {
+    return to<SubType>(*this);
+  }
+
   //returns the shape of the expr
   Shape getShape() const;
 

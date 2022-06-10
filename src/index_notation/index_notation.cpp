@@ -3121,7 +3121,6 @@ struct ReplaceReductionsWithWheres : IndexNotationRewriter {
   }
 };
 
-IndexStmt makeConcreteNotation(IndexStmt stmt) {
 std::string flattenStmt(IndexStmt stmt){
 
   std::string flattenedTree;

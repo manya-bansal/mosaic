@@ -5,12 +5,10 @@ endif()
 if(POLICY CMP0054)
   cmake_policy(SET CMP0054 NEW)
 endif()
-<<<<<<< HEAD
 project(taco
   VERSION 0.1
   LANGUAGES C CXX
 )
-=======
 
 if(POLICY CMP0079)
   cmake_policy(SET CMP0079 NEW)
@@ -18,7 +16,6 @@ if(POLICY CMP0079)
 endif()
 
 project(taco)
->>>>>>> array_algebra_squash
 option(CUDA "Build for NVIDIA GPU (CUDA must be preinstalled)" OFF)
 option(PYTHON "Build TACO for python environment" OFF)
 option(OPENMP "Build with OpenMP execution support" OFF)
@@ -126,7 +123,8 @@ include_directories(${TACO_INCLUDE_DIR})
 
 set(TACO_LIBRARY_DIR ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 
-install(DIRECTORY ${TACO_INCLUDE_DIR}/ DESTINATION include FILES_MATCHING PATTERN "*.h")
+
+install(DIRECTORY ${TACO_INCLUDE_DIR}/ DESTINATION include)
 
 
 
