@@ -16,7 +16,7 @@ using namespace std;
 namespace taco {
 namespace error {
 
-static vector<const AccessNode*> getAccessNodes(const IndexExpr& expr) {
+vector<const AccessNode*> getAccessNodes(const IndexExpr& expr) {
   vector<const AccessNode*> readNodes;
   match(expr,
     std::function<void(const AccessNode*)>([&](const AccessNode* op) {

@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <tuple>
+#include "taco/index_notation/index_notation.h"
 
 namespace taco {
 class IndexVar;
@@ -12,6 +13,8 @@ class Format;
 class Shape;
 
 namespace error {
+
+std::vector<const AccessNode*> getAccessNodes(const IndexExpr& expr);
 
 /// Check whether all dimensions indexed by the same variable are the same.
 /// If they are not, then the first element of the returned tuple will be false,

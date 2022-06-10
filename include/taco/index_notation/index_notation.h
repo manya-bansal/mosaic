@@ -104,6 +104,7 @@ template <typename SubType> SubType to(IndexExpr);
 ///
 /// @see IndexVar Index into index expressions.
 /// @see TensorVar Operands of index expressions.
+
 class IndexExpr : public util::IntrusivePtr<const IndexExprNode> {
 public:
   IndexExpr() : util::IntrusivePtr<const IndexExprNode>(nullptr) {}
@@ -174,14 +175,13 @@ public:
   /// results.
   void workspace(IndexVar i, IndexVar iw, TensorVar workspace);
 
+  std::vector<IndexVar> getIndexVars();
+
   /// Returns the schedule of the index expression.
   const Schedule& getSchedule() const;
 
-  /// Casts index expression to specified subtype.
-  template <typename SubType>
-  SubType as() {
-    return to<SubType>(*this);
-  }
+  //returns the shape of the expr
+  Shape getShape() const;
 
   /// Visit the index expression's sub-expressions.
   void accept(IndexExprVisitorStrict *) const;
@@ -585,6 +585,7 @@ public:
 
   /// Takes any index notation and concretizes unknowns to make it concrete notation
   IndexStmt concretize() const;
+  IndexStmt concretizeAccelerated(std::vector<IndexExpr> AcceleratedExpressions) const;
 
   /// Takes any index notation and concretizes unknowns to make it concrete notation
   /// given a Provenance Graph of indexVars
@@ -1136,6 +1137,8 @@ public:
   /// Returns the format of the tensor variable.
   const Format& getFormat() const;
 
+  Shape getShape() const;
+
   /// Returns the schedule of the tensor var, which describes how to compile
   /// and execute it's expression.
   const Schedule& getSchedule() const;
@@ -1217,6 +1220,12 @@ bool isConcreteNotation(IndexStmt, std::string* reason=nullptr);
 /// summation convention to sum non-free/reduction variables over their term.
 Assignment makeReductionNotation(Assignment);
 IndexStmt makeReductionNotation(IndexStmt);
+
+//annotates the index stmt with possible blos calls
+void annotateConcreteNotation(IndexStmt stmt, std::vector<IndexExpr> AcceleratedExpressions);
+
+IndexStmt makeAcceleratedConcreteNotation(IndexStmt stmt, std::vector<IndexExpr> AcceleratedExpressions);
+
 
 /// Convert reduction notation to concrete notation, by inserting forall nodes,
 /// replacing reduction nodes by compound assignments, and inserting temporaries
