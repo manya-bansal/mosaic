@@ -2,6 +2,12 @@ cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
 if(POLICY CMP0054)
   cmake_policy(SET CMP0054 NEW)
 endif()
+
+if(POLICY CMP0079)
+  cmake_policy(SET CMP0079 NEW)
+  message("setting policy CMP0079 to new")
+endif()
+
 project(taco)
 option(CUDA "Build for NVIDIA GPU (CUDA must be preinstalled)" OFF)
 option(PYTHON "Build TACO for python environment" OFF)
@@ -95,13 +101,19 @@ set(TACO_SRC_DIR     ${TACO_PROJECT_DIR}/src)
 set(TACO_TEST_DIR    ${TACO_PROJECT_DIR}/test)
 set(TACO_TOOLS_DIR   ${TACO_PROJECT_DIR}/tools)
 set(TACO_INCLUDE_DIR ${TACO_PROJECT_DIR}/include)
+# set(BLAS_INCLUDE_DIR /opt/homebrew/opt/openblas/include/)
 
 enable_testing()
 include_directories(${TACO_INCLUDE_DIR})
 
+
+
 set(TACO_LIBRARY_DIR ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 
+
 install(DIRECTORY ${TACO_INCLUDE_DIR}/ DESTINATION include)
+
+
 
 add_subdirectory(src)
 add_subdirectory(test)
@@ -127,6 +139,10 @@ endif()
 if(NOT EXISTS "${TACO_PROJECT_DIR}/python_bindings/pybind11/CMakeLists.txt")
   message(FATAL_ERROR "The submodules were not downloaded! GIT_SUBMODULE was turned off or failed. Please update submodules and try again.")
 endif()
+
+find_package( BLAS REQUIRED )
+include_directories(${BLAS_INCLUDE_DIRS})
+target_link_libraries(taco ${BLAS_LIBRARIES})
 
 if(PYTHON)
   add_subdirectory(python_bindings)

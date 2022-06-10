@@ -421,8 +421,10 @@ public:
 
   /// Compile the tensor expression.
   void compile();
+  void compileAccelerated(std::vector<IndexExpr> AcceleratedExpressions);
 
   void compile(IndexStmt stmt, bool assembleWhileCompute=false);
+  void compileAccelerated(taco::IndexStmt stmt, std::vector<IndexExpr> AcceleratedExpressions, bool assembleWhileCompute=false);
 
   /// Assemble the tensor storage, including index and value arrays.
   void assemble();
@@ -432,6 +434,8 @@ public:
 
   /// Compile, assemble and compute as needed.
   void evaluate();
+  void evaluateAccelerated(std::vector<IndexExpr> AcceleratedExpressions);
+
 
   /// True if the Tensor needs to be packed.
   bool needsPack();

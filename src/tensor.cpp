@@ -640,6 +640,48 @@ void TensorBase::compile() {
   compile(stmt, content->assembleWhileCompute);
 }
 
+void TensorBase::compileAccelerated(std::vector<IndexExpr> AcceleratedExpressions) {
+ 
+
+  Assignment assignment = getAssignment();
+  taco_uassert(assignment.defined())
+      << error::compile_without_expr;
+
+  struct CollisionFinder : public IndexNotationVisitor {
+    using IndexNotationVisitor::visit;
+
+    std::map<std::string,const TensorVar> tensorvars;
+
+    CollisionFinder() :tensorvars() {}
+
+    void visit(const AccessNode* node) {
+      Access access(node);
+      const TensorVar new_tensorvar = access.getTensorVar();
+      const std::string new_name = new_tensorvar.getName();
+      if(new_tensorvar.getId() != -1) {
+        auto found = tensorvars.find(new_name);
+        if(found != tensorvars.end() && found->second.getId() != -1) {
+          const TensorVar found_tensorvar = found->second;
+          taco_uassert(new_tensorvar.getId() == found_tensorvar.getId())
+              << error::compile_tensor_name_collision << " " << new_name;
+        } else {
+          tensorvars.insert(std::pair<std::string,const TensorVar>(new_name, new_tensorvar));
+        }
+      }
+    }
+  };
+  CollisionFinder dupes = CollisionFinder();
+  assignment.getLhs().accept(&dupes);
+  assignment.accept(&dupes);
+
+  IndexStmt stmt = makeAcceleratedConcreteNotation(makeReductionNotation(assignment), AcceleratedExpressions);
+  stmt = reorderLoopsTopologically(stmt);
+  stmt = insertTemporaries(stmt);
+  stmt = parallelizeOuterLoop(stmt);
+  cout << "calling compileAccelerated" << endl;
+  compileAccelerated(stmt, AcceleratedExpressions, content->assembleWhileCompute);
+}
+
 void TensorBase::compile(taco::IndexStmt stmt, bool assembleWhileCompute) {
   if (!needsCompile()) {
     return;
@@ -648,6 +690,29 @@ void TensorBase::compile(taco::IndexStmt stmt, bool assembleWhileCompute) {
 
   IndexStmt concretizedAssign = stmt;
   IndexStmt stmtToCompile = stmt.concretize();
+  stmtToCompile = scalarPromote(stmtToCompile);
+
+  if (!std::getenv("CACHE_KERNELS") ||
+      std::string(std::getenv("CACHE_KERNELS")) != "0") {
+    concretizedAssign = stmtToCompile;
+    const auto cachedKernel = getComputeKernel(concretizedAssign);
+    if (cachedKernel) {
+      content->module = cachedKernel;
+      return;
+    }
+  }
+}
+
+  void TensorBase::compileAccelerated(taco::IndexStmt stmt, std::vector<IndexExpr> AcceleratedExpressions, bool assembleWhileCompute) {
+  if (!needsCompile()) {
+    return;
+  }
+  setNeedsCompile(false);
+
+  IndexStmt concretizedAssign = stmt;
+
+  cout << "calling concretizeAccelerated" << endl;
+  IndexStmt stmtToCompile = stmt.concretizeAccelerated(AcceleratedExpressions);
   stmtToCompile = scalarPromote(stmtToCompile);
 
   if (!std::getenv("CACHE_KERNELS") ||
@@ -848,6 +913,14 @@ void TensorBase::compute() {
 
 void TensorBase::evaluate() {
   this->compile();
+  if (!getAssignment().getOperator().defined()) {
+    this->assemble();
+  }
+  this->compute();
+}
+
+void TensorBase::evaluateAccelerated(std::vector<IndexExpr> AcceleratedExpressions) {
+  this->compileAccelerated(AcceleratedExpressions);
   if (!getAssignment().getOperator().defined()) {
     this->assemble();
   }
