@@ -169,7 +169,7 @@ endif()
 
 find_package( BLAS REQUIRED )
 include_directories(${BLAS_INCLUDE_DIRS})
-target_link_libraries(taco ${BLAS_LIBRARIES})
+target_link_libraries(taco PRIVATE ${BLAS_LIBRARIES})
 
 if(PYTHON)
   add_subdirectory(python_bindings)
