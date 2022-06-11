@@ -29,16 +29,22 @@ TEST(blasTest, simpleBlasCall) {
    Tensor<uint32_t> test_b("actualb", {1}, dense, 1);
    Tensor<uint32_t> test_c("actualc", {1}, dense, 1);
 
+   TensorVar workspace(Type(taco::UInt32, {1}), taco::dense, 0) ;
+
    IndexStmt stmt = test_c(i) = test_a(i) + test_b(i);
+   IndexStmt stmt_accel = test_c(i) = test_a(i) + test_b(i);
 
    std::vector<IndexExpr> canAccelerate = {a(i) + b(i)};
 
-   makeAcceleratedConcreteNotation(stmt, canAccelerate);
+   stmt = stmt.concretize();
+   stmt = stmt.precompute(test_a(i) + test_b(i), i, IndexVar(), workspace);
+   cout << stmt << endl;
+
+   makeConcreteNotation(stmt);
+
+   // makeAcceleratedConcreteNotation(stmt_accel, canAccelerate);
 
 //    test_c.evaluateAccelerated(canAccelerate);
-
-
-
 
 }
 

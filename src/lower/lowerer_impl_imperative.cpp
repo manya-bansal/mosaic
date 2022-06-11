@@ -49,6 +49,7 @@ private:
   void visit(const YieldNode* node)         { stmt = impl->lowerYield(node); }
   void visit(const ForallNode* node)        { stmt = impl->lowerForall(node); }
   void visit(const WhereNode* node)         { stmt = impl->lowerWhere(node); }
+  void visit(const AccelerateNode* node)    { stmt = impl->lowerAccelerate(node); }
   void visit(const MultiNode* node)         { stmt = impl->lowerMulti(node); }
   void visit(const SuchThatNode* node)      { stmt = impl->lowerSuchThat(node); }
   void visit(const SequenceNode* node)      { stmt = impl->lowerSequence(node); }
@@ -2582,6 +2583,11 @@ Stmt LowererImplImperative::lowerWhere(Where where) {
   whereTemps.pop_back();
   whereTempsToResult.erase(where.getTemporary());
   return Block::make(initializeTemporary, producer, markAssignsAtomicDepth > 0 ? capturedLocatePos : ir::Stmt(), consumer,  freeTemporary);
+}
+
+
+Stmt LowererImplImperative::lowerAccelerate(Accelerate acceleratehere) {
+  taco_uerror << "Unimplemented";
 }
 
 

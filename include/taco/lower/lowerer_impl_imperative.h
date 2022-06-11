@@ -200,6 +200,8 @@ protected:
   /// Lower a where statement.
   virtual ir::Stmt lowerWhere(Where where);
 
+  virtual ir::Stmt lowerAccelerate(Accelerate accelerate);
+
   /// Lower a sequence statement.
   virtual ir::Stmt lowerSequence(Sequence sequence);
 

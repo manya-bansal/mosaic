@@ -702,9 +702,20 @@ void TensorBase::compile(taco::IndexStmt stmt, bool assembleWhileCompute) {
       return;
     }
   }
+
+  content->assembleFunc = lower(stmtToCompile, "assemble", true, false);
+  content->computeFunc = lower(stmtToCompile, "compute",  assembleWhileCompute, true);
+  // If we have to recompile the kernel, we need to create a new Module. Since
+  // the module we are holding on to could have been retrieved from the cache,
+  // we can't modify it.
+  content->module = make_shared<Module>();
+  content->module->addFunction(content->assembleFunc);
+  content->module->addFunction(content->computeFunc);
+  content->module->compile();
+  cacheComputeKernel(concretizedAssign, content->module);
 }
 
-  void TensorBase::compileAccelerated(taco::IndexStmt stmt, std::vector<IndexExpr> AcceleratedExpressions, bool assembleWhileCompute) {
+void TensorBase::compileAccelerated(taco::IndexStmt stmt, std::vector<IndexExpr> AcceleratedExpressions, bool assembleWhileCompute) {
   if (!needsCompile()) {
     return;
   }
@@ -880,10 +891,9 @@ void TensorBase::assemble() {
   for (auto& operand : operands) {
     operand.second.syncValues();
   }
-
+  
   auto arguments = packArguments(*this);
   content->module->callFuncPacked("assemble", arguments.data());
-
   if (!content->assembleWhileCompute) {
     setNeedsAssemble(false);
     taco_tensor_t* tensorData = ((taco_tensor_t*)arguments[0]);

@@ -63,6 +63,7 @@ struct AssignmentNode;
 struct YieldNode;
 struct ForallNode;
 struct WhereNode;
+struct AccelerateNode;
 struct SequenceNode;
 struct AssembleNode;
 struct MultiNode;
@@ -750,6 +751,12 @@ public:
   ///  reorder computations to increase locality
   IndexStmt precompute(IndexExpr expr, std::vector<IndexVar> i_vars,
                        std::vector<IndexVar> iw_vars, TensorVar workspace) const;
+
+
+  IndexStmt accelerate(IndexExpr expr, IndexVar i, IndexVar iw, TensorVar workspace) const;
+
+  IndexStmt accelerate(IndexExpr expr, std::vector<IndexVar> i_vars,
+                       std::vector<IndexVar> iw_vars, TensorVar workspace) const;
   
   /// bound specifies a compile-time constraint on an index variable's
   /// iteration space that allows knowledge of the
@@ -898,6 +905,31 @@ public:
 /// Create a where index statement.
 Where where(IndexStmt consumer, IndexStmt producer);
 
+
+class Accelerate : public IndexStmt {
+public:
+  Accelerate() = default;
+  Accelerate(const AccelerateNode*);
+  Accelerate(IndexStmt consumer, IndexStmt producer);
+
+  IndexStmt getConsumer();
+  IndexStmt getProducer();
+
+  /**
+   * Retrieve the result of this where statement;
+   */
+   TensorVar getResult();
+
+  /**
+   * Retrieve the temporary variable of this where statement.
+   */
+  TensorVar getTemporary();
+
+  typedef AccelerateNode Node;
+};
+
+/// Create an accelerate stmt index statement.
+Where accelerate(IndexStmt consumer, IndexStmt producer);
 
 /// A sequence statement has two statements, a definition and a mutation, that
 /// are executed in sequence.  The defintion creates an index variable and the
