@@ -17,6 +17,7 @@ class IndexStmt;
 class TransformationInterface;
 class Reorder;
 class Precompute;
+class AccelerateExpr;
 class ForAllReplace;
 class AddSuchThatPredicates;
 class Parallelize;
@@ -32,6 +33,7 @@ class Transformation {
 public:
   Transformation(Reorder);
   Transformation(Precompute);
+  Transformation(AccelerateExpr);
   Transformation(ForAllReplace);
   Transformation(Parallelize);
   Transformation(TopoReorder);
@@ -113,6 +115,36 @@ private:
 
 /// Print a precompute command.
 std::ostream &operator<<(std::ostream &, const Precompute &);
+
+
+/// The precompute optimizaton rewrites an index expression to precompute `expr`
+/// and store it to the given workspace.
+class AccelerateExpr : public TransformationInterface {
+public:
+  AccelerateExpr();
+  AccelerateExpr(IndexExpr expr, IndexVar i, IndexVar iw, TensorVar workspace);
+  AccelerateExpr(IndexExpr expr, std::vector<IndexVar> i_vars,
+             std::vector<IndexVar> iw_vars, TensorVar workspace);
+  
+  IndexExpr getExpr() const;
+  std::vector<IndexVar>& getIVars() const;
+  std::vector<IndexVar>& getIWVars() const;
+  TensorVar getWorkspace() const;
+
+  /// Apply the precompute optimization to a concrete index statement.
+  IndexStmt apply(IndexStmt stmt, std::string *reason = nullptr) const;
+
+  void print(std::ostream &os) const;
+
+  bool defined() const;
+
+private:
+  struct Content;
+  std::shared_ptr<Content> content;
+};
+
+/// Print a precompute command.
+std::ostream &operator<<(std::ostream &, const AccelerateExpr &);
 
 
 /// Replaces all occurrences of directly nested forall nodes of pattern with

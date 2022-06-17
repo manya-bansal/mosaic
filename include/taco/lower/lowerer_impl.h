@@ -23,6 +23,7 @@ class Assignment;
 class Yield;
 class Forall;
 class Where;
+class Accelerate;
 class Multi;
 class SuchThat;
 class Sequence;
@@ -72,6 +73,9 @@ protected:
 
   /// Lower a where statement.
   virtual ir::Stmt lowerWhere(Where where) = 0;
+
+  /// Lower a where statement.
+  virtual ir::Stmt lowerAccelerate(Accelerate accelerate) = 0;
 
   /// Lower a sequence statement.
   virtual ir::Stmt lowerSequence(Sequence sequence) = 0;

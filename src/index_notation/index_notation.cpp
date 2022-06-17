@@ -538,6 +538,20 @@ struct Isomorphic : public IndexNotationVisitorStrict {
     eq = true;
   }
 
+    void visit(const AccelerateNode* anode) {
+      if (!isa<AccelerateNode>(bStmt.ptr)) {
+        eq = false;
+        return;
+      }
+      auto bnode = to<AccelerateNode>(bStmt.ptr);
+      if (!check(anode->consumer, bnode->consumer) ||
+          !check(anode->producer, bnode->producer)) {
+        eq = false;
+        return;
+      }
+      eq = true;
+  }
+
   void visit(const SequenceNode* anode) {
     if (!isa<SequenceNode>(bStmt.ptr)) {
       eq = false;
@@ -996,6 +1010,22 @@ struct Equals : public IndexNotationVisitorStrict {
     }
     eq = true;
   }
+
+
+  void visit(const AccelerateNode* anode) {
+    if (!isa<AccelerateNode>(bStmt.ptr)) {
+      eq = false;
+      return;
+    }
+    auto bnode = to<AccelerateNode>(bStmt.ptr);
+    if (!equals(anode->consumer, bnode->consumer) ||
+        !equals(anode->producer, bnode->producer)) {
+      eq = false;
+      return;
+    }
+    eq = true;
+  }
+
 
   void visit(const SequenceNode* anode) {
     if (!isa<SequenceNode>(bStmt.ptr)) {
@@ -1880,12 +1910,11 @@ IndexStmt IndexStmt::concretize() const {
   if (isReductionNotation(stmt)) {
     stmt = makeConcreteNotation(stmt);
   }
+  cout << stmt << endl;
   return stmt;
 }
 
 IndexStmt IndexStmt::concretizeAccelerated(std::vector<IndexExpr> AcceleratedExpressions) const {
-
-  cout << "in compileAccelerated" << endl;
 
   IndexStmt stmt = *this;
   if (isEinsumNotation(stmt)) {
@@ -1894,6 +1923,7 @@ IndexStmt IndexStmt::concretizeAccelerated(std::vector<IndexExpr> AcceleratedExp
   if (isReductionNotation(stmt)) {
     stmt = makeAcceleratedConcreteNotation(stmt, AcceleratedExpressions);
   }
+  cout << stmt << endl;
   return stmt;
 }
 
@@ -1965,6 +1995,12 @@ IndexStmt IndexStmt::precompute(IndexExpr expr, std::vector<IndexVar> i_vars,
   return transformed;
 }
 
+IndexStmt IndexStmt::precompute(IndexExpr expr, IndexVar i, IndexVar iw, TensorVar workspace) const {
+  std::vector<IndexVar> i_vars{i};
+  std::vector<IndexVar> iw_vars{iw};
+  return precompute(expr, i_vars, iw_vars, workspace);
+}
+
 
 IndexStmt IndexStmt::accelerate(IndexExpr expr, std::vector<IndexVar> i_vars,
                                 std::vector<IndexVar> iw_vars, TensorVar workspace) const {
@@ -1979,15 +2015,16 @@ IndexStmt IndexStmt::accelerate(IndexExpr expr, std::vector<IndexVar> i_vars,
     IndexVar iw = iw_vars.at(l);
 
     if (i != iw) {
-      IndexVarRel rel = IndexVarRel(new PrecomputeRelNode(i, iw));
+      IndexVarRel rel = IndexVarRel(new AccelerateRelNode(i, iw));
       transformed = Transformation(AddSuchThatPredicates({rel})).apply(transformed, &reason);
+      cout << "transfored " << transformed << endl; 
       if (!transformed.defined()) {
         taco_uerror << reason;
       }
     }
   }
 
-  transformed = Transformation(Precompute(expr, i_vars, iw_vars, workspace)).apply(transformed, &reason);
+  transformed = Transformation(AccelerateExpr(expr, i_vars, iw_vars, workspace)).apply(transformed, &reason);
 
   if (!transformed.defined()) {
     taco_uerror << reason;
@@ -1998,13 +2035,9 @@ IndexStmt IndexStmt::accelerate(IndexExpr expr, std::vector<IndexVar> i_vars,
 IndexStmt IndexStmt::accelerate(IndexExpr expr, IndexVar i, IndexVar iw, TensorVar workspace) const{
   std::vector<IndexVar> i_vars{i};
   std::vector<IndexVar> iw_vars{iw};
-  return precompute(expr, i_vars, iw_vars, workspace);
-}
 
-IndexStmt IndexStmt::precompute(IndexExpr expr, IndexVar i, IndexVar iw, TensorVar workspace) const {
-  std::vector<IndexVar> i_vars{i};
-  std::vector<IndexVar> iw_vars{iw};
-  return precompute(expr, i_vars, iw_vars, workspace);
+  //TODO for MB: Change this back to accelerate
+  return accelerate(expr, i_vars, iw_vars, workspace);
 }
 
 IndexStmt IndexStmt::reorder(taco::IndexVar i, taco::IndexVar j) const {
@@ -2337,6 +2370,44 @@ template <> bool isa<Where>(IndexStmt s) {
 template <> Where to<Where>(IndexStmt s) {
   taco_iassert(isa<Where>(s));
   return Where(to<WhereNode>(s.ptr));
+}
+
+// class accelerate
+Accelerate::Accelerate(const AccelerateNode* n) : IndexStmt(n) {
+}
+
+Accelerate::Accelerate(IndexStmt consumer, IndexStmt producer)
+    : Accelerate(new AccelerateNode(consumer, producer)) {
+}
+
+IndexStmt Accelerate::getConsumer() {
+  return getNode(*this)->consumer;
+}
+
+
+IndexStmt Accelerate::getProducer() {
+  return getNode(*this)->producer;
+}
+
+TensorVar Accelerate::getResult() {
+  return getResultAccesses(getConsumer()).first[0].getTensorVar();
+}
+
+TensorVar Accelerate::getTemporary() {
+  return getResultAccesses(getProducer()).first[0].getTensorVar();
+}
+
+Accelerate accelerate(IndexStmt consumer, IndexStmt producer) {
+  return Accelerate(consumer, producer);
+}
+
+template <> bool isa<Accelerate>(IndexStmt s) {
+  return isa<AccelerateNode>(s.ptr);
+}
+
+template <> Accelerate to<Accelerate>(IndexStmt s) {
+  taco_iassert(isa<Accelerate>(s));
+  return Accelerate(to<AccelerateNode>(s.ptr));
 }
 
 
@@ -3434,7 +3505,7 @@ IndexExprNode* findSubexpresionStmt(IndexStmt stmt, std::string flattenedExpr){
 
 }
 
-bool isADirectSubexpression(IndexStmt stmt, IndexExpr expr){
+IndexStmt isADirectSubexpression(IndexStmt stmt, IndexExpr expr){
 
 
   std::string flattenedExpr = flattenExpr(expr);
@@ -3450,19 +3521,21 @@ bool isADirectSubexpression(IndexStmt stmt, IndexExpr expr){
     cout << stmt << endl;
     cout << "shape " << subExpression.getShape() << endl;
     stmt = stmt.accelerate(subExpression, subExpression.getIndexVars()[0], IndexVar(), TensorVar(Type(subExpression.getDataType(), subExpression.getShape()), 0));
-    cout << "apply precompute " << endl;
+    cout << "apply accel " << endl;
     cout << stmt << endl;
   }
 
+  return stmt;
   
 
 }
 
-void annotateConcreteNotation(IndexStmt stmt, std::vector<IndexExpr> AcceleratedExpressions){
+IndexStmt annotateConcreteNotation(IndexStmt stmt, std::vector<IndexExpr> AcceleratedExpressions){
     
     for (IndexExpr expr: AcceleratedExpressions){
-      isADirectSubexpression(stmt, expr);
+      stmt = isADirectSubexpression(stmt, expr);
     }
+    return stmt;
 
 }
 
@@ -3525,9 +3598,7 @@ IndexStmt makeAcceleratedConcreteNotation(IndexStmt stmt, std::vector<IndexExpr>
   cout << "final statement " << stmt << endl;
 
 
-  annotateConcreteNotation(stmt, AcceleratedExpressions);
-
-  return stmt;
+  return annotateConcreteNotation(stmt, AcceleratedExpressions);
 }
 
 
@@ -3964,6 +4035,11 @@ std::vector<TensorVar> getTemporaries(IndexStmt stmt) {
       ctx->match(op->consumer);
       ctx->match(op->producer);
     }),
+    function<void(const AccelerateNode*,Matcher*)>([&](const AccelerateNode* op,
+                                                  Matcher* ctx) {
+      ctx->match(op->consumer);
+      ctx->match(op->producer);
+    }),
     function<void(const AssembleNode*,Matcher*)>([&](const AssembleNode* op,
                                                   Matcher* ctx) {
       ctx->match(op->compute);
@@ -4033,6 +4109,10 @@ pair<vector<Access>,set<Access>> getResultAccesses(IndexStmt stmt)
       }
     }),
     function<void(const WhereNode*,Matcher*)>([&](const WhereNode* op,
+                                                  Matcher* ctx) {
+      ctx->match(op->consumer);
+    }),
+    function<void(const AccelerateNode*,Matcher*)>([&](const AccelerateNode* op,
                                                   Matcher* ctx) {
       ctx->match(op->consumer);
     }),
@@ -4510,6 +4590,23 @@ private:
     }
     else {
       stmt = new WhereNode(consumer, producer);
+    }
+  }
+
+  void visit(const AccelerateNode* op) {
+    IndexStmt producer = rewrite(op->producer);
+    IndexStmt consumer = rewrite(op->consumer);
+    if (!consumer.defined()) {
+      stmt = IndexStmt();
+    }
+    else if (!producer.defined()) {
+      stmt = consumer;
+    }
+    else if (producer == op->producer && consumer == op->consumer) {
+      stmt = op;
+    }
+    else {
+      stmt = new AccelerateNode(consumer, producer);
     }
   }
 

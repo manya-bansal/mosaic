@@ -57,6 +57,7 @@ protected:
   virtual void visit(const YieldNode* op) = 0;
   virtual void visit(const ForallNode* op) = 0;
   virtual void visit(const WhereNode* op) = 0;
+  virtual void visit(const AccelerateNode* op) = 0;
   virtual void visit(const SequenceNode* op) = 0;
   virtual void visit(const AssembleNode* op) = 0;
   virtual void visit(const MultiNode* op) = 0;
@@ -105,6 +106,7 @@ protected:
   virtual void visit(const YieldNode* op);
   virtual void visit(const ForallNode* op);
   virtual void visit(const WhereNode* op);
+  virtual void visit(const AccelerateNode* op);
   virtual void visit(const SequenceNode* op);
   virtual void visit(const AssembleNode* op);
   virtual void visit(const MultiNode* op);

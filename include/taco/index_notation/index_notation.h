@@ -929,7 +929,7 @@ public:
 };
 
 /// Create an accelerate stmt index statement.
-Where accelerate(IndexStmt consumer, IndexStmt producer);
+Accelerate accelerate(IndexStmt consumer, IndexStmt producer);
 
 /// A sequence statement has two statements, a definition and a mutation, that
 /// are executed in sequence.  The defintion creates an index variable and the
@@ -1259,7 +1259,7 @@ Assignment makeReductionNotation(Assignment);
 IndexStmt makeReductionNotation(IndexStmt);
 
 //annotates the index stmt with possible blos calls
-void annotateConcreteNotation(IndexStmt stmt, std::vector<IndexExpr> AcceleratedExpressions);
+IndexStmt annotateConcreteNotation(IndexStmt stmt, std::vector<IndexExpr> AcceleratedExpressions);
 
 IndexStmt makeAcceleratedConcreteNotation(IndexStmt stmt, std::vector<IndexExpr> AcceleratedExpressions);
 

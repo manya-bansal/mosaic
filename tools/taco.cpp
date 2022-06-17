@@ -661,6 +661,7 @@ int main(int argc, char* argv[]) {
   bool computeWithAssemble = false;
 
   bool printCompute        = false;
+  bool printAccelerate     = false;
   bool printAssemble       = false;
   bool printEvaluate       = false;
   bool printKernels        = false;
@@ -936,6 +937,8 @@ int main(int argc, char* argv[]) {
     }
     else if ("-print-compute" == argName) {
       printCompute = true;
+    } else if ("-print-accelerate" == argName) {
+      printAccelerate = true;
     }
     else if ("-print-assembly" == argName) {
       printAssemble = true;

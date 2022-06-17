@@ -5,7 +5,7 @@
 
 namespace taco {
 struct IndexVarRelNode;
-enum IndexVarRelType {UNDEFINED, SPLIT, DIVIDE, POS, FUSE, BOUND, PRECOMPUTE};
+enum IndexVarRelType {UNDEFINED, SPLIT, DIVIDE, POS, FUSE, BOUND, PRECOMPUTE, ACCELERATE};
 
 /// A pointer class for IndexVarRelNodes provides some operations for all IndexVarRelTypes
 class IndexVarRel : public util::IntrusivePtr<const IndexVarRelNode> {
@@ -302,6 +302,31 @@ private:
 };
 
 bool operator==(const PrecomputeRelNode&, const PrecomputeRelNode&);
+
+
+struct AccelerateRelNode : public IndexVarRelNode {
+  AccelerateRelNode(IndexVar parentVar, IndexVar precomputeVar);
+
+  const IndexVar& getParentVar() const;
+  const IndexVar& getPrecomputeVar() const;
+
+  void print(std::ostream& stream) const;
+  bool equals(const AccelerateRelNode &rel) const;
+  std::vector<IndexVar> getParents() const; // parentVar
+  std::vector<IndexVar> getChildren() const; // precomputeVar
+  std::vector<IndexVar> getIrregulars() const; // precomputeVar
+
+  /// all bounds remain unchanged and parentVar = precomputeVar
+  std::vector<ir::Expr> computeRelativeBound(std::set<IndexVar> definedVars, std::map<IndexVar, std::vector<ir::Expr>> computedBounds, std::map<IndexVar, ir::Expr> variableExprs, Iterators iterators, ProvenanceGraph provGraph) const;
+  std::vector<ir::Expr> deriveIterBounds(IndexVar indexVar, std::map<IndexVar, std::vector<ir::Expr>> parentIterBounds, std::map<IndexVar, std::vector<ir::Expr>> parentCoordBounds, std::map<taco::IndexVar, taco::ir::Expr> variableNames, Iterators iterators, ProvenanceGraph provGraph) const;
+  ir::Expr recoverVariable(IndexVar indexVar, std::map<IndexVar, ir::Expr> variableNames, Iterators iterators, std::map<IndexVar, std::vector<ir::Expr>> parentIterBounds, std::map<IndexVar, std::vector<ir::Expr>> parentCoordBounds, ProvenanceGraph provGraph) const;
+  ir::Stmt recoverChild(IndexVar indexVar, std::map<IndexVar, ir::Expr> relVariables, bool emitVarDecl, Iterators iterators, ProvenanceGraph provGraph) const;
+private:
+  struct Content;
+  std::shared_ptr<Content> content;
+};
+
+bool operator==(const AccelerateRelNode&, const AccelerateRelNode&);
 
 
 /// An IndexVarprovGraph is a side IR that takes in Concrete Index Notation and supports querying

@@ -46,6 +46,9 @@ void IndexVarRel::print(std::ostream& stream) const {
       case PRECOMPUTE:
         getNode<PrecomputeRelNode>()->print(stream);
         break;
+      case ACCELERATE:
+        getNode<AccelerateRelNode>()->print(stream);
+        break;
       default:
         taco_ierror;
     }
@@ -72,6 +75,8 @@ bool IndexVarRel::equals(const IndexVarRel &rel) const {
       return getNode<BoundRelNode>()->equals(*rel.getNode<BoundRelNode>());
     case PRECOMPUTE:
       return getNode<PrecomputeRelNode>()->equals(*rel.getNode<PrecomputeRelNode>());
+    case ACCELERATE:
+      return getNode<AccelerateRelNode>()->equals(*rel.getNode<AccelerateRelNode>());
     default:
       taco_ierror;
       return false;
@@ -904,6 +909,89 @@ bool operator==(const PrecomputeRelNode& a, const PrecomputeRelNode& b) {
   return a.equals(b);
 }
 
+
+// PrecomputeRelNode
+struct AccelerateRelNode::Content {
+  IndexVar parentVar;
+  IndexVar precomputeVar;
+};
+
+AccelerateRelNode::AccelerateRelNode(taco::IndexVar parentVar, taco::IndexVar precomputeVar)
+  : IndexVarRelNode(ACCELERATE), content (new Content) {
+  content->parentVar = parentVar;
+  content->precomputeVar = precomputeVar;
+}
+
+const IndexVar& AccelerateRelNode::getParentVar() const {
+  return content->parentVar;
+}
+
+const IndexVar& AccelerateRelNode::getPrecomputeVar() const {
+  return content->precomputeVar;
+}
+
+
+void AccelerateRelNode::print(std::ostream &stream) const {
+  stream << "accelerate(" << getParentVar() << ", " << getPrecomputeVar() << ")";
+}
+
+bool AccelerateRelNode::equals(const AccelerateRelNode &rel) const {
+  return getParentVar() == rel.getParentVar() && getPrecomputeVar() == rel.getPrecomputeVar();
+}
+
+std::vector<IndexVar> AccelerateRelNode::getParents() const {
+  return {getParentVar()};
+}
+
+std::vector<IndexVar> AccelerateRelNode::getChildren() const {
+  return {getPrecomputeVar()};
+}
+
+std::vector<IndexVar> AccelerateRelNode::getIrregulars() const {
+  return {getPrecomputeVar()};
+}
+
+std::vector<ir::Expr> AccelerateRelNode::computeRelativeBound(std::set<IndexVar> definedVars, std::map<IndexVar, std::vector<ir::Expr>> computedBounds, std::map<IndexVar, ir::Expr> variableExprs, Iterators iterators, ProvenanceGraph provGraph) const {
+  taco_iassert(computedBounds.count(getParentVar()) == 1);
+  std::vector<ir::Expr> parentCoordBound = computedBounds.at(getParentVar());
+  return parentCoordBound;
+}
+
+std::vector<ir::Expr> AccelerateRelNode::deriveIterBounds(taco::IndexVar indexVar,
+                                                     std::map<IndexVar, std::vector<ir::Expr>> parentIterBounds,
+                                                     std::map<IndexVar, std::vector<ir::Expr>> parentCoordBounds,
+                                                     std::map<taco::IndexVar, taco::ir::Expr> variableNames,
+                                                     Iterators iterators,
+                                                     ProvenanceGraph provGraph) const {
+  taco_iassert(indexVar == getPrecomputeVar());
+  taco_iassert(parentIterBounds.count(getParentVar()) == 1);
+  std::vector<ir::Expr> parentIterBound = parentIterBounds.at(getParentVar());
+  return parentIterBound;
+}
+
+ir::Expr AccelerateRelNode::recoverVariable(taco::IndexVar indexVar,
+                                       std::map<taco::IndexVar, taco::ir::Expr> variableNames,
+                                       Iterators iterators,
+                                       std::map<IndexVar, std::vector<ir::Expr>> parentIterBounds,
+                                       std::map<IndexVar, std::vector<ir::Expr>> parentCoordBounds,
+                                       ProvenanceGraph provGraph) const {
+  taco_iassert(indexVar == getParentVar());
+  taco_iassert(variableNames.count(getPrecomputeVar()) == 1);
+  return variableNames[getPrecomputeVar()];
+}
+
+ir::Stmt AccelerateRelNode::recoverChild(taco::IndexVar indexVar,
+                                    std::map<taco::IndexVar, taco::ir::Expr> variableNames, bool emitVarDecl, Iterators iterators, ProvenanceGraph provGraph) const {
+  taco_iassert(indexVar == getPrecomputeVar());
+  taco_iassert(variableNames.count(getParentVar()) && variableNames.count(getPrecomputeVar()));
+  ir::Expr boundVarExpr = variableNames[getPrecomputeVar()];
+  return ir::VarDecl::make(boundVarExpr, variableNames[getParentVar()]);
+}
+
+bool operator==(const AccelerateRelNode& a, const AccelerateRelNode& b) {
+  return a.equals(b);
+}
+
 // class ProvenanceGraph
 ProvenanceGraph::ProvenanceGraph(IndexStmt concreteStmt) {
   // Add all nodes (not all nodes may be scheduled)
@@ -923,6 +1011,7 @@ ProvenanceGraph::ProvenanceGraph(IndexStmt concreteStmt) {
   vector<IndexVarRel> relations = suchThat.getPredicate();
 
   for (IndexVarRel rel : relations) {
+    cout << "rel " << rel << endl;
     std::vector<IndexVar> parents = rel.getNode()->getParents();
     std::vector<IndexVar> children = rel.getNode()->getChildren();
     for (IndexVar parent : parents) {
@@ -1045,7 +1134,7 @@ bool ProvenanceGraph::getPosIteratorDescendant(IndexVar indexVar, IndexVar *irre
 }
 
 bool ProvenanceGraph::getPosIteratorFullyDerivedDescendant(IndexVar indexVar, IndexVar *irregularChild) const {
-  if (isFullyDerived(indexVar) || childRelMap.at(indexVar).getRelType() == PRECOMPUTE) {
+  if (isFullyDerived(indexVar) || childRelMap.at(indexVar).getRelType() == PRECOMPUTE ||  childRelMap.at(indexVar).getRelType() == ACCELERATE) {
     if (isPosVariable(indexVar)) {
       *irregularChild = indexVar;
       return true;
@@ -1125,14 +1214,13 @@ bool ProvenanceGraph::isRecoverable(taco::IndexVar indexVar, std::set<taco::Inde
   vector<IndexVar> producers;
   vector<IndexVar> consumers;
   for (auto& def : defined) {
-    if (childRelMap.count(def) && childRelMap.at(def).getRelType() == IndexVarRelType::PRECOMPUTE) {
+    if (childRelMap.count(def) && (childRelMap.at(def).getRelType() == IndexVarRelType::PRECOMPUTE || childRelMap.at(def).getRelType() == IndexVarRelType::ACCELERATE)) {
       consumers.push_back(def);
     }
-    if (parentRelMap.count(def) && parentRelMap.at(def).getRelType() == IndexVarRelType::PRECOMPUTE) {
+    if (parentRelMap.count(def) && (parentRelMap.at(def).getRelType() == IndexVarRelType::PRECOMPUTE || parentRelMap.at(def).getRelType() == IndexVarRelType::ACCELERATE)) {
       producers.push_back(def);
     }
   }
-
   return isRecoverablePrecompute(indexVar, defined, producers, consumers);
 }
 
@@ -1143,7 +1231,7 @@ bool ProvenanceGraph::isRecoverablePrecompute(taco::IndexVar indexVar, std::set<
     return true;
   }
   if (!producers.empty() && (childRelMap.count(indexVar) &&
-                             childRelMap.at(indexVar).getRelType() == IndexVarRelType::PRECOMPUTE)) {
+                             (childRelMap.at(indexVar).getRelType() == IndexVarRelType::PRECOMPUTE || childRelMap.at(indexVar).getRelType() == IndexVarRelType::ACCELERATE))) {
     auto precomputeChild = getChildren(indexVar)[0];
     if (std::find(producers.begin(), producers.end(), precomputeChild) != producers.end()) {
       return true;

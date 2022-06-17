@@ -20,6 +20,7 @@ using namespace taco;
 
 TEST(blasTest, simpleBlasCall) {
 
+ 
 
    TensorVar a("a", Type(taco::UInt32, {Dimension()}), taco::dense);
    TensorVar b("a", Type(taco::UInt32, {Dimension()}), taco::dense);
@@ -32,17 +33,24 @@ TEST(blasTest, simpleBlasCall) {
    TensorVar workspace(Type(taco::UInt32, {1}), taco::dense, 0) ;
 
    IndexStmt stmt = test_c(i) = test_a(i) + test_b(i);
-   IndexStmt stmt_accel = test_c(i) = test_a(i) + test_b(i);
+   // IndexStmt stmt_accel = test_c(i) = test_a(i)  test_b(i);
 
    std::vector<IndexExpr> canAccelerate = {a(i) + b(i)};
 
-   stmt = stmt.concretize();
-   stmt = stmt.precompute(test_a(i) + test_b(i), i, IndexVar(), workspace);
-   cout << stmt << endl;
+   // stmt = stmt.concretize();
+   // stmt = stmt.precompute(test_a(i) + test_b(i), i, IndexVar(), workspace);
+   // cout << stmt << endl;
 
-   makeConcreteNotation(stmt);
-
+   // makeConcreteNotation(stmt);
    // makeAcceleratedConcreteNotation(stmt_accel, canAccelerate);
+
+   // std::shared_ptr<ir::CodeGen> codegen = ir::CodeGen::init_default(cout, ir::CodeGen::ImplementationGen);
+
+   test_c.compileAccelerated(canAccelerate);
+   test_c.assemble();
+   test_c.compute();
+
+   // cout << test_c << endl;
 
 //    test_c.evaluateAccelerated(canAccelerate);
 

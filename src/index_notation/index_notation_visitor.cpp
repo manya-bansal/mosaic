@@ -111,6 +111,11 @@ void IndexNotationVisitor::visit(const WhereNode* op) {
   op->consumer.accept(this);
 }
 
+void IndexNotationVisitor::visit(const AccelerateNode* op) {
+  op->producer.accept(this);
+  op->consumer.accept(this); 
+}
+
 void IndexNotationVisitor::visit(const SequenceNode* op) {
   op->definition.accept(this);
   op->mutation.accept(this);

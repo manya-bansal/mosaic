@@ -4,7 +4,7 @@
 #include <string>
 #include <cstring>
 #include <unistd.h>
-
+#include <iostream>
 #include "taco/error.h"
 
 namespace taco {
@@ -64,6 +64,7 @@ inline std::string getTmpdir() {
       atexit(cachedtmpdirCleanup);
     #endif
   }
+  std::cout << cachedtmpdir << std::endl;
   return cachedtmpdir;
 }
 

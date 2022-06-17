@@ -234,7 +234,7 @@ static std::set<Expr> hasSparseInserts(IndexStmt stmt, Iterators iterators,
 Stmt
 LowererImplImperative::lower(IndexStmt stmt, string name,
                    bool assemble, bool compute, bool pack, bool unpack)
-{
+{ 
   this->assemble = assemble;
   this->compute = compute;
   definedIndexVarsOrdered = {};
@@ -646,7 +646,7 @@ LowererImplImperative::splitAppenderAndInserters(const vector<Iterator>& results
 
 
 Stmt LowererImplImperative::lowerForall(Forall forall)
-{
+{  
   bool hasExactBound = provGraph.hasExactBound(forall.getIndexVar());
   bool forallNeedsUnderivedGuards = !hasExactBound && emitUnderivedGuards;
   if (!ignoreVectorize && forallNeedsUnderivedGuards &&
@@ -2179,6 +2179,56 @@ Expr LowererImplImperative::getTemporarySize(Where where) {
   return Expr();
 }
 
+Expr LowererImplImperative::getTemporarySize(Accelerate where) {
+  TensorVar temporary = where.getTemporary();
+  int temporaryOrder = temporary.getType().getShape().getOrder();
+
+  Access temporaryAccess = getResultAccesses(where.getProducer()).first[0];
+  std::vector<IndexVar> indexVars = temporaryAccess.getIndexVars();
+
+  if(util::all(indexVars, [&](const IndexVar& var) { return provGraph.isUnderived(var);})) {
+    // All index vars underived then use tensor properties to get tensor size
+    taco_iassert(util::contains(dimensions, indexVars[0])) << "Missing " << indexVars[0];
+    ir::Expr size = dimensions.at(indexVars[0]);
+    vector<ir::Expr> temporarySizeVector = {size};
+
+    for(size_t i = 1; i < indexVars.size(); ++i) {
+      taco_iassert(util::contains(dimensions, indexVars[i])) << "Missing " << indexVars[i];
+      auto dimGP = dimensions.at(indexVars[i]);
+      size = ir::Mul::make(size, dimGP);
+      temporarySizeVector.push_back(dimGP);
+    }
+    temporarySizeMap[temporary] = temporarySizeVector;
+    return size;
+  }
+
+  vector<Expr> sizeVector;
+  Expr finalSize;
+  for (int i = 0; i < temporaryOrder; i++) {
+    Dimension temporarySize = temporary.getType().getShape().getDimension(i);
+    Expr size;
+    if (temporarySize.isFixed()) {
+      size = ir::Literal::make(temporarySize.getSize());
+
+    } else if (temporarySize.isIndexVarSized()) {
+      IndexVar var = temporarySize.getIndexVarSize();
+      vector<Expr> bounds = provGraph.deriveIterBounds(var, definedIndexVarsOrdered, underivedBounds,
+                                                       indexVarToExprMap, iterators);
+      size = ir::Sub::make(bounds[1], bounds[0]);
+    }
+    sizeVector.push_back(size);
+    if (i == 0)
+      finalSize = size;
+    else
+      finalSize = ir::Mul::make(finalSize, size);
+  }
+  temporarySizeMap[temporary] = sizeVector;
+  return finalSize;
+
+  taco_ierror; // TODO
+  return Expr();
+}
+
 vector<Stmt> LowererImplImperative::codeToInitializeDenseAcceleratorArrays(Where where, bool parallel) {
   // if parallel == true, need to initialize dense accelerator arrays as size*numThreads
   // and rename all dense accelerator arrays to name + '_all'
@@ -2440,6 +2490,7 @@ vector<Stmt> LowererImplImperative::codeToInitializeTemporaryParallel(Where wher
 }
 
 vector<Stmt> LowererImplImperative::codeToInitializeTemporary(Where where) {
+  cout << "in codeToInitializeTemporary" << endl;
   TensorVar temporary = where.getTemporary();
 
   const bool accelerateDense = canAccelerateDenseTemp(where).first;
@@ -2453,6 +2504,7 @@ vector<Stmt> LowererImplImperative::codeToInitializeTemporary(Where where) {
     initializeTemporary = Block::make(initializeTemporary, initTempSet);
     tempToBitGuard[temporary] = tempSet;
   } else {
+    cout << "3" << endl; 
     // TODO: Need to support keeping track of initialized elements for
     //       temporaries that don't have sparse accelerator
     taco_iassert(!util::contains(guardedTemps, temporary) || accelerateDense);
@@ -2460,6 +2512,7 @@ vector<Stmt> LowererImplImperative::codeToInitializeTemporary(Where where) {
     // When emitting code to accelerate dense workspaces with sparse iteration, we need the following arrays
     // to construct the result indices
     if(accelerateDense) {
+      cout << "4" << endl; 
       vector<Stmt> initAndFree = codeToInitializeDenseAcceleratorArrays(where);
       initializeTemporary = initAndFree[0];
       freeTemporary = initAndFree[1];
@@ -2468,10 +2521,13 @@ vector<Stmt> LowererImplImperative::codeToInitializeTemporary(Where where) {
     Expr values;
     if (util::contains(needCompute, temporary) &&
         needComputeValues(where, temporary)) {
+          cout << "5" << endl; 
       values = ir::Var::make(temporary.getName(),
                              temporary.getType().getDataType(), true, false);
 
       Expr size = getTemporarySize(where);
+
+      cout << values << endl;
 
       // no decl needed for shared memory
       Stmt decl = Stmt();
@@ -2488,13 +2544,16 @@ vector<Stmt> LowererImplImperative::codeToInitializeTemporary(Where where) {
     /// temporary value arrays from.
     TemporaryArrays arrays;
     arrays.values = values;
+    cout << "temp " << temporary << " vals " << values << endl; 
     this->temporaryArrays.insert({temporary, arrays});
   }
   return {initializeTemporary, freeTemporary};
 }
 
 Stmt LowererImplImperative::lowerWhere(Where where) {
+  cout << "enter lower where" << endl;
   TensorVar temporary = where.getTemporary();
+  cout << temporary << endl;
   bool accelerateDenseWorkSpace, sortAccelerator;
   std::tie(accelerateDenseWorkSpace, sortAccelerator) =
       canAccelerateDenseTemp(where);
@@ -2505,19 +2564,24 @@ Stmt LowererImplImperative::lowerWhere(Where where) {
   for (auto it = temporaryInitialization.begin(); it != temporaryInitialization.end(); ++it) {
     if (it->second == where && it->first.getParallelUnit() ==
         ParallelUnit::NotParallel && !isScalar(temporary.getType())) {
+          cout << "1" << endl;
       temporaryHoisted = true;
     } else if (it->second == where && it->first.getParallelUnit() ==
                ParallelUnit::CPUThread && !isScalar(temporary.getType())) {
       temporaryHoisted = true;
       auto decls = codeToInitializeLocalTemporaryParallel(where, it->first.getParallelUnit());
-
+      cout << "2" << endl;
       temporaryValuesInitFree[0] = ir::Block::make(decls);
     }
   }
 
+  
+
   if (!temporaryHoisted) {
+      cout << "3" << endl;
     temporaryValuesInitFree = codeToInitializeTemporary(where);
   }
+  
 
   Stmt initializeTemporary = temporaryValuesInitFree[0];
   Stmt freeTemporary = temporaryValuesInitFree[1];
@@ -2531,6 +2595,8 @@ Stmt LowererImplImperative::lowerWhere(Where where) {
   );
 
   Stmt consumer = lower(where.getConsumer());
+  // taco_uerror << "Stop "  << consumer << endl;
+
   if (accelerateDenseWorkSpace && sortAccelerator) {
     // We need to sort the indices array
     Expr listOfIndices = tempToIndexList.at(temporary);
@@ -2582,12 +2648,156 @@ Stmt LowererImplImperative::lowerWhere(Where where) {
   whereConsumers.pop_back();
   whereTemps.pop_back();
   whereTempsToResult.erase(where.getTemporary());
+  cout << "producer " << producer << endl;
+  cout << "consumer " << consumer << endl;
+  // taco_uerror << Block::make(initializeTemporary, producer, markAssignsAtomicDepth > 0 ? capturedLocatePos : ir::Stmt(), consumer,  freeTemporary) << endl;
   return Block::make(initializeTemporary, producer, markAssignsAtomicDepth > 0 ? capturedLocatePos : ir::Stmt(), consumer,  freeTemporary);
 }
 
 
-Stmt LowererImplImperative::lowerAccelerate(Accelerate acceleratehere) {
-  taco_uerror << "Unimplemented";
+vector<Stmt> LowererImplImperative::codeToInitializeTemporary(Accelerate accelerate) {
+  cout << "in codeToInitializeTemporary" << endl;
+  TensorVar temporary = accelerate.getTemporary();
+
+  const bool accelerateDense = false;
+
+  Stmt freeTemporary = Stmt();
+  Stmt initializeTemporary = Stmt();
+  if (isScalar(temporary.getType())) {
+    initializeTemporary = defineScalarVariable(temporary, true);
+    Expr tempSet = ir::Var::make(temporary.getName() + "_set", Datatype::Bool);
+    Stmt initTempSet = VarDecl::make(tempSet, false);
+    initializeTemporary = Block::make(initializeTemporary, initTempSet);
+    tempToBitGuard[temporary] = tempSet;
+  } else {
+    cout << "3" << endl; 
+    // TODO: Need to support keeping track of initialized elements for
+    //       temporaries that don't have sparse accelerator
+    taco_iassert(!util::contains(guardedTemps, temporary) || accelerateDense);
+
+    // When emitting code to accelerate dense workspaces with sparse iteration, we need the following arrays
+    // to construct the result indices
+    // if(accelerateDense) {
+    //   cout << "4" << endl; 
+    //   vector<Stmt> initAndFree = codeToInitializeDenseAcceleratorArrays(accelerate);
+    //   initializeTemporary = initAndFree[0];
+    //   freeTemporary = initAndFree[1];
+    // }
+
+    Expr values;
+    if (util::contains(needCompute, temporary) &&
+        needComputeValues(accelerate, temporary)) {
+          cout << "5" << endl; 
+      values = ir::Var::make(temporary.getName(),
+                             temporary.getType().getDataType(), true, false);
+
+      Expr size = getTemporarySize(accelerate);
+
+      cout << values << endl;
+
+      // no decl needed for shared memory
+      Stmt decl = Stmt();
+      if ((isa<Forall>(accelerate.getProducer()) && inParallelLoopDepth == 0) || !should_use_CUDA_codegen()) {
+        decl = VarDecl::make(values, ir::Literal::make(0));
+      }
+      Stmt allocate = Allocate::make(values, size);
+
+      freeTemporary = Block::make(freeTemporary, Free::make(values));
+      initializeTemporary = Block::make(decl, initializeTemporary, allocate);
+    }
+
+    /// Make a struct object that lowerAssignment and lowerAccess can read
+    /// temporary value arrays from.
+    TemporaryArrays arrays;
+    arrays.values = values;
+    cout << "temp " << temporary << " vals " << values << endl; 
+    this->temporaryArrays.insert({temporary, arrays});
+  }
+  return {initializeTemporary, freeTemporary};
+}
+
+
+
+Stmt LowererImplImperative::lowerAccelerate(Accelerate accelerate) {
+  //initiailze temporary workspace
+  TensorVar temporary = accelerate.getTemporary();
+
+  //set this explicitly to false rn for simplicity
+  bool accelerateDenseWorkSpace = false;
+  bool sortAccelerator = false;
+
+  vector<Stmt> temporaryValuesInitFree = {Stmt(), Stmt()};
+
+  cout << "temporary " << temporary << endl;
+  bool temporaryHoisted = false;
+
+    Expr values;
+
+    for (auto it = temporaryInitialization.begin(); it != temporaryInitialization.end(); ++it) {
+
+      if (it->second == accelerate && it->first.getParallelUnit() ==
+               ParallelUnit::CPUThread && !isScalar(temporary.getType())) {
+
+          TemporaryArrays arrays;
+          arrays.values = values;
+          this->temporaryArrays.insert({temporary, arrays});
+
+        }
+    }
+
+  temporaryValuesInitFree = codeToInitializeTemporary(accelerate);
+
+  Stmt initializeTemporary = temporaryValuesInitFree[0];
+  Stmt freeTemporary = temporaryValuesInitFree[1];
+   
+
+    match(accelerate.getConsumer(),
+        std::function<void(const AssignmentNode*)>([&](const AssignmentNode* op) {
+            if (op->lhs.getTensorVar().getOrder() > 0) {
+              whereTempsToResult[accelerate.getTemporary()] = (const AccessNode *) op->lhs.ptr;
+            }
+        })
+  );
+
+  Stmt consumer = lower(accelerate.getConsumer());
+
+  if (util::contains(needCompute, temporary) && !isScalar(temporary.getType()) && !accelerateDenseWorkSpace) {
+    // TODO: We only actually need to do this if:
+    //      1) We use the temporary multiple times
+    //      2) The PRODUCER RHS is sparse(not full). (Guarantees that old values are overwritten before consuming)
+
+    Expr p = Var::make("p" + temporary.getName(), Int());
+    values = ir::Var::make(temporary.getName(),
+                                temporary.getType().getDataType(),
+                                true, false);
+    Expr size = getTemporarySize(accelerate);
+    Stmt zeroInit = Store::make(values, p, ir::Literal::zero(temporary.getType().getDataType()));
+    Stmt loopInit = For::make(p, 0, size, 1, zeroInit, LoopKind::Serial);
+    initializeTemporary = Block::make(initializeTemporary, loopInit);
+  }
+
+  whereConsumers.push_back(consumer);
+  whereTemps.push_back(accelerate.getTemporary());
+
+  //just some hardcoded nonscense 
+  //this should go away once 
+  //we build the abstract class
+  //for specifying rda info 
+
+
+  // cout << accelerate.getProducer().getResult << endl;
+
+  // taco_uerror << ir::Call::make("cblas_saxpy", {}, UInt32) << endl;
+  // taco_uerror << ir::Assign::make(values, values) << endl;
+
+  whereConsumers.pop_back();
+  whereTemps.pop_back();
+
+  cout << accelerate.getConsumer() << endl;
+  cout << consumer << endl;
+  whereTempsToResult.erase(accelerate.getTemporary());
+
+  return Block::make(initializeTemporary, consumer, freeTemporary);
 }
 
 

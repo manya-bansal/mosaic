@@ -24,6 +24,7 @@ class Assignment;
 class Yield;
 class Forall;
 class Where;
+class Accelerate;
 class Multi;
 class SuchThat;
 class Sequence;
@@ -370,16 +371,24 @@ protected:
   /// Returns true iff the temporary used in the where statement is dense and sparse iteration over that
   /// temporary can be automaticallty supported by the compiler.
   std::pair<bool,bool> canAccelerateDenseTemp(Where where);
+  // std::pair<bool,bool> canAccelerateDenseTemp(Accelerate where);
 
   /// Initializes a temporary workspace
   std::vector<ir::Stmt> codeToInitializeTemporary(Where where);
+   std::vector<ir::Stmt> codeToInitializeTemporary(Accelerate where);
+
   std::vector<ir::Stmt> codeToInitializeTemporaryParallel(Where where, ParallelUnit parallelUnit);
+    // std::vector<ir::Stmt> codeToInitializeTemporaryParallel(Accelerate where, ParallelUnit parallelUnit);
+
   std::vector<ir::Stmt> codeToInitializeLocalTemporaryParallel(Where where, ParallelUnit parallelUnit);
+  // std::vector<ir::Stmt> codeToInitializeLocalTemporaryParallel(Accelerate where, ParallelUnit parallelUnit);
   /// Gets the size of a temporary tensorVar in the where statement
   ir::Expr getTemporarySize(Where where);
+  ir::Expr getTemporarySize(Accelerate where);
 
   /// Initializes helper arrays to give dense workspaces sparse acceleration
   std::vector<ir::Stmt> codeToInitializeDenseAcceleratorArrays(Where where, bool parallel = false);
+    // std::vector<ir::Stmt> codeToInitializeDenseAcceleratorArrays(Accelerate where, bool parallel = false);
 
   /// Recovers a derived indexvar from an underived variable.
   ir::Stmt codeToRecoverDerivedIndexVar(IndexVar underived, IndexVar indexVar, bool emitVarDecl);

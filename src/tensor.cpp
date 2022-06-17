@@ -674,12 +674,10 @@ void TensorBase::compileAccelerated(std::vector<IndexExpr> AcceleratedExpression
   CollisionFinder dupes = CollisionFinder();
   assignment.getLhs().accept(&dupes);
   assignment.accept(&dupes);
-
-  IndexStmt stmt = makeAcceleratedConcreteNotation(makeReductionNotation(assignment), AcceleratedExpressions);
-  stmt = reorderLoopsTopologically(stmt);
-  stmt = insertTemporaries(stmt);
+  IndexStmt stmt = makeAcceleratedConcreteNotation(assignment, AcceleratedExpressions);
+  // stmt = reorderLoopsTopologically(stmt);
+  stmt = insertTemporaries(stmt); 
   stmt = parallelizeOuterLoop(stmt);
-  cout << "calling compileAccelerated" << endl;
   compileAccelerated(stmt, AcceleratedExpressions, content->assembleWhileCompute);
 }
 
@@ -711,7 +709,7 @@ void TensorBase::compile(taco::IndexStmt stmt, bool assembleWhileCompute) {
   content->module = make_shared<Module>();
   content->module->addFunction(content->assembleFunc);
   content->module->addFunction(content->computeFunc);
-  content->module->compile();
+  content->module->compile(); 
   cacheComputeKernel(concretizedAssign, content->module);
 }
 
@@ -725,6 +723,9 @@ void TensorBase::compileAccelerated(taco::IndexStmt stmt, std::vector<IndexExpr>
 
   cout << "calling concretizeAccelerated" << endl;
   IndexStmt stmtToCompile = stmt.concretizeAccelerated(AcceleratedExpressions);
+  
+  cout << stmtToCompile << endl;
+
   stmtToCompile = scalarPromote(stmtToCompile);
 
   if (!std::getenv("CACHE_KERNELS") ||
@@ -738,13 +739,18 @@ void TensorBase::compileAccelerated(taco::IndexStmt stmt, std::vector<IndexExpr>
   }
 
   content->assembleFunc = lower(stmtToCompile, "assemble", true, false);
+  // taco_uerror << content->assembleFunc << endl;
   content->computeFunc = lower(stmtToCompile, "compute",  assembleWhileCompute, true);
+  cout << content->assembleFunc << endl;
+  cout << content->computeFunc << endl;
+  // taco_uerror << "stop" << endl;
   // If we have to recompile the kernel, we need to create a new Module. Since
   // the module we are holding on to could have been retrieved from the cache,
   // we can't modify it.
   content->module = make_shared<Module>();
   content->module->addFunction(content->assembleFunc);
   content->module->addFunction(content->computeFunc);
+  // taco_uerror << content->module->getSource() << endl;
   content->module->compile();
   cacheComputeKernel(concretizedAssign, content->module);
 }

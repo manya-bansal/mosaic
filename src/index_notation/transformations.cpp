@@ -30,6 +30,10 @@ Transformation::Transformation(Precompute precompute)
     : transformation(new Precompute(precompute)) {
 }
 
+Transformation::Transformation(AccelerateExpr accelexpr)
+    : transformation(new AccelerateExpr(accelexpr)) {
+}
+
 Transformation::Transformation(ForAllReplace forallreplace)
         : transformation(new ForAllReplace(forallreplace)) {
 }
@@ -373,6 +377,18 @@ static IndexStmt eliminateRedundantReductions(IndexStmt stmt,
         availableVars.erase(workspace);
       }
     }
+
+
+    void visit(const AccelerateNode* op) {
+      const auto workspaces = getResults(op->producer);
+      for (const auto& workspace : workspaces) {
+        availableVars[workspace] = {};
+      }
+      IndexNotationRewriter::visit(op);
+      for (const auto& workspace : workspaces) {
+        availableVars.erase(workspace);
+      }
+    }
     
     void visit(const AssignmentNode* op) {
       const auto result = op->lhs.getTensorVar();
@@ -581,6 +597,252 @@ std::ostream& operator<<(std::ostream& os, const Precompute& precompute) {
   precompute.print(os);
   return os;
 }
+
+
+// class AccelerateExpr
+struct AccelerateExpr::Content {
+  IndexExpr expr;
+  std::vector<IndexVar> i_vars;
+  std::vector<IndexVar> iw_vars;
+  TensorVar workspace;
+};
+
+AccelerateExpr::AccelerateExpr() : content(nullptr) {
+}
+
+AccelerateExpr::AccelerateExpr(IndexExpr expr, IndexVar i, IndexVar iw,
+                     TensorVar workspace) : content(new Content) {
+  std::vector<IndexVar> i_vars{i};
+  std::vector<IndexVar> iw_vars{iw};
+  content->expr = expr;
+  content->i_vars = i_vars;
+  content->iw_vars = iw_vars;
+  content->workspace = workspace;
+}
+
+  AccelerateExpr::AccelerateExpr(IndexExpr expr, std::vector<IndexVar> i_vars,
+                         std::vector<IndexVar> iw_vars,
+                         TensorVar workspace) : content(new Content) {
+  content->expr = expr;
+  content->i_vars = i_vars;
+  content->iw_vars = iw_vars;
+  content->workspace = workspace;
+}
+  
+IndexExpr AccelerateExpr::getExpr() const {
+  return content->expr;
+}
+
+std::vector<IndexVar>& AccelerateExpr::getIVars() const {
+  return content->i_vars;
+}
+
+std::vector<IndexVar>& AccelerateExpr::getIWVars() const {
+  return content->iw_vars;
+}
+
+TensorVar AccelerateExpr::getWorkspace() const {
+  return content->workspace;
+}
+
+
+IndexStmt AccelerateExpr::apply(IndexStmt stmt, std::string* reason) const {
+  INIT_REASON(reason);
+
+  cout << "in accel aply" << endl;
+
+  // Precondition: The expr to precompute is not in `stmt`
+  Assignment assignment = getAssignmentContainingExpr(stmt, getExpr());
+  if (!assignment.defined()) {
+    *reason = "The expression (" + util::toString(getExpr()) + ") " +
+              "is not in " + util::toString(stmt);
+    return IndexStmt();
+  }
+
+  vector<IndexVar> forallIndexVars;
+  match(stmt,
+        function<void(const ForallNode*)>([&](const ForallNode* op) {
+          forallIndexVars.push_back(op->indexVar);
+        })
+  );
+
+  ProvenanceGraph provGraph = ProvenanceGraph(stmt);
+
+  struct AccelerateExprRewriter : public IndexNotationRewriter {
+    using IndexNotationRewriter::visit;
+    AccelerateExpr precompute;
+    ProvenanceGraph provGraph;
+    vector<IndexVar> forallIndexVarList;
+
+    Assignment getConsumerAssignment(IndexStmt stmt, TensorVar& ws) {
+      Assignment a = Assignment();
+      match(stmt,
+            function<void(const AssignmentNode*, Matcher*)>([&](const AssignmentNode* op, Matcher* ctx) {
+              a = Assignment(op);
+            }),
+            function<void(const AccelerateNode*, Matcher*)>([&](const AccelerateNode* op, Matcher* ctx) {
+              ctx->match(op->consumer);
+              ctx->match(op->producer);
+            }),
+            function<void(const AccessNode*, Matcher*)>([&](const AccessNode* op, Matcher* ctx) {
+              if (op->tensorVar == ws) {
+                return;
+              }
+            })
+      );
+
+      if (!a.getReductionVars().empty()) {
+        a = Assignment(a.getLhs(), a.getRhs(), Add());
+      } else {
+        a = Assignment(a.getLhs(), a.getRhs());
+      }
+      return a;
+    }
+
+    Assignment getProducerAssignment(TensorVar& ws,
+                                     const std::vector<IndexVar>& i_vars,
+                                     const std::vector<IndexVar>& iw_vars,
+                                     const IndexExpr& e,
+                                     map<IndexVar, IndexVar> substitutions) {
+
+      auto assignment = ws(iw_vars) = replace(e, substitutions);
+      if (!assignment.getReductionVars().empty())
+        assignment = Assignment(assignment.getLhs(), assignment.getRhs(), Add());
+      return assignment;
+    }
+
+    IndexStmt generateForalls(IndexStmt stmt, vector<IndexVar> indexVars) {
+      auto returnStmt = stmt;
+      for (auto &i : indexVars) {
+        returnStmt = forall(i, returnStmt);
+      }
+      return returnStmt;
+    }
+
+    bool containsIndexVarScheduled(vector<IndexVar> indexVars,
+                                 IndexVar indexVar) {
+      bool contains = false;
+      for (auto &i : indexVars) {
+        if (i == indexVar) {
+          contains = true;
+        } else if (provGraph.isFullyDerived(indexVar) && !provGraph.isFullyDerived(i)) {
+          for (auto &child : provGraph.getFullyDerivedDescendants(i)) {
+            if (child == indexVar)
+              contains = true;
+          }
+        } else if (provGraph.isFullyDerived(indexVar) && !provGraph.isFullyDerived(i)) {
+          for (auto &child : provGraph.getFullyDerivedDescendants(indexVar)) {
+            if (child == i)
+              contains = true;
+          }
+        }
+      }
+      return contains;
+    }
+
+    void visit(const ForallNode* node) {
+      Forall foralli(node);
+      std::vector<IndexVar> i_vars = precompute.getIVars();
+
+      bool containsWhere = false;
+      match(foralli,
+            function<void(const WhereNode*)>([&](const WhereNode* op) {
+              containsWhere = true;
+            })
+      );
+
+      if (!containsWhere) {
+        vector<IndexVar> forallIndexVars;
+        match(foralli,
+              function<void(const ForallNode*)>([&](const ForallNode* op) {
+                forallIndexVars.push_back(op->indexVar);
+              })
+        );
+
+        IndexStmt s = foralli.getStmt();
+        TensorVar ws = precompute.getWorkspace();
+        IndexExpr e = precompute.getExpr();
+        std::vector<IndexVar> iw_vars = precompute.getIWVars();
+
+        map<IndexVar, IndexVar> substitutions;
+        taco_iassert(i_vars.size() == iw_vars.size()) << "i_vars and iw_vars lists must be the same size";
+
+        for (int index = 0; index < (int)i_vars.size(); index++) {
+          substitutions[i_vars[index]] = iw_vars[index];
+        }
+
+        // Build consumer by replacing with temporary (in replacedStmt)
+        IndexStmt replacedStmt = replace(s, {{e, ws(i_vars) }});
+        if (replacedStmt != s) {
+          // Then modify the replacedStmt to have the correct foralls
+          // by concretizing the consumer assignment
+
+          auto consumerAssignment = getConsumerAssignment(replacedStmt, ws);
+          auto consumerIndexVars = consumerAssignment.getIndexVars();
+
+          auto producerAssignment = getProducerAssignment(ws, i_vars, iw_vars, e, substitutions);
+          auto producerIndexVars = producerAssignment.getIndexVars();
+
+          vector<IndexVar> producerForallIndexVars;
+          vector<IndexVar> consumerForallIndexVars;
+          vector<IndexVar> outerForallIndexVars;
+
+          bool stopForallDistribution = false;
+          for (auto &i : util::reverse(forallIndexVars)) {
+            if (!stopForallDistribution && containsIndexVarScheduled(i_vars, i)) {
+              producerForallIndexVars.push_back(substitutions[i]);
+              consumerForallIndexVars.push_back(i);
+            } else {
+              auto consumerContains = containsIndexVarScheduled(consumerIndexVars, i);
+              auto producerContains = containsIndexVarScheduled(producerIndexVars, i);
+              if (stopForallDistribution || (producerContains && consumerContains)) {
+                outerForallIndexVars.push_back(i);
+                stopForallDistribution = true;
+              } else if (!stopForallDistribution && consumerContains) {
+                consumerForallIndexVars.push_back(i);
+              } else if (!stopForallDistribution && producerContains) {
+                producerForallIndexVars.push_back(i);
+              }
+            }
+          }
+
+          IndexStmt consumer = generateForalls(consumerAssignment, consumerForallIndexVars);
+
+          IndexStmt producer = generateForalls(producerAssignment, producerForallIndexVars);
+          Accelerate accel(consumer, producer);
+
+          stmt = generateForalls(accel, outerForallIndexVars);
+          return;
+        }
+      }
+      IndexNotationRewriter::visit(node);
+    }
+  };
+
+  AccelerateExprRewriter rewriter;
+  rewriter.precompute = *this;
+  rewriter.provGraph = provGraph;
+  rewriter.forallIndexVarList = forallIndexVars;
+  stmt = rewriter.rewrite(stmt);
+
+  return stmt;
+}
+
+void AccelerateExpr::print(std::ostream& os) const {
+  os << "accelerate(" << getExpr() << ", " << getIVars() << ", "
+     << getIWVars() << ", " << getWorkspace() << ")";
+}
+
+bool AccelerateExpr::defined() const {
+  return content != nullptr;
+}
+
+std::ostream& operator<<(std::ostream& os, const AccelerateExpr& precompute) {
+  precompute.print(os);
+  return os;
+}
+
+
 
 // class ForAllReplace
 struct ForAllReplace::Content {
@@ -816,14 +1078,15 @@ IndexStmt Parallelize::apply(IndexStmt stmt, std::string* reason) const {
           }
         }
       }
-
+      cout << "yes" << endl;
       tensorVars = createIRTensorVars(stmt);
 
       assembledByUngroupedInsert.clear();
       for (const auto& result : getAssembledByUngroupedInsertion(stmt)) {
+        cout << "here" << endl;
         assembledByUngroupedInsert.push_back(tensorVars[result]);
       }
-
+      cout << "out" << endl;
       return rewrite(stmt);
     }
 
@@ -973,7 +1236,9 @@ IndexStmt Parallelize::apply(IndexStmt stmt, std::string* reason) const {
 
   ParallelizeRewriter rewriter;
   rewriter.parallelize = *this;
+  cout << "out" << endl;
   IndexStmt rewritten = rewriter.rewriteParallel(stmt);
+  cout << " not out" << endl;
   if (!rewriter.reason.empty()) {
     *reason = rewriter.reason;
     return IndexStmt();
@@ -1145,6 +1410,19 @@ IndexStmt SetAssembleStrategy::apply(IndexStmt stmt, string* reason) const {
         stmt = IndexStmt();
       }
     }
+
+    void visit(const AccelerateNode* op) {
+      IndexStmt producer = rewrite(op->producer);
+      IndexStmt consumer = rewrite(op->consumer);
+      if (producer == op->producer && consumer == op->consumer) {
+        stmt = op;
+      } else if (consumer.defined()) {
+        stmt = producer.defined() ? Accelerate(consumer, producer) : consumer;
+      } else {
+        stmt = IndexStmt();
+      }
+    }
+
 
     void visit(const AssignmentNode* op) {
       IndexExpr rhs = rewrite(op->rhs);
@@ -1339,6 +1617,16 @@ IndexStmt SetAssembleStrategy::apply(IndexStmt stmt, string* reason) const {
       }
     }
 
+    void visit(const AccelerateNode* op) {
+      IndexStmt consumer = rewrite(op->consumer);
+      IndexStmt producer = rewrite(op->producer);
+      if (producer == op->producer && consumer == op->consumer) {
+        stmt = op;
+      } else {
+        stmt = new AccelerateNode(consumer, producer);
+      }
+    }
+
     void visit(const AssignmentNode* op) {
       const auto lhsTensor = op->lhs.getTensorVar();
       if (util::contains(tmpUse, lhsTensor) && !op->op.defined()) {
@@ -1416,6 +1704,17 @@ IndexStmt SetAssembleStrategy::apply(IndexStmt stmt, string* reason) const {
       }
     }
 
+    void visit(const AccelerateNode* op) {
+      IndexStmt consumer = rewrite(op->consumer);
+      if (consumer == op->consumer) {
+        stmt = op;
+      } else if (consumer.defined()) {
+        stmt = new AccelerateNode(consumer, op->producer);
+      } else {
+        stmt = op->producer;
+      }
+    }
+
     void visit(const AssignmentNode* op) {
       const auto lhsTensor = op->lhs.getTensorVar();
       if (util::contains(inlinedResults, lhsTensor)) {
@@ -1447,6 +1746,7 @@ std::ostream& operator<<(std::ostream& os,
 
 IndexStmt parallelizeOuterLoop(IndexStmt stmt) {
   // get outer ForAll
+  cout << "inside parralleise" << endl;
   Forall forall;
   bool matched = false;
   match(stmt,
@@ -1456,7 +1756,7 @@ IndexStmt parallelizeOuterLoop(IndexStmt stmt) {
           matched = true;
         })
   );
-
+  
   if (!matched) return stmt;
   string reason;
 
@@ -1482,7 +1782,9 @@ IndexStmt parallelizeOuterLoop(IndexStmt stmt) {
     return parallelized256;
   }
   else {
+    cout << "in" << endl;
     IndexStmt parallelized = Parallelize(forall.getIndexVar(), ParallelUnit::CPUThread, OutputRaceStrategy::NoRaces).apply(stmt, &reason);
+    cout << "out" << endl;
     if (parallelized == IndexStmt()) {
       // can't parallelize
       return stmt;
@@ -1840,7 +2142,6 @@ IndexStmt scalarPromote(IndexStmt stmt, ProvenanceGraph provGraph,
                         Type(resultVar.getType().getDataType(), {}));
           body = ReplaceReductionExpr(
               map<Access,Access>({{resultAccess.first, val()}})).rewrite(body);
-
           IndexExpr op = util::contains(reduceOp, resultAccess.first) 
                        ? reduceOp.at(resultAccess.first) : IndexExpr();
           IndexStmt consumer = Assignment(Access(resultAccess.first), val(), op);

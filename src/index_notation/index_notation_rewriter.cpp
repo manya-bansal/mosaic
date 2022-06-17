@@ -33,6 +33,7 @@ IndexStmt IndexStmtRewriterStrict::rewrite(IndexStmt s) {
     s = IndexStmt();
   }
   stmt = IndexStmt();
+  cout << s << endl;
   return s;
 }
 
@@ -200,6 +201,17 @@ void IndexNotationRewriter::visit(const WhereNode* op) {
   }
 }
 
+void IndexNotationRewriter::visit(const AccelerateNode* op) {
+  IndexStmt producer = rewrite(op->producer);
+  IndexStmt consumer = rewrite(op->consumer);
+  if (producer == op->producer && consumer == op->consumer) {
+    stmt = op;
+  }
+  else {
+    stmt = new AccelerateNode(consumer, producer);
+  }
+}
+
 void IndexNotationRewriter::visit(const SequenceNode* op) {
   IndexStmt definition = rewrite(op->definition);
   IndexStmt mutation = rewrite(op->mutation);
@@ -340,6 +352,10 @@ struct ReplaceRewriter : public IndexNotationRewriter {
   }
 
   void visit(const WhereNode* op) {
+    SUBSTITUTE_STMT;
+  }
+
+  void visit(const AccelerateNode* op) {
     SUBSTITUTE_STMT;
   }
 
