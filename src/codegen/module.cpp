@@ -67,6 +67,7 @@ void Module::compileToSource(string path, string prefix) {
 
   ofstream source_file;
   string file_ending = should_use_CUDA_codegen() ? ".cu" : ".c";
+
   source_file.open(path+prefix+file_ending);
   source_file << source.str();
   source_file.close();
@@ -75,6 +76,7 @@ void Module::compileToSource(string path, string prefix) {
   header_file.open(path+prefix+".h");
   header_file << header.str();
   header_file.close();
+
 }
 
 void Module::compileToStaticLibrary(string path, string prefix) {
@@ -146,6 +148,7 @@ string Module::compile() {
     "-o " + fullpath + " -lm";
 
   // open the output file & write out the source
+
   compileToSource(tmpdir, libname);
   
   // write out the shims

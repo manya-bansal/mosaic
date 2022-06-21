@@ -115,6 +115,7 @@ Kernel compile(IndexStmt stmt) {
       << reason << endl << stmt;
 
   shared_ptr<ir::Module> module(new ir::Module);
+  // module->setSource("~/temp");
   IndexStmt parallelStmt = parallelizeOuterLoop(stmt);
   module->addFunction(lower(parallelStmt, "compute",  false, true));
   module->addFunction(lower(stmt, "assemble", true, false));
@@ -124,6 +125,7 @@ Kernel compile(IndexStmt stmt) {
   void* evaluate = module->getFuncPtr("evaluate");
   void* assemble = module->getFuncPtr("assemble");
   void* compute  = module->getFuncPtr("compute");
+
   return Kernel(stmt, module, evaluate, assemble, compute);
 }
 

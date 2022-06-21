@@ -26,9 +26,9 @@ TEST(blasTest, simpleBlasCall) {
    TensorVar b("a", Type(taco::UInt32, {Dimension()}), taco::dense);
    IndexVar i("i");
 
-   Tensor<uint32_t> test_a("actuala", {1}, dense, 0);
-   Tensor<uint32_t> test_b("actualb", {1}, dense, 1);
-   Tensor<uint32_t> test_c("actualc", {1}, dense, 1);
+   Tensor<uint32_t> test_a("actuala", {3}, dense, 0);
+   Tensor<uint32_t> test_b("actualb", {3}, dense, 1);
+   Tensor<uint32_t> test_c("actualc", {3}, dense, 1);
 
    TensorVar workspace(Type(taco::UInt32, {1}), taco::dense, 0) ;
 
@@ -49,6 +49,16 @@ TEST(blasTest, simpleBlasCall) {
    test_c.compileAccelerated(canAccelerate);
    test_c.assemble();
    test_c.compute();
+
+   auto it = iterate<uint32_t>(test_c);
+   auto iit = it.begin();
+
+   while (iit != it.end()){
+      cout << "val " << iit->second << endl;
+      ++iit;
+   }
+
+   // test_c.evaluateAccelerated(canAccelerate);
 
    // cout << test_c << endl;
 
