@@ -18,6 +18,8 @@
 
 using namespace std;
 
+#define ACCELERATE 1
+
 namespace taco {
 namespace ir {
 
@@ -28,6 +30,7 @@ std::uniform_int_distribution<int> Module::randint =
 
 void Module::setJITTmpdir() {
   tmpdir = util::getTmpdir();
+  cout << tmpdir << endl;
 }
 
 void Module::setJITLibname() {
@@ -142,11 +145,17 @@ string Module::compile() {
     file_ending = ".c";
     shims_file = "";
   }
+
   
   string cmd = cc + " " + cflags + " " +
     prefix + file_ending + " " + shims_file + " " + 
     "-o " + fullpath + " -lm";
 
+
+  if (ACCELERATE){
+    cmd += " -lblas";
+  }
+    
   // open the output file & write out the source
 
   compileToSource(tmpdir, libname);

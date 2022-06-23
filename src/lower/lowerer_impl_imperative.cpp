@@ -2779,18 +2779,15 @@ Stmt LowererImplImperative::lowerAccelerate(Accelerate accelerate) {
   whereConsumers.push_back(consumer);
   whereTemps.push_back(accelerate.getTemporary());
 
-  //just some hardcoded nonscense 
+  //just some hardcoded nonsense 
   //this should go away once 
   //we build the abstract class
   //for specifying rda info 
 
-
-  // cout << accelerate.getProducer().getResult << endl;
-
-  // taco_uerror << ir::Call::make("cblas_saxpy", {}, UInt32) << endl;
-  // taco_uerror << ir::Assign::make(values, values) << endl;
-
   //TODO: NEED TO LOWER PRODUCER HERE 
+
+  Stmt producer = ir::Comment::make("Producer code will go here");
+  // ir::Call::make("add", {})
 
   whereConsumers.pop_back();
   whereTemps.pop_back();
@@ -2799,7 +2796,7 @@ Stmt LowererImplImperative::lowerAccelerate(Accelerate accelerate) {
   cout << consumer << endl;
   whereTempsToResult.erase(accelerate.getTemporary());
 
-  return Block::make(initializeTemporary, consumer, freeTemporary);
+  return Block::make(initializeTemporary, producer, consumer, freeTemporary);
 }
 
 

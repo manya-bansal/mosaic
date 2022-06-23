@@ -49,13 +49,13 @@ TEST(completeProcess, targetAccelerate) {
 
  
 
-   TensorVar a("a", Type(taco::UInt32, {Dimension()}), taco::dense);
-   TensorVar b("a", Type(taco::UInt32, {Dimension()}), taco::dense);
+   TensorVar a("a", Type(taco::Float32, {Dimension()}), taco::dense);
+   TensorVar b("a", Type(taco::Float32, {Dimension()}), taco::dense);
    IndexVar i("i");
 
-   Tensor<uint32_t> test_a("actuala", {3}, dense, 0);
-   Tensor<uint32_t> test_b("actualb", {3}, dense, 1);
-   Tensor<uint32_t> test_c("actualc", {3}, dense, 1);
+   Tensor<float32_t> test_a("actuala", {3}, dense, 0);
+   Tensor<float32_t> test_b("actualb", {3}, dense, 1);
+   Tensor<float32_t> test_c("actualc", {3}, dense, 1);
 
 
    IndexStmt stmt = test_c(i) = test_a(i) + test_b(i);

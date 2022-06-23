@@ -34,6 +34,7 @@ const string cHeaders =
   "#include <math.h>\n"
   "#include <complex.h>\n"
   "#include <string.h>\n"
+  "#include <Accelerate/Accelerate.h>\n"
   "#if _OPENMP\n"
   "#include <omp.h>\n"
   "#endif\n"
@@ -161,6 +162,16 @@ const string cHeaders =
   "  free(t->mode_types);\n"
   "  free(t);\n"
   "}\n"
+  "void add(taco_tensor_t *actuala, taco_tensor_t *actualb, float* temp){\n"
+  "  int actuala_dimension = (int)(actuala->dimensions[0]);\n"
+  "  float* restrict actuala_vals = (float*)(actuala->vals);\n"
+  "  float* restrict actualb_vals = (float*)(actualb->vals);\n"
+  "  //copy all elements of a into temp\n"
+  "  for (int32_t i = 0; i < actuala_dimension; i++) {\n"
+  "     temp[i] = actuala_vals[i];\n"
+  "   }\n"
+  "  cblas_saxpy(actuala_dimension, 1, actualb_vals, 1, temp, 1);\n"
+"}\n"
   "#endif\n";
 } // anonymous namespace
 
