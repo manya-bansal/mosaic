@@ -64,7 +64,7 @@ inline std::string getTmpdir() {
     //   atexit(cachedtmpdirCleanup);
     // #endif
   }
-  std::cout << cachedtmpdir << std::endl;
+  // std::cout << cachedtmpdir << std::endl;
   return cachedtmpdir;
 }
 

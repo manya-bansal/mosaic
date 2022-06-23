@@ -119,7 +119,7 @@ Shape IndexExpr::getShape() const {
   std::vector<Dimension> indexVarDims;
   std::set<IndexVar> seenVars;
 
-  cout << this << endl;
+  // cout << this << endl;
 
   std::vector<const AccessNode*> readNodes = error::getAccessNodes(*this);
   for (auto& readNode : readNodes) {
@@ -137,12 +137,12 @@ Shape IndexExpr::getShape() const {
       }
 
       if (seenVars.find(var) == seenVars.end()){
-        cout << "Pushing " << endl;
+        // cout << "Pushing " << endl;
          indexVarDims.push_back(dimension);
          seenVars.insert(var);
       }
       
-      cout << var << endl;
+      // cout << var << endl;
      
 
     }
@@ -1910,7 +1910,7 @@ IndexStmt IndexStmt::concretize() const {
   if (isReductionNotation(stmt)) {
     stmt = makeConcreteNotation(stmt);
   }
-  cout << stmt << endl;
+  // cout << stmt << endl;
   return stmt;
 }
 
@@ -1923,7 +1923,7 @@ IndexStmt IndexStmt::concretizeAccelerated(std::vector<IndexExpr> AcceleratedExp
   if (isReductionNotation(stmt)) {
     stmt = makeAcceleratedConcreteNotation(stmt, AcceleratedExpressions);
   }
-  cout << stmt << endl;
+  // cout << stmt << endl;
   return stmt;
 }
 
@@ -2017,7 +2017,7 @@ IndexStmt IndexStmt::accelerate(IndexExpr expr, std::vector<IndexVar> i_vars,
     if (i != iw) {
       IndexVarRel rel = IndexVarRel(new AccelerateRelNode(i, iw));
       transformed = Transformation(AddSuchThatPredicates({rel})).apply(transformed, &reason);
-      cout << "transfored " << transformed << endl; 
+      // cout << "transformed " << transformed << endl; 
       if (!transformed.defined()) {
         taco_uerror << reason;
       }
@@ -2036,7 +2036,6 @@ IndexStmt IndexStmt::accelerate(IndexExpr expr, IndexVar i, IndexVar iw, TensorV
   std::vector<IndexVar> i_vars{i};
   std::vector<IndexVar> iw_vars{iw};
 
-  //TODO for MB: Change this back to accelerate
   return accelerate(expr, i_vars, iw_vars, workspace);
 }
 
@@ -3388,7 +3387,7 @@ IndexExprNode* findSubexpresionStmt(IndexStmt stmt, std::string flattenedExpr){
        }
        
        if (flattenedExpr.find(flattenedTree+"Add") == std::string::npos || flattenedTree.empty()){
-         cout << op << endl;
+        //  cout << op << endl;
          subExpressionRoot = (IndexExprNode*) op;
          flattenedTree = "Add";
        }else{
@@ -3497,7 +3496,7 @@ IndexExprNode* findSubexpresionStmt(IndexStmt stmt, std::string flattenedExpr){
   );
 
   if (flattenedTree.compare(flattenedExpr) == 0){
-        cout << IndexExpr(subExpressionRoot) << endl;
+        // cout << IndexExpr(subExpressionRoot) << endl;
         return subExpressionRoot;
   }else{
     return NULL;
@@ -3511,18 +3510,18 @@ IndexStmt isADirectSubexpression(IndexStmt stmt, IndexExpr expr){
   std::string flattenedExpr = flattenExpr(expr);
   std::string flattenedStmt = flattenStmt(stmt);
 
-  cout << flattenedStmt << endl;
-  cout << flattenedExpr << endl;
+  // cout << flattenedStmt << endl;
+  // cout << flattenedExpr << endl;
 
   if (flattenedStmt.find(flattenedExpr) != std::string::npos){
     IndexExprNode* subExpressionRoot = findSubexpresionStmt(stmt, flattenedExpr);
     IndexExpr subExpression(subExpressionRoot);
-    cout << "after " << endl;
-    cout << stmt << endl;
-    cout << "shape " << subExpression.getShape() << endl;
+    // cout << "after " << endl;
+    // cout << stmt << endl;
+    // cout << "shape " << subExpression.getShape() << endl;
     stmt = stmt.accelerate(subExpression, subExpression.getIndexVars()[0], IndexVar(), TensorVar(Type(subExpression.getDataType(), subExpression.getShape()), 0));
-    cout << "apply accel " << endl;
-    cout << stmt << endl;
+    // cout << "apply accel " << endl;
+    // cout << stmt << endl;
   }
 
   return stmt;
@@ -3541,10 +3540,8 @@ IndexStmt annotateConcreteNotation(IndexStmt stmt, std::vector<IndexExpr> Accele
 
 IndexStmt makeAcceleratedConcreteNotation(IndexStmt stmt, std::vector<IndexExpr> AcceleratedExpressions) {
 
-  cout << "Accerlarting" << endl;
 
   std::string reason;
-
 
   taco_iassert(isReductionNotation(stmt, &reason))
       << "Not reduction notation: " << stmt << std::endl << reason;
@@ -3595,8 +3592,7 @@ IndexStmt makeAcceleratedConcreteNotation(IndexStmt stmt, std::vector<IndexExpr>
 
   stmt = ReplaceReductionsWithWheres().rewrite(stmt);
 
-  cout << "final statement " << stmt << endl;
-
+  // cout << "final statement " << stmt << endl;
 
   return annotateConcreteNotation(stmt, AcceleratedExpressions);
 }

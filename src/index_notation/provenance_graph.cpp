@@ -1011,7 +1011,7 @@ ProvenanceGraph::ProvenanceGraph(IndexStmt concreteStmt) {
   vector<IndexVarRel> relations = suchThat.getPredicate();
 
   for (IndexVarRel rel : relations) {
-    cout << "rel " << rel << endl;
+    // cout << "rel " << rel << endl;
     std::vector<IndexVar> parents = rel.getNode()->getParents();
     std::vector<IndexVar> children = rel.getNode()->getChildren();
     for (IndexVar parent : parents) {

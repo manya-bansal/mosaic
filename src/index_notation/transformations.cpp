@@ -649,7 +649,7 @@ TensorVar AccelerateExpr::getWorkspace() const {
 IndexStmt AccelerateExpr::apply(IndexStmt stmt, std::string* reason) const {
   INIT_REASON(reason);
 
-  cout << "in accel aply" << endl;
+  // cout << "in accel aply" << endl;
 
   // Precondition: The expr to precompute is not in `stmt`
   Assignment assignment = getAssignmentContainingExpr(stmt, getExpr());

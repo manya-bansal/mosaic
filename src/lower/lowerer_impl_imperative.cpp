@@ -2790,6 +2790,8 @@ Stmt LowererImplImperative::lowerAccelerate(Accelerate accelerate) {
   // taco_uerror << ir::Call::make("cblas_saxpy", {}, UInt32) << endl;
   // taco_uerror << ir::Assign::make(values, values) << endl;
 
+  //TODO: NEED TO LOWER PRODUCER HERE 
+
   whereConsumers.pop_back();
   whereTemps.pop_back();
 
