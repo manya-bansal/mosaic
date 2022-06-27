@@ -2785,8 +2785,11 @@ Stmt LowererImplImperative::lowerAccelerate(Accelerate accelerate) {
   //for specifying rda info 
 
   //TODO: NEED TO LOWER PRODUCER HERE 
-
-  Stmt producer = ir::Comment::make("Producer code will go here");
+  Stmt producer;
+  if (this->compute){
+    producer = ir::Comment::make("Producer code will go here");
+  }
+  
   // ir::Call::make("add", {})
 
   whereConsumers.pop_back();

@@ -3592,7 +3592,7 @@ IndexStmt makeAcceleratedConcreteNotation(IndexStmt stmt, std::vector<IndexExpr>
 
   stmt = ReplaceReductionsWithWheres().rewrite(stmt);
 
-  // cout << "final statement " << stmt << endl;
+  cout << "final statement " << stmt << endl;
 
   return annotateConcreteNotation(stmt, AcceleratedExpressions);
 }
