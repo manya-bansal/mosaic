@@ -465,6 +465,25 @@ void IRRewriter::visit(const Break* op) {
   stmt = op;
 }
 
+void IRRewriter::visit(const VoidCall* op) {
+
+  vector<Expr> params;
+  bool paramsSame = true;
+  for (auto& param : op->args) {
+    Expr rewrittenParam = rewrite(param);
+    params.push_back(rewrittenParam);
+    if (rewrittenParam != param) {
+      paramsSame = false;
+    }
+  }
+  if (paramsSame) {
+    stmt = op;
+  }
+  else {
+    stmt = VoidCall::make(op->func, params);
+  }
+}
+
 void IRRewriter::visit(const Print* op) {
   vector<Expr> params;
   bool paramsSame = true;

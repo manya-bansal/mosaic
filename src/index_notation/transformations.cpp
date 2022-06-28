@@ -54,6 +54,7 @@ IndexStmt Transformation::apply(IndexStmt stmt, string* reason) const {
   return transformation->apply(stmt, reason);
 }
 
+
 std::ostream& operator<<(std::ostream& os, const Transformation& t) {
   t.transformation->print(os);
   return os;
@@ -601,7 +602,7 @@ std::ostream& operator<<(std::ostream& os, const Precompute& precompute) {
 
 // class AccelerateExpr
 struct AccelerateExpr::Content {
-  IndexExpr expr;
+  AccelerateCodeGenerator accelGen;
   std::vector<IndexVar> i_vars;
   std::vector<IndexVar> iw_vars;
   TensorVar workspace;
@@ -610,27 +611,27 @@ struct AccelerateExpr::Content {
 AccelerateExpr::AccelerateExpr() : content(nullptr) {
 }
 
-AccelerateExpr::AccelerateExpr(IndexExpr expr, IndexVar i, IndexVar iw,
+AccelerateExpr::AccelerateExpr(AccelerateCodeGenerator accelGen, IndexVar i, IndexVar iw,
                      TensorVar workspace) : content(new Content) {
   std::vector<IndexVar> i_vars{i};
   std::vector<IndexVar> iw_vars{iw};
-  content->expr = expr;
+  content->accelGen = accelGen;
   content->i_vars = i_vars;
   content->iw_vars = iw_vars;
   content->workspace = workspace;
 }
 
-  AccelerateExpr::AccelerateExpr(IndexExpr expr, std::vector<IndexVar> i_vars,
+  AccelerateExpr::AccelerateExpr(AccelerateCodeGenerator accelGen, std::vector<IndexVar> i_vars,
                          std::vector<IndexVar> iw_vars,
                          TensorVar workspace) : content(new Content) {
-  content->expr = expr;
+  content->accelGen = accelGen;
   content->i_vars = i_vars;
   content->iw_vars = iw_vars;
   content->workspace = workspace;
 }
   
 IndexExpr AccelerateExpr::getExpr() const {
-  return content->expr;
+  return content->accelGen.getExpr();
 }
 
 std::vector<IndexVar>& AccelerateExpr::getIVars() const {

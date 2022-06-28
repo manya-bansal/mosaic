@@ -23,6 +23,7 @@
 #include "taco/index_notation/index_notation_nodes_abstract.h"
 #include "taco/ir_tags.h"
 #include "taco/index_notation/provenance_graph.h"
+#include "taco/index_notation/accelerate_notation.h"
 #include "taco/index_notation/properties.h"
 
 namespace taco {
@@ -31,6 +32,7 @@ class Type;
 class Dimension;
 class Format;
 class Schedule;
+class AccelerateCodeGenerator;
 
 class IndexVar;
 class WindowedIndexVar;
@@ -39,6 +41,7 @@ class TensorVar;
 
 class IndexStmt;
 class IndexExpr;
+class Intrinsic;
 class Assignment;
 class Access;
 
@@ -753,11 +756,11 @@ public:
                        std::vector<IndexVar> iw_vars, TensorVar workspace) const;
 
 
-  IndexStmt accelerate(IndexExpr expr, IndexVar i, IndexVar iw, TensorVar workspace) const;
+  IndexStmt accelerate(AccelerateCodeGenerator accelGen, IndexVar i, IndexVar iw, TensorVar workspace) const;
 
-  IndexStmt accelerate(IndexExpr expr, std::vector<IndexVar> i_vars,
+  IndexStmt accelerate(AccelerateCodeGenerator accelGen, std::vector<IndexVar> i_vars,
                        std::vector<IndexVar> iw_vars, TensorVar workspace) const;
-  
+
   /// bound specifies a compile-time constraint on an index variable's
   /// iteration space that allows knowledge of the
   /// size or structured sparsity pattern of the inputs to be
@@ -1362,6 +1365,22 @@ IndexStmt generatePackStmt(TensorVar tensor,
 /// Same as generatePackStmt, where otherFormat is COO.
 IndexStmt generatePackCOOStmt(TensorVar tensor, 
                               std::vector<IndexVar> indexVars, bool otherIsOnRight);
+
+class AccelerateCodeGenerator {
+    public: 
+        AccelerateCodeGenerator(taco::IndexExpr expr, std::string functionName, std::vector<ir::Expr> args, std::function<bool(IndexExpr)> checker) :
+                            expr(expr), functionName(functionName), args(args), checker(checker) {};
+
+        AccelerateCodeGenerator()=default;
+
+        taco::IndexExpr getExpr() { return expr;};
+
+        taco::IndexExpr expr;
+        std::string functionName;
+        std::vector<ir::Expr> args;
+        std::function<bool(IndexExpr)> checker;
+
+};    
 
 }
 #endif

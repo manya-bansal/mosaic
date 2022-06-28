@@ -38,7 +38,7 @@ TEST(accelerateSchedule, targetAccelerate) {
 
   IndexStmt stmt = A.getAssignment().concretize();
   TensorVar accelWorkspace("accelWorkspace", Type(taco::Float64, {16}), taco::dense);
-  stmt = stmt.accelerate(accelerateExpr, i, iw, accelWorkspace);
+//   stmt = stmt.accelerate(accelerateExpr, i, iw, accelWorkspace);
 
    cout << stmt << endl;
 
@@ -46,8 +46,6 @@ TEST(accelerateSchedule, targetAccelerate) {
 
 
 TEST(completeProcess, targetAccelerate) {
-
- 
 
    TensorVar a("a", Type(taco::Float32, {Dimension()}), taco::dense);
    TensorVar b("a", Type(taco::Float32, {Dimension()}), taco::dense);

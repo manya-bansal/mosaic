@@ -6,6 +6,7 @@
 
 #include "taco/type.h"
 #include "taco/ir/ir.h"
+#include "taco/index_notation/index_notation.h"
 
 namespace taco {
 

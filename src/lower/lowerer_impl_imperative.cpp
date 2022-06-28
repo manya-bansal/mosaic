@@ -2717,10 +2717,12 @@ vector<Stmt> LowererImplImperative::codeToInitializeTemporary(Accelerate acceler
 }
 
 
-
 Stmt LowererImplImperative::lowerAccelerate(Accelerate accelerate) {
   //initiailze temporary workspace
   TensorVar temporary = accelerate.getTemporary();
+
+  //THE BELOW CODE IS FOR THE USUAL LOWERING LIKE DONE IN THE 
+  //WHERE NODE
 
   //set this explicitly to false rn for simplicity
   bool accelerateDenseWorkSpace = false;
@@ -2787,11 +2789,10 @@ Stmt LowererImplImperative::lowerAccelerate(Accelerate accelerate) {
   //TODO: NEED TO LOWER PRODUCER HERE 
   Stmt producer;
   if (this->compute){
-    producer = ir::Comment::make("Producer code will go here");
+    producer = VoidCall::make("add", {});
+    
   }
   
-  // ir::Call::make("add", {})
-
   whereConsumers.pop_back();
   whereTemps.pop_back();
 
@@ -2800,6 +2801,7 @@ Stmt LowererImplImperative::lowerAccelerate(Accelerate accelerate) {
   whereTempsToResult.erase(accelerate.getTemporary());
 
   return Block::make(initializeTemporary, producer, consumer, freeTemporary);
+
 }
 
 

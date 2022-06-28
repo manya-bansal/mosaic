@@ -42,6 +42,7 @@ public:
   Transformation(SetMergeStrategy);
 
   IndexStmt apply(IndexStmt stmt, std::string *reason = nullptr) const;
+ 
 
   friend std::ostream &operator<<(std::ostream &, const Transformation &);
 
@@ -122,8 +123,8 @@ std::ostream &operator<<(std::ostream &, const Precompute &);
 class AccelerateExpr : public TransformationInterface {
 public:
   AccelerateExpr();
-  AccelerateExpr(IndexExpr expr, IndexVar i, IndexVar iw, TensorVar workspace);
-  AccelerateExpr(IndexExpr expr, std::vector<IndexVar> i_vars,
+  AccelerateExpr(AccelerateCodeGenerator accelGen, IndexVar i, IndexVar iw, TensorVar workspace);
+  AccelerateExpr(AccelerateCodeGenerator accelGen, std::vector<IndexVar> i_vars,
              std::vector<IndexVar> iw_vars, TensorVar workspace);
   
   IndexExpr getExpr() const;

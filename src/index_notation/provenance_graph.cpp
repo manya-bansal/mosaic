@@ -914,12 +914,14 @@ bool operator==(const PrecomputeRelNode& a, const PrecomputeRelNode& b) {
 struct AccelerateRelNode::Content {
   IndexVar parentVar;
   IndexVar precomputeVar;
+  AccelerateCodeGenerator accelGen;
 };
 
-AccelerateRelNode::AccelerateRelNode(taco::IndexVar parentVar, taco::IndexVar precomputeVar)
+AccelerateRelNode::AccelerateRelNode(taco::IndexVar parentVar, taco::IndexVar precomputeVar, AccelerateCodeGenerator accelGen)
   : IndexVarRelNode(ACCELERATE), content (new Content) {
   content->parentVar = parentVar;
   content->precomputeVar = precomputeVar;
+  content->accelGen = accelGen;
 }
 
 const IndexVar& AccelerateRelNode::getParentVar() const {

@@ -2002,7 +2002,7 @@ IndexStmt IndexStmt::precompute(IndexExpr expr, IndexVar i, IndexVar iw, TensorV
 }
 
 
-IndexStmt IndexStmt::accelerate(IndexExpr expr, std::vector<IndexVar> i_vars,
+IndexStmt IndexStmt::accelerate(AccelerateCodeGenerator accelGen, std::vector<IndexVar> i_vars,
                                 std::vector<IndexVar> iw_vars, TensorVar workspace) const {
 
   IndexStmt transformed = *this;
@@ -2015,7 +2015,7 @@ IndexStmt IndexStmt::accelerate(IndexExpr expr, std::vector<IndexVar> i_vars,
     IndexVar iw = iw_vars.at(l);
 
     if (i != iw) {
-      IndexVarRel rel = IndexVarRel(new AccelerateRelNode(i, iw));
+      IndexVarRel rel = IndexVarRel(new AccelerateRelNode(i, iw, accelGen));
       transformed = Transformation(AddSuchThatPredicates({rel})).apply(transformed, &reason);
       // cout << "transformed " << transformed << endl; 
       if (!transformed.defined()) {
@@ -2024,7 +2024,7 @@ IndexStmt IndexStmt::accelerate(IndexExpr expr, std::vector<IndexVar> i_vars,
     }
   }
 
-  transformed = Transformation(AccelerateExpr(expr, i_vars, iw_vars, workspace)).apply(transformed, &reason);
+  transformed = Transformation(AccelerateExpr(accelGen, i_vars, iw_vars, workspace)).apply(transformed, &reason);
 
   if (!transformed.defined()) {
     taco_uerror << reason;
@@ -2032,11 +2032,11 @@ IndexStmt IndexStmt::accelerate(IndexExpr expr, std::vector<IndexVar> i_vars,
   return transformed;
 }
 
-IndexStmt IndexStmt::accelerate(IndexExpr expr, IndexVar i, IndexVar iw, TensorVar workspace) const{
+IndexStmt IndexStmt::accelerate(AccelerateCodeGenerator accelGen, IndexVar i, IndexVar iw, TensorVar workspace) const{
   std::vector<IndexVar> i_vars{i};
   std::vector<IndexVar> iw_vars{iw};
 
-  return accelerate(expr, i_vars, iw_vars, workspace);
+  return accelerate(accelGen, i_vars, iw_vars, workspace);
 }
 
 IndexStmt IndexStmt::reorder(taco::IndexVar i, taco::IndexVar j) const {
@@ -3519,7 +3519,7 @@ IndexStmt isADirectSubexpression(IndexStmt stmt, IndexExpr expr){
     // cout << "after " << endl;
     // cout << stmt << endl;
     // cout << "shape " << subExpression.getShape() << endl;
-    stmt = stmt.accelerate(subExpression, subExpression.getIndexVars()[0], IndexVar(), TensorVar(Type(subExpression.getDataType(), subExpression.getShape()), 0));
+    // stmt = stmt.accelerate(subExpression, subExpression.getIndexVars()[0], IndexVar(), TensorVar(Type(subExpression.getDataType(), subExpression.getShape()), 0));
     // cout << "apply accel " << endl;
     // cout << stmt << endl;
   }

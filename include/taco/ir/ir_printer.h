@@ -71,6 +71,7 @@ protected:
   virtual void visit(const GetProperty*);
   virtual void visit(const Sort*);
   virtual void visit(const Break*);
+  virtual void visit(const VoidCall*);
 
   std::ostream &stream;
   int indent;

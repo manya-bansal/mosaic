@@ -580,6 +580,14 @@ void IRPrinter::visit(const Break*) {
   stream << "break;" << endl;
 }
 
+void IRPrinter::visit(const VoidCall* op) {
+  stream << op->func << "(";
+  parentPrecedence = Precedence::CALL;
+  acceptJoin(this, stream, op->args, ", ");
+  stream << ")";
+  stream << endl;
+}
+
 void IRPrinter::visit(const Print* op) {
   doIndent();
   stream << "printf(";

@@ -51,6 +51,7 @@ struct Print;
 struct GetProperty;
 struct Sort;
 struct Break;
+struct VoidCall;
 
 /// Extend this class to visit every node in the IR.
 class IRVisitorStrict {
@@ -104,6 +105,7 @@ public:
   virtual void visit(const GetProperty*) = 0;
   virtual void visit(const Sort*) = 0;
   virtual void visit(const Break*) = 0;
+  virtual void visit(const VoidCall*) = 0;
 };
 
 
@@ -160,6 +162,7 @@ public:
   virtual void visit(const GetProperty* op);
   virtual void visit(const Sort* op);
   virtual void visit(const Break* op);
+  virtual void visit(const VoidCall* op);
 };
 
 }}

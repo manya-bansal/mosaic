@@ -1,12 +1,15 @@
 #ifndef TACO_PROVENANCE_GRAPH_H
 #define TACO_PROVENANCE_GRAPH_H
 
+#include "taco/index_notation/index_notation.h"
 #include "taco/lower/iterator.h"
+
 
 namespace taco {
 struct IndexVarRelNode;
 enum IndexVarRelType {UNDEFINED, SPLIT, DIVIDE, POS, FUSE, BOUND, PRECOMPUTE, ACCELERATE};
 
+class AccelerateCodeGenerator;
 /// A pointer class for IndexVarRelNodes provides some operations for all IndexVarRelTypes
 class IndexVarRel : public util::IntrusivePtr<const IndexVarRelNode> {
 public:
@@ -305,7 +308,7 @@ bool operator==(const PrecomputeRelNode&, const PrecomputeRelNode&);
 
 
 struct AccelerateRelNode : public IndexVarRelNode {
-  AccelerateRelNode(IndexVar parentVar, IndexVar precomputeVar);
+  AccelerateRelNode(IndexVar parentVar, IndexVar precomputeVar, taco::AccelerateCodeGenerator accelGen);
 
   const IndexVar& getParentVar() const;
   const IndexVar& getPrecomputeVar() const;

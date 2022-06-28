@@ -239,6 +239,11 @@ void IRVisitor::visit(const Continue*) {
 void IRVisitor::visit(const Break*) {
 }
 
+void IRVisitor::visit(const VoidCall* op) {
+   for (auto e: op->args)
+    e.accept(this);
+}
+
 void IRVisitor::visit(const Print* op) {
   for (auto e: op->params)
     e.accept(this);

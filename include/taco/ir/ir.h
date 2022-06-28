@@ -68,7 +68,8 @@ enum class IRNodeType {
   GetProperty,
   Continue,
   Sort,
-  Break
+  Break,
+  VoidCall
 };
 
 enum class TensorProperty {
@@ -504,6 +505,8 @@ struct Call : public ExprNode<Call> {
   static Expr make(const std::string& func, const std::vector<Expr>& args, 
                    Datatype type);
 
+  static Expr make(const std::string& func, const std::vector<Expr>& args);
+
   static const IRNodeType _type_info = IRNodeType::Call;
 };
 
@@ -757,6 +760,16 @@ struct Break : public StmtNode<Break> {
   static Stmt make();
 
   static const IRNodeType _type_info = IRNodeType::Break;
+};
+
+struct VoidCall : public StmtNode<VoidCall> {
+
+  std::string func;
+  std::vector<Expr> args;
+  
+  static Stmt make(std::string functionName,std::vector<Expr> args);
+
+  static const IRNodeType _type_info = IRNodeType::VoidCall;
 };
 
 struct Sort : public StmtNode<Sort> {

@@ -512,6 +512,13 @@ Expr Call::make(const std::string& func, const std::vector<Expr>& args,
   return call;
 }
 
+Expr Call::make(const std::string& func, const std::vector<Expr>& args) {
+  Call *call = new Call;
+  call->func = func;
+  call->args = args;
+  return call;
+}
+
 // Load
 Expr Load::make(Expr arr) {
   return Load::make(arr, Literal::make((int64_t)0));
@@ -852,6 +859,13 @@ Stmt Sort::make(std::vector<Expr> args) {
 }
 
 
+Stmt VoidCall::make(std::string functionName,std::vector<Expr> args) {
+  VoidCall* voidCall = new VoidCall;
+  voidCall->func = functionName;
+  voidCall->args = args;
+  return voidCall;
+}
+
 // GetProperty
 Expr GetProperty::make(Expr tensor, TensorProperty property, int mode) {
   GetProperty* gp = new GetProperty;
@@ -902,7 +916,7 @@ Expr GetProperty::make(Expr tensor, TensorProperty property, int mode) {
 // visitor methods
 template<> void ExprNode<Literal>::accept(IRVisitorStrict *v)
     const { v->visit((const Literal*)this); }
-template<> void ExprNode<Var>::accept(IRVisitorStrict *v)
+template<> void ExprNode<Var>::accept(IRVisitorStrict *v) 
     const { v->visit((const Var*)this); }
 template<> void ExprNode<Neg>::accept(IRVisitorStrict *v)
     const { v->visit((const Neg*)this); }
@@ -996,6 +1010,8 @@ template<> void StmtNode<Sort>::accept(IRVisitorStrict *v)
   const { v->visit((const Sort*)this); }
 template<> void StmtNode<Break>::accept(IRVisitorStrict *v)
   const { v->visit((const Break*)this); }
+template<> void StmtNode<VoidCall>::accept(IRVisitorStrict *v)
+  const { v->visit((const VoidCall*)this); }
 
 // printing methods
 std::ostream& operator<<(std::ostream& os, const Stmt& stmt) {
