@@ -131,6 +131,7 @@ public:
   std::vector<IndexVar>& getIVars() const;
   std::vector<IndexVar>& getIWVars() const;
   TensorVar getWorkspace() const;
+  AccelerateCodeGenerator getCodeGenerator() const;
 
   /// Apply the precompute optimization to a concrete index statement.
   IndexStmt apply(IndexStmt stmt, std::string *reason = nullptr) const;

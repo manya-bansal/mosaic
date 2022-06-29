@@ -208,7 +208,7 @@ void IndexNotationRewriter::visit(const AccelerateNode* op) {
     stmt = op;
   }
   else {
-    stmt = new AccelerateNode(consumer, producer);
+    stmt = new AccelerateNode(consumer, producer, op->accelGen);
   }
 }
 

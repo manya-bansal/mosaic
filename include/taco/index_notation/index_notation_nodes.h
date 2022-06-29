@@ -426,8 +426,8 @@ struct WhereNode : public IndexStmtNode {
 };
 
 struct AccelerateNode : public IndexStmtNode {
-  AccelerateNode(IndexStmt consumer, IndexStmt producer)
-      : consumer(consumer), producer(producer) {}
+  AccelerateNode(IndexStmt consumer, IndexStmt producer, AccelerateCodeGenerator accelGen)
+      : consumer(consumer), producer(producer), accelGen(accelGen) {}
 
   void accept(IndexStmtVisitorStrict* v) const {
     v->visit(this);
@@ -435,6 +435,7 @@ struct AccelerateNode : public IndexStmtNode {
 
   IndexStmt consumer;
   IndexStmt producer;
+  AccelerateCodeGenerator accelGen;
 };
 
 struct MultiNode : public IndexStmtNode {

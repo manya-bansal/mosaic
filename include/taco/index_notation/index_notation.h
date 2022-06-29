@@ -913,11 +913,11 @@ class Accelerate : public IndexStmt {
 public:
   Accelerate() = default;
   Accelerate(const AccelerateNode*);
-  Accelerate(IndexStmt consumer, IndexStmt producer);
+  Accelerate(IndexStmt consumer, IndexStmt producer, AccelerateCodeGenerator accelGen);
 
   IndexStmt getConsumer();
   IndexStmt getProducer();
-
+  AccelerateCodeGenerator getAccelGen();
   /**
    * Retrieve the result of this where statement;
    */
@@ -932,7 +932,7 @@ public:
 };
 
 /// Create an accelerate stmt index statement.
-Accelerate accelerate(IndexStmt consumer, IndexStmt producer);
+Accelerate accelerate(IndexStmt consumer, IndexStmt producer, AccelerateCodeGenerator accelGen);
 
 /// A sequence statement has two statements, a definition and a mutation, that
 /// are executed in sequence.  The defintion creates an index variable and the

@@ -584,7 +584,7 @@ void IRPrinter::visit(const VoidCall* op) {
   stream << op->func << "(";
   parentPrecedence = Precedence::CALL;
   acceptJoin(this, stream, op->args, ", ");
-  stream << ")";
+  stream << ");";
   stream << endl;
 }
 

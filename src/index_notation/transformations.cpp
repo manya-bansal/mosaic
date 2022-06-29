@@ -646,6 +646,10 @@ TensorVar AccelerateExpr::getWorkspace() const {
   return content->workspace;
 }
 
+AccelerateCodeGenerator AccelerateExpr::getCodeGenerator() const {
+  return content->accelGen;
+}
+
 
 IndexStmt AccelerateExpr::apply(IndexStmt stmt, std::string* reason) const {
   INIT_REASON(reason);
@@ -654,6 +658,8 @@ IndexStmt AccelerateExpr::apply(IndexStmt stmt, std::string* reason) const {
 
   // Precondition: The expr to precompute is not in `stmt`
   Assignment assignment = getAssignmentContainingExpr(stmt, getExpr());
+  static AccelerateCodeGenerator accelGen = getCodeGenerator();
+
   if (!assignment.defined()) {
     *reason = "The expression (" + util::toString(getExpr()) + ") " +
               "is not in " + util::toString(stmt);
@@ -810,7 +816,7 @@ IndexStmt AccelerateExpr::apply(IndexStmt stmt, std::string* reason) const {
           IndexStmt consumer = generateForalls(consumerAssignment, consumerForallIndexVars);
 
           IndexStmt producer = generateForalls(producerAssignment, producerForallIndexVars);
-          Accelerate accel(consumer, producer);
+          Accelerate accel(consumer, producer, accelGen);
 
           stmt = generateForalls(accel, outerForallIndexVars);
           return;
@@ -1418,7 +1424,7 @@ IndexStmt SetAssembleStrategy::apply(IndexStmt stmt, string* reason) const {
       if (producer == op->producer && consumer == op->consumer) {
         stmt = op;
       } else if (consumer.defined()) {
-        stmt = producer.defined() ? Accelerate(consumer, producer) : consumer;
+        stmt = producer.defined() ? Accelerate(consumer, producer, op->accelGen) : consumer;
       } else {
         stmt = IndexStmt();
       }
@@ -1624,7 +1630,7 @@ IndexStmt SetAssembleStrategy::apply(IndexStmt stmt, string* reason) const {
       if (producer == op->producer && consumer == op->consumer) {
         stmt = op;
       } else {
-        stmt = new AccelerateNode(consumer, producer);
+        stmt = new AccelerateNode(consumer, producer, op->accelGen);
       }
     }
 
@@ -1710,7 +1716,7 @@ IndexStmt SetAssembleStrategy::apply(IndexStmt stmt, string* reason) const {
       if (consumer == op->consumer) {
         stmt = op;
       } else if (consumer.defined()) {
-        stmt = new AccelerateNode(consumer, op->producer);
+        stmt = new AccelerateNode(consumer, op->producer, op->accelGen);
       } else {
         stmt = op->producer;
       }

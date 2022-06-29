@@ -101,16 +101,16 @@ bool trivialChecker(IndexExpr expr){
 
 TEST(accelerateScheduleLower, simpleBlasCall) {
 
-  Tensor<double> A("A", {16}, Format{Dense});
-  Tensor<double> B("B", {16}, Format{Dense});
-  Tensor<double> C("C", {16}, Format{Dense});
+  Tensor<float32_t> A("A", {16}, Format{Dense}, 0);
+  Tensor<float32_t> B("B", {16}, Format{Dense});
+  Tensor<float32_t> C("C", {16}, Format{Dense});
 
   for (int i = 0; i < 16; i++) {
-      A.insert({i}, (double) i);
-      B.insert({i}, (double) i);
+      C.insert({i}, (float32_t) i);
+      B.insert({i}, (float32_t) i);
   }
 
-  A.pack();
+  C.pack();
   B.pack();
 
   IndexVar i("i");
@@ -120,11 +120,11 @@ TEST(accelerateScheduleLower, simpleBlasCall) {
 
 
   IndexStmt stmt = A.getAssignment().concretize();
-  TensorVar accelWorkspace("accelWorkspace", Type(taco::Float64, {16}), taco::dense);
+  TensorVar accelWorkspace("accelWorkspace", Type(taco::Float32, {16}), taco::dense);
 
   std::function<bool(IndexExpr)> checker = trivialChecker;
 
-  std::vector<taco::ir::Expr> args = {makeTensorArg(A), makeTensorArg(B), makeTensorArgVar(accelWorkspace)};
+  std::vector<taco::ir::Expr> args = {makeTensorArg(C), makeTensorArg(B), makeTensorArgVar(accelWorkspace)};
 
 
   AccelerateCodeGenerator accelGen(accelerateExpr, "add", args, checker);
@@ -134,6 +134,14 @@ TEST(accelerateScheduleLower, simpleBlasCall) {
    A.compile(stmt);
    A.assemble();
    A.compute();
+
+   auto it = iterate<float32_t>(A);
+   auto iit = it.begin();
+
+   while (iit != it.end()){
+      cout << "val " << iit->second << endl;
+      ++iit;
+   }
 
 }
 

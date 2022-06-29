@@ -2375,8 +2375,8 @@ template <> Where to<Where>(IndexStmt s) {
 Accelerate::Accelerate(const AccelerateNode* n) : IndexStmt(n) {
 }
 
-Accelerate::Accelerate(IndexStmt consumer, IndexStmt producer)
-    : Accelerate(new AccelerateNode(consumer, producer)) {
+Accelerate::Accelerate(IndexStmt consumer, IndexStmt producer, AccelerateCodeGenerator accelGen)
+    : Accelerate(new AccelerateNode(consumer, producer, accelGen)) {
 }
 
 IndexStmt Accelerate::getConsumer() {
@@ -2388,6 +2388,10 @@ IndexStmt Accelerate::getProducer() {
   return getNode(*this)->producer;
 }
 
+AccelerateCodeGenerator Accelerate::getAccelGen() {
+  return getNode(*this)->accelGen;
+}
+
 TensorVar Accelerate::getResult() {
   return getResultAccesses(getConsumer()).first[0].getTensorVar();
 }
@@ -2396,8 +2400,8 @@ TensorVar Accelerate::getTemporary() {
   return getResultAccesses(getProducer()).first[0].getTensorVar();
 }
 
-Accelerate accelerate(IndexStmt consumer, IndexStmt producer) {
-  return Accelerate(consumer, producer);
+Accelerate accelerate(IndexStmt consumer, IndexStmt producer, AccelerateCodeGenerator accelGen) {
+  return Accelerate(consumer, producer, accelGen);
 }
 
 template <> bool isa<Accelerate>(IndexStmt s) {
@@ -4602,7 +4606,7 @@ private:
       stmt = op;
     }
     else {
-      stmt = new AccelerateNode(consumer, producer);
+      stmt = new AccelerateNode(consumer, producer, op->accelGen);
     }
   }
 

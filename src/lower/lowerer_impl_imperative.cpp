@@ -2720,7 +2720,7 @@ vector<Stmt> LowererImplImperative::codeToInitializeTemporary(Accelerate acceler
 Stmt LowererImplImperative::lowerAccelerate(Accelerate accelerate) {
   //initiailze temporary workspace
   TensorVar temporary = accelerate.getTemporary();
-
+  AccelerateCodeGenerator accelGen = accelerate.getAccelGen();
   //THE BELOW CODE IS FOR THE USUAL LOWERING LIKE DONE IN THE 
   //WHERE NODE
 
@@ -2789,7 +2789,7 @@ Stmt LowererImplImperative::lowerAccelerate(Accelerate accelerate) {
   //TODO: NEED TO LOWER PRODUCER HERE 
   Stmt producer;
   if (this->compute){
-    producer = VoidCall::make("add", {});
+    producer = VoidCall::make(accelGen.functionName, accelGen.args);
     
   }
   
