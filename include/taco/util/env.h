@@ -61,9 +61,9 @@ inline std::string getTmpdir() {
     cachedtmpdir = tacotmpdir;
 
     //cleanup unless we are in debug mode
-    // #ifndef TACO_DEBUG
-    //   atexit(cachedtmpdirCleanup);
-    // #endif
+    #ifndef TACO_DEBUG
+      atexit(cachedtmpdirCleanup);
+    #endif
   }
   // std::cout << cachedtmpdir << std::endl;
   return cachedtmpdir;

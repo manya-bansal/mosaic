@@ -703,6 +703,171 @@ bool isomorphic(IndexStmt a, IndexStmt b) {
   return Isomorphic().check(a,b);
 }
 
+static void addCommutativityRewrite(IndexStmt stmt, std::map<IndexExpr, std::vector<IndexExpr>> &exprToreplace){
+  
+  
+  match(stmt,                                            
+   std::function<void(const AddNode*,Matcher*)>([&](const AddNode* op,
+                                                      Matcher* ctx) {
+      // a + b = b + a                                                 
+      exprToreplace[op].push_back(new AddNode(op->b, op->a));   
+
+      ctx->match(op->a); 
+      ctx->match(op->b);
+
+    }),
+    std::function<void(const MulNode*,Matcher*)>([&](const MulNode* op,
+                                                     Matcher* ctx) {
+
+       // a * b = b * a 
+
+      //any order should be fine since indexVars would ensure
+      //equivalence (we are not changing any index vars)    
+
+      // if (isa<LiteralNode>((op->a).ptr) || isa<LiteralNode>((op->b).ptr)){
+      exprToreplace[op].push_back(new MulNode(op->b, op->a));   
+      // }
+
+      ctx->match(op->a); 
+      ctx->match(op->b);
+
+    })
+    
+    );
+}
+
+static void addIdentityRewrite(IndexStmt stmt, std::map<IndexExpr, std::vector<IndexExpr>> &exprToreplace){
+
+
+  // a = a + 0
+  // a = a * 1
+  // a = a - 1
+
+  match(stmt,                                            
+   std::function<void(const AccessNode*,Matcher*)>([&](const AccessNode* op,
+                                                     Matcher* ctx) {  
+
+      exprToreplace[op].push_back(new AddNode(op, IndexExpr(0)));   
+      exprToreplace[op].push_back(new MulNode(op, IndexExpr(1))); 
+      exprToreplace[op].push_back(new SubNode(op, IndexExpr(0)));  
+
+    }),
+
+    std::function<void(const LiteralNode*,Matcher*)>([&](const LiteralNode* op,
+                                                     Matcher* ctx) {
+
+      exprToreplace[op].push_back(new AddNode(op, IndexExpr(0)));   
+      exprToreplace[op].push_back(new MulNode(op, IndexExpr(1))); 
+      exprToreplace[op].push_back(new SubNode(op, IndexExpr(0)));  
+
+    })
+
+    );
+
+}
+
+static void addDistributivityRewrites(IndexStmt stmt, std::map<IndexExpr, std::vector<IndexExpr>> &exprToreplace){
+
+
+  match(stmt, 
+    std::function<void(const MulNode*,Matcher*)>([&](const MulNode* op,
+                                                     Matcher* ctx) {
+      // (a+b)*c = a*c + b*c                                                 
+      if (isa<AddNode>((op->a).ptr)){
+        const AddNode * addNode = to<AddNode>((op->a).ptr);
+        exprToreplace[op].push_back(new AddNode(new MulNode(addNode->a, op->b), new MulNode(addNode->b, op->b)));
+      }else if (isa<AddNode>((op->b).ptr)){
+        const AddNode * addNode = to<AddNode>((op->b).ptr);
+        exprToreplace[op].push_back(new AddNode(new MulNode(addNode->a, op->a), new MulNode(addNode->b, op->a)));
+      }
+
+      // (a-b)*c = a*c - b*c  
+      if (isa<SubNode>((op->a).ptr)){
+        const SubNode * subNode = to<SubNode>((op->a).ptr);
+        exprToreplace[op].push_back(new SubNode(new MulNode(subNode->a, op->b), new MulNode(subNode->b, op->b)));
+      }else if (isa<SubNode>((op->b).ptr)){
+        const SubNode * subNode = to<SubNode>((op->b).ptr);
+        exprToreplace[op].push_back(new SubNode(new MulNode(subNode->a, op->a), new MulNode(subNode->b, op->a)));
+      }
+
+      // (a/b)*c = a*c/b 
+      if (isa<DivNode>((op->a).ptr)){
+        const DivNode * divNode = to<DivNode>((op->a).ptr);
+        exprToreplace[op].push_back(new DivNode(new MulNode(divNode->a, op->b), divNode->b));
+      }else if (isa<DivNode>((op->b).ptr)){
+        const DivNode * divNode = to<DivNode>((op->b).ptr);
+        exprToreplace[op].push_back(new DivNode(new MulNode(divNode->a, op->a), divNode->b));
+      }
+
+      ctx->match(op->a); 
+      ctx->match(op->b);
+
+    }),
+    std::function<void(const DivNode*,Matcher*)>([&](const DivNode* op,
+                                                     Matcher* ctx) {
+
+      // (a+b)/c = a/c + b/c                                                 
+      if (isa<AddNode>((op->a).ptr)){
+        const AddNode * addNode = to<AddNode>((op->a).ptr);
+        exprToreplace[op].push_back(new AddNode(new DivNode(addNode->a, op->b), new DivNode(addNode->b, op->b)));
+      }else if (isa<AddNode>((op->b).ptr)){
+        const AddNode * addNode = to<AddNode>((op->b).ptr);
+        exprToreplace[op].push_back(new AddNode(new DivNode(addNode->a, op->a), new DivNode(addNode->b, op->a)));
+      }
+
+      // (a-b)/c = a/c - b/c
+      if (isa<SubNode>((op->a).ptr)){
+        const SubNode * subNode = to<SubNode>((op->a).ptr);
+        exprToreplace[op].push_back(new SubNode(new DivNode(subNode->a, op->b), new DivNode(subNode->b, op->b)));
+      }else if (isa<SubNode>((op->b).ptr)){
+        const SubNode * subNode = to<SubNode>((op->b).ptr);
+        exprToreplace[op].push_back(new SubNode(new DivNode(subNode->a, op->a), new DivNode(subNode->b, op->a)));
+      }
+
+      // (ab)/c = a/c*b
+
+      if (isa<MulNode>((op->a).ptr)){
+        const MulNode * mulNode = to<MulNode>((op->a).ptr);
+        //( ab)/c = b/c*a should be expressed by applying a commutativity rewrite and then
+        // this rewrite 
+        exprToreplace[op].push_back(new MulNode(new DivNode(mulNode->a, op->b), mulNode->b));
+      }if (isa<MulNode>((op->b).ptr)){
+        const MulNode * mulNode = to<MulNode>((op->b).ptr);
+        exprToreplace[op].push_back(new MulNode(new DivNode(mulNode->a, op->a), mulNode->b));
+      }
+
+
+      ctx->match(op->a); 
+      ctx->match(op->b);
+
+    })
+
+  );
+
+}
+
+std::vector<IndexStmt> generateEquivalentStmts(IndexStmt stmt){
+  std::vector<IndexStmt> possibleRewrites= {};
+  std::vector<IndexStmt> currentRewrites= {}; 
+
+  std::map<IndexExpr, std::vector<IndexExpr>> exprToreplace;
+
+  addIdentityRewrite(stmt, exprToreplace);
+  addCommutativityRewrite(stmt, exprToreplace);
+  addDistributivityRewrites(stmt, exprToreplace);
+
+  cout << "stmt : " << stmt << endl;
+
+  for (auto const& it : exprToreplace){
+    cout << it.first << " REWRITES : " << endl;
+    for (auto expr: it.second){
+      cout << "\t" << expr << endl; 
+    }
+  }
+
+  return {};
+}
+
 struct Equals : public IndexNotationVisitorStrict {
   bool eq = false;
   IndexExpr bExpr;

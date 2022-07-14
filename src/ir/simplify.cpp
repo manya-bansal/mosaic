@@ -620,6 +620,9 @@ ir::Stmt simplify(const ir::Stmt& stmt) {
       void visit(const Break *op) {
         stmt = Stmt();
       }
+      void visit(const VoidCall *op) {
+        stmt = Stmt();
+      }
     };
 
     struct CheckModified : public IRVisitor {

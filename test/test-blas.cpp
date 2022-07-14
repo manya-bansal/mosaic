@@ -124,7 +124,7 @@ TEST(accelerateScheduleLower, simpleBlasCall) {
 
   std::function<bool(IndexExpr)> checker = trivialChecker;
 
-  std::vector<taco::ir::Expr> args = {makeTensorArg(C), makeTensorArg(B), makeTensorArgVar(accelWorkspace)};
+  std::vector<taco::ir::Expr> args = {makeTensorArg(B), makeTensorArg(C), makeTensorArgVar(accelWorkspace)};
 
 
   AccelerateCodeGenerator accelGen(accelerateExpr, "add", args, checker);
@@ -143,5 +143,79 @@ TEST(accelerateScheduleLower, simpleBlasCall) {
       ++iit;
    }
 
+}
+
+
+
+TEST(accelerateScheduleLower, testExpr) {
+
+   int NUM_I = 100;
+  int NUM_J = 100;
+  int NUM_K = 100;
+
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar k("k");
+   IndexVar l("l");
+
+  Tensor<double> expected("expected", {NUM_I, NUM_K}, {Dense, Dense});
+  Tensor<double> A("A", {NUM_I, NUM_J}, {Dense, Dense});
+  Tensor<double> B("B", {NUM_J, 100}, {Dense, Dense});
+  Tensor<double> D("D", {NUM_I, NUM_K}, {Dense, Dense});
+
+  expected(i, k) = A(i, j) * B(j, k);
+
+//   stmt = stmt.concretize();
+
+
+
+//   stmt = makeConcreteNotation(stmt);
+
+   // Tensor<double> test("test", {NUM_I, NUM_J, NUM_K, NUM_K}, {Dense, Dense, Dense, Dense});
+
+   // test(i, j, k, l) = A(i, l) * B(l ,k);
+
+//   cout << stmt << endl;
+
+  expected.compile();
+  expected.assemble();
+  expected.compute();
+//   ASSERT_TENSOR_EQ(expected, C);
+}
+
+TEST(accelerateScheduleLower, testExpr2) {
+
+   int NUM_I = 100;
+  int NUM_J = 100;
+  int NUM_K = 100;
+
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar k("k");
+   IndexVar l("l");
+
+  Tensor<double> expected("expected", {NUM_I, NUM_J, NUM_K}, {Dense, Dense, Dense});
+  Tensor<double> A("A", {NUM_I, NUM_J, NUM_J}, {Dense, Dense, Dense});
+  Tensor<double> B("B", {NUM_J, NUM_K, NUM_J}, {Dense, Dense, Dense});
+//   Tensor<double> D("D", {NUM_I, NUM_K}, {Dense, Dense});
+
+  expected(i, j, k) = A(l, j, k) * B(i, l, k);
+
+//   stmt = stmt.concretize(x);
+
+
+
+//   stmt = makeConcreteNotation(stmt);
+
+   // Tensor<double> test("test", {NUM_I, NUM_J, NUM_K, NUM_K}, {Dense, Dense, Dense, Dense});
+
+   // test(i, j, k, l) = A(i, l) * B(l ,k);
+
+//   cout << stmt << endl;
+
+  expected.compile();
+  expected.assemble();
+  expected.compute();
+//   ASSERT_TENSOR_EQ(expected, C);
 }
 

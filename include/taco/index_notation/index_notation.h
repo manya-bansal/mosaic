@@ -205,6 +205,8 @@ bool isomorphic(IndexExpr, IndexExpr);
 /// Compare two index expressions by value.
 bool equals(IndexExpr, IndexExpr);
 
+std::vector<IndexStmt> generateEquivalentStmts(IndexStmt);
+
 /// Construct and returns an expression that negates this expression.
 /// ```
 /// A(i,j) = -B(i,j);
@@ -234,6 +236,8 @@ IndexExpr operator*(const IndexExpr&, const IndexExpr&);
 /// A(i,j) = B(i,j) / C(i,j);  // Component-wise division
 /// ```
 IndexExpr operator/(const IndexExpr&, const IndexExpr&);
+
+
 
 
 /// An index expression that represents a tensor access, such as `A(i,j))`.
