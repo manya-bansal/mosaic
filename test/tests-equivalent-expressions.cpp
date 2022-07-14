@@ -31,7 +31,7 @@ TEST(generateEquivExpressions, addExpr) {
    generateEquivalentStmts(stmt);
 
    stmt = actualc(i) = (actuala(i) + actualb(i));
-   
+
    generateEquivalentStmts(stmt);
 
 }
@@ -113,5 +113,32 @@ TEST(generateEquivExpressions, divExpr) {
    stmt = actualc(i) = (actuala(i) * actualb(i)) / 5;
 
     generateEquivalentStmts(stmt);
+
+}
+
+TEST(generateEquivExpressions, takeCommonTerms) {
+
+   TensorVar a("a", Type(taco::Float32, {Dimension()}), taco::dense);
+   TensorVar b("a", Type(taco::Float32, {Dimension()}), taco::dense);
+   IndexVar i("i");
+
+   Tensor<float32_t> actuala("actuala", {3}, dense, 0);
+   Tensor<float32_t> actualb("actualb", {3}, dense, 1);
+   Tensor<float32_t> actualc("actualc", {3}, dense, 1);
+
+
+   IndexStmt stmt = actualc(i) = (actuala(i)*5 + actualb(i)*5);
+   generateEquivalentStmts(stmt);
+
+    stmt = actualc(i) = (actuala(i)/5 + actualb(i)/5);
+    generateEquivalentStmts(stmt);
+
+
+    stmt = actualc(i) = (actuala(i)/5 - actualb(i)/5);
+    generateEquivalentStmts(stmt);
+
+    stmt = actualc(i) = (actuala(i)*5 - actualb(i)*5);
+    generateEquivalentStmts(stmt);
+
 
 }

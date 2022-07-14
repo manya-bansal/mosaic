@@ -846,6 +846,96 @@ static void addDistributivityRewrites(IndexStmt stmt, std::map<IndexExpr, std::v
 
 }
 
+
+static void takeCommonTermsOut(IndexStmt stmt, std::map<IndexExpr, std::vector<IndexExpr>> &exprToreplace){
+
+  match(stmt,                                            
+   std::function<void(const AddNode*,Matcher*)>([&](const AddNode* op,
+                                                     Matcher* ctx) {  
+      // a*b + a*c = a(b+c)                                                 
+      if (isa<MulNode>((op->a).ptr) && isa<MulNode>((op->b).ptr)) {
+         const MulNode * mulNodeA = to<MulNode>((op->a).ptr);
+         const MulNode * mulNodeB = to<MulNode>((op->b).ptr);
+
+        if (equals(mulNodeA->a, mulNodeB->a)){
+          cout << mulNodeA->a << endl;
+          cout << mulNodeB->a << endl;
+          exprToreplace[op].push_back(new MulNode(mulNodeA->a, new AddNode(mulNodeA->b, mulNodeB->b)));
+        }
+
+        if (equals(mulNodeA->b, mulNodeB->a)){
+          exprToreplace[op].push_back(new MulNode(mulNodeA->b, new AddNode(mulNodeA->a, mulNodeB->b)));
+        }
+
+        if (equals(mulNodeA->a, mulNodeB->b)){
+          exprToreplace[op].push_back(new MulNode(mulNodeA->a, new AddNode(mulNodeA->b, mulNodeB->a)));
+        }
+
+        if (equals(mulNodeA->b, mulNodeB->b)){
+          cout << mulNodeA->b << endl;
+          cout << mulNodeB->b << endl;
+          exprToreplace[op].push_back(new MulNode(mulNodeA->b, new AddNode(mulNodeA->a, mulNodeB->a)));
+        }
+      
+      }
+
+      if (isa<DivNode>((op->a).ptr) && isa<DivNode>((op->b).ptr)) {
+        const DivNode * divNodeA = to<DivNode>((op->a).ptr);
+        const DivNode * divNodeB = to<DivNode>((op->b).ptr);
+
+        // for division only a/5 + b/5 = (a+b)/5 is the valid choice 
+        if (equals(divNodeA->b, divNodeB->b)){
+          cout << divNodeA->b << endl;
+          cout << divNodeB->b << endl;
+          exprToreplace[op].push_back(new DivNode(new AddNode(divNodeA->a, divNodeB->a), divNodeA->b));
+        }
+      }
+
+    }),
+    // a*b - a*c = a(b-c)           
+    std::function<void(const SubNode*,Matcher*)>([&](const SubNode* op,
+                                                     Matcher* ctx) {  
+      // a*b + a*c = a(b+c)                                                 
+      if (isa<MulNode>((op->a).ptr) && isa<MulNode>((op->b).ptr)) {
+         const MulNode * mulNodeA = to<MulNode>((op->a).ptr);
+         const MulNode * mulNodeB = to<MulNode>((op->b).ptr);
+
+        if (equals(mulNodeA->a, mulNodeB->a)){
+          exprToreplace[op].push_back(new MulNode(mulNodeA->a, new SubNode(mulNodeA->b, mulNodeB->b)));
+        }
+
+        if (equals(mulNodeA->b, mulNodeB->a)){
+          exprToreplace[op].push_back(new MulNode(mulNodeA->b, new SubNode(mulNodeA->a, mulNodeB->b)));
+        }
+
+        if (equals(mulNodeA->a, mulNodeB->b)){
+          exprToreplace[op].push_back(new MulNode(mulNodeA->a, new SubNode(mulNodeA->b, mulNodeB->a)));
+        }
+
+        if (equals(mulNodeA->b, mulNodeB->b)){
+          exprToreplace[op].push_back(new MulNode(mulNodeA->b, new SubNode(mulNodeA->a, mulNodeB->a)));
+        }
+      
+      }
+
+      if (isa<DivNode>((op->a).ptr) && isa<DivNode>((op->b).ptr)) {
+        const DivNode * divNodeA = to<DivNode>((op->a).ptr);
+        const DivNode * divNodeB = to<DivNode>((op->b).ptr);
+
+        // for division only a/5 - b/5 = (a-b)/5 is the valid choice 
+        if (equals(divNodeA->b, divNodeB->b)){
+          cout << divNodeA->b << endl;
+          cout << divNodeB->b << endl;
+          exprToreplace[op].push_back(new DivNode(new SubNode(divNodeA->a, divNodeB->a), divNodeA->b));
+        }
+      }
+
+    })
+  
+  );
+
+}
+
 std::vector<IndexStmt> generateEquivalentStmts(IndexStmt stmt){
   std::vector<IndexStmt> possibleRewrites= {};
   std::vector<IndexStmt> currentRewrites= {}; 
@@ -855,6 +945,7 @@ std::vector<IndexStmt> generateEquivalentStmts(IndexStmt stmt){
   addIdentityRewrite(stmt, exprToreplace);
   addCommutativityRewrite(stmt, exprToreplace);
   addDistributivityRewrites(stmt, exprToreplace);
+  takeCommonTermsOut(stmt, exprToreplace); 
 
   cout << "stmt : " << stmt << endl;
 
