@@ -30,7 +30,7 @@ std::uniform_int_distribution<int> Module::randint =
 
 void Module::setJITTmpdir() {
   tmpdir = util::getTmpdir();
-  cout << tmpdir << endl;
+  // cout << tmpdir << endl;
 }
 
 void Module::setJITLibname() {

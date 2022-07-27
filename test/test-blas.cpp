@@ -12,7 +12,7 @@
 #include "taco/index_notation/index_notation.h"
 #include "codegen/codegen.h"
 #include "taco/lower/lowerer_impl_imperative.h"
-#include "taco/index_notation/accelerate_notation.h"
+#include "taco/index_notation/accel_interface.h"
 #include "taco/lower/lower.h"
 #include "taco/ir_tags.h"
 

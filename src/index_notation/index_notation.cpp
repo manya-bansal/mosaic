@@ -872,8 +872,6 @@ static void takeCommonTermsOut(IndexStmt stmt, std::map<IndexExpr, std::vector<I
         }
 
         if (equals(mulNodeA->b, mulNodeB->b)){
-          cout << mulNodeA->b << endl;
-          cout << mulNodeB->b << endl;
           exprToreplace[op].push_back(new MulNode(mulNodeA->b, new AddNode(mulNodeA->a, mulNodeB->a)));
         }
       
@@ -885,8 +883,6 @@ static void takeCommonTermsOut(IndexStmt stmt, std::map<IndexExpr, std::vector<I
 
         // for division only a/5 + b/5 = (a+b)/5 is the valid choice 
         if (equals(divNodeA->b, divNodeB->b)){
-          cout << divNodeA->b << endl;
-          cout << divNodeB->b << endl;
           exprToreplace[op].push_back(new DivNode(new AddNode(divNodeA->a, divNodeB->a), divNodeA->b));
         }
       }
@@ -924,8 +920,6 @@ static void takeCommonTermsOut(IndexStmt stmt, std::map<IndexExpr, std::vector<I
 
         // for division only a/5 - b/5 = (a-b)/5 is the valid choice 
         if (equals(divNodeA->b, divNodeB->b)){
-          cout << divNodeA->b << endl;
-          cout << divNodeB->b << endl;
           exprToreplace[op].push_back(new DivNode(new SubNode(divNodeA->a, divNodeB->a), divNodeA->b));
         }
       }
@@ -935,6 +929,29 @@ static void takeCommonTermsOut(IndexStmt stmt, std::map<IndexExpr, std::vector<I
   );
 
 }
+
+static void simplifyNegatives(IndexStmt stmt, std::map<IndexExpr, std::vector<IndexExpr>> &exprToreplace){
+
+  match(stmt,                                            
+   std::function<void(const AddNode*,Matcher*)>([&](const AddNode* op,
+                                                     Matcher* ctx) {  
+
+      if (isa<NegNode>((op->a).ptr)){
+         exprToreplace[op].push_back(new SubNode(op->a, op->a));
+      }
+
+    }),
+    std::function<void(const SubNode*,Matcher*)>([&](const SubNode* op,
+                                                     Matcher* ctx) {  
+
+      if (isa<SubNode>((op->a).ptr)){
+         exprToreplace[op].push_back(new AddNode(op->a, op->a));
+      }
+    })
+
+    );
+}
+
 
 std::vector<IndexStmt> generateEquivalentStmts(IndexStmt stmt){
   std::vector<IndexStmt> possibleRewrites= {};
@@ -946,6 +963,7 @@ std::vector<IndexStmt> generateEquivalentStmts(IndexStmt stmt){
   addCommutativityRewrite(stmt, exprToreplace);
   addDistributivityRewrites(stmt, exprToreplace);
   takeCommonTermsOut(stmt, exprToreplace); 
+  // simplifyNegatives(stmt, exprToreplace);
 
   cout << "stmt : " << stmt << endl;
 

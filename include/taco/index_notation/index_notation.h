@@ -25,6 +25,8 @@
 #include "taco/index_notation/provenance_graph.h"
 #include "taco/index_notation/accelerate_notation.h"
 #include "taco/index_notation/properties.h"
+#include "taco/util/collections.h"
+#include "taco/util/strings.h"
 
 namespace taco {
 
@@ -1370,21 +1372,15 @@ IndexStmt generatePackStmt(TensorVar tensor,
 IndexStmt generatePackCOOStmt(TensorVar tensor, 
                               std::vector<IndexVar> indexVars, bool otherIsOnRight);
 
-class AccelerateCodeGenerator {
-    public: 
-        AccelerateCodeGenerator(taco::IndexExpr expr, std::string functionName, std::vector<ir::Expr> args, std::function<bool(IndexExpr)> checker) :
-                            expr(expr), functionName(functionName), args(args), checker(checker) {};
 
-        AccelerateCodeGenerator()=default;
 
-        taco::IndexExpr getExpr() { return expr;};
 
-        taco::IndexExpr expr;
-        std::string functionName;
-        std::vector<ir::Expr> args;
-        std::function<bool(IndexExpr)> checker;
+// class ArgType : public util::Manageable<IndexVarRelNode>,
+//                 private util::Uncopyable {
 
-};    
+
+              
+// };
 
 }
 #endif
