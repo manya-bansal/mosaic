@@ -13,7 +13,7 @@ namespace taco {
 struct IndexVarRelNode;
 enum IndexVarRelType {UNDEFINED, SPLIT, DIVIDE, POS, FUSE, BOUND, PRECOMPUTE, ACCELERATE};
 
-class AccelerateCodeGenerator;
+class ConcreteAccelerateCodeGenerator;
 /// A pointer class for IndexVarRelNodes provides some operations for all IndexVarRelTypes
 class IndexVarRel : public util::IntrusivePtr<const IndexVarRelNode> {
 public:
@@ -312,7 +312,7 @@ bool operator==(const PrecomputeRelNode&, const PrecomputeRelNode&);
 
 
 struct AccelerateRelNode : public IndexVarRelNode {
-  AccelerateRelNode(IndexVar parentVar, IndexVar precomputeVar, taco::AccelerateCodeGenerator accelGen);
+  AccelerateRelNode(IndexVar parentVar, IndexVar precomputeVar, taco::ConcreteAccelerateCodeGenerator accelGen);
 
   const IndexVar& getParentVar() const;
   const IndexVar& getPrecomputeVar() const;

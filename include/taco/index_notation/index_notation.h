@@ -34,7 +34,7 @@ class Type;
 class Dimension;
 class Format;
 class Schedule;
-class AccelerateCodeGenerator;
+class ConcreteAccelerateCodeGenerator;
 
 class IndexVar;
 class WindowedIndexVar;
@@ -762,9 +762,9 @@ public:
                        std::vector<IndexVar> iw_vars, TensorVar workspace) const;
 
 
-  IndexStmt accelerate(AccelerateCodeGenerator accelGen, IndexVar i, IndexVar iw, TensorVar workspace) const;
+  IndexStmt accelerate(ConcreteAccelerateCodeGenerator accelGen, IndexVar i, IndexVar iw, TensorVar workspace) const;
 
-  IndexStmt accelerate(AccelerateCodeGenerator accelGen, std::vector<IndexVar> i_vars,
+  IndexStmt accelerate(ConcreteAccelerateCodeGenerator accelGen, std::vector<IndexVar> i_vars,
                        std::vector<IndexVar> iw_vars, TensorVar workspace) const;
 
   /// bound specifies a compile-time constraint on an index variable's
@@ -919,11 +919,11 @@ class Accelerate : public IndexStmt {
 public:
   Accelerate() = default;
   Accelerate(const AccelerateNode*);
-  Accelerate(IndexStmt consumer, IndexStmt producer, AccelerateCodeGenerator accelGen);
+  Accelerate(IndexStmt consumer, IndexStmt producer, ConcreteAccelerateCodeGenerator accelGen);
 
   IndexStmt getConsumer();
   IndexStmt getProducer();
-  AccelerateCodeGenerator getAccelGen();
+  ConcreteAccelerateCodeGenerator getAccelGen();
   /**
    * Retrieve the result of this where statement;
    */
@@ -938,7 +938,7 @@ public:
 };
 
 /// Create an accelerate stmt index statement.
-Accelerate accelerate(IndexStmt consumer, IndexStmt producer, AccelerateCodeGenerator accelGen);
+Accelerate accelerate(IndexStmt consumer, IndexStmt producer, ConcreteAccelerateCodeGenerator accelGen);
 
 /// A sequence statement has two statements, a definition and a mutation, that
 /// are executed in sequence.  The defintion creates an index variable and the

@@ -2276,7 +2276,7 @@ IndexStmt IndexStmt::precompute(IndexExpr expr, IndexVar i, IndexVar iw, TensorV
 }
 
 
-IndexStmt IndexStmt::accelerate(AccelerateCodeGenerator accelGen, std::vector<IndexVar> i_vars,
+IndexStmt IndexStmt::accelerate(ConcreteAccelerateCodeGenerator accelGen, std::vector<IndexVar> i_vars,
                                 std::vector<IndexVar> iw_vars, TensorVar workspace) const {
 
   IndexStmt transformed = *this;
@@ -2306,7 +2306,7 @@ IndexStmt IndexStmt::accelerate(AccelerateCodeGenerator accelGen, std::vector<In
   return transformed;
 }
 
-IndexStmt IndexStmt::accelerate(AccelerateCodeGenerator accelGen, IndexVar i, IndexVar iw, TensorVar workspace) const{
+IndexStmt IndexStmt::accelerate(ConcreteAccelerateCodeGenerator accelGen, IndexVar i, IndexVar iw, TensorVar workspace) const{
   std::vector<IndexVar> i_vars{i};
   std::vector<IndexVar> iw_vars{iw};
 
@@ -2649,7 +2649,7 @@ template <> Where to<Where>(IndexStmt s) {
 Accelerate::Accelerate(const AccelerateNode* n) : IndexStmt(n) {
 }
 
-Accelerate::Accelerate(IndexStmt consumer, IndexStmt producer, AccelerateCodeGenerator accelGen)
+Accelerate::Accelerate(IndexStmt consumer, IndexStmt producer, ConcreteAccelerateCodeGenerator accelGen)
     : Accelerate(new AccelerateNode(consumer, producer, accelGen)) {
 }
 
@@ -2662,7 +2662,7 @@ IndexStmt Accelerate::getProducer() {
   return getNode(*this)->producer;
 }
 
-AccelerateCodeGenerator Accelerate::getAccelGen() {
+ConcreteAccelerateCodeGenerator Accelerate::getAccelGen() {
   return getNode(*this)->accelGen;
 }
 
@@ -2674,7 +2674,7 @@ TensorVar Accelerate::getTemporary() {
   return getResultAccesses(getProducer()).first[0].getTensorVar();
 }
 
-Accelerate accelerate(IndexStmt consumer, IndexStmt producer, AccelerateCodeGenerator accelGen) {
+Accelerate accelerate(IndexStmt consumer, IndexStmt producer, ConcreteAccelerateCodeGenerator accelGen) {
   return Accelerate(consumer, producer, accelGen);
 }
 

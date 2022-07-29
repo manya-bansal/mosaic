@@ -10,9 +10,9 @@
 
 namespace taco {
 
-// class AccelerateCodeGenerator {
+// class ConcreteAccelerateCodeGenerator {
 //     public: 
-//         AccelerateCodeGenerator(std::string functionName, std::vector<ir::Expr> args, std::function<bool(IndexExpr)> checker) :
+//         ConcreteAccelerateCodeGenerator(std::string functionName, std::vector<ir::Expr> args, std::function<bool(IndexExpr)> checker) :
 //                             functionName(functionName), args(args), checker(checker) {};
 
         

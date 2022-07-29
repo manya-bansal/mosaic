@@ -73,33 +73,13 @@ ir::Expr makeTensorArgVar(TensorVar t){
 }
 
 
-TEST(functionObject, simpleBlasCall) {
 
- 
-
-   Tensor<float32_t> test_a("actuala", {3}, dense, 0);
-   Tensor<float32_t> test_b("actualb", {3}, dense, 1);
-   Tensor<float32_t> test_c("actualc", {3}, dense, 1);
-   IndexVar i("i");
-
-   TensorVar workspace(Type(taco::Float32, {1}), taco::dense, 0) ;
-
-   IndexStmt stmt = test_c(i) = test_a(i) + test_b(i);
-
-
-   // vector<Expr> args = {ir::Var::make(test_a.getName(), test_a.getComponentType(),true, true)};
-
-   std::vector<taco::ir::Expr> args = {ir::Var::make(test_a.getName(), test_a.getComponentType(),true, true)};;
-
-   // AccelerateCodeGenerator accelerateSpec()
-
-}
 
 bool trivialChecker(IndexExpr expr){
    return true;
 }
 
-TEST(accelerateScheduleLower, simpleBlasCall) {
+TEST(accelerateScheduleLower, simpleBlasCallFunction) {
 
   Tensor<float32_t> A("A", {16}, Format{Dense}, 0);
   Tensor<float32_t> B("B", {16}, Format{Dense});
@@ -127,7 +107,7 @@ TEST(accelerateScheduleLower, simpleBlasCall) {
   std::vector<taco::ir::Expr> args = {makeTensorArg(B), makeTensorArg(C), makeTensorArgVar(accelWorkspace)};
 
 
-  AccelerateCodeGenerator accelGen(accelerateExpr, "add", args, checker);
+  ConcreteAccelerateCodeGenerator accelGen(accelerateExpr, "add", args, checker);
 
    stmt = stmt.accelerate(accelGen, i, iw, accelWorkspace);
 

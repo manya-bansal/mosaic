@@ -602,7 +602,7 @@ std::ostream& operator<<(std::ostream& os, const Precompute& precompute) {
 
 // class AccelerateExpr
 struct AccelerateExpr::Content {
-  AccelerateCodeGenerator accelGen;
+  ConcreteAccelerateCodeGenerator accelGen;
   std::vector<IndexVar> i_vars;
   std::vector<IndexVar> iw_vars;
   TensorVar workspace;
@@ -611,7 +611,7 @@ struct AccelerateExpr::Content {
 AccelerateExpr::AccelerateExpr() : content(nullptr) {
 }
 
-AccelerateExpr::AccelerateExpr(AccelerateCodeGenerator accelGen, IndexVar i, IndexVar iw,
+AccelerateExpr::AccelerateExpr(ConcreteAccelerateCodeGenerator accelGen, IndexVar i, IndexVar iw,
                      TensorVar workspace) : content(new Content) {
   std::vector<IndexVar> i_vars{i};
   std::vector<IndexVar> iw_vars{iw};
@@ -621,7 +621,7 @@ AccelerateExpr::AccelerateExpr(AccelerateCodeGenerator accelGen, IndexVar i, Ind
   content->workspace = workspace;
 }
 
-  AccelerateExpr::AccelerateExpr(AccelerateCodeGenerator accelGen, std::vector<IndexVar> i_vars,
+  AccelerateExpr::AccelerateExpr(ConcreteAccelerateCodeGenerator accelGen, std::vector<IndexVar> i_vars,
                          std::vector<IndexVar> iw_vars,
                          TensorVar workspace) : content(new Content) {
   content->accelGen = accelGen;
@@ -646,7 +646,7 @@ TensorVar AccelerateExpr::getWorkspace() const {
   return content->workspace;
 }
 
-AccelerateCodeGenerator AccelerateExpr::getCodeGenerator() const {
+ConcreteAccelerateCodeGenerator AccelerateExpr::getCodeGenerator() const {
   return content->accelGen;
 }
 
@@ -658,7 +658,7 @@ IndexStmt AccelerateExpr::apply(IndexStmt stmt, std::string* reason) const {
 
   // Precondition: The expr to precompute is not in `stmt`
   Assignment assignment = getAssignmentContainingExpr(stmt, getExpr());
-  static AccelerateCodeGenerator accelGen = getCodeGenerator();
+  static ConcreteAccelerateCodeGenerator accelGen = getCodeGenerator();
 
   if (!assignment.defined()) {
     *reason = "The expression (" + util::toString(getExpr()) + ") " +

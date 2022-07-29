@@ -4,13 +4,14 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+
         
         {
             "name": "(lldb) Launch",
             "type": "lldb",
             "request": "launch",
             "program": "${workspaceFolder}/build/bin/taco-test",
-            "args": ["blasTest"],
+            "args": ["where_vector_sum/lower.compile/0"],
             "stopAtEntry": false,
             "cwd": "${fileDirname}", 
             "environment": [],

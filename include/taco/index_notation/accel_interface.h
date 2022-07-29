@@ -6,15 +6,73 @@
 
 namespace taco {
 
-class TransferWithArgs{
-  public:
+struct TransferTypeArgs;
+
+class Argument : public util::IntrusivePtr<const TransferTypeArgs> {
+  public: 
+    Argument() : IntrusivePtr(nullptr) {}
+    Argument(TransferTypeArgs * arg) : IntrusivePtr(arg) {}
+
+    template<typename T>
+    const T* getNode() const {
+      return static_cast<const T*>(ptr);
+    }
+
+    const TransferTypeArgs* getNode() const {
+    return ptr;
+    }
+};
+
+//We need to types of args: args that we provide to the user
+//dimension of a user etc, and a way for them to call a special function
+
+struct TransferTypeArgs : public util::Manageable<TransferTypeArgs>{
+    TransferTypeArgs() = default;
+    virtual ~TransferTypeArgs() = default;
+    virtual void lower() const {  };
+
+    virtual std::ostream& print(std::ostream& os) const {
+        os << "Printing a TransferTypeArg" << std::endl;
+        return os;
+    };
+
+};
+
+std::ostream& operator<<(std::ostream&,  const Argument&);
+
+struct TensorPropertiesArgs : public TransferTypeArgs{
+
+    TensorPropertiesArgs(ir::Expr irExpr) : irExpr(irExpr) {};
+    void lower() const;
+
+    friend std::ostream& operator<<(std::ostream&, const TensorPropertiesArgs&);
+
+    std::ostream& print(std::ostream& os) const;
+
+    ir::Expr irExpr; 
+
+};
+
+
+
+struct TransferWithArgs : public TransferTypeArgs{
     TransferWithArgs() = default;
 
-    TransferWithArgs(const std::string& name, const std::string& returnType , const std::vector<ir::Expr>& args) : name(name), returnType(returnType), args(args) {};
-  
+    TransferWithArgs(const std::string& name, const std::string& returnType , const std::vector<Argument>& args) : name(name), returnType(returnType), args(args) {};
+
+    // TransferWithArgs(const std::string& name, const std::string& returnType, const TransferWithArgs& transferWithArgs)
+
+    std::string getName() const { return name; };
+    std::string getReturnType() const { return returnType; };
+    std::vector<Argument> getArgs() const { return args; };
+
+    void lower() const;
+
+    std::ostream& print(std::ostream& os) const;
+    
     std::string name;
     std::string returnType;
-    std::vector<ir::Expr> args; 
+    std::vector<Argument> args; 
 
 };
 
@@ -25,9 +83,9 @@ class TransferLoad{
     TransferLoad() = default;
     TransferLoad(const std::string& name, const std::string& returnType) : name(name), returnType(returnType) {};
 
-    template <typename... Exprs>
-    TransferWithArgs operator()(const Exprs&... exprs){
-      return TransferWithArgs(name, returnType, {exprs...});
+    template <typename... Exprs> 
+    Argument operator()(const Exprs... expr){
+      return new TransferWithArgs(name, returnType, {expr...});
     }
 
   private:
@@ -40,9 +98,9 @@ class TransferStore{
     TransferStore() = default;
     TransferStore(const std::string& name, const std::string& returnType) : name(name), returnType(returnType){};
 
-    template <typename... Exprs>
-    TransferWithArgs operator()(const Exprs&... exprs){
-      return TransferWithArgs(name, returnType, {exprs...});
+    template <typename... Exprs> 
+    Argument operator()(const Exprs... expr){
+      return new TransferWithArgs(name, returnType, {expr...});
     }
 
   private:
@@ -50,35 +108,57 @@ class TransferStore{
     std::string returnType; 
 };
 
-
-// QUESTION: do we need different functions for runtime versus compile time 
-// conversions (are there good cases for compile time conversions?)
-
 class TransferType{
   public:
     TransferType(std::string name, taco::TransferLoad transferLoad, taco::TransferStore transferStore);
-    // TransferType(TensorVar tensorVar);
   private:
     struct Content;
     std::shared_ptr<Content> content;
 
 };
 
-class AccelerateCodeGenerator {
+
+// QUESTION: do we need different functions for runtime versus compile time 
+// conversions (are there good cases for compile time conversions?)
+
+
+
+
+class ConcreteAccelerateCodeGenerator {
   public: 
-      AccelerateCodeGenerator(taco::IndexExpr expr, std::string functionName, std::vector<ir::Expr> args, std::function<bool(IndexExpr)> checker) :
+
+      ConcreteAccelerateCodeGenerator() = default;
+
+      ConcreteAccelerateCodeGenerator(taco::IndexExpr expr, const std::string& functionName, const std::vector<ir::Expr>& args, std::function<bool(IndexExpr)> checker) :
                           expr(expr), functionName(functionName), args(args), checker(checker) {};
 
-      AccelerateCodeGenerator() = default;
-
+    
       taco::IndexExpr getExpr() { return expr; };
 
       taco::IndexExpr expr;
       std::string functionName;
       std::vector<ir::Expr> args;
-      std::function<bool(IndexExpr)> checker;
+      std::function<bool(taco::IndexExpr)> checker;
 
 };
+
+
+class ForeignFunctionDescription {
+  public: 
+    ForeignFunctionDescription() = default;
+    ForeignFunctionDescription( const IndexStmt& targetStmt, const std::string& functionName, const std::string& returnType, const std::vector<Argument>& args, 
+                                const std::vector<TensorVar>& temporaries, std::function<bool(taco::IndexStmt)> checker) 
+                                : targetStmt(targetStmt), functionName(functionName), returnType(returnType), args(args), temporaries(temporaries), checker(checker) {};
+  private:
+    taco::IndexStmt targetStmt;
+    std::string functionName;
+    std::string returnType;
+    std::vector<Argument> args;
+    std::vector<taco::TensorVar> temporaries;
+    std::function<bool(taco::IndexStmt)> checker;
+
+};
+
 
 
 

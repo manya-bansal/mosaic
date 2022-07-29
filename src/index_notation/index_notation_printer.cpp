@@ -181,6 +181,7 @@ void IndexNotationPrinter::visit(const CallIntrinsicNode* op) {
 }
 
 void IndexNotationPrinter::visit(const ReductionNode* op) {
+  cout << "yes" << endl;
   struct ReductionName : IndexNotationVisitor {
     std::string reductionName;
     std::string get(IndexExpr expr) {
@@ -253,6 +254,7 @@ void IndexNotationPrinter::visit(const WhereNode* op) {
   os << "where(";
   op->consumer.accept(this);
   os << ", ";
+  cout << "test " << op->producer << endl;
   op->producer.accept(this);
   os << ")";
 }

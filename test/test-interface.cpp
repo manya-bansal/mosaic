@@ -36,7 +36,14 @@ TEST(transferType, pluginInterface) {
 
     TransferType("test", load_test, store_test);
 
-    cout << load_test(makeTensorArgVarLocal(a)) << endl;
-    cout << store_test(makeTensorArgVarLocal(a)) << endl;    
+    // Argument arg = load_test(new TensorPropertiesArgs(makeTensorArgVarLocal(a)));
+    cout << load_test(store_test(new TensorPropertiesArgs(makeTensorArgVarLocal(a)))) << endl;
+    cout << store_test(new TensorPropertiesArgs(makeTensorArgVarLocal(a))) << endl;   
+
+
+    vector<Argument> test_args = {new TransferWithArgs("test" , " ", { }), new TensorPropertiesArgs(makeTensorArgVarLocal(a))};
+
+    test_args[0].getNode()->lower();
+    test_args[1].getNode()->lower();
 
 }

@@ -123,15 +123,15 @@ std::ostream &operator<<(std::ostream &, const Precompute &);
 class AccelerateExpr : public TransformationInterface {
 public:
   AccelerateExpr();
-  AccelerateExpr(AccelerateCodeGenerator accelGen, IndexVar i, IndexVar iw, TensorVar workspace);
-  AccelerateExpr(AccelerateCodeGenerator accelGen, std::vector<IndexVar> i_vars,
+  AccelerateExpr(ConcreteAccelerateCodeGenerator accelGen, IndexVar i, IndexVar iw, TensorVar workspace);
+  AccelerateExpr(ConcreteAccelerateCodeGenerator accelGen, std::vector<IndexVar> i_vars,
              std::vector<IndexVar> iw_vars, TensorVar workspace);
   
   IndexExpr getExpr() const;
   std::vector<IndexVar>& getIVars() const;
   std::vector<IndexVar>& getIWVars() const;
   TensorVar getWorkspace() const;
-  AccelerateCodeGenerator getCodeGenerator() const;
+  ConcreteAccelerateCodeGenerator getCodeGenerator() const;
 
   /// Apply the precompute optimization to a concrete index statement.
   IndexStmt apply(IndexStmt stmt, std::string *reason = nullptr) const;

@@ -2720,7 +2720,7 @@ vector<Stmt> LowererImplImperative::codeToInitializeTemporary(Accelerate acceler
 Stmt LowererImplImperative::lowerAccelerate(Accelerate accelerate) {
   //initiailze temporary workspace
   TensorVar temporary = accelerate.getTemporary();
-  AccelerateCodeGenerator accelGen = accelerate.getAccelGen();
+  ConcreteAccelerateCodeGenerator accelGen = accelerate.getAccelGen();
   //THE BELOW CODE IS FOR THE USUAL LOWERING LIKE DONE IN THE 
   //WHERE NODE
 
