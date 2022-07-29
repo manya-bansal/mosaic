@@ -42,6 +42,14 @@ std::ostream& TransferWithArgs::print(std::ostream& os) const{
   return os;
 }
 
+TensorPropertiesArgs::TensorPropertiesArgs(TensorVar t){
+  irExpr = ir::Var::make(t.getName(), t.getType().getDataType(),true, true);
+}
+
+// TensorPropertiesArgs::TensorPropertiesArgs(Tensor t){
+//   irExpr = ir::Var::make(t.getName(), t.getComponentType(),true, true);
+// }
+
 void TensorPropertiesArgs::lower() const {
   std::cout << "lower with Expr" << std::endl;
 };

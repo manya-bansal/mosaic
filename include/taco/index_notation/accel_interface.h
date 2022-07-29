@@ -3,6 +3,7 @@
 
 #include "taco/index_notation/index_notation.h"
 #include "taco/lower/iterator.h"
+#include "taco/tensor.h"
 
 namespace taco {
 
@@ -43,6 +44,14 @@ std::ostream& operator<<(std::ostream&,  const Argument&);
 struct TensorPropertiesArgs : public TransferTypeArgs{
 
     TensorPropertiesArgs(ir::Expr irExpr) : irExpr(irExpr) {};
+
+    TensorPropertiesArgs(TensorVar t);
+
+    template <typename T>
+    TensorPropertiesArgs(T t){
+      irExpr = ir::Var::make(t.getName(), t.getComponentType(),true, true);
+    }
+
     void lower() const;
 
     friend std::ostream& operator<<(std::ostream&, const TensorPropertiesArgs&);
@@ -149,13 +158,32 @@ class ForeignFunctionDescription {
     ForeignFunctionDescription( const IndexStmt& targetStmt, const std::string& functionName, const std::string& returnType, const std::vector<Argument>& args, 
                                 const std::vector<TensorVar>& temporaries, std::function<bool(taco::IndexStmt)> checker) 
                                 : targetStmt(targetStmt), functionName(functionName), returnType(returnType), args(args), temporaries(temporaries), checker(checker) {};
-  private:
+
+    ForeignFunctionDescription( const IndexStmt& targetStmt, const std::string& functionName, const std::string& returnType,
+                                    const std::vector<TensorVar>& temporaries, std::function<bool(taco::IndexStmt)> checker) 
+                                    : targetStmt(targetStmt), functionName(functionName), returnType(returnType), temporaries(temporaries), checker(checker) {};
+
+    template <typename... Exprs> 
+    ForeignFunctionDescription operator()(const Exprs... expr){
+        return ForeignFunctionDescription(targetStmt, functionName, returnType, {expr...}, temporaries, checker);
+    }
+
     taco::IndexStmt targetStmt;
     std::string functionName;
     std::string returnType;
     std::vector<Argument> args;
     std::vector<taco::TensorVar> temporaries;
     std::function<bool(taco::IndexStmt)> checker;
+
+};
+
+
+class AcceleratorDescription {
+  public:
+    AcceleratorDescription(TransferType kernelTransfer, std::vector<ForeignFunctionDescription> funcDescriptions) : kernelTransfer(kernelTransfer), funcDescriptions(funcDescriptions) {};
+
+    TransferType kernelTransfer;
+    std::vector<ForeignFunctionDescription> funcDescriptions;
 
 };
 

@@ -19,8 +19,9 @@
 
 using namespace taco;
 
-ir::Expr makeTensorArgVarLocal(TensorVar t){
-   return ir::Var::make(t.getName(), t.getType().getDataType(),true, true);
+
+bool trivialkernelChecker(IndexStmt expr){
+   return true;
 }
 
 
@@ -28,22 +29,24 @@ TEST(transferType, pluginInterface) {
 
     TensorVar a("a", Type(taco::Float32, {Dimension()}), taco::dense);
     TensorVar b("b", Type(taco::Float32, {Dimension()}), taco::dense);
+    IndexVar i("i");
 
     // should basically call a C function 
     // that can be included in header
     TransferLoad load_test("load_test", "void");
     TransferStore store_test("store_test", "void");
 
-    TransferType("test", load_test, store_test);
+    TransferType kernelTransfer("test", load_test, store_test);
 
-    // Argument arg = load_test(new TensorPropertiesArgs(makeTensorArgVarLocal(a)));
-    cout << load_test(store_test(new TensorPropertiesArgs(makeTensorArgVarLocal(a)))) << endl;
-    cout << store_test(new TensorPropertiesArgs(makeTensorArgVarLocal(a))) << endl;   
+    ForeignFunctionDescription kernel1(a(i) = a(i) + b(i), "kernel1", "void", {}, trivialkernelChecker);
+    ForeignFunctionDescription kernel2(a(i) = b(i), "kernel2", "void", {}, trivialkernelChecker);
 
+    AcceleratorDescription accelDesc(kernelTransfer, 
+            {  kernel1(load_test(new TensorPropertiesArgs(a)), load_test(new TensorPropertiesArgs(b))),
+               kernel2(load_test(new TensorPropertiesArgs(a)), load_test(new TensorPropertiesArgs(b)))
+            });
 
-    vector<Argument> test_args = {new TransferWithArgs("test" , " ", { }), new TensorPropertiesArgs(makeTensorArgVarLocal(a))};
-
-    test_args[0].getNode()->lower();
-    test_args[1].getNode()->lower();
+    //need to register AcceleratorDescription
+    //so that the TACO can use it
 
 }
