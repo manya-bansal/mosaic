@@ -16,6 +16,12 @@ std::ostream& operator<<(std::ostream& os,  const Argument& argument){
   return argument.getNode()->print(os);
 }
 
+ArgType Argument::getArgType() const {
+   if (ptr == NULL) return UNKNOWN;
+  return getNode()->argType;
+}
+
+
 
 struct TransferType::Content {
   std::string name;
@@ -54,6 +60,22 @@ void TensorPropertiesArgs::lower() const {
   std::cout << "lower with Expr" << std::endl;
 };
 
+// template <typename... Exprs> 
+// Argument TransferLoad::operator()(const Exprs... expsr){
+//   std::vector<Argument> expr_args = {exprs...};
+//   std::vector<Argument> arguments; 
+//   for (auto arg : expr_args){
+//     if (arg.getArgType() == INTERNAL){
+//       arguments.push_back(new TensorPropertiesArgs(arg));
+//     }else{
+//       arguments.push_back(arg);
+//     }
+//     // if (arg.getArgType() == USER_DEFINED){
+//     //   arguments.push_back(new TransferWithArgs(name, returnType, arg));
+//     // }
+//   }
+//   return new TransferWithArgs(name, returnType, arguments);
+// }
 
 std::ostream& TensorPropertiesArgs::print(std::ostream& os) const{
   os << irExpr;

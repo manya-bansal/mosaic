@@ -41,10 +41,12 @@ TEST(transferType, pluginInterface) {
     ForeignFunctionDescription kernel1(a(i) = a(i) + b(i), "kernel1", "void", {}, trivialkernelChecker);
     ForeignFunctionDescription kernel2(a(i) = b(i), "kernel2", "void", {}, trivialkernelChecker);
 
-    AcceleratorDescription accelDesc(kernelTransfer, 
-            {  kernel1(load_test(new TensorPropertiesArgs(a)), load_test(new TensorPropertiesArgs(b))),
-               kernel2(load_test(new TensorPropertiesArgs(a)), load_test(new TensorPropertiesArgs(b)))
-            });
+   //  AcceleratorDescription accelDesc(kernelTransfer, 
+   //          {  kernel1(load_test(a)),
+   //             kernel2(load_test(a, load_test(b)), load_test(new TensorPropertiesArgs(b)))
+   //          });
+
+   cout << load_test(a, load_test(a), load_test(a), a) << endl;
 
     //need to register AcceleratorDescription
     //so that the TACO can use it

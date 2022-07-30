@@ -1,18 +1,25 @@
 #ifndef ACCEL_INTERFACE_H
 #define ACCEL_INTERFACE_H
 
+#include <variant>
 #include "taco/index_notation/index_notation.h"
 #include "taco/lower/iterator.h"
 #include "taco/tensor.h"
 
+
 namespace taco {
 
 struct TransferTypeArgs;
+struct TensorPropertiesArgs;
+
+enum ArgType {USER_DEFINED, INTERNAL, UNKNOWN};
 
 class Argument : public util::IntrusivePtr<const TransferTypeArgs> {
   public: 
     Argument() : IntrusivePtr(nullptr) {}
     Argument(TransferTypeArgs * arg) : IntrusivePtr(arg) {}
+
+    ArgType getArgType() const;
 
     template<typename T>
     const T* getNode() const {
@@ -28,7 +35,8 @@ class Argument : public util::IntrusivePtr<const TransferTypeArgs> {
 //dimension of a user etc, and a way for them to call a special function
 
 struct TransferTypeArgs : public util::Manageable<TransferTypeArgs>{
-    TransferTypeArgs() = default;
+    TransferTypeArgs() : argType(UNKNOWN) {}
+    TransferTypeArgs(ArgType argType) : argType(argType) {}
     virtual ~TransferTypeArgs() = default;
     virtual void lower() const {  };
 
@@ -37,20 +45,22 @@ struct TransferTypeArgs : public util::Manageable<TransferTypeArgs>{
         return os;
     };
 
+    ArgType argType;
+
 };
 
 std::ostream& operator<<(std::ostream&,  const Argument&);
 
 struct TensorPropertiesArgs : public TransferTypeArgs{
 
-    TensorPropertiesArgs(ir::Expr irExpr) : irExpr(irExpr) {};
+    TensorPropertiesArgs(ir::Expr irExpr) : TransferTypeArgs(INTERNAL), irExpr(irExpr) {};
 
     TensorPropertiesArgs(TensorVar t);
 
-    template <typename T>
-    TensorPropertiesArgs(T t){
-      irExpr = ir::Var::make(t.getName(), t.getComponentType(),true, true);
-    }
+    // template <typename T>
+    // TensorPropertiesArgs(T t){
+    //   irExpr = ir::Var::make(t.getName(), t.getComponentType(),true, true);
+    // }
 
     void lower() const;
 
@@ -59,6 +69,7 @@ struct TensorPropertiesArgs : public TransferTypeArgs{
     std::ostream& print(std::ostream& os) const;
 
     ir::Expr irExpr; 
+    ArgType argType;
 
 };
 
@@ -67,7 +78,7 @@ struct TensorPropertiesArgs : public TransferTypeArgs{
 struct TransferWithArgs : public TransferTypeArgs{
     TransferWithArgs() = default;
 
-    TransferWithArgs(const std::string& name, const std::string& returnType , const std::vector<Argument>& args) : name(name), returnType(returnType), args(args) {};
+    TransferWithArgs(const std::string& name, const std::string& returnType , const std::vector<Argument>& args) : TransferTypeArgs(USER_DEFINED), name(name), returnType(returnType), args(args) {};
 
     // TransferWithArgs(const std::string& name, const std::string& returnType, const TransferWithArgs& transferWithArgs)
 
@@ -82,19 +93,42 @@ struct TransferWithArgs : public TransferTypeArgs{
     std::string name;
     std::string returnType;
     std::vector<Argument> args; 
+    ArgType argType;
 
 };
 
 std::ostream& operator<<(std::ostream&, const TransferWithArgs&);
+
+inline void addArg(std::vector<Argument>& argument, TensorVar t) { argument.push_back(new TensorPropertiesArgs(t)); };
+inline void addArg(std::vector<Argument>& argument, Argument arg) { argument.push_back(arg); };
+
+
+
+template <typename T, typename ...Next>
+void addArg(std::vector<Argument>& argument, T first, Next...next){
+    addArg(argument, first);
+    addArg(argument, (next)...); 
+}
+
 
 class TransferLoad{
   public:
     TransferLoad() = default;
     TransferLoad(const std::string& name, const std::string& returnType) : name(name), returnType(returnType) {};
 
-    template <typename... Exprs> 
-    Argument operator()(const Exprs... expr){
-      return new TransferWithArgs(name, returnType, {expr...});
+    template <typename Exprs> 
+    Argument operator()(Exprs expr)
+    { 
+      std::vector<Argument> argument;
+      addArg(argument, expr);
+      return new TransferWithArgs(name, returnType, {argument});
+    }
+
+    template <typename FirstT, typename ...Args>
+    Argument operator()(FirstT first, Args...remaining){
+      std::vector<Argument> argument;
+      addArg(argument, first, remaining...);
+      return  new TransferWithArgs(name, returnType, {argument});
     }
 
   private:
@@ -106,10 +140,21 @@ class TransferStore{
   public:
     TransferStore() = default;
     TransferStore(const std::string& name, const std::string& returnType) : name(name), returnType(returnType){};
+    
 
-    template <typename... Exprs> 
-    Argument operator()(const Exprs... expr){
-      return new TransferWithArgs(name, returnType, {expr...});
+    template <typename Exprs> 
+    Argument operator()(Exprs expr)
+    { 
+      std::vector<Argument> argument;
+      addArg(argument, expr);
+      return new TransferWithArgs(name, returnType, {argument});
+    }
+
+    template <typename FirstT, typename ...Args>
+    Argument operator()(FirstT first, Args...remaining){
+      std::vector<Argument> argument;
+      addArg(argument, first, remaining...);
+      return  new TransferWithArgs(name, returnType, {argument});
     }
 
   private:
@@ -184,6 +229,7 @@ class AcceleratorDescription {
 
     TransferType kernelTransfer;
     std::vector<ForeignFunctionDescription> funcDescriptions;
+    //files to include
 
 };
 
