@@ -27,26 +27,28 @@ bool trivialkernelChecker(IndexStmt expr){
 
 TEST(transferType, pluginInterface) {
 
-    TensorVar a("a", Type(taco::Float32, {Dimension()}), taco::dense);
-    TensorVar b("b", Type(taco::Float32, {Dimension()}), taco::dense);
-    IndexVar i("i");
+   TensorVar a("a", Type(taco::Float32, {Dimension()}), taco::dense);
+   TensorVar b("b", Type(taco::Float32, {Dimension()}), taco::dense);
+   IndexVar i("i");
 
-    // should basically call a C function 
-    // that can be included in header
-    TransferLoad load_test("load_test", "void");
-    TransferStore store_test("store_test", "void");
+   // should basically call a C function 
+   // that can be included in header
+   TransferLoad load_test("load_test", "void");
+   TransferStore store_test("store_test", "void");
 
-    TransferType kernelTransfer("test", load_test, store_test);
+   TransferType kernelTransfer("test", load_test, store_test);
 
-    ForeignFunctionDescription kernel1(a(i) = a(i) + b(i), "kernel1", "void", {}, trivialkernelChecker);
-    ForeignFunctionDescription kernel2(a(i) = b(i), "kernel2", "void", {}, trivialkernelChecker);
+   ForeignFunctionDescription kernel1("kernel1", "void", a(i) = a(i) + b(i), {}, trivialkernelChecker);
+   ForeignFunctionDescription kernel2( "kernel2", "void", a(i) = b(i), {}, trivialkernelChecker);
 
-   //  AcceleratorDescription accelDesc(kernelTransfer, 
-   //          {  kernel1(load_test(a)),
-   //             kernel2(load_test(a, load_test(b)), load_test(new TensorPropertiesArgs(b)))
-   //          });
+   AcceleratorDescription accelDesc(kernelTransfer, 
+            {  kernel1(load_test(a)),
+               kernel2(load_test(a, load_test(b)), load_test(b))
+            });
 
-   cout << load_test(a, load_test(a), load_test(a), a) << endl;
+   cout << load_test(a, load_test(a), load_test(a, load_test(a)), b, Dim(i)) << endl;
+
+   Tensor<double> A("A", {16}, Format{Dense});
 
     //need to register AcceleratorDescription
     //so that the TACO can use it

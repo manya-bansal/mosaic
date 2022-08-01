@@ -172,6 +172,31 @@ void TensorBase::reserve(size_t numCoordinates) {
   content->coordinateBuffer->resize(newSize);
 }
 
+void TensorBase::setProperty(std::string property){
+  content->properties.insert(property);
+}
+
+void TensorBase::eraseAllProperties(){
+  content->properties.clear();
+}
+
+void TensorBase::eraseProperty(std::string property){
+   content->properties.erase(property);
+}
+
+bool TensorBase::hasProperty(std::string property){
+  return content->properties.count(property);
+}
+
+bool TensorBase::hasProperties(std::set<std::string> desiredProperties){
+  return std::includes(content->properties.begin(), content->properties.end(), 
+                       desiredProperties.begin(), desiredProperties.end());
+}
+
+std::set<std::string> TensorBase::getProperties(){
+  return content->properties;
+}
+
 int TensorBase::getDimension(int mode) const {
   taco_uassert(mode < getOrder()) << "Invalid mode";
   return content->dimensions[mode];
@@ -593,6 +618,18 @@ std::shared_ptr<Module> TensorBase::getComputeKernel(const IndexStmt stmt) {
   }
   computeKernelsMutex.unlock();
   return nullptr;
+}
+
+void TensorBase::regsiterAccelerator(AcceleratorDescription acceleratorDescription){
+  acceleratorDescriptions.push_back(acceleratorDescription);
+}
+
+void TensorBase::regsiterAccelerators(std::vector<AcceleratorDescription> acceleratorDescriptionVec){
+  acceleratorDescriptions.insert(acceleratorDescriptions.end(), acceleratorDescriptionVec.begin(), acceleratorDescriptionVec.end());
+}
+
+std::vector<AcceleratorDescription> TensorBase::getRegisteredAccelerators(){
+  return acceleratorDescriptions;
 }
 
 void TensorBase::cacheComputeKernel(const IndexStmt stmt,

@@ -1,25 +1,24 @@
 #ifndef ACCEL_INTERFACE_H
 #define ACCEL_INTERFACE_H
 
-#include <variant>
 #include "taco/index_notation/index_notation.h"
 #include "taco/lower/iterator.h"
-#include "taco/tensor.h"
+
+// #include "taco/index_notation/internal_args.h"
 
 
 namespace taco {
 
 struct TransferTypeArgs;
 struct TensorPropertiesArgs;
+class TensorVar;
 
-enum ArgType {USER_DEFINED, INTERNAL, UNKNOWN};
+enum InternalArgType {DIM, TENSORVAR, EXPR, UNKNOWN};
 
 class Argument : public util::IntrusivePtr<const TransferTypeArgs> {
   public: 
     Argument() : IntrusivePtr(nullptr) {}
     Argument(TransferTypeArgs * arg) : IntrusivePtr(arg) {}
-
-    ArgType getArgType() const;
 
     template<typename T>
     const T* getNode() const {
@@ -35,8 +34,6 @@ class Argument : public util::IntrusivePtr<const TransferTypeArgs> {
 //dimension of a user etc, and a way for them to call a special function
 
 struct TransferTypeArgs : public util::Manageable<TransferTypeArgs>{
-    TransferTypeArgs() : argType(UNKNOWN) {}
-    TransferTypeArgs(ArgType argType) : argType(argType) {}
     virtual ~TransferTypeArgs() = default;
     virtual void lower() const {  };
 
@@ -45,22 +42,25 @@ struct TransferTypeArgs : public util::Manageable<TransferTypeArgs>{
         return os;
     };
 
-    ArgType argType;
-
 };
 
 std::ostream& operator<<(std::ostream&,  const Argument&);
 
+class Dim{
+  public:
+    Dim(IndexVar indexVar) : indexVar(indexVar) {}
+    IndexVar indexVar;
+};
+
 struct TensorPropertiesArgs : public TransferTypeArgs{
 
-    TensorPropertiesArgs(ir::Expr irExpr) : TransferTypeArgs(INTERNAL), irExpr(irExpr) {};
+    TensorPropertiesArgs() : internalArgType(UNKNOWN){}
 
-    TensorPropertiesArgs(TensorVar t);
+    explicit TensorPropertiesArgs(ir::Expr irExpr) : irExpr(irExpr), internalArgType(EXPR) {};
 
-    // template <typename T>
-    // TensorPropertiesArgs(T t){
-    //   irExpr = ir::Var::make(t.getName(), t.getComponentType(),true, true);
-    // }
+    explicit TensorPropertiesArgs(TensorVar t) :  t(t), internalArgType(TENSORVAR){}
+
+    explicit TensorPropertiesArgs(Dim dim) : indexVar(dim.indexVar), internalArgType(DIM){}
 
     void lower() const;
 
@@ -69,16 +69,16 @@ struct TensorPropertiesArgs : public TransferTypeArgs{
     std::ostream& print(std::ostream& os) const;
 
     ir::Expr irExpr; 
-    ArgType argType;
-
+    TensorVar t; 
+    IndexVar indexVar;
+    InternalArgType internalArgType;
 };
-
 
 
 struct TransferWithArgs : public TransferTypeArgs{
     TransferWithArgs() = default;
 
-    TransferWithArgs(const std::string& name, const std::string& returnType , const std::vector<Argument>& args) : TransferTypeArgs(USER_DEFINED), name(name), returnType(returnType), args(args) {};
+    TransferWithArgs(const std::string& name, const std::string& returnType , const std::vector<Argument>& args) : name(name), returnType(returnType), args(args) {};
 
     // TransferWithArgs(const std::string& name, const std::string& returnType, const TransferWithArgs& transferWithArgs)
 
@@ -93,16 +93,16 @@ struct TransferWithArgs : public TransferTypeArgs{
     std::string name;
     std::string returnType;
     std::vector<Argument> args; 
-    ArgType argType;
 
 };
 
 std::ostream& operator<<(std::ostream&, const TransferWithArgs&);
 
 inline void addArg(std::vector<Argument>& argument, TensorVar t) { argument.push_back(new TensorPropertiesArgs(t)); };
-inline void addArg(std::vector<Argument>& argument, Argument arg) { argument.push_back(arg); };
-
-
+inline void addArg(std::vector<Argument>& argument, Argument  arg) { argument.push_back(arg); };
+inline void addArg(std::vector<Argument>& argument, TensorPropertiesArgs * arg) { argument.push_back(arg); };
+inline void addArg(std::vector<Argument>& argument, TransferWithArgs * arg) { argument.push_back(arg); };
+inline void addArg(std::vector<Argument>& argument, Dim dim) { argument.push_back(new TensorPropertiesArgs(dim)); };
 
 template <typename T, typename ...Next>
 void addArg(std::vector<Argument>& argument, T first, Next...next){
@@ -200,25 +200,36 @@ class ConcreteAccelerateCodeGenerator {
 class ForeignFunctionDescription {
   public: 
     ForeignFunctionDescription() = default;
-    ForeignFunctionDescription( const IndexStmt& targetStmt, const std::string& functionName, const std::string& returnType, const std::vector<Argument>& args, 
-                                const std::vector<TensorVar>& temporaries, std::function<bool(taco::IndexStmt)> checker) 
-                                : targetStmt(targetStmt), functionName(functionName), returnType(returnType), args(args), temporaries(temporaries), checker(checker) {};
 
-    ForeignFunctionDescription( const IndexStmt& targetStmt, const std::string& functionName, const std::string& returnType,
-                                    const std::vector<TensorVar>& temporaries, std::function<bool(taco::IndexStmt)> checker) 
-                                    : targetStmt(targetStmt), functionName(functionName), returnType(returnType), temporaries(temporaries), checker(checker) {};
+    ForeignFunctionDescription( const std::string& functionName, const std::string& returnType, const IndexStmt& targetStmt,  const std::vector<Argument>& args, 
+                                const std::vector<TensorVar>& temporaries, std::function<bool(taco::IndexStmt)> checker) 
+                                : functionName(functionName), returnType(returnType), targetStmt(targetStmt), args(args), temporaries(temporaries), checker(checker) {};
+    
+    ForeignFunctionDescription( const std::string& functionName, const std::string& returnType, const IndexStmt& targetStmt,  const std::vector<Argument>& args, 
+                                const std::vector<TensorVar>& temporaries, std::function<bool(taco::IndexStmt)> checker,  const  std::map<TensorVar, std::set<std::string>>& propertites)
+                                : functionName(functionName), returnType(returnType), targetStmt(targetStmt), args(args), temporaries(temporaries), checker(checker), propertites(propertites) {};
+
+    ForeignFunctionDescription( const std::string& functionName, const std::string& returnType, const IndexStmt& targetStmt, 
+                                const std::vector<TensorVar>& temporaries, std::function<bool(taco::IndexStmt)> checker) 
+                                : functionName(functionName), returnType(returnType), targetStmt(targetStmt), temporaries(temporaries), checker(checker) {};
+
+    ForeignFunctionDescription( const std::string& functionName, const std::string& returnType, const IndexStmt& targetStmt, 
+                                const std::vector<TensorVar>& temporaries, std::function<bool(taco::IndexStmt)> checker,
+                                const  std::map<TensorVar, std::set<std::string>>& propertites)
+                                : functionName(functionName), returnType(returnType), targetStmt(targetStmt), temporaries(temporaries), checker(checker), propertites(propertites) {};
 
     template <typename... Exprs> 
     ForeignFunctionDescription operator()(const Exprs... expr){
-        return ForeignFunctionDescription(targetStmt, functionName, returnType, {expr...}, temporaries, checker);
+        return ForeignFunctionDescription(functionName, returnType, targetStmt, {expr...}, temporaries, checker);
     }
 
-    taco::IndexStmt targetStmt;
     std::string functionName;
     std::string returnType;
+    taco::IndexStmt targetStmt;
     std::vector<Argument> args;
     std::vector<taco::TensorVar> temporaries;
     std::function<bool(taco::IndexStmt)> checker;
+    std::map<TensorVar, std::set<std::string>> propertites;
 
 };
 
@@ -232,24 +243,6 @@ class AcceleratorDescription {
     //files to include
 
 };
-
-
-
-
-// class packData{
-//   packData()
-// }
-
-// class ReformatData{
-
-//   ReformatData(std::string name, taco::TransferLoad transferLoad, taco::TransferStore transferStore);
-
-//   private:
-//     struct Content;
-//     std::shared_ptr<Content> content;
-// };
-
-
 
 }
 #endif

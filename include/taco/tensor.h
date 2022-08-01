@@ -15,6 +15,7 @@
 #include "taco/codegen/module.h"
 
 #include "taco/index_notation/index_notation.h"
+#include "taco/index_notation/accel_interface.h"
 
 #include "taco/storage/storage.h"
 #include "taco/storage/index.h"
@@ -129,6 +130,29 @@ public:
 
   /// Reserve space for `numCoordinates` additional coordinates.
   void reserve(size_t numCoordinates);
+
+
+ /* --- Set Properties      --- */
+
+  /// annotate a tensor with certain properties 
+  /// so that autoshceudlar can exploit this knowledge
+  /// to call differing foriegn function interfaces.
+  void setProperty(std::string property);
+
+  /// erase all previosuly set properties
+  void eraseAllProperties();
+
+  /// erase particular property
+  void eraseProperty(std::string property);
+
+  /// does the tensor have the following property
+  bool hasProperty(std::string property);
+
+  /// test for a range of properties
+  bool hasProperties(std::set<std::string> desiredProperties);
+
+  /// returns all properties 
+  std::set<std::string> getProperties();
 
   /* --- Write Methods       --- */
 
@@ -419,6 +443,11 @@ public:
   /// Pack tensor into the given format
   void pack();
 
+  /// register a backend that we can autoschedule to
+  void regsiterAccelerator(AcceleratorDescription acceleratorDescription);
+  void regsiterAccelerators(std::vector<AcceleratorDescription> acceleratorDescriptionVec);
+  std::vector<AcceleratorDescription> getRegisteredAccelerators();
+
   /// Compile the tensor expression.
   void compile();
   void compileAccelerated(std::vector<IndexExpr> AcceleratedExpressions);
@@ -555,6 +584,7 @@ private:
                                 std::shared_ptr<ir::Module>>> KernelsCache;
   static KernelsCache computeKernels;
   static std::mutex computeKernelsMutex;
+  std::vector<AcceleratorDescription> acceleratorDescriptions;
 };
 
 /// A reference to a tensor. Tensor object copies copies the reference, and
@@ -920,6 +950,7 @@ struct TensorBase::Content {
   bool               needsCompute;
   std::vector<std::weak_ptr<TensorBase::Content>> dependentTensors;
   unsigned int       uniqueId;
+  std::set<std::string> properties;
 
   Content(std::string name, Datatype dataType, const std::vector<int>& dimensions,
           Format format, Literal fill)
