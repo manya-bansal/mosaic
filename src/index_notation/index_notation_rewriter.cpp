@@ -33,7 +33,6 @@ IndexStmt IndexStmtRewriterStrict::rewrite(IndexStmt s) {
     s = IndexStmt();
   }
   stmt = IndexStmt();
-  cout << s << endl;
   return s;
 }
 
@@ -476,6 +475,9 @@ IndexExpr replace(IndexExpr expr,
 
 IndexStmt replace(IndexStmt stmt,
                   const std::map<IndexExpr,IndexExpr>& substitutions) {
+  cout << stmt << "|";
+  cout << util::join(substitutions) << endl;
+  cout <<  ReplaceRewriter(substitutions,{}).rewrite(stmt) << endl;
   return ReplaceRewriter(substitutions,{}).rewrite(stmt);
 }
 

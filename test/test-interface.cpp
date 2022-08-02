@@ -77,21 +77,17 @@ TEST(transferType, concretepluginInterface) {
 
    IndexStmt stmt = A.getAssignment().concretize();
 
-   ConcreteAccelerateCodeGenerator concrete_cblas_saxpy("cblas_saxpy", "void",  B(i),  B(i) + C(i), {});
-   cout << concrete_cblas_saxpy(Dim(i), 1, A, 1, B, 1) << endl;
 
+   //the way rewrite works, you need an object to object copy 
+   ConcreteAccelerateCodeGenerator concrete_cblas_saxpy("cblas_saxpy", "void",  B(i), accelerateExpr, {});
+   cout << concrete_cblas_saxpy(Dim(i), 1, A, 1, B, 1) << endl;
 
    TensorVar accelWorkspace("accelWorkspace", Type(taco::Float32, {16}), taco::dense);
 
-   cout << stmt.accelerate(concrete_cblas_saxpy(Dim(i), 1, A, 1, B, 1), i, iw, accelWorkspace) << endl;
-   cout << stmt.precompute(accelerateExpr, i, iw, accelWorkspace) << endl;
-
-   cout << stmt << endl;
-
-
+   stmt = stmt.accelerate(concrete_cblas_saxpy(Dim(i), 1, A, 1, B, 1), i, iw, accelWorkspace);
    
 
-    //need to register AcceleratorDescription
-    //so that the TACO can use it
+   //need to register AcceleratorDescription
+   //so that the TACO can use it
 
 }

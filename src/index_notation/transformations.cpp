@@ -407,13 +407,12 @@ static IndexStmt eliminateRedundantReductions(IndexStmt stmt,
 
 IndexStmt Precompute::apply(IndexStmt stmt, std::string* reason) const {
 
-  cout << "######## " << getExpr() << endl;
   INIT_REASON(reason);
 
   // Precondition: The expr to precompute is not in `stmt`
   Assignment assignment = getAssignmentContainingExpr(stmt, getExpr());
-
-  cout << "precompute " << getExpr() << endl;
+  // cout << assignment << endl;
+  // cout << "precompute " << getExpr() << endl;
   if (!assignment.defined()) {
     *reason = "The expression (" + util::toString(getExpr()) + ") " +
               "is not in " + util::toString(stmt);
@@ -426,6 +425,8 @@ IndexStmt Precompute::apply(IndexStmt stmt, std::string* reason) const {
           forallIndexVars.push_back(op->indexVar);
         })
   );
+
+  // cout << util::join(forallIndexVars) << endl;
 
   ProvenanceGraph provGraph = ProvenanceGraph(stmt);
 
@@ -469,6 +470,7 @@ IndexStmt Precompute::apply(IndexStmt stmt, std::string* reason) const {
       auto assignment = ws(iw_vars) = replace(e, substitutions);
       if (!assignment.getReductionVars().empty())
         assignment = Assignment(assignment.getLhs(), assignment.getRhs(), Add());
+
       return assignment;
     }
 
@@ -531,16 +533,17 @@ IndexStmt Precompute::apply(IndexStmt stmt, std::string* reason) const {
         for (int index = 0; index < (int)i_vars.size(); index++) {
           substitutions[i_vars[index]] = iw_vars[index];
         }
-
+        // cout << "stmt-->" << s  << " |" << ws  << " |" <<  i_vars  << " |" << e << endl;
         // Build consumer by replacing with temporary (in replacedStmt)
         IndexStmt replacedStmt = replace(s, {{e, ws(i_vars) }});
+        // cout << "stmt??" << replacedStmt << endl;
         if (replacedStmt != s) {
           // Then modify the replacedStmt to have the correct foralls
           // by concretizing the consumer assignment
 
           auto consumerAssignment = getConsumerAssignment(replacedStmt, ws);
           auto consumerIndexVars = consumerAssignment.getIndexVars();
-
+          // cout << "map " << util::join(substitutions) << endl;
           auto producerAssignment = getProducerAssignment(ws, i_vars, iw_vars, e, substitutions);
           auto producerIndexVars = producerAssignment.getIndexVars();
 
@@ -570,20 +573,26 @@ IndexStmt Precompute::apply(IndexStmt stmt, std::string* reason) const {
           IndexStmt consumer = generateForalls(consumerAssignment, consumerForallIndexVars);
 
           IndexStmt producer = generateForalls(producerAssignment, producerForallIndexVars);
+
+          // taco_uerror << "here" << endl;
           Where where(consumer, producer);
 
           stmt = generateForalls(where, outerForallIndexVars);
           return;
         }
       }
+      // // cout << " node" << node << endl;
       IndexNotationRewriter::visit(node);
     }
   };
 
   PrecomputeRewriter rewriter;
   rewriter.precompute = *this;
+  // // cout << ">>>check STRUCT " << endl;
+  // // cout << rewriter.precompute << endl;
   rewriter.provGraph = provGraph;
   rewriter.forallIndexVarList = forallIndexVars;
+  // // cout << util::join(forallIndexVars) << endl;
   stmt = rewriter.rewrite(stmt);
 
   return stmt;
@@ -656,13 +665,12 @@ ConcreteAccelerateCodeGenerator AccelerateExpr::getCodeGenerator() const {
 
 
 IndexStmt AccelerateExpr::apply(IndexStmt stmt, std::string* reason) const {
-  cout << "######## " << getExpr() << endl;
   INIT_REASON(reason);
 
   // Precondition: The expr to precompute is not in `stmt`
   Assignment assignment = getAssignmentContainingExpr(stmt, getExpr());
+  static ConcreteAccelerateCodeGenerator accelGen = getCodeGenerator();
 
-  cout << "accel " << getExpr() << endl;
   if (!assignment.defined()) {
     *reason = "The expression (" + util::toString(getExpr()) + ") " +
               "is not in " + util::toString(stmt);
@@ -690,7 +698,7 @@ IndexStmt AccelerateExpr::apply(IndexStmt stmt, std::string* reason) const {
             function<void(const AssignmentNode*, Matcher*)>([&](const AssignmentNode* op, Matcher* ctx) {
               a = Assignment(op);
             }),
-            function<void(const WhereNode*, Matcher*)>([&](const WhereNode* op, Matcher* ctx) {
+            function<void(const AccelerateNode*, Matcher*)>([&](const AccelerateNode* op, Matcher* ctx) {
               ctx->match(op->consumer);
               ctx->match(op->producer);
             }),
@@ -781,6 +789,9 @@ IndexStmt AccelerateExpr::apply(IndexStmt stmt, std::string* reason) const {
           substitutions[i_vars[index]] = iw_vars[index];
         }
 
+        // TODO: REPLACE THIS WITH A BETTER MATCHER
+        // THAT DOES NOT DO AN OBJECT TO OBJECT MATCH 
+        // (CHECKS FOR MEM ADDR)
         // Build consumer by replacing with temporary (in replacedStmt)
         IndexStmt replacedStmt = replace(s, {{e, ws(i_vars) }});
         if (replacedStmt != s) {
@@ -819,9 +830,9 @@ IndexStmt AccelerateExpr::apply(IndexStmt stmt, std::string* reason) const {
           IndexStmt consumer = generateForalls(consumerAssignment, consumerForallIndexVars);
 
           IndexStmt producer = generateForalls(producerAssignment, producerForallIndexVars);
-          Where where(consumer, producer);
+          Accelerate accel(consumer, producer, accelGen);
 
-          stmt = generateForalls(where, outerForallIndexVars);
+          stmt = generateForalls(accel, outerForallIndexVars);
           return;
         }
       }
@@ -837,6 +848,7 @@ IndexStmt AccelerateExpr::apply(IndexStmt stmt, std::string* reason) const {
 
   return stmt;
 }
+
 
 void AccelerateExpr::print(std::ostream& os) const {
   os << "accelerate(" << getExpr() << ", " << getIVars() << ", "
@@ -1088,15 +1100,13 @@ IndexStmt Parallelize::apply(IndexStmt stmt, std::string* reason) const {
           }
         }
       }
-      cout << "yes" << endl;
+
       tensorVars = createIRTensorVars(stmt);
 
       assembledByUngroupedInsert.clear();
       for (const auto& result : getAssembledByUngroupedInsertion(stmt)) {
-        cout << "here" << endl;
         assembledByUngroupedInsert.push_back(tensorVars[result]);
       }
-      cout << "out" << endl;
       return rewrite(stmt);
     }
 
@@ -1246,9 +1256,7 @@ IndexStmt Parallelize::apply(IndexStmt stmt, std::string* reason) const {
 
   ParallelizeRewriter rewriter;
   rewriter.parallelize = *this;
-  cout << "out" << endl;
   IndexStmt rewritten = rewriter.rewriteParallel(stmt);
-  cout << " not out" << endl;
   if (!rewriter.reason.empty()) {
     *reason = rewriter.reason;
     return IndexStmt();
@@ -1756,7 +1764,6 @@ std::ostream& operator<<(std::ostream& os,
 
 IndexStmt parallelizeOuterLoop(IndexStmt stmt) {
   // get outer ForAll
-  cout << "inside parralleise" << endl;
   Forall forall;
   bool matched = false;
   match(stmt,
@@ -1792,9 +1799,7 @@ IndexStmt parallelizeOuterLoop(IndexStmt stmt) {
     return parallelized256;
   }
   else {
-    cout << "in" << endl;
     IndexStmt parallelized = Parallelize(forall.getIndexVar(), ParallelUnit::CPUThread, OutputRaceStrategy::NoRaces).apply(stmt, &reason);
-    cout << "out" << endl;
     if (parallelized == IndexStmt()) {
       // can't parallelize
       return stmt;

@@ -106,10 +106,10 @@ TEST(accelerateScheduleLower, simpleBlasCallFunction) {
 
   std::vector<taco::ir::Expr> args = {makeTensorArg(B), makeTensorArg(C), makeTensorArgVar(accelWorkspace)};
 
-
+   ConcreteAccelerateCodeGenerator concrete_cblas_saxpy("cblas_saxpy", "void",  B(i),  B(i) + C(i), {});
 //   ConcreteAccelerateCodeGenerator accelGen(accelerateExpr, "add", args, checker);
 
-   stmt = stmt.precompute(accelerateExpr, i, iw, accelWorkspace);
+   stmt = stmt.accelerate(concrete_cblas_saxpy, i, iw, accelWorkspace);
 
    cout << stmt << endl;
 
