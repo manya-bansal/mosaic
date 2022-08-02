@@ -1373,14 +1373,5 @@ IndexStmt generatePackCOOStmt(TensorVar tensor,
                               std::vector<IndexVar> indexVars, bool otherIsOnRight);
 
 
-
-
-// class ArgType : public util::Manageable<IndexVarRelNode>,
-//                 private util::Uncopyable {
-
-
-              
-// };
-
 }
 #endif

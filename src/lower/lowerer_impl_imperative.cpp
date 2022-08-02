@@ -2788,10 +2788,10 @@ Stmt LowererImplImperative::lowerAccelerate(Accelerate accelerate) {
 
   //TODO: NEED TO LOWER PRODUCER HERE 
   Stmt producer;
-  if (this->compute){
-    producer = VoidCall::make(accelGen.functionName, accelGen.args);
+  // if (this->compute){
+  //   producer = VoidCall::make(accelGen.functionName, accelGen.args);
     
-  }
+  // }
   
   whereConsumers.pop_back();
   whereTemps.pop_back();

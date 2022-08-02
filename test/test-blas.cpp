@@ -107,9 +107,9 @@ TEST(accelerateScheduleLower, simpleBlasCallFunction) {
   std::vector<taco::ir::Expr> args = {makeTensorArg(B), makeTensorArg(C), makeTensorArgVar(accelWorkspace)};
 
 
-  ConcreteAccelerateCodeGenerator accelGen(accelerateExpr, "add", args, checker);
+//   ConcreteAccelerateCodeGenerator accelGen(accelerateExpr, "add", args, checker);
 
-   stmt = stmt.accelerate(accelGen, i, iw, accelWorkspace);
+   // stmt = stmt.accelerate(accelGen, i, iw, accelWorkspace);
 
    A.compile(stmt);
    A.assemble();
