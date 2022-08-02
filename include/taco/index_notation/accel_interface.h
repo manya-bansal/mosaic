@@ -303,14 +303,14 @@ class ConcreteAccelerateCodeGenerator {
     ConcreteAccelerateCodeGenerator operator()(Exprs expr)
     {  std::vector<Argument> argument;
       addArg(argument, expr);
-      return ConcreteAccelerateCodeGenerator(functionName, returnType, rhs, lhs, argument, declarations);
+      return ConcreteAccelerateCodeGenerator(functionName, returnType, lhs, rhs, argument, declarations);
     }
 
     template <typename FirstT, typename ...Args>
     ConcreteAccelerateCodeGenerator operator()(FirstT first, Args...remaining){
         std::vector<Argument> argument;
         addArg(argument, first, remaining...);
-        return ConcreteAccelerateCodeGenerator(functionName, returnType, rhs, lhs, argument, declarations);
+        return ConcreteAccelerateCodeGenerator(functionName, returnType, lhs, rhs, argument, declarations);
     }
 
       std::string functionName;

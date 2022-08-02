@@ -406,10 +406,14 @@ static IndexStmt eliminateRedundantReductions(IndexStmt stmt,
 }
 
 IndexStmt Precompute::apply(IndexStmt stmt, std::string* reason) const {
+
+  cout << "######## " << getExpr() << endl;
   INIT_REASON(reason);
 
   // Precondition: The expr to precompute is not in `stmt`
   Assignment assignment = getAssignmentContainingExpr(stmt, getExpr());
+
+  cout << "precompute " << getExpr() << endl;
   if (!assignment.defined()) {
     *reason = "The expression (" + util::toString(getExpr()) + ") " +
               "is not in " + util::toString(stmt);
@@ -652,14 +656,13 @@ ConcreteAccelerateCodeGenerator AccelerateExpr::getCodeGenerator() const {
 
 
 IndexStmt AccelerateExpr::apply(IndexStmt stmt, std::string* reason) const {
+  cout << "######## " << getExpr() << endl;
   INIT_REASON(reason);
-
-  // cout << "in accel aply" << endl;
 
   // Precondition: The expr to precompute is not in `stmt`
   Assignment assignment = getAssignmentContainingExpr(stmt, getExpr());
-  static ConcreteAccelerateCodeGenerator accelGen = getCodeGenerator();
 
+  cout << "accel " << getExpr() << endl;
   if (!assignment.defined()) {
     *reason = "The expression (" + util::toString(getExpr()) + ") " +
               "is not in " + util::toString(stmt);
@@ -687,7 +690,7 @@ IndexStmt AccelerateExpr::apply(IndexStmt stmt, std::string* reason) const {
             function<void(const AssignmentNode*, Matcher*)>([&](const AssignmentNode* op, Matcher* ctx) {
               a = Assignment(op);
             }),
-            function<void(const AccelerateNode*, Matcher*)>([&](const AccelerateNode* op, Matcher* ctx) {
+            function<void(const WhereNode*, Matcher*)>([&](const WhereNode* op, Matcher* ctx) {
               ctx->match(op->consumer);
               ctx->match(op->producer);
             }),
@@ -816,9 +819,9 @@ IndexStmt AccelerateExpr::apply(IndexStmt stmt, std::string* reason) const {
           IndexStmt consumer = generateForalls(consumerAssignment, consumerForallIndexVars);
 
           IndexStmt producer = generateForalls(producerAssignment, producerForallIndexVars);
-          Accelerate accel(consumer, producer, accelGen);
+          Where where(consumer, producer);
 
-          stmt = generateForalls(accel, outerForallIndexVars);
+          stmt = generateForalls(where, outerForallIndexVars);
           return;
         }
       }

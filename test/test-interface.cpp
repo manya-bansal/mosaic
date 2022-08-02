@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <iostream>
 #include <vector>
+#include <Accelerate/Accelerate.h>
 #include <taco/index_notation/transformations.h>
 #include <codegen/codegen_c.h>
 #include <codegen/codegen_cuda.h>
@@ -9,10 +10,9 @@
 #include "test_tensors.h"
 #include "taco/tensor.h"
 #include "taco/index_notation/index_notation.h"
-#include "taco/index_notation/accel_interface.h"
 #include "codegen/codegen.h"
 #include "taco/lower/lowerer_impl_imperative.h"
-#include "taco/index_notation/accelerate_notation.h"
+#include "taco/index_notation/accel_interface.h"
 #include "taco/lower/lower.h"
 #include "taco/ir_tags.h"
 
@@ -58,40 +58,38 @@ TEST(transferType, pluginInterface) {
 
 TEST(transferType, concretepluginInterface) {
 
-  Tensor<float> A("A", {16}, Format{Dense}, 0);
-  Tensor<float> B("B", {16}, Format{Dense});
-  Tensor<float> C("C", {16}, Format{Dense});
-  TensorVar a("a", Type(taco::Float32, {Dimension()}), taco::dense);
+   Tensor<float32_t> A("A", {16}, Format{Dense}, 0);
+   Tensor<float32_t> B("B", {16}, Format{Dense});
+   Tensor<float32_t> C("C", {16}, Format{Dense});
 
-  IndexVar i("i");
+   for (int i = 0; i < 16; i++) {
+      C.insert({i}, (float32_t) i);
+      B.insert({i}, (float32_t) i);
+   }
 
-  for (int i = 0; i < 16; i++) {
-      C.insert({i}, (float) i);
-      B.insert({i}, (float) i);
-  }
+   C.pack();
+   B.pack();
 
-  C.pack();
-  B.pack();
+   IndexVar i("i");
+   IndexVar iw("iw");
+   IndexExpr accelerateExpr = B(i) + C(i);
+   A(i) = accelerateExpr;
 
-   // should basically call a C function 
-   // that can be included in header
-   TransferLoad load_test("load_test", "void");
-   TransferStore store_test("store_test", "void");
+   IndexStmt stmt = A.getAssignment().concretize();
 
-   TransferType kernelTransfer("test", load_test, store_test);
-
-   ForeignFunctionDescription cblas_saxpy("cblas_saxpy", "void", C(i),  A(i) + B(i), {}, trivialkernelChecker);
-
-   AcceleratorDescription accelDesc(kernelTransfer, 
-            {  cblas_saxpy(Dim(i), A),
-            });
-   
-   cout << cblas_saxpy(Dim(i), 1, A, 1, B, 1) << endl;
-
-
-   ConcreteAccelerateCodeGenerator concrete_cblas_saxpy("cblas_saxpy", "void",  A(i),  A(i) + B(i), {});
-
+   ConcreteAccelerateCodeGenerator concrete_cblas_saxpy("cblas_saxpy", "void",  B(i),  B(i) + C(i), {});
    cout << concrete_cblas_saxpy(Dim(i), 1, A, 1, B, 1) << endl;
+
+
+   TensorVar accelWorkspace("accelWorkspace", Type(taco::Float32, {16}), taco::dense);
+
+   cout << stmt.accelerate(concrete_cblas_saxpy(Dim(i), 1, A, 1, B, 1), i, iw, accelWorkspace) << endl;
+   cout << stmt.precompute(accelerateExpr, i, iw, accelWorkspace) << endl;
+
+   cout << stmt << endl;
+
+
+   
 
     //need to register AcceleratorDescription
     //so that the TACO can use it

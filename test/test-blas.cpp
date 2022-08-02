@@ -109,19 +109,21 @@ TEST(accelerateScheduleLower, simpleBlasCallFunction) {
 
 //   ConcreteAccelerateCodeGenerator accelGen(accelerateExpr, "add", args, checker);
 
-   // stmt = stmt.accelerate(accelGen, i, iw, accelWorkspace);
+   stmt = stmt.precompute(accelerateExpr, i, iw, accelWorkspace);
 
-   A.compile(stmt);
-   A.assemble();
-   A.compute();
+   cout << stmt << endl;
 
-   auto it = iterate<float32_t>(A);
-   auto iit = it.begin();
+   // A.compile(stmt);
+   // A.assemble();
+   // A.compute();
 
-   while (iit != it.end()){
-      cout << "val " << iit->second << endl;
-      ++iit;
-   }
+   // auto it = iterate<float32_t>(A);
+   // auto iit = it.begin();
+
+   // while (iit != it.end()){
+   //    cout << "val " << iit->second << endl;
+   //    ++iit;
+   // }
 
 }
 

@@ -254,7 +254,6 @@ void IndexNotationPrinter::visit(const WhereNode* op) {
   os << "where(";
   op->consumer.accept(this);
   os << ", ";
-  cout << "test " << op->producer << endl;
   op->producer.accept(this);
   os << ")";
 }
