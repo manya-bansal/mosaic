@@ -2753,7 +2753,6 @@ Stmt LowererImplImperative::makeAcceleratedProducer(Accelerate accelerate){
     std::map<TensorVar, ir::Expr> newTensorVars;
 
     TensorVar temporary = accelerate.getTemporary();
-    // TensorVar newVar(resultVar.getType(), 0);
 
     std::vector<IndexVar> newIndices;
     std::vector<IndexVar> newPrecomputeIndices;
@@ -2767,15 +2766,10 @@ Stmt LowererImplImperative::makeAcceleratedProducer(Accelerate accelerate){
     IndexStmt newAssign = IndexStmt(new AssignmentNode(resultAccess, resultAccess, IndexExpr())).concretize();
     newAssign = newAssign.precompute(resultAccess, newIndices, newPrecomputeIndices, temporary);
 
-
-    newTensorVars.insert({resultVar, ir::Var::make(resultVar.getName(), resultVar.getType().getDataType(), true, true, false)});
-    newTensorVars.insert({temporary, ir::Var::make(temporary.getName(), temporary.getType().getDataType(), true, true, false)});
-
     LowererImplImperative newLower;
     newLower.lower(newAssign, "assemble", true, true, false, false);
 
     copyTemp = newLower.getProducerCode();
-    cout << util::join(newLower.getHeader()) << endl;
   
   }
 
