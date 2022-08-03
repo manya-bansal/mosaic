@@ -655,6 +655,7 @@ Iterator Iterators::levelIterator(ModeAccess modeAccess) const
   taco_iassert(util::contains(content->levelIterators, modeAccess))
       << "Cannot find " << modeAccess << " in "
       << util::join(content->levelIterators) << "\n" << modeAccess.getAccess();
+  content->levelIterators.at(modeAccess);
   return content->levelIterators.at(modeAccess);
 }
 
@@ -681,6 +682,10 @@ Iterator Iterators::modeIterator(IndexVar indexVar) const
 
 std::map<IndexVar, Iterator> Iterators::modeIterators() const {
   return content->modeIterators;
+}
+
+std::map<Iterator,ModeAccess> Iterators::modeAccesses() const {
+  return content->modeAccesses;
 }
 
 

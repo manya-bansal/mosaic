@@ -86,8 +86,9 @@ TEST(transferType, concretepluginInterface) {
 
    stmt = stmt.accelerate(concrete_cblas_saxpy(Dim(i), 1, A, 1, B, 1), i, iw, accelWorkspace);
    
+   A.compile(stmt);
+   A.assemble();
+   A.compute();
 
-   //need to register AcceleratorDescription
-   //so that the TACO can use it
 
 }

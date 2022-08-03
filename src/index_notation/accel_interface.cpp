@@ -80,14 +80,6 @@ std::ostream& operator<<(std::ostream& os, const ForeignFunctionDescription& for
   return os;
 }
 
-
-//should always have one assign
-//TODO: ADD SOME ERROR CHECKING FOR THIS
-taco::IndexExpr ConcreteAccelerateCodeGenerator::getExpr() {
-
-  return rhs;
-} 
-
 std::ostream& operator<<(std::ostream& os,  const ConcreteAccelerateCodeGenerator& accelGen){
   os << accelGen.returnType << " " << accelGen.functionName << "(" << util::join(accelGen.args) 
     << ") targets " << accelGen.lhs << " = " << accelGen.rhs << endl;

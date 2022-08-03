@@ -247,9 +247,26 @@ protected:
     op->contents.accept(this);
   }
 
+  bool checkMatchVar(vector<Expr> exprs, Expr expr){
+    if (!isa<Var>(expr)){
+      return false;
+    }
+    const ir::Var * exprVar = to<Var>(expr);
+
+    for (auto e: exprs){
+      if (isa<Var>(e)) {
+        const ir::Var * eVar = to<Var>(e);
+        if (eVar->name == exprVar->name){
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   virtual void visit(const GetProperty *op) {
-    if (!util::contains(inputTensors, op->tensor) &&
-        !util::contains(outputTensors, op->tensor)) {
+    if (!checkMatchVar(inputTensors, op->tensor) &&
+        !checkMatchVar(outputTensors, op->tensor)) {
       // Don't create header unpacking code for temporaries
       return;
     }
@@ -328,7 +345,18 @@ void CodeGen_C::visit(const Function* func) {
   // find all the vars that are not inputs or outputs and declare them
   resetUniqueNameCounters();
   FindVars varFinder(func->inputs, func->outputs, this);
+  // out << "//" << util::join(func->inputs) << endl;
   func->body.accept(&varFinder);
+  // out << "//";
+  // for (auto& vardecl: varFinder.varDecls){
+  //   out << vardecl.first << "->" << vardecl.second << "|";
+  // }
+  // out << "varmap ";
+  // cout << "####" << func->body << "####" << endl;
+  // for (auto& vardecl: varFinder.varMap){
+  //   out << vardecl.first << "->" << vardecl.second << "|";
+  // }
+  out << endl;
   varMap = varFinder.varMap;
   localVars = varFinder.localVars;
 

@@ -273,9 +273,21 @@ protected:
   /// Retrieve the values array of the tensor var.
   ir::Expr getValuesArray(TensorVar) const;
 
+  ir::Stmt makeAcceleratedProducer(Accelerate accelerate);
+
   /// Retrieve the dimension of an index variable (the values it iterates over),
   /// which is encoded as the interval [0, result).
   ir::Expr getDimension(IndexVar indexVar) const;
+
+  std::map<IndexVar, ir::Expr>  getDimensions() const {return dimensions;};
+
+  std::map<IndexVar, ir::Expr> getIndexVarToExprMap() const {return indexVarToExprMap;};
+
+  std::map<IndexVar, std::vector<ir::Expr>> getUnderivedBounds() const {return underivedBounds;};
+
+  std::set<IndexVar> getDefinedIndexVars() const {return definedIndexVars;};
+
+  Iterators getIterators() const {return iterators;};
 
   /// Retrieve the chain of iterators that iterate over the access expression.
   std::vector<Iterator> getIterators(Access) const;
@@ -414,6 +426,9 @@ protected:
   /// Create an expression that can be used to filter out (some) zeros in the
   /// result
   ir::Expr generateAssembleGuard(IndexExpr expr);
+
+  ir::Stmt getProducerCode() { return producerCode; };
+  std::vector<ir::Stmt> getHeader() { return header; };
 
   /// Check whether the result tensor should be assembled by ungrouped insertion
   bool isAssembledByUngroupedInsertion(TensorVar result);
@@ -606,6 +621,10 @@ private:
 
   /// Visitor methods can add code to emit it to the function footer.
   std::vector<ir::Stmt> footer;
+
+  //QUESTION: Is there a better way to get the producer code
+  //produced in the lowerWhere into makeAcceleratedProducer?
+  ir::Stmt producerCode;
 
   class Visitor;
   friend class Visitor;

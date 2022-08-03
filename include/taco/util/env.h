@@ -24,6 +24,7 @@ inline std::string getFromEnv(std::string flag, std::string dflt) {
 }
 
 inline std::string getTmpdir() {
+  // std::cout << "!!!! temp dir !!!!!! " << std::endl;
   if (cachedtmpdir == ""){
     // use posix logic for finding a temp dir
     auto tmpdir = getFromEnv("TMPDIR", "/tmp/");
@@ -59,11 +60,11 @@ inline std::string getTmpdir() {
     }
 
     cachedtmpdir = tacotmpdir;
-
+    std::cout << "!!!! temp dir !!!!!! " << tacotmpdir << std::endl;
     //cleanup unless we are in debug mode
-    #ifndef TACO_DEBUG
-      atexit(cachedtmpdirCleanup);
-    #endif
+    // #ifndef TACO_DEBUG
+      // atexit(cachedtmpdirCleanup);
+    // #endif
   }
   // std::cout << cachedtmpdir << std::endl;
   return cachedtmpdir;

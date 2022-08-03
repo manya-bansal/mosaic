@@ -286,7 +286,8 @@ class AcceleratorDescription {
 
 class ConcreteAccelerateCodeGenerator {
   public: 
-
+    // TODO: Add some error checking here so users 
+    // dont pass in any legal IndexExpr
     ConcreteAccelerateCodeGenerator() = default;
 
     ConcreteAccelerateCodeGenerator(const std::string& functionName, const std::string& returnType, const taco::IndexExpr& lhs, const taco::IndexExpr& rhs, const std::vector<Argument>& args, 
@@ -297,7 +298,9 @@ class ConcreteAccelerateCodeGenerator {
                                     const std::vector<taco::TensorVar>& declarations)
                                     : functionName(functionName), returnType(returnType), lhs(lhs), rhs(rhs), declarations(declarations) {}
   
-    taco::IndexExpr getExpr();
+    taco::IndexExpr getExpr() {return rhs;};
+    taco::IndexExpr getLHS()     {return lhs;};
+    taco::IndexExpr getRHS()      {return rhs;};
 
     template <typename Exprs> 
     ConcreteAccelerateCodeGenerator operator()(Exprs expr)

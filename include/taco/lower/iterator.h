@@ -279,6 +279,10 @@ public:
 
   std::map<IndexVar, Iterator> modeIterators() const;
 
+  std::map<Iterator,ModeAccess>  modeAccesses() const;
+
+  
+
 private:
   void createAccessIterators(Access access, Format format, ir::Expr tensorIR, ProvenanceGraph provGraph,
                              const std::map<TensorVar, ir::Expr> &tensorVars);
