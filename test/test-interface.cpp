@@ -53,6 +53,7 @@ TEST(transferType, pluginInterface) {
     //need to register AcceleratorDescription
     //so that the TACO can use it
 
+
 }
 
 
@@ -99,4 +100,36 @@ TEST(transferType, concretepluginInterface) {
    ASSERT_TENSOR_EQ(expected, A);
 
 
+}
+
+TEST(transferType, endToEndPlugin) {
+
+   TensorVar a("a", Type(taco::Float32, {Dimension()}), taco::dense);
+   TensorVar b("b", Type(taco::Float32, {Dimension()}), taco::dense);
+   IndexVar i("i");
+
+   // should basically call a C function 
+   // that can be included in header
+   TransferLoad load_test("load_test", "void");
+   TransferStore store_test("store_test", "void");
+
+   TransferType kernelTransfer("test", load_test, store_test);
+
+   ForeignFunctionDescription cblas_saxpy("cblas_saxpy", "void", a(i),  a(i) + b(i), {}, trivialkernelChecker);
+
+   AcceleratorDescription accelDesc(kernelTransfer, {cblas_saxpy(Dim(i), 1, b, 1, a, 1)});
+
+   Tensor<double> A("A", {16}, Format{Dense});
+   Tensor<float32_t> B("B", {16}, Format{Dense});
+   Tensor<float32_t> C("C", {16}, Format{Dense});
+
+   A(i) = B(i) + C(i) + B(i);
+
+   A.regsiterAccelerator(accelDesc);
+   A.accelerateOn();
+   A.compile();
+
+    //need to register AcceleratorDescription
+    //so that the TACO can use it
+    
 }

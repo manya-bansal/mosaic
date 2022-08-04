@@ -144,6 +144,7 @@ TensorBase::TensorBase(string name, Datatype ctype, vector<int> dimensions,
   content->needsCompile = false;
   content->needsAssemble = false;
   content->needsCompute = false;
+  content->accelerate = false;
 
   content->coordinateBuffer = shared_ptr<vector<char>>(new vector<char>);
   content->coordinateBufferUsed = 0;
@@ -632,6 +633,14 @@ std::vector<AcceleratorDescription> TensorBase::getRegisteredAccelerators(){
   return acceleratorDescriptions;
 }
 
+void TensorBase::accelerateOn(){
+  content->accelerate = true;
+}
+
+void TensorBase::accelerateOff(){
+  content->accelerate = false;
+}
+
 void TensorBase::cacheComputeKernel(const IndexStmt stmt,
                                     const std::shared_ptr<Module> kernel) {
   computeKernelsMutex.lock();
@@ -670,12 +679,17 @@ void TensorBase::compile() {
   CollisionFinder dupes = CollisionFinder();
   assignment.getLhs().accept(&dupes);
   assignment.accept(&dupes);
-
   IndexStmt stmt = makeConcreteNotation(makeReductionNotation(assignment));
   stmt = reorderLoopsTopologically(stmt);
   stmt = insertTemporaries(stmt);
   stmt = parallelizeOuterLoop(stmt);
-  compile(stmt, content->assembleWhileCompute);
+  
+  if (content->accelerate){
+    compileAccelerated(stmt, getRegisteredAccelerators(), content->assembleWhileCompute);
+  }
+  else{
+    compile(stmt, content->assembleWhileCompute);
+  }
 }
 
 void TensorBase::compileAccelerated(std::vector<IndexExpr> AcceleratedExpressions) {
@@ -715,7 +729,7 @@ void TensorBase::compileAccelerated(std::vector<IndexExpr> AcceleratedExpression
   // stmt = reorderLoopsTopologically(stmt);
   stmt = insertTemporaries(stmt); 
   stmt = parallelizeOuterLoop(stmt);
-  compileAccelerated(stmt, AcceleratedExpressions, content->assembleWhileCompute);
+  compileAccelerated(stmt, getRegisteredAccelerators(), content->assembleWhileCompute);
 }
 
 void TensorBase::compile(taco::IndexStmt stmt, bool assembleWhileCompute) {
@@ -750,7 +764,7 @@ void TensorBase::compile(taco::IndexStmt stmt, bool assembleWhileCompute) {
   cacheComputeKernel(concretizedAssign, content->module);
 }
 
-void TensorBase::compileAccelerated(taco::IndexStmt stmt, std::vector<IndexExpr> AcceleratedExpressions, bool assembleWhileCompute) {
+void TensorBase::compileAccelerated(taco::IndexStmt stmt, std::vector<AcceleratorDescription> acceleratorDescriptions, bool assembleWhileCompute) {
   if (!needsCompile()) {
     return;
   }
@@ -759,7 +773,7 @@ void TensorBase::compileAccelerated(taco::IndexStmt stmt, std::vector<IndexExpr>
   IndexStmt concretizedAssign = stmt;
 
   cout << "calling concretizeAccelerated" << endl;
-  IndexStmt stmtToCompile = stmt.concretizeAccelerated(AcceleratedExpressions);
+  IndexStmt stmtToCompile = stmt.concretizeAccelerated(acceleratorDescriptions);
   
   cout << stmtToCompile << endl;
 

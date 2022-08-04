@@ -1,5 +1,4 @@
 #include "taco/index_notation/index_notation_rewriter.h"
-
 #include "taco/index_notation/index_notation_nodes.h"
 #include "taco/util/collections.h"
 
@@ -462,6 +461,7 @@ struct ReplaceTensorVars : public IndexNotationRewriter {
     }
   }
 };
+
 
 IndexExpr replace(IndexExpr expr,
                   const std::map<IndexExpr,IndexExpr>& substitutions) {

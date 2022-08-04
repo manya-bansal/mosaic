@@ -17,10 +17,12 @@
 #include "taco/index_notation/properties.h"
 #include "taco/index_notation/intrinsic.h"
 #include "taco/index_notation/schedule.h"
+#include "taco/index_notation/accel_interface.h"
 #include "taco/index_notation/transformations.h"
 #include "taco/index_notation/index_notation_nodes.h"
 #include "taco/index_notation/index_notation_rewriter.h"
 #include "taco/index_notation/index_notation_printer.h"
+#include "taco/index_notation/accelerate_search.h"
 #include "taco/ir/ir.h"
 #include "taco/codegen/module.h"
 #include "taco/tensor.h"
@@ -2184,20 +2186,30 @@ IndexStmt IndexStmt::concretize() const {
   if (isReductionNotation(stmt)) {
     stmt = makeConcreteNotation(stmt);
   }
-  // cout << stmt << endl;
   return stmt;
 }
 
-IndexStmt IndexStmt::concretizeAccelerated(std::vector<IndexExpr> AcceleratedExpressions) const {
+IndexStmt IndexStmt::concretizeAccelerated(const std::vector<AcceleratorDescription>& acceleratorDescriptions) const {
 
   IndexStmt stmt = *this;
   if (isEinsumNotation(stmt)) {
     stmt = makeReductionNotation(stmt);
   }
+  
   if (isReductionNotation(stmt)) {
-    stmt = makeAcceleratedConcreteNotation(stmt, AcceleratedExpressions);
+    stmt = makeConcreteNotation(stmt);
   }
-  // cout << stmt << endl;
+  stmt = autoAccelerate(stmt, acceleratorDescriptions);
+  return stmt;
+}
+
+IndexStmt IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<AcceleratorDescription> acceleratorDescriptions) const{
+  
+  for (auto descripton: acceleratorDescriptions){
+    cout << util::join(allMatchedOpPatterns(stmt, descripton)) << endl;
+  }
+    
+  taco_uerror << stmt;
   return stmt;
 }
 

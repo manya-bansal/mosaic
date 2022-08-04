@@ -77,6 +77,8 @@ struct SuchThatNode;
 class IndexExprVisitorStrict;
 class IndexStmtVisitorStrict;
 
+class AcceleratorDescription;
+
 /// Return true if the index statement is of the given subtype.  The subtypes
 /// are Assignment, Forall, Where, Sequence, and Multi.
 template <typename SubType> bool isa(IndexExpr);
@@ -600,7 +602,9 @@ public:
 
   /// Takes any index notation and concretizes unknowns to make it concrete notation
   IndexStmt concretize() const;
-  IndexStmt concretizeAccelerated(std::vector<IndexExpr> AcceleratedExpressions) const;
+  IndexStmt concretizeAccelerated(const std::vector<AcceleratorDescription>& acceleratorDescriptions) const;
+
+  IndexStmt autoAccelerate(IndexStmt stmt, std::vector<AcceleratorDescription> acceleratorDescriptions) const;
 
   /// Takes any index notation and concretizes unknowns to make it concrete notation
   /// given a Provenance Graph of indexVars

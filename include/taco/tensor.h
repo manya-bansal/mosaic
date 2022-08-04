@@ -448,12 +448,15 @@ public:
   void regsiterAccelerators(std::vector<AcceleratorDescription> acceleratorDescriptionVec);
   std::vector<AcceleratorDescription> getRegisteredAccelerators();
 
+  void accelerateOn();
+  void accelerateOff();
+
   /// Compile the tensor expression.
   void compile();
   void compileAccelerated(std::vector<IndexExpr> AcceleratedExpressions);
 
   void compile(IndexStmt stmt, bool assembleWhileCompute=false);
-  void compileAccelerated(taco::IndexStmt stmt, std::vector<IndexExpr> AcceleratedExpressions, bool assembleWhileCompute=false);
+  void compileAccelerated(taco::IndexStmt stmt, std::vector<AcceleratorDescription> acceleratorDescriptions, bool assembleWhileCompute=false);
 
   /// Assemble the tensor storage, including index and value arrays.
   void assemble();
@@ -585,6 +588,7 @@ private:
   static KernelsCache computeKernels;
   static std::mutex computeKernelsMutex;
   std::vector<AcceleratorDescription> acceleratorDescriptions;
+  
 };
 
 /// A reference to a tensor. Tensor object copies copies the reference, and
@@ -951,6 +955,7 @@ struct TensorBase::Content {
   std::vector<std::weak_ptr<TensorBase::Content>> dependentTensors;
   unsigned int       uniqueId;
   std::set<std::string> properties;
+  bool                accelerate;
 
   Content(std::string name, Datatype dataType, const std::vector<int>& dimensions,
           Format format, Literal fill)

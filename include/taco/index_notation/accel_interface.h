@@ -246,6 +246,8 @@ class ForeignFunctionDescription {
                                 const  std::map<TensorVar, std::set<std::string>>& propertites)
                                 : functionName(functionName), returnType(returnType), lhs(lhs), rhs(rhs), temporaries(temporaries), checker(checker), propertites(propertites) {};
 
+    taco::IndexExpr getExpr() const {return rhs;};
+
     template <typename Exprs> 
     ForeignFunctionDescription operator()(Exprs expr)
     {  std::vector<Argument> argument;
@@ -280,6 +282,7 @@ class AcceleratorDescription {
     AcceleratorDescription(const TransferType& kernelTransfer, const std::vector<ForeignFunctionDescription>& funcDescriptions, const std::string& includeFile)
                            : kernelTransfer(kernelTransfer), funcDescriptions(funcDescriptions), includeFile(includeFile) {};
 
+    std::vector<ForeignFunctionDescription> getFuncDescriptions() const {return funcDescriptions;};
     TransferType kernelTransfer;
     std::vector<ForeignFunctionDescription> funcDescriptions;
     //files to include
