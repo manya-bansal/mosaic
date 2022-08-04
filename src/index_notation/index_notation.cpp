@@ -2205,10 +2205,21 @@ IndexStmt IndexStmt::concretizeAccelerated(const std::vector<AcceleratorDescript
 
 IndexStmt IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<AcceleratorDescription> acceleratorDescriptions) const{
   
+  //TODO: need to add logic for repeated matches
   for (auto descripton: acceleratorDescriptions){
-    cout << util::join(allMatchedOpPatterns(stmt, descripton)) << endl;
-  }
+    for (auto funcDesc: descripton.getFuncDescriptions()){  
+      std::vector<IndexExpr> matchedExprs = allMatchedOpPatterns(stmt, funcDesc.getExpr());
+        for (auto expr: matchedExprs){
+          if (hasPreciseMatch(expr, funcDesc.getExpr())){
+
+              //now we need to construct the construct the Concret
+              //code gen objec to use the accelerate stmt 
+          }
+        }
+    }
     
+
+  }
   taco_uerror << stmt;
   return stmt;
 }

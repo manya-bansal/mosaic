@@ -10,12 +10,14 @@
 namespace taco {
 
 
-enum OpTypes {ADD, SUB, NEG, MUL, SQRT, DIV};
+enum OpTypes {ADD, SUB, NEG, MUL, SQRT, DIV, REDUX};
+enum EndNodeTypes {ACCESS, LITERALNODE, INDEX_VAR};
 
-std::vector<IndexExpr> allMatchedOpPatterns(IndexStmt s, AcceleratorDescription accelDesc);
+std::vector<IndexExpr> allMatchedOpPatterns(IndexStmt s, IndexExpr e);
 
 bool hasOpMatch(IndexExpr e1, IndexExpr e2);
 
+bool hasPreciseMatch(IndexExpr e1, IndexExpr e2);
 
 
 }
