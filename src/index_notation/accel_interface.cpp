@@ -6,6 +6,10 @@ using namespace std;
 
 namespace taco {
 
+ArgType Argument::getArgType() const{
+  if (ptr == NULL) return UNKNOWN;
+  return getNode()->argType;
+}
 
 std::ostream& operator<<(std::ostream& os,  const Argument& argument){
   return argument.getNode()->print(os);

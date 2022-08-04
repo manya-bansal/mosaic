@@ -16,7 +16,7 @@ class TensorVar;
 template <typename CType>
 class Tensor;
 
-enum InternalArgType {DIM, TENSORVAR, TENSOR, EXPR, LITERAL, USER_DEFINED, UNKNOWN};
+enum ArgType {DIM, TENSORVAR, TENSOR, EXPR, LITERAL, USER_DEFINED, UNKNOWN};
 
 // QUESTION: do we need different functions for runtime versus compile time 
 // conversions (are there good cases for compile time conversions?)
@@ -32,14 +32,22 @@ class Argument : public util::IntrusivePtr<const TransferTypeArgs> {
     }
 
     const TransferTypeArgs* getNode() const {
-    return ptr;
+      return ptr;
     }
+
+    ArgType getArgType() const;
+
+    
 };
 
 //We need to types of args: args that we provide to the user
 //dimension of a user etc, and a way for them to call a special function
 
 struct TransferTypeArgs : public util::Manageable<TransferTypeArgs>{
+
+    TransferTypeArgs() : argType(UNKNOWN) {}
+    TransferTypeArgs(ArgType argType) : argType(argType) {}
+
     virtual ~TransferTypeArgs() = default;
     virtual void lower() const {  };
 
@@ -48,25 +56,23 @@ struct TransferTypeArgs : public util::Manageable<TransferTypeArgs>{
         return os;
     };
 
+    ArgType argType;
 };
 
 std::ostream& operator<<(std::ostream&,  const Argument&);
 
 struct TensorVarArg : public TransferTypeArgs{
-    explicit TensorVarArg(const TensorVar& t) : internalArgType(TENSOR), t(t) {}
+    explicit TensorVarArg(const TensorVar& t) : TransferTypeArgs(TENSOR), t(t) {}
 
     std::ostream& print(std::ostream& os) const override;
-
-    InternalArgType internalArgType;
     TensorVar t; 
 };
 
 struct irExprArg : public TransferTypeArgs{
-    explicit irExprArg(const ir::Expr& irExpr) : internalArgType(EXPR), irExpr(irExpr) {}
+    explicit irExprArg(const ir::Expr& irExpr) : TransferTypeArgs(EXPR), irExpr(irExpr) {}
 
     std::ostream& print(std::ostream& os) const override;
 
-    InternalArgType internalArgType;
     ir::Expr irExpr; 
 };
 
@@ -77,22 +83,20 @@ class Dim{
 };
 
 struct DimArg : public TransferTypeArgs{
-    explicit DimArg(const Dim& dim): internalArgType(DIM), indexVar(dim.indexVar) {}
+    explicit DimArg(const Dim& dim): TransferTypeArgs(DIM), indexVar(dim.indexVar) {}
 
     std::ostream& print(std::ostream& os) const override;
 
-    InternalArgType internalArgType;
     IndexVar indexVar;
 };
 
 struct TensorArg : public TransferTypeArgs{
     template <typename CType>
     explicit TensorArg(const Tensor<CType>& tensor) : 
-    internalArgType(TENSOR), irExpr(ir::Var::make(tensor.getName(), tensor.getComponentType(),true, true)) {}
+    TransferTypeArgs(TENSOR), irExpr(ir::Var::make(tensor.getName(), tensor.getComponentType(),true, true)) {}
 
     std::ostream& print(std::ostream& os) const override;
 
-    InternalArgType internalArgType;
     ir::Expr irExpr; 
 };
 
@@ -100,7 +104,7 @@ struct TensorArg : public TransferTypeArgs{
 struct LiteralArg : public TransferTypeArgs{
     template <typename T> 
     LiteralArg(Datatype datatype, T val) 
-      : internalArgType(LITERAL), datatype(datatype) {
+      : TransferTypeArgs(LITERAL), datatype(datatype) {
         this->val = malloc(sizeof(T));
         *static_cast<T*>(this->val) = val;
     }
@@ -115,7 +119,6 @@ struct LiteralArg : public TransferTypeArgs{
 
     std::ostream& print(std::ostream& os) const override;
 
-    InternalArgType internalArgType;
     void * val; 
     Datatype datatype;
 };
@@ -124,7 +127,7 @@ struct LiteralArg : public TransferTypeArgs{
 struct TransferWithArgs : public TransferTypeArgs{
     TransferWithArgs() = default;
 
-    TransferWithArgs(const std::string& name, const std::string& returnType , const std::vector<Argument>& args) : name(name), returnType(returnType), args(args) {};
+    TransferWithArgs(const std::string& name, const std::string& returnType , const std::vector<Argument>& args) : TransferTypeArgs(USER_DEFINED), name(name), returnType(returnType), args(args) {};
 
     // TransferWithArgs(const std::string& name, const std::string& returnType, const TransferWithArgs& transferWithArgs)
 
@@ -298,9 +301,12 @@ class ConcreteAccelerateCodeGenerator {
                                     const std::vector<taco::TensorVar>& declarations)
                                     : functionName(functionName), returnType(returnType), lhs(lhs), rhs(rhs), declarations(declarations) {}
   
-    taco::IndexExpr getExpr() {return rhs;};
-    taco::IndexExpr getLHS()     {return lhs;};
-    taco::IndexExpr getRHS()      {return rhs;};
+    taco::IndexExpr getExpr() const     {return rhs;};
+    taco::IndexExpr getLHS() const      {return lhs;};
+    taco::IndexExpr getRHS() const      {return rhs;};
+    std::vector<Argument> getArguments() const {return args;};
+    std::string getReturnType() const   {return returnType;};
+    std::string getFunctionName() const {return functionName;};
 
     template <typename Exprs> 
     ConcreteAccelerateCodeGenerator operator()(Exprs expr)

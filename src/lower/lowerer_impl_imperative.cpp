@@ -2719,6 +2719,61 @@ vector<Stmt> LowererImplImperative::codeToInitializeTemporary(Accelerate acceler
   return {initializeTemporary, freeTemporary};
 }
 
+ir::Expr LowererImplImperative::lowerArgument(Argument argument, TensorVar resultVar, TensorVar temporary, bool replace){
+
+    switch(argument.getArgType()){
+      case DIM:
+        return dimensions.at(argument.getNode<DimArg>()->indexVar);
+
+      case TENSOR:
+        { 
+          ir::Expr expr = argument.getNode<TensorArg>()->irExpr;
+          const ir::Var * exprVar = to<Var>(expr);
+
+          if(exprVar->name == resultVar.getName()){
+            if (replace){
+              return getValuesArray(temporary);
+            }
+          }
+
+          for (auto var: tensorVars){
+            cout << var.first.getName() << endl;
+            if (exprVar->name == var.first.getName()){
+              return getValuesArray(var.first);
+            }
+          }
+          
+        }
+        break;
+      case TENSORVAR:
+        {
+          TensorVar t = argument.getNode<TensorVarArg>()->t;
+          if (t.getName() == resultVar.getName() && replace){
+          return getValuesArray(temporary);
+          }
+          return getValuesArray(t);
+        }
+
+      case EXPR:
+        return argument.getNode<irExprArg>()->irExpr;
+
+      case LITERAL:
+        {
+          switch (argument.getNode<LiteralArg>()->datatype.getKind()){
+            case Datatype::UInt32:
+              {int val = argument.getNode<LiteralArg>()->getVal<int32_t>();
+              return ir::Literal::make(val);}
+            default:
+              taco_uerror << "Unimplimented" << endl;
+            }
+
+        }
+      default:
+        taco_uerror << "Should not reach" << endl;
+    }
+  return Expr();
+}
+
 Stmt LowererImplImperative::makeAcceleratedProducer(Accelerate accelerate){
   // first check whether the rhs contains the rhs
   // if it does, we know that the ffi is setting
@@ -2747,13 +2802,12 @@ Stmt LowererImplImperative::makeAcceleratedProducer(Accelerate accelerate){
   //value of the result var into teh temp var
   //the result will aotomatically be stored in the
   //temp var
+  TensorVar temporary = accelerate.getTemporary();
+
   Stmt copyTemp;
   if(setResultByRef){
 
     std::map<TensorVar, ir::Expr> newTensorVars;
-
-    TensorVar temporary = accelerate.getTemporary();
-
     std::vector<IndexVar> newIndices;
     std::vector<IndexVar> newPrecomputeIndices;
     for (int i = 0; i < resultVar.getOrder(); i++){
@@ -2768,12 +2822,36 @@ Stmt LowererImplImperative::makeAcceleratedProducer(Accelerate accelerate){
 
     LowererImplImperative newLower;
     newLower.lower(newAssign, "assemble", true, true, false, false);
-
     copyTemp = newLower.getProducerCode();
   
   }
 
-  return copyTemp;
+  //now we need to make the ffi call 
+  std::vector<Argument> arguments = accelGen.getArguments();
+  std::vector<Expr> loweredArguments;
+
+  Stmt functionCall; 
+  if (accelGen.getReturnType() == "void"){
+    // if return value is not set by reference
+    // then we have no idea how it is being set
+    assert(setResultByRef == true);
+    for (auto argument: arguments){
+      if (argument.getArgType() != USER_DEFINED){
+        loweredArguments.push_back(lowerArgument(argument, resultVar, temporary, true));
+      }else{
+        taco_uerror << "Unimplimented: need to add user defined" << endl;
+      }
+      functionCall = VoidCall::make(accelGen.getFunctionName(), loweredArguments);
+
+    }
+
+  }else{
+    taco_uerror << "Unimplimented" << endl;
+  }
+
+  //TODO: Emit code to check for error code
+  
+  return Block::make({copyTemp, functionCall});
 }
 
 

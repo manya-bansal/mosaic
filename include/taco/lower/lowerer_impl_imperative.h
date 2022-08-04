@@ -7,7 +7,7 @@
 #include <set>
 #include <memory>
 #include <taco/index_notation/index_notation.h>
-
+#include <taco/index_notation/accel_interface.h>
 #include "taco/lower/iterator.h"
 #include "taco/util/scopedset.h"
 #include "taco/util/uncopyable.h"
@@ -263,7 +263,6 @@ protected:
   /// Check whether the lowerer should generate code to compute result values.
   bool generateComputeCode() const;
 
-
   /// Retrieve a tensor IR variable.
   ir::Expr getTensorVar(TensorVar) const;
 
@@ -274,6 +273,9 @@ protected:
   ir::Expr getValuesArray(TensorVar) const;
 
   ir::Stmt makeAcceleratedProducer(Accelerate accelerate);
+
+  /// lowerArgs for ffi
+  ir::Expr lowerArgument(Argument argument, TensorVar resulltVar, TensorVar temporary, bool replace=false);
 
   /// Retrieve the dimension of an index variable (the values it iterates over),
   /// which is encoded as the interval [0, result).

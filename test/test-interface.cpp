@@ -79,16 +79,24 @@ TEST(transferType, concretepluginInterface) {
 
 
    //the way rewrite works, you need an object to object copy 
-   ConcreteAccelerateCodeGenerator concrete_cblas_saxpy("cblas_saxpy", "void",  B(i), accelerateExpr, {});
+   ConcreteAccelerateCodeGenerator concrete_cblas_saxpy("cblas_saxpy", "void",  C(i), accelerateExpr, {});
    cout << concrete_cblas_saxpy(Dim(i), 1, A, 1, B, 1) << endl;
 
    TensorVar accelWorkspace("accelWorkspace", Type(taco::Float32, {16}), taco::dense);
 
-   stmt = stmt.accelerate(concrete_cblas_saxpy(Dim(i), 1, A, 1, B, 1), i, iw, accelWorkspace);
+   stmt = stmt.accelerate(concrete_cblas_saxpy(Dim(i), 1, B, 1, C, 1), i, iw, accelWorkspace);
    
    A.compile(stmt);
    A.assemble();
    A.compute();
+
+   auto it = iterate<float32_t>(A);
+   auto iit = it.begin();
+
+   while (iit != it.end()){
+      cout << "val " << iit->second << endl;
+      ++iit;
+   }
 
 
 }
