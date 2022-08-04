@@ -61,6 +61,7 @@ TEST(transferType, concretepluginInterface) {
    Tensor<float32_t> A("A", {16}, Format{Dense}, 0);
    Tensor<float32_t> B("B", {16}, Format{Dense});
    Tensor<float32_t> C("C", {16}, Format{Dense});
+   Tensor<float32_t> expected("expected", {16}, Format{Dense});
 
    for (int i = 0; i < 16; i++) {
       C.insert({i}, (float32_t) i);
@@ -90,13 +91,12 @@ TEST(transferType, concretepluginInterface) {
    A.assemble();
    A.compute();
 
-   auto it = iterate<float32_t>(A);
-   auto iit = it.begin();
+   expected(i) = accelerateExpr;
+   expected.compile();
+   expected.assemble();
+   expected.compute();
 
-   while (iit != it.end()){
-      cout << "val " << iit->second << endl;
-      ++iit;
-   }
+   ASSERT_TENSOR_EQ(expected, A);
 
 
 }
