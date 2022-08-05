@@ -319,6 +319,8 @@ public:
   /// ```
   Assignment operator+=(const IndexExpr&);
 
+  std::pair<IndexExpr, IndexExpr> operator<=(IndexExpr);
+
   typedef AccessNode Node;
 
   // Equality and comparison are overridden on Access to perform a deep

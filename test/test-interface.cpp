@@ -107,7 +107,7 @@ TEST(transferType, endToEndPlugin) {
    TensorVar y("y", Type(taco::Float32, {Dimension()}), taco::dense);
    IndexVar i("i");
 
-   ForeignFunctionDescription cblas_saxpy("cblas_saxpy", "void", x(i),  x(i) + y(i), {}, trivialkernelChecker);
+   ForeignFunctionDescription cblas_saxpy("cblas_saxpy", "void", x(i) <=  x(i) + y(i), {}, trivialkernelChecker);
 
    AcceleratorDescription accelDesc({cblas_saxpy(Dim(i), 1, y, 1, x, 1)});
 

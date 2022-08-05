@@ -248,6 +248,10 @@ class ForeignFunctionDescription {
                                 const  std::map<TensorVar, std::set<std::string>>& propertites)
                                 : functionName(functionName), returnType(returnType), lhs(lhs), rhs(rhs), temporaries(temporaries), checker(checker), propertites(propertites) {};
 
+    ForeignFunctionDescription( const std::string& functionName, const std::string& returnType, std::pair<IndexExpr, IndexExpr> assign,
+                                const std::vector<TensorVar>& temporaries, std::function<bool(taco::IndexStmt)> checker)
+                                : functionName(functionName), returnType(returnType), lhs(assign.first), rhs(assign.second), temporaries(temporaries), checker(checker) {};
+
     taco::IndexExpr getExpr() const {return rhs;};
     std::vector<Argument> getArgs() const {return args;};
     taco::IndexExpr getLHS() const      {return lhs;};

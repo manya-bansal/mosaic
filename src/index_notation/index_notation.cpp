@@ -1569,6 +1569,10 @@ Assignment Access::operator+=(const IndexExpr& expr) {
   return assignment;
 }
 
+std::pair<IndexExpr, IndexExpr> Access::operator<=(IndexExpr expr){
+  return std::make_pair(*this, expr);
+}
+
 template <> bool isa<Access>(IndexExpr e) {
   return isa<AccessNode>(e.ptr);
 }
