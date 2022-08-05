@@ -3024,6 +3024,7 @@ struct TensorVar::Content {
   Format format;
   Schedule schedule;
   Literal fill;
+  std::set<std::string> properties;
 };
 
 TensorVar::TensorVar() : content(nullptr) {
@@ -3113,6 +3114,31 @@ void TensorVar::setName(std::string name) {
 
 bool TensorVar::defined() const {
   return content != nullptr;
+}
+
+void TensorVar::setProperty(std::string property) const{
+  content->properties.insert(property);
+}
+
+void TensorVar::eraseAllProperties() const{
+  content->properties.clear();
+}
+
+void TensorVar::eraseProperty(std::string property) const{
+   content->properties.erase(property);
+}
+
+bool TensorVar::hasProperty(std::string property) const{
+  return content->properties.count(property);
+}
+
+bool TensorVar::hasProperties(std::set<std::string> desiredProperties) const{
+  return std::includes(content->properties.begin(), content->properties.end(), 
+                       desiredProperties.begin(), desiredProperties.end());
+}
+
+std::set<std::string> TensorVar::getProperties() const{
+  return content->properties;
 }
 
 const Access TensorVar::operator()(const std::vector<IndexVar>& indices) const {

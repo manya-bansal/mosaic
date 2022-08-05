@@ -120,6 +120,8 @@ bool hasOpMatch(IndexExpr e1, IndexExpr e2){
 
 }
 
+/// Checks whether e1 is a precise match for e2
+/// this is not a symmetric relation! 
 bool hasPreciseMatch(IndexExpr e1, IndexExpr e2, ArgumentMap& argumentMap){
 
     assert(hasOpMatch(e1, e2));
@@ -185,6 +187,9 @@ bool hasPreciseMatch(IndexExpr e1, IndexExpr e2, ArgumentMap& argumentMap){
                     Shape shape1  = node1->tensorVar.getType().getShape();
                     Shape shape2  = node2->tensorVar.getType().getShape();
 
+                    // this is what makes this check non-symmetric
+                    // if e2 has dynamic dimension, but e1 has fixed dimension, 
+                    // then we retrun true, but not vice-a-versa
                     for (int i = 0; i<order; i++){
                         if (shape2.getDimension(i).isVariable()){
                             continue;
@@ -197,11 +202,17 @@ bool hasPreciseMatch(IndexExpr e1, IndexExpr e2, ArgumentMap& argumentMap){
                         }
                     }
 
+                    if (!node1->tensorVar.hasProperties(node2->tensorVar.getProperties())){
+                         return false;
+                    }
+
                     tensors[node2->tensorVar] = node1->tensorVar;
 
                     for (size_t i = 0; i < node2->indexVars.size(); i++){
                         indexVars[node2->indexVars[i]] = node1->indexVars[i];
                     }
+
+                   
 
                     break;
                 }

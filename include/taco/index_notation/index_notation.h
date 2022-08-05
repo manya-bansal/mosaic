@@ -1205,6 +1205,26 @@ public:
   /// Check whether the tensor variable is defined.
   bool defined() const;
 
+    /// annotate a tensor with certain properties 
+  /// so that autoshceudlar can exploit this knowledge
+  /// to call differing foriegn function interfaces.
+  void setProperty(std::string property) const;
+
+  /// erase all previosuly set properties
+  void eraseAllProperties() const;
+
+  /// erase particular property
+  void eraseProperty(std::string property) const;
+
+  /// does the tensor have the following property
+  bool hasProperty(std::string property) const;
+
+  /// test for a range of properties
+  bool hasProperties(std::set<std::string> desiredProperties) const;
+
+  /// returns the set of all properties
+  std::set<std::string> getProperties() const;
+
   /// Create an index expression that accesses (reads) this tensor.
   const Access operator()(const std::vector<IndexVar>& indices) const;
 
