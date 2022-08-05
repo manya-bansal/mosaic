@@ -217,6 +217,7 @@ class TransferStore{
 
 class TransferType{
   public:
+    TransferType() = default;
     TransferType(std::string name, taco::TransferLoad transferLoad, taco::TransferStore transferStore);
   private:
     struct Content;
@@ -281,6 +282,7 @@ std::ostream& operator<<(std::ostream&, const ForeignFunctionDescription&);
 
 class AcceleratorDescription {
   public:
+    AcceleratorDescription(const std::vector<ForeignFunctionDescription>& funcDescriptions) : funcDescriptions(funcDescriptions) {};
     AcceleratorDescription(const TransferType& kernelTransfer, const std::vector<ForeignFunctionDescription>& funcDescriptions) : kernelTransfer(kernelTransfer), funcDescriptions(funcDescriptions) {};
     AcceleratorDescription(const TransferType& kernelTransfer, const std::vector<ForeignFunctionDescription>& funcDescriptions, const std::string& includeFile)
                            : kernelTransfer(kernelTransfer), funcDescriptions(funcDescriptions), includeFile(includeFile) {};

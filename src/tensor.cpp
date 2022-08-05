@@ -621,11 +621,11 @@ std::shared_ptr<Module> TensorBase::getComputeKernel(const IndexStmt stmt) {
   return nullptr;
 }
 
-void TensorBase::regsiterAccelerator(AcceleratorDescription acceleratorDescription){
+void TensorBase::registerAccelerator(AcceleratorDescription acceleratorDescription){
   acceleratorDescriptions.push_back(acceleratorDescription);
 }
 
-void TensorBase::regsiterAccelerators(std::vector<AcceleratorDescription> acceleratorDescriptionVec){
+void TensorBase::registerAccelerators(std::vector<AcceleratorDescription> acceleratorDescriptionVec){
   acceleratorDescriptions.insert(acceleratorDescriptions.end(), acceleratorDescriptionVec.begin(), acceleratorDescriptionVec.end());
 }
 

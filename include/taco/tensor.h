@@ -444,8 +444,8 @@ public:
   void pack();
 
   /// register a backend that we can autoschedule to
-  void regsiterAccelerator(AcceleratorDescription acceleratorDescription);
-  void regsiterAccelerators(std::vector<AcceleratorDescription> acceleratorDescriptionVec);
+  void registerAccelerator(AcceleratorDescription acceleratorDescription);
+  void registerAccelerators(std::vector<AcceleratorDescription> acceleratorDescriptionVec);
   std::vector<AcceleratorDescription> getRegisteredAccelerators();
 
   void accelerateOn();

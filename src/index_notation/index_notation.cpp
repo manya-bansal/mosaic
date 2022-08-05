@@ -2218,7 +2218,7 @@ IndexStmt IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<AcceleratorDescr
               //code gen object to use the accelerate stmt 
               assert(argumentMap.possible);
 
-              for (auto arg: funcDesc.getArgs()){
+              for (auto arg : funcDesc.getArgs()){
                 switch (arg.getArgType())
                 {
                 case DIM:
@@ -2277,7 +2277,6 @@ IndexStmt IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<AcceleratorDescr
     
 
   }
-  // taco_uerror << stmt;
   return stmt;
 }
 

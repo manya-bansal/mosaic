@@ -79,8 +79,7 @@ TEST(transferType, concretepluginInterface) {
 
    IndexStmt stmt = A.getAssignment().concretize();
 
-
-   //the way rewrite works, you need an object to object copy 
+   //due the way rewrite indexstmt works, need the same object
    ConcreteAccelerateCodeGenerator concrete_cblas_saxpy("cblas_saxpy", "void",  C(i), accelerateExpr, {});
    cout << concrete_cblas_saxpy(Dim(i), 1, A, 1, B, 1) << endl;
 
@@ -104,21 +103,15 @@ TEST(transferType, concretepluginInterface) {
 
 TEST(transferType, endToEndPlugin) {
 
-   TensorVar a("a", Type(taco::Float32, {Dimension()}), taco::dense);
-   TensorVar b("b", Type(taco::Float32, {Dimension()}), taco::dense);
+   TensorVar x("x", Type(taco::Float32, {Dimension()}), taco::dense);
+   TensorVar y("y", Type(taco::Float32, {Dimension()}), taco::dense);
    IndexVar i("i");
 
-   // should basically call a C function 
-   // that can be included in header
-   TransferLoad load_test("load_test", "void");
-   TransferStore store_test("store_test", "void");
+   ForeignFunctionDescription cblas_saxpy("cblas_saxpy", "void", x(i),  x(i) + y(i), {}, trivialkernelChecker);
 
-   TransferType kernelTransfer("test", load_test, store_test);
+   AcceleratorDescription accelDesc({cblas_saxpy(Dim(i), 1, y, 1, x, 1)});
 
-   ForeignFunctionDescription cblas_saxpy("cblas_saxpy", "void", a(i),  a(i) + b(i), {}, trivialkernelChecker);
-
-   AcceleratorDescription accelDesc(kernelTransfer, {cblas_saxpy(Dim(i), 1, b, 1, a, 1)});
-
+   // actual computation
    Tensor<float32_t> A("A", {16}, Format{Dense});
    Tensor<float32_t> B("B", {16}, Format{Dense});
    Tensor<float32_t> C("C", {16}, Format{Dense});
@@ -133,9 +126,14 @@ TEST(transferType, endToEndPlugin) {
 
    A(i) = B(i) + C(i);
 
-   A.regsiterAccelerator(accelDesc);
+   // register the description
+   A.registerAccelerator(accelDesc);
+   // enable targeting
    A.accelerateOn();
+   
    A.compile();
+   A.assemble();
+   A.compute();
 
    Tensor<float32_t> expected("expected", {16}, Format{Dense});
    expected(i) = B(i) + C(i);
@@ -144,7 +142,5 @@ TEST(transferType, endToEndPlugin) {
    expected.compute();
 
    ASSERT_TENSOR_EQ(expected, A);
-    //need to register AcceleratorDescription
-    //so that the TACO can use it
-    
+
 }
