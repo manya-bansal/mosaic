@@ -84,6 +84,16 @@ std::ostream& operator<<(std::ostream& os, const ForeignFunctionDescription& for
   return os;
 }
 
+// void ConcreteAccelerateCodeGenerator::operator=(const ConcreteAccelerateCodeGenerator& concreteAccelerateCodeGenerator)
+// ConcreteAccelerateCodeGenerator& ConcreteAccelerateCodeGenerator::operator=(const ConcreteAccelerateCodeGenerator& concreteAccelerateCodeGenerator) {
+//       std::cout << concreteAccelerateCodeGenerator.rhs << std::endl;
+//       std::cout << concreteAccelerateCodeGenerator << std::endl;
+//       std::cout << *this <<std::endl;
+//       return *this;
+//       // return ConcreteAccelerateCodeGenerator(concreteAccelerateCodeGenerator.functionName, concreteAccelerateCodeGenerator.returnType, concreteAccelerateCodeGenerator.lhs,
+//                                               // concreteAccelerateCodeGenerator.rhs, concreteAccelerateCodeGenerator.args, concreteAccelerateCodeGenerator.declarations);
+// }
+
 std::ostream& operator<<(std::ostream& os,  const ConcreteAccelerateCodeGenerator& accelGen){
   os << accelGen.returnType << " " << accelGen.functionName << "(" << util::join(accelGen.args) 
     << ") targets " << accelGen.lhs << " = " << accelGen.rhs << endl;

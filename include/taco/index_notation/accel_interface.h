@@ -62,7 +62,7 @@ struct TransferTypeArgs : public util::Manageable<TransferTypeArgs>{
 std::ostream& operator<<(std::ostream&,  const Argument&);
 
 struct TensorVarArg : public TransferTypeArgs{
-    explicit TensorVarArg(const TensorVar& t) : TransferTypeArgs(TENSOR), t(t) {}
+    explicit TensorVarArg(const TensorVar& t) : TransferTypeArgs(TENSORVAR), t(t) {}
 
     std::ostream& print(std::ostream& os) const override;
     TensorVar t; 
@@ -84,6 +84,7 @@ class Dim{
 
 struct DimArg : public TransferTypeArgs{
     explicit DimArg(const Dim& dim): TransferTypeArgs(DIM), indexVar(dim.indexVar) {}
+    explicit DimArg(const IndexVar& indexVar): TransferTypeArgs(DIM), indexVar(indexVar) {}
 
     std::ostream& print(std::ostream& os) const override;
 
@@ -247,6 +248,8 @@ class ForeignFunctionDescription {
                                 : functionName(functionName), returnType(returnType), lhs(lhs), rhs(rhs), temporaries(temporaries), checker(checker), propertites(propertites) {};
 
     taco::IndexExpr getExpr() const {return rhs;};
+    std::vector<Argument> getArgs() const {return args;};
+    taco::IndexExpr getLHS() const      {return lhs;};
 
     template <typename Exprs> 
     ForeignFunctionDescription operator()(Exprs expr)
@@ -325,6 +328,8 @@ class ConcreteAccelerateCodeGenerator {
         return ConcreteAccelerateCodeGenerator(functionName, returnType, lhs, rhs, argument, declarations);
     }
 
+    // ConcreteAccelerateCodeGenerator& operator=(const ConcreteAccelerateCodeGenerator& concreteAccelerateCodeGenerator);
+
       std::string functionName;
       std::string returnType;
       //there is a smal problem with using 
@@ -337,6 +342,7 @@ class ConcreteAccelerateCodeGenerator {
 };
 
 std::ostream& operator<<(std::ostream&,  const ConcreteAccelerateCodeGenerator&);
+
 
 }
 #endif

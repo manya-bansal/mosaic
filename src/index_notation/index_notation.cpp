@@ -2205,22 +2205,79 @@ IndexStmt IndexStmt::concretizeAccelerated(const std::vector<AcceleratorDescript
 
 IndexStmt IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<AcceleratorDescription> acceleratorDescriptions) const{
   
+  ArgumentMap argumentMap;
+  std::vector<Argument>  newArgs; 
   //TODO: need to add logic for repeated matches
   for (auto descripton: acceleratorDescriptions){
     for (auto funcDesc: descripton.getFuncDescriptions()){  
       std::vector<IndexExpr> matchedExprs = allMatchedOpPatterns(stmt, funcDesc.getExpr());
-        for (auto expr: matchedExprs){
-          if (hasPreciseMatch(expr, funcDesc.getExpr())){
 
-              //now we need to construct the construct the Concret
-              //code gen objec to use the accelerate stmt 
+        for (auto expr: matchedExprs){
+          if (hasPreciseMatch(expr, funcDesc.getExpr(), argumentMap)){
+              //now we need to construct the construct the concrete
+              //code gen object to use the accelerate stmt 
+              assert(argumentMap.possible);
+
+              for (auto arg: funcDesc.getArgs()){
+                switch (arg.getArgType())
+                {
+                case DIM:
+                  {
+                    newArgs.push_back(new DimArg(argumentMap.indexVars[arg.getNode<DimArg>()->indexVar]));
+                    break;
+                  }
+                case TENSOR:
+                  taco_uerror << "Unimplemented: Tensor Case" << endl;
+                  break; 
+                case TENSORVAR:
+                  newArgs.push_back(new TensorVarArg(argumentMap.tensors[arg.getNode<TensorVarArg>()->t]));
+                  break;
+                case LITERAL:
+                  newArgs.push_back(arg);
+                  break;
+                default:
+                  cout << arg.getArgType() << endl;
+                  taco_uerror << "Unimplemented" << endl;
+                  break;
+                }
+              }
+            
+            std::vector<IndexVar> indexingVec;
+            for (auto var: funcDesc.getLHS().getIndexVars()){
+              indexingVec.push_back(argumentMap.indexVars[var]);
+            } 
+
+            cout << expr << endl;
+
+            assert(isa<AccessNode>(funcDesc.getLHS().ptr));
+
+            auto accessOriginal = to<AccessNode>(funcDesc.getLHS().ptr);
+            
+            IndexExpr e = static_cast<IndexExpr>(Access(argumentMap.tensors[accessOriginal->tensorVar], indexingVec));
+            // Access lhs = Access(argumentMap.tensors[accessOriginal->tensorVar], indexingVec);
+            ConcreteAccelerateCodeGenerator concreteCodeGen = ConcreteAccelerateCodeGenerator(funcDesc.functionName, funcDesc.returnType, e, expr, newArgs, funcDesc.temporaries);
+            // TensorVar t = TensorVar(accessOriginal->tensorVar.getType());
+
+            
+            TensorVar t = TensorVar(Type(expr.getDataType(), expr.getShape()));
+            // TensorVar t("accelWorkspace", Type(taco::Float32, {16}), taco::dense);
+
+            cout << concreteCodeGen << endl;
+
+            std::vector<IndexVar> oldVars = expr.getIndexVars();
+            std::vector<IndexVar> precomputeVars;
+
+            for (size_t i = 0; i < oldVars.size(); i++) { precomputeVars.push_back(IndexVar()); }
+
+            stmt = stmt.accelerate(concreteCodeGen, oldVars, precomputeVars, t);
+
           }
         }
     }
     
 
   }
-  taco_uerror << stmt;
+  // taco_uerror << stmt;
   return stmt;
 }
 
@@ -2311,8 +2368,11 @@ IndexStmt IndexStmt::accelerate(ConcreteAccelerateCodeGenerator accelGen, std::v
     IndexVar i = i_vars.at(l);
     IndexVar iw = iw_vars.at(l);
 
+    std::cout  << accelGen << std::endl;
     if (i != iw) {
+      std::cout << "in" << endl;
       IndexVarRel rel = IndexVarRel(new AccelerateRelNode(i, iw, accelGen));
+      std::cout << "out" << endl;
       transformed = Transformation(AddSuchThatPredicates({rel})).apply(transformed, &reason);
       // cout << "transformed " << transformed << endl; 
       if (!transformed.defined()) {

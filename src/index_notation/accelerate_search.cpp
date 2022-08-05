@@ -120,7 +120,7 @@ bool hasOpMatch(IndexExpr e1, IndexExpr e2){
 
 }
 
-bool hasPreciseMatch(IndexExpr e1, IndexExpr e2){
+bool hasPreciseMatch(IndexExpr e1, IndexExpr e2, ArgumentMap& argumentMap){
 
     assert(hasOpMatch(e1, e2));
 
@@ -146,6 +146,9 @@ bool hasPreciseMatch(IndexExpr e1, IndexExpr e2){
 
     std::vector<IndexExpr> e1Nodes;
     std::vector<IndexExpr> e2Nodes;
+
+    std::map<TensorVar, TensorVar> tensors; 
+    std::map<IndexVar, IndexVar> indexVars; 
 
     PrecisePattern(e1, e1Pattern, e1Nodes);
     PrecisePattern(e2, e2Pattern, e2Nodes);
@@ -194,6 +197,12 @@ bool hasPreciseMatch(IndexExpr e1, IndexExpr e2){
                         }
                     }
 
+                    tensors[node2->tensorVar] = node1->tensorVar;
+
+                    for (size_t i = 0; i < node2->indexVars.size(); i++){
+                        indexVars[node2->indexVars[i]] = node1->indexVars[i];
+                    }
+
                     break;
                 }
             case INDEX_VAR:
@@ -217,6 +226,8 @@ bool hasPreciseMatch(IndexExpr e1, IndexExpr e2){
                 taco_uerror << "Not reachable" << std::endl;
         }
     }
+
+    argumentMap = ArgumentMap(tensors, indexVars, true);
 
     return true;
 

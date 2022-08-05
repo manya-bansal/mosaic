@@ -119,16 +119,31 @@ TEST(transferType, endToEndPlugin) {
 
    AcceleratorDescription accelDesc(kernelTransfer, {cblas_saxpy(Dim(i), 1, b, 1, a, 1)});
 
-   Tensor<double> A("A", {16}, Format{Dense});
+   Tensor<float32_t> A("A", {16}, Format{Dense});
    Tensor<float32_t> B("B", {16}, Format{Dense});
    Tensor<float32_t> C("C", {16}, Format{Dense});
 
-   A(i) = B(i) + C(i) + B(i);
+   for (int i = 0; i < 16; i++) {
+      C.insert({i}, (float32_t) i);
+      B.insert({i}, (float32_t) i);
+   }
+
+   C.pack();
+   B.pack();
+
+   A(i) = B(i) + C(i);
 
    A.regsiterAccelerator(accelDesc);
    A.accelerateOn();
    A.compile();
 
+   Tensor<float32_t> expected("expected", {16}, Format{Dense});
+   expected(i) = B(i) + C(i);
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+   ASSERT_TENSOR_EQ(expected, A);
     //need to register AcceleratorDescription
     //so that the TACO can use it
     

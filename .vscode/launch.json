@@ -5,13 +5,14 @@
     "version": "0.2.0",
     "configurations": [
 
+
         
         {
             "name": "(lldb) Launch",
             "type": "lldb",
             "request": "launch",
             "program": "${workspaceFolder}/build/bin/taco-test",
-            "args" : ["concretepluginInterface"],
+            "args" : ["endToEndPlugin"],
             // "args": ["where_vector_sum/lower.compile/0"],
             "stopAtEntry": false,
             "cwd": "${fileDirname}", 
