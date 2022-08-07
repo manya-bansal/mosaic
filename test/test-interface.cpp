@@ -124,7 +124,7 @@ TEST(transferType, endToEndPlugin) {
    C.pack();
    B.pack();
 
-   A(i) = B(i) + C(i);
+   A(i) = B(i) + C(i) + B(i);
 
    // register the description
    A.registerAccelerator(accelDesc);
@@ -136,7 +136,7 @@ TEST(transferType, endToEndPlugin) {
    A.compute();
 
    Tensor<float32_t> expected("expected", {16}, Format{Dense});
-   expected(i) = B(i) + C(i);
+   expected(i) = B(i) + C(i) + B(i);
    expected.compile();
    expected.assemble();
    expected.compute();
