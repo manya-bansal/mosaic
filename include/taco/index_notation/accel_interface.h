@@ -253,6 +253,9 @@ class ForeignFunctionDescription {
                                 const std::vector<TensorVar>& temporaries, std::function<bool(taco::IndexStmt)> checker)
                                 : functionName(functionName), returnType(returnType), lhs(assign.first), rhs(assign.second), temporaries(temporaries), checker(checker) {};
 
+    ForeignFunctionDescription( const std::string& functionName, const std::string& returnType, const taco::IndexExpr& lhs, const taco::IndexExpr& rhs, const std::vector<Argument>& args)
+                                : functionName(functionName), returnType(returnType), lhs(lhs), rhs(rhs), args(args) {}
+
     taco::IndexExpr getExpr() const {return rhs;};
     std::vector<Argument> getArgs() const {return args;};
     taco::IndexExpr getLHS() const      {return lhs;};
@@ -371,6 +374,7 @@ struct AbstractFunctionInterface :  public util::Manageable<AbstractFunctionInte
     virtual std::vector<Argument> getArguments() const= 0;
     virtual std::string getReturnType()   const = 0;
     virtual std::string getFunctionName() const = 0;
+    virtual bool checkerFunction(IndexStmt stmt) const = 0;
 
 };
 

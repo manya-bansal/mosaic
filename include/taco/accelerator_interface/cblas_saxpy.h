@@ -7,28 +7,32 @@
 
 using namespace taco;
 
-class Saxpy : public taco::AbstractFunctionInterface{
+class Saxpy : public AbstractFunctionInterface{
     public: 
-        Saxpy() : x(taco::TensorVar(taco::Type(taco::Float32, {taco::Dimension()}), taco::dense)),
-                  y(taco::TensorVar(taco::Type(taco::Float32, {taco::Dimension()}), taco::dense)),
-                  i(taco::IndexVar()) {};
+        Saxpy() : x(TensorVar(Type(taco::Float32, {Dimension()}), dense)),
+                  y(TensorVar(Type(taco::Float32, {Dimension()}), dense)),
+                  i(IndexVar()) {};
 
-        taco::IndexExpr getRHS() const {return x(i) + y(i);}
-        taco::IndexExpr getExpr() const {return x(i) + y(i);}
-        taco::IndexExpr getLHS() const {return x(i);}
-        std::vector<Argument> getArguments() const {return {new DimArg(i), 
+        IndexExpr getRHS() const override {return x(i) + y(i);}
+        IndexExpr getExpr() const override {return x(i) + y(i);}
+        IndexExpr getLHS() const override {return x(i);}
+        std::vector<Argument> getArguments() const override {return 
+                                                {
+                                                    new DimArg(i), 
                                                     new LiteralArg(Datatype(taco::UInt32), 1),
                                                     new TensorVarArg(y), 
                                                     new LiteralArg(Datatype(taco::UInt32), 1),
                                                     new TensorVarArg(x), 
-                                                    new LiteralArg(Datatype(taco::UInt32), 1)};}
-        std::string getReturnType() const {return "void";}
-        std::string getFunctionName() const {return "cblas_saxpy";}
+                                                    new LiteralArg(Datatype(taco::UInt32), 1)
+                                                };}
+        std::string getReturnType() const override {return "void";}
+        std::string getFunctionName() const override{return "cblas_saxpy";}
+        bool checkerFunction(IndexStmt stmt) const override{return true;}
 
     private: 
-        taco::TensorVar x;
-        taco::TensorVar y;
-        taco::IndexVar i;
+        TensorVar x;
+        TensorVar y;
+        IndexVar i;
 };
 
 

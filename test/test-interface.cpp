@@ -13,9 +13,12 @@
 #include "codegen/codegen.h"
 #include "taco/lower/lowerer_impl_imperative.h"
 #include "taco/index_notation/accel_interface.h"
-#include "taco/accelerator_interface/cblas_saxpy.h"
 #include "taco/lower/lower.h"
 #include "taco/ir_tags.h"
+#include "taco/error/error_messages.h"
+
+#include "taco/accelerator_interface/cblas_saxpy.h"
+#include "taco/accelerator_interface/test_interface.h"
 
 
 using namespace taco;
@@ -26,7 +29,7 @@ bool trivialkernelChecker(IndexStmt expr){
 }
 
 
-TEST(transferType, pluginInterface) {
+TEST(interface, pluginInterface) {
 
    TensorVar a("a", Type(taco::Float32, {Dimension()}), taco::dense);
    TensorVar b("b", Type(taco::Float32, {Dimension()}), taco::dense);
@@ -58,7 +61,7 @@ TEST(transferType, pluginInterface) {
 }
 
 
-TEST(transferType, concretepluginInterface) {
+TEST(interface, concretepluginInterface) {
 
    Tensor<float32_t> A("A", {16}, Format{Dense}, 0);
    Tensor<float32_t> B("B", {16}, Format{Dense});
@@ -102,7 +105,7 @@ TEST(transferType, concretepluginInterface) {
 
 }
 
-TEST(transferType, endToEndPlugin) {
+TEST(interface, endToEndPlugin) {
 
    TensorVar x("x", Type(taco::Float32, {Dimension()}), taco::dense);
    TensorVar y("y", Type(taco::Float32, {Dimension()}), taco::dense);
@@ -182,4 +185,69 @@ TEST(interface, interfaceClass) {
    expected.compute();
 
    ASSERT_TENSOR_EQ(expected, A);
+}
+
+TEST(interface, endToEndPluginInterfaceClass) {
+
+   // actual computation
+   Tensor<float32_t> A("A", {16}, Format{Dense});
+   Tensor<float32_t> B("B", {16}, Format{Dense});
+   Tensor<float32_t> C("C", {16}, Format{Dense});
+   IndexVar i("i");
+   
+   for (int i = 0; i < 16; i++) {
+      C.insert({i}, (float32_t) i);
+      B.insert({i}, (float32_t) i);
+   }
+
+   C.pack();
+   B.pack();
+
+   A(i) = B(i) + C(i) + B(i);
+
+   // register the description
+   A.registerAccelerator(new Saxpy());
+   // enable targeting
+   A.accelerateOn();
+   
+   A.compile();
+   A.assemble();
+   A.compute();
+
+   Tensor<float32_t> expected("expected", {16}, Format{Dense});
+   expected(i) = B(i) + C(i) + B(i);
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+   ASSERT_TENSOR_EQ(expected, A);
+
+}
+
+TEST(interface, mismatchInterfaceClass) {
+
+
+   Tensor<float32_t> A("A", {16}, Format{Dense}, 0);
+   Tensor<float32_t> B("B", {16}, Format{Dense});
+   Tensor<float32_t> C("C", {16}, Format{Dense});
+   Tensor<float32_t> expected("expected", {16}, Format{Dense});
+   TensorVar accelWorkspace("accelWorkspace", Type(taco::Float32, {16}), taco::dense);
+   IndexVar i("i");
+   IndexVar iw("iw");
+
+   for (int i = 0; i < 16; i++) {
+      C.insert({i}, (float32_t) i);
+      B.insert({i}, (float32_t) i);
+   }
+
+   C.pack();
+   B.pack();
+
+   IndexExpr accelerateExpr = B(i) + C(i);
+   A(i) = accelerateExpr;
+
+   IndexStmt stmt = A.getAssignment().concretize();
+
+   ASSERT_THROW(stmt.accelerate(new Test1(), accelerateExpr, i, iw, accelWorkspace), taco::TacoException);
+
 }

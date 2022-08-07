@@ -446,6 +446,7 @@ public:
   /// register a backend that we can autoschedule to
   void registerAccelerator(AcceleratorDescription acceleratorDescription);
   void registerAccelerators(std::vector<AcceleratorDescription> acceleratorDescriptionVec);
+  void registerAccelerator(FunctionInterface functionInterface);
   std::vector<AcceleratorDescription> getRegisteredAccelerators();
 
   void accelerateOn();

@@ -625,6 +625,18 @@ void TensorBase::registerAccelerator(AcceleratorDescription acceleratorDescripti
   acceleratorDescriptions.push_back(acceleratorDescription);
 }
 
+void TensorBase::registerAccelerator(FunctionInterface functionInterface){
+  acceleratorDescriptions.push_back(AcceleratorDescription({
+                                      ForeignFunctionDescription(
+                                        functionInterface.getNode()->getFunctionName(),
+                                        functionInterface.getNode()->getReturnType(),
+                                        functionInterface.getNode()->getLHS(),
+                                        functionInterface.getNode()->getRHS(),
+                                        functionInterface.getNode()->getArguments()
+                                    )}));
+}
+
+
 void TensorBase::registerAccelerators(std::vector<AcceleratorDescription> acceleratorDescriptionVec){
   acceleratorDescriptions.insert(acceleratorDescriptions.end(), acceleratorDescriptionVec.begin(), acceleratorDescriptionVec.end());
 }
