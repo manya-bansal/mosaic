@@ -35,6 +35,7 @@ class Dimension;
 class Format;
 class Schedule;
 class ConcreteAccelerateCodeGenerator;
+class FunctionInterface;
 
 class IndexVar;
 class WindowedIndexVar;
@@ -772,6 +773,8 @@ public:
 
   IndexStmt accelerate(ConcreteAccelerateCodeGenerator accelGen, std::vector<IndexVar> i_vars,
                        std::vector<IndexVar> iw_vars, TensorVar workspace) const;
+
+  IndexStmt accelerate(FunctionInterface functionInterface, IndexExpr exprToAccelerate, IndexVar i, IndexVar iw, TensorVar workspace) const;
 
   /// bound specifies a compile-time constraint on an index variable's
   /// iteration space that allows knowledge of the

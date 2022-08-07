@@ -2399,6 +2399,65 @@ IndexStmt IndexStmt::accelerate(ConcreteAccelerateCodeGenerator accelGen, IndexV
   return accelerate(accelGen, i_vars, iw_vars, workspace);
 }
 
+IndexStmt IndexStmt::accelerate(FunctionInterface functionInterface, IndexExpr exprToAccelerate, IndexVar i, IndexVar iw, TensorVar workspace) const{
+
+  ArgumentMap argumentMap;
+  IndexExpr reference = functionInterface.getNode()->getRHS();
+  if (!hasPreciseMatch(exprToAccelerate, reference, argumentMap)){
+    taco_uerror << exprToAccelerate << " does not match " << reference << endl;
+  }
+
+  assert(argumentMap.possible);
+
+  std::vector<Argument> newArgs;
+  for (auto arg : functionInterface.getNode()->getArguments()){
+    switch (arg.getArgType())
+    {
+    case DIM:
+      {
+        newArgs.push_back(new DimArg(argumentMap.indexVars[arg.getNode<DimArg>()->indexVar]));
+        break;
+      }
+    case TENSOR:
+      taco_uerror << "Unimplemented: Tensor Case" << endl;
+      break; 
+    case TENSORVAR:
+      newArgs.push_back(new TensorVarArg(argumentMap.tensors[arg.getNode<TensorVarArg>()->t]));
+      break;
+    case LITERAL:
+      newArgs.push_back(arg);
+      break;
+    default:
+      cout << arg.getArgType() << endl;
+      taco_uerror << "Unimplemented" << endl;
+      break;
+    }
+  }
+
+  std::vector<IndexVar> indexingVec;
+  for (auto var:  functionInterface.getNode()->getLHS().getIndexVars()){
+    indexingVec.push_back(argumentMap.indexVars[var]);
+  } 
+
+
+  assert(isa<AccessNode>(functionInterface.getNode()->getLHS().ptr));
+
+  auto accessOriginal = to<AccessNode>(functionInterface.getNode()->getLHS().ptr);
+
+  IndexExpr e = static_cast<IndexExpr>(Access(argumentMap.tensors[accessOriginal->tensorVar], indexingVec));
+  ConcreteAccelerateCodeGenerator concreteCodeGen = ConcreteAccelerateCodeGenerator( functionInterface.getNode()->getFunctionName(),  functionInterface.getNode()->getReturnType(), e, exprToAccelerate, newArgs, {});
+  TensorVar t = TensorVar(Type(exprToAccelerate.getDataType(), exprToAccelerate.getShape()));
+
+  std::vector<IndexVar> oldVars = exprToAccelerate.getIndexVars();
+  std::vector<IndexVar> precomputeVars;
+
+  for (size_t i = 0; i < oldVars.size(); i++) { precomputeVars.push_back(IndexVar()); }
+
+  IndexStmt stmt = accelerate(concreteCodeGen, oldVars, precomputeVars, t);
+
+  return stmt;
+}
+
 IndexStmt IndexStmt::reorder(taco::IndexVar i, taco::IndexVar j) const {
   string reason;
   IndexStmt transformed = Reorder(i, j).apply(*this, &reason);

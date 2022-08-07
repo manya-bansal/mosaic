@@ -11,10 +11,11 @@
 namespace taco {
 
 struct TransferTypeArgs;
-// struct TensorPropertiesArgs;
+struct AbstractFunctionInterface;
 class TensorVar;
 template <typename CType>
 class Tensor;
+
 
 enum ArgType {DIM, TENSORVAR, TENSOR, EXPR, LITERAL, USER_DEFINED, UNKNOWN};
 
@@ -349,6 +350,29 @@ class ConcreteAccelerateCodeGenerator {
 
 std::ostream& operator<<(std::ostream&,  const ConcreteAccelerateCodeGenerator&);
 
+
+class FunctionInterface : public util::IntrusivePtr<const AbstractFunctionInterface> {
+  public: 
+    FunctionInterface() : IntrusivePtr(nullptr) {}
+    FunctionInterface(AbstractFunctionInterface * interface) : IntrusivePtr(interface) {}
+
+    const AbstractFunctionInterface* getNode() const {
+        return ptr;
+    }
+};
+
+struct AbstractFunctionInterface :  public util::Manageable<AbstractFunctionInterface>{
+    AbstractFunctionInterface() = default;
+    virtual ~AbstractFunctionInterface() = default;
+
+    virtual taco::IndexExpr getExpr()   const   = 0;
+    virtual taco::IndexExpr getLHS()    const  = 0; 
+    virtual taco::IndexExpr getRHS()    const  = 0;
+    virtual std::vector<Argument> getArguments() const= 0;
+    virtual std::string getReturnType()   const = 0;
+    virtual std::string getFunctionName() const = 0;
+
+};
 
 }
 #endif

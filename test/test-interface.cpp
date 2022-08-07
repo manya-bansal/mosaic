@@ -13,6 +13,7 @@
 #include "codegen/codegen.h"
 #include "taco/lower/lowerer_impl_imperative.h"
 #include "taco/index_notation/accel_interface.h"
+#include "taco/accelerator_interface/cblas_saxpy.h"
 #include "taco/lower/lower.h"
 #include "taco/ir_tags.h"
 
@@ -143,4 +144,42 @@ TEST(transferType, endToEndPlugin) {
 
    ASSERT_TENSOR_EQ(expected, A);
 
+}
+
+TEST(interface, interfaceClass) {
+
+
+   Tensor<float32_t> A("A", {16}, Format{Dense}, 0);
+   Tensor<float32_t> B("B", {16}, Format{Dense});
+   Tensor<float32_t> C("C", {16}, Format{Dense});
+   Tensor<float32_t> expected("expected", {16}, Format{Dense});
+   TensorVar accelWorkspace("accelWorkspace", Type(taco::Float32, {16}), taco::dense);
+   IndexVar i("i");
+   IndexVar iw("iw");
+
+   for (int i = 0; i < 16; i++) {
+      C.insert({i}, (float32_t) i);
+      B.insert({i}, (float32_t) i);
+   }
+
+   C.pack();
+   B.pack();
+
+   IndexExpr accelerateExpr = B(i) + C(i);
+   A(i) = accelerateExpr;
+
+   IndexStmt stmt = A.getAssignment().concretize();
+   stmt = stmt.accelerate(new Saxpy(), accelerateExpr, i, iw, accelWorkspace);
+
+    
+   A.compile(stmt);
+   A.assemble();
+   A.compute();
+
+   expected(i) = accelerateExpr;
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+   ASSERT_TENSOR_EQ(expected, A);
 }
