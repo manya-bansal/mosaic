@@ -369,7 +369,6 @@ struct AbstractFunctionInterface :  public util::Manageable<AbstractFunctionInte
     AbstractFunctionInterface() = default;
     virtual ~AbstractFunctionInterface() = default;
 
-    virtual taco::IndexExpr getExpr()   const   = 0;
     virtual taco::IndexExpr getLHS()    const  = 0; 
     virtual taco::IndexExpr getRHS()    const  = 0;
     virtual std::vector<Argument> getArguments() const= 0;

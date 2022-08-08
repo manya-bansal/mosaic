@@ -253,3 +253,41 @@ TEST(interface, mismatchInterfaceClass) {
    ASSERT_THROW(stmt.accelerate(new Test1(), accelerateExpr, i, iw, accelWorkspace), taco::TacoException);
 
 }
+
+TEST(interface, classInterfaceSdsdot) {
+
+
+   Tensor<float32_t> A("A");
+   Tensor<float32_t> B("B", {16}, Format{Dense});
+   Tensor<float32_t> C("C", {16}, Format{Dense});
+
+   Tensor<float32_t> expected("expected");
+   TensorVar accelWorkspace((Type(taco::Float32)));
+
+   IndexVar i("i");
+   IndexVar iw("iw");
+
+   for (int i = 0; i < 16; i++) {
+      C.insert({i}, (float32_t) i);
+      B.insert({i}, (float32_t) i);
+   }
+
+   Test1 test;
+
+   C.pack();
+   B.pack();
+
+   IndexExpr accelerateExpr = B(i) * C(i);
+   A = accelerateExpr;
+
+   IndexStmt stmt = A.getAssignment().concretize();
+   // stmt = stmt.accelerate(new Sdsdot(), accelerateExpr, i, iw, accelWorkspace);
+
+   // IndexExpr accelerateExpr = B(i) + C(i);
+   // A(i) = accelerateExpr;
+
+   // IndexStmt stmt = A.getAssignment().concretize();
+
+   // ASSERT_THROW(stmt.accelerate(new Test1(), accelerateExpr, i, iw, accelWorkspace), taco::TacoException);
+
+}

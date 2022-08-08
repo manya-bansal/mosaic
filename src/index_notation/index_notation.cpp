@@ -2258,13 +2258,10 @@ IndexStmt IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<AcceleratorDescr
             auto accessOriginal = to<AccessNode>(funcDesc.getLHS().ptr);
             
             IndexExpr e = static_cast<IndexExpr>(Access(argumentMap.tensors[accessOriginal->tensorVar], indexingVec));
-            // Access lhs = Access(argumentMap.tensors[accessOriginal->tensorVar], indexingVec);
-            ConcreteAccelerateCodeGenerator concreteCodeGen = ConcreteAccelerateCodeGenerator(funcDesc.functionName, funcDesc.returnType, e, expr, newArgs, funcDesc.temporaries);
-            // TensorVar t = TensorVar(accessOriginal->tensorVar.getType());
 
+            ConcreteAccelerateCodeGenerator concreteCodeGen = ConcreteAccelerateCodeGenerator(funcDesc.functionName, funcDesc.returnType, e, expr, newArgs, funcDesc.temporaries);
             
             TensorVar t = TensorVar(Type(expr.getDataType(), expr.getShape()));
-            // TensorVar t("accelWorkspace", Type(taco::Float32, {16}), taco::dense);
 
             cout << concreteCodeGen << endl;
 

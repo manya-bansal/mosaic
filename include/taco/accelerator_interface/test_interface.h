@@ -14,7 +14,6 @@ class Test1 : public AbstractFunctionInterface{
                   i(IndexVar()) {};
 
         IndexExpr getRHS() const override {return x(i);}
-        IndexExpr getExpr() const override {return x(i);}
         IndexExpr getLHS() const override {return x(i);}
         std::vector<Argument> getArguments() const override {return {new TensorVarArg(x)};}
         std::string getReturnType() const override {return "void";}

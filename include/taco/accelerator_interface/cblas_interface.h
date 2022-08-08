@@ -26,7 +26,6 @@ class Saxpy : public AbstractFunctionInterface{
                                                 };}
         std::string getReturnType() const override {return "void";}
         std::string getFunctionName() const override{return "cblas_saxpy";}
-        bool checkerFunction(IndexStmt stmt) const override{return true;}
 
     private: 
         TensorVar x;
@@ -60,7 +59,6 @@ class Sdsdot : public AbstractFunctionInterface{
         TensorVar s;
         IndexVar i;
 };
-
 
 
 #endif 
