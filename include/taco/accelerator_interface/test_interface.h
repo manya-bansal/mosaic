@@ -19,7 +19,6 @@ class Test1 : public AbstractFunctionInterface{
         std::vector<Argument> getArguments() const override {return {new TensorVarArg(x)};}
         std::string getReturnType() const override {return "void";}
         std::string getFunctionName() const override {return "test";}
-        bool checkerFunction(IndexStmt stmt) const override{return true;}
 
     private: 
         TensorVar x;

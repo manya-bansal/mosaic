@@ -364,6 +364,7 @@ class FunctionInterface : public util::IntrusivePtr<const AbstractFunctionInterf
     }
 };
 
+
 struct AbstractFunctionInterface :  public util::Manageable<AbstractFunctionInterface>{
     AbstractFunctionInterface() = default;
     virtual ~AbstractFunctionInterface() = default;
@@ -374,7 +375,8 @@ struct AbstractFunctionInterface :  public util::Manageable<AbstractFunctionInte
     virtual std::vector<Argument> getArguments() const= 0;
     virtual std::string getReturnType()   const = 0;
     virtual std::string getFunctionName() const = 0;
-    virtual bool checkerFunction(IndexStmt stmt) const = 0;
+
+    virtual bool checkerFunction(IndexStmt stmt) const {return true;}
 
 };
 

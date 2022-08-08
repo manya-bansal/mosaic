@@ -194,7 +194,7 @@ TEST(interface, endToEndPluginInterfaceClass) {
    Tensor<float32_t> B("B", {16}, Format{Dense});
    Tensor<float32_t> C("C", {16}, Format{Dense});
    IndexVar i("i");
-   
+
    for (int i = 0; i < 16; i++) {
       C.insert({i}, (float32_t) i);
       B.insert({i}, (float32_t) i);
@@ -239,6 +239,8 @@ TEST(interface, mismatchInterfaceClass) {
       C.insert({i}, (float32_t) i);
       B.insert({i}, (float32_t) i);
    }
+
+   Test1 test;
 
    C.pack();
    B.pack();
