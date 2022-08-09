@@ -34,6 +34,7 @@ class AcceleratorExprVisitorStrict;
 class TensorObject;
 
 struct AcceleratorAccessNode;
+struct AcceleratorLiteralNode;
 
 class AcceleratorExpr : public util::IntrusivePtr<const AcceleratorExprNode> {
 public:
@@ -80,6 +81,43 @@ public:
     AcceleratorAccess(const TensorObject& tensorObject, const std::vector<IndexVar>& indices={},
             bool isAccessingStructure=false);
 };
+
+/// A literal index expression is a scalar literal that is embedded in the code.
+/// @note In the future we may allow general tensor literals.
+class AcceleratorLiteral : public AcceleratorExpr {
+public:
+  AcceleratorLiteral() = default;
+  explicit AcceleratorLiteral(const AcceleratorLiteralNode*);
+ 
+  explicit AcceleratorLiteral(bool);
+  explicit AcceleratorLiteral(unsigned char);
+  explicit AcceleratorLiteral(unsigned short);
+  explicit AcceleratorLiteral(unsigned int);
+  explicit AcceleratorLiteral(unsigned long);
+  explicit AcceleratorLiteral(unsigned long long);
+  explicit AcceleratorLiteral(char);
+  explicit AcceleratorLiteral(short);
+  explicit AcceleratorLiteral(int);
+  explicit AcceleratorLiteral(long);
+  explicit AcceleratorLiteral(long long);
+  explicit AcceleratorLiteral(int8_t);
+  explicit AcceleratorLiteral(float);
+  explicit AcceleratorLiteral(double);
+  explicit AcceleratorLiteral(std::complex<float>);
+  explicit AcceleratorLiteral(std::complex<double>);
+
+  static AcceleratorLiteral zero(Datatype);
+
+  /// Returns the literal value.
+  template <typename T> T getVal() const;
+
+  /// Returns an untyped pointer to the literal value
+  void* getValPtr();
+
+  typedef AcceleratorLiteralNode Node;
+
+};
+
 
 class TensorObject : public util::Comparable<TensorObject> {
 public:

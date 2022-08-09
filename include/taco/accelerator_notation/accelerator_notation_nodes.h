@@ -58,9 +58,9 @@ struct AcceleratorLiteralNode : public AcceleratorExprNode {
     free(val);
   }
 
-//   void accept(IndexExprVisitorStrict* v) const {
-//     v->visit(this);
-//   }
+  void accept(AcceleratorExprVisitorStrict* v) const {
+    v->visit(this);
+  }
 
   template <typename T> T getVal() const {
     taco_iassert(getDataType() == type<T>())

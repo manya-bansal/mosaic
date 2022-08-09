@@ -72,7 +72,85 @@ AcceleratorAccess::AcceleratorAccess(const TensorObject& tensor, const std::vect
     : AcceleratorAccess(new AcceleratorAccessNode(tensor, indices, isAccessingStructure)) {
 }
 
+AcceleratorLiteral::AcceleratorLiteral(const AcceleratorLiteralNode* n) : AcceleratorExpr(n) {
+}
 
+AcceleratorLiteral::AcceleratorLiteral(bool val) : AcceleratorLiteral(new AcceleratorLiteralNode(val)) {
+}
+
+AcceleratorLiteral::AcceleratorLiteral(unsigned char val) : AcceleratorLiteral(new AcceleratorLiteralNode(val)) {
+}
+
+AcceleratorLiteral::AcceleratorLiteral(unsigned short val) : AcceleratorLiteral(new AcceleratorLiteralNode(val)) {
+}
+
+AcceleratorLiteral::AcceleratorLiteral(unsigned int val) : AcceleratorLiteral(new AcceleratorLiteralNode(val)) {
+}
+
+AcceleratorLiteral::AcceleratorLiteral(unsigned long val) : AcceleratorLiteral(new AcceleratorLiteralNode(val)) {
+}
+
+AcceleratorLiteral::AcceleratorLiteral(unsigned long long val) : AcceleratorLiteral(new AcceleratorLiteralNode(val)) {
+}
+
+AcceleratorLiteral::AcceleratorLiteral(char val) : AcceleratorLiteral(new AcceleratorLiteralNode(val)) {
+}
+
+AcceleratorLiteral::AcceleratorLiteral(short val) : AcceleratorLiteral(new AcceleratorLiteralNode(val)) {
+}
+
+AcceleratorLiteral::AcceleratorLiteral(int val) : AcceleratorLiteral(new AcceleratorLiteralNode(val)) {
+}
+
+AcceleratorLiteral::AcceleratorLiteral(long val) : AcceleratorLiteral(new AcceleratorLiteralNode(val)) {
+}
+
+AcceleratorLiteral::AcceleratorLiteral(long long val) : AcceleratorLiteral(new AcceleratorLiteralNode(val)) {
+}
+
+AcceleratorLiteral::AcceleratorLiteral(int8_t val) : AcceleratorLiteral(new AcceleratorLiteralNode(val)) {
+}
+
+AcceleratorLiteral::AcceleratorLiteral(float val) : AcceleratorLiteral(new AcceleratorLiteralNode(val)) {
+}
+
+AcceleratorLiteral::AcceleratorLiteral(double val) : AcceleratorLiteral(new AcceleratorLiteralNode(val)) {
+}
+
+AcceleratorLiteral::AcceleratorLiteral(std::complex<float> val) : AcceleratorLiteral(new AcceleratorLiteral(val)) {
+}
+
+AcceleratorLiteral::AcceleratorLiteral(std::complex<double> val) : AcceleratorLiteral(new AcceleratorLiteral(val)) {
+}
+
+AcceleratorLiteral AcceleratorLiteral::zero(Datatype type) {
+  switch (type.getKind()) {
+    case Datatype::Bool:        return AcceleratorLiteral(false);
+    case Datatype::UInt8:       return AcceleratorLiteral(uint8_t(0));
+    case Datatype::UInt16:      return AcceleratorLiteral(uint16_t(0));
+    case Datatype::UInt32:      return AcceleratorLiteral(uint32_t(0));
+    case Datatype::UInt64:      return AcceleratorLiteral(uint64_t(0));
+    case Datatype::Int8:        return AcceleratorLiteral(int8_t(0));
+    case Datatype::Int16:       return AcceleratorLiteral(int16_t(0));
+    case Datatype::Int32:       return AcceleratorLiteral(int32_t(0));
+    case Datatype::Int64:       return AcceleratorLiteral(int64_t(0));
+    case Datatype::Float32:     return AcceleratorLiteral(float(0.0));
+    case Datatype::Float64:     return AcceleratorLiteral(double(0.0));
+    case Datatype::Complex64:   return AcceleratorLiteral(std::complex<float>());
+    case Datatype::Complex128:  return AcceleratorLiteral(std::complex<double>());
+    default:                    taco_ierror << "unsupported type";
+  };
+
+  return AcceleratorLiteral();
+}
+
+template <typename T> T AcceleratorLiteral::getVal() const {
+  return getNode(*this)->getVal<T>();
+}
+
+void* AcceleratorLiteral::getValPtr() {
+  return getNode(*this)->val;
+}
 
 // class TensorObject
 struct TensorObject::Content {

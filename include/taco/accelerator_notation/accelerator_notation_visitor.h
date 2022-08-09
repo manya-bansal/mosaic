@@ -10,6 +10,7 @@ namespace taco {
 class AcceleratorExpr;
 
 struct AcceleratorAccessNode;
+struct AcceleratorLiteralNode;
 
 class AcceleratorExprVisitorStrict {
     public:
@@ -18,6 +19,7 @@ class AcceleratorExprVisitorStrict {
         void visit(const AcceleratorExpr&);
 
         virtual void visit(const AcceleratorAccessNode*) = 0;
+        virtual void visit(const AcceleratorLiteralNode*) = 0;
 
 };
 
@@ -84,6 +86,7 @@ private:
 
   using AcceleratorNotationVisitor::visit;
   ACCEL_RULE(AcceleratorAccessNode)
+  ACCEL_RULE(AcceleratorLiteralNode)
 
 };
 

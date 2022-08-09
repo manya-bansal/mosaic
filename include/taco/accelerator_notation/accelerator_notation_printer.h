@@ -17,7 +17,7 @@ public:
 
   // Scalar Expressions
   void visit(const AcceleratorAccessNode*);
-//   void visit(const LiteralNode*);
+  void visit(const AcceleratorLiteralNode*);
 //   void visit(const NegNode*);
 //   void visit(const SqrtNode*);
 //   void visit(const AddNode*);
