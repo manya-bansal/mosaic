@@ -1,4 +1,4 @@
-#include "taco/index_notation/accel_interface.h"
+#include "taco/accelerator_notation/accel_interface.h"
 #include "taco/index_notation/index_notation_nodes.h"
 #include "taco/tensor.h"
 

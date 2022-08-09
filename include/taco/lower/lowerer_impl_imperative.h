@@ -7,7 +7,7 @@
 #include <set>
 #include <memory>
 #include <taco/index_notation/index_notation.h>
-#include <taco/index_notation/accel_interface.h>
+#include <taco/accelerator_notation/accel_interface.h>
 #include "taco/lower/iterator.h"
 #include "taco/util/scopedset.h"
 #include "taco/util/uncopyable.h"

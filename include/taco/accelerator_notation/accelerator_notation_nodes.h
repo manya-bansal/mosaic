@@ -13,7 +13,7 @@
 #include "taco/type.h"
 #include "taco/tensor.h"
 #include "taco/index_notation/index_notation.h"
-#include "taco/index_notation/accel_interface.h"
+#include "taco/accelerator_notation/accel_interface.h"
 #include "taco/accelerator_notation/accelerator_notation_nodes_abstract.h"
 #include "taco/accelerator_notation/accelerator_notation.h"
 #include "taco/accelerator_notation/accelerator_notation_visitor.h"

@@ -2,8 +2,8 @@
 #include "taco/index_notation/index_notation_visitor.h"
 #include "taco/index_notation/index_notation_rewriter.h"
 #include "taco/index_notation/index_notation.h"
-#include "taco/index_notation/accel_interface.h"
-#include "taco/index_notation/accelerate_search.h"
+#include "taco/accelerator_notation/accel_interface.h"
+#include "taco/accelerator_notation/accelerate_search.h"
 
 namespace taco {
 

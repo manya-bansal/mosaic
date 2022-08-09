@@ -8,7 +8,7 @@
 #include "taco/index_notation/index_notation_visitor.h"
 #include "taco/index_notation/index_notation_rewriter.h"
 #include "taco/index_notation/provenance_graph.h"
-#include "taco/index_notation/accel_interface.h"
+#include "taco/accelerator_notation/accel_interface.h"
 #include "taco/ir/ir.h"
 #include "taco/ir/ir_generators.h"
 #include "taco/ir/ir_visitor.h"
