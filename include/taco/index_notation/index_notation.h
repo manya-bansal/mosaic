@@ -23,7 +23,6 @@
 #include "taco/index_notation/index_notation_nodes_abstract.h"
 #include "taco/ir_tags.h"
 #include "taco/index_notation/provenance_graph.h"
-#include "taco/index_notation/accelerate_notation.h"
 #include "taco/index_notation/properties.h"
 #include "taco/util/collections.h"
 #include "taco/util/strings.h"

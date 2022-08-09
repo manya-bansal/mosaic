@@ -92,5 +92,6 @@
         "filesystem": "cpp",
         "__functional_base_03": "cpp",
         "cassert": "cpp"
-    }
+    },
+    "C_Cpp.dimInactiveRegions": false
 }

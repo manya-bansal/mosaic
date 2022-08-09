@@ -281,7 +281,7 @@ TEST(interface, classInterfaceSdsdot) {
    A = accelerateExpr;
 
    IndexStmt stmt = A.getAssignment().concretize();
-   // stmt = stmt.accelerate(new Sdsdot(), accelerateExpr, i, iw, accelWorkspace);
+   stmt = stmt.accelerate(new Sdsdot(), accelerateExpr, i, iw, accelWorkspace);
 
    // IndexExpr accelerateExpr = B(i) + C(i);
    // A(i) = accelerateExpr;

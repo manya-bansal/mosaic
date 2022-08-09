@@ -2251,7 +2251,6 @@ IndexStmt IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<AcceleratorDescr
               indexingVec.push_back(argumentMap.indexVars[var]);
             } 
 
-            cout << expr << endl;
 
             assert(isa<AccessNode>(funcDesc.getLHS().ptr));
 
@@ -2262,8 +2261,6 @@ IndexStmt IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<AcceleratorDescr
             ConcreteAccelerateCodeGenerator concreteCodeGen = ConcreteAccelerateCodeGenerator(funcDesc.functionName, funcDesc.returnType, e, expr, newArgs, funcDesc.temporaries);
             
             TensorVar t = TensorVar(Type(expr.getDataType(), expr.getShape()));
-
-            cout << concreteCodeGen << endl;
 
             std::vector<IndexVar> oldVars = expr.getIndexVars();
             std::vector<IndexVar> precomputeVars;
@@ -2396,6 +2393,26 @@ IndexStmt IndexStmt::accelerate(ConcreteAccelerateCodeGenerator accelGen, IndexV
   return accelerate(accelGen, i_vars, iw_vars, workspace);
 }
 
+static bool setByReference(IndexExpr lhs, IndexExpr rhs){
+  TensorVar resultVar;
+  match((lhs),
+      // should only be one var on the lhs
+      std::function<void(const AccessNode*)>([&](const AccessNode* op) {
+            resultVar = op->tensorVar;
+        })
+  );
+
+  bool setResultByRef = false;
+  match((rhs),
+      std::function<void(const AccessNode*)>([&](const AccessNode* op) {
+            if (resultVar == op->tensorVar){
+              setResultByRef = true;
+            }
+        })
+  );
+  return setResultByRef;
+}
+
 IndexStmt IndexStmt::accelerate(FunctionInterface functionInterface, IndexExpr exprToAccelerate, IndexVar i, IndexVar iw, TensorVar workspace) const{
 
   ArgumentMap argumentMap;
@@ -2432,19 +2449,25 @@ IndexStmt IndexStmt::accelerate(FunctionInterface functionInterface, IndexExpr e
   }
 
   std::vector<IndexVar> indexingVec;
-  for (auto var:  functionInterface.getNode()->getLHS().getIndexVars()){
+  for (auto var:  functionInterface.getNode()->getRHS().getIndexVars()){
     indexingVec.push_back(argumentMap.indexVars[var]);
   } 
 
 
   assert(isa<AccessNode>(functionInterface.getNode()->getLHS().ptr));
 
-  auto accessOriginal = to<AccessNode>(functionInterface.getNode()->getLHS().ptr);
-
-  IndexExpr e = static_cast<IndexExpr>(Access(argumentMap.tensors[accessOriginal->tensorVar], indexingVec));
-  ConcreteAccelerateCodeGenerator concreteCodeGen = ConcreteAccelerateCodeGenerator( functionInterface.getNode()->getFunctionName(),  functionInterface.getNode()->getReturnType(), e, exprToAccelerate, newArgs, {});
   TensorVar t = TensorVar(Type(exprToAccelerate.getDataType(), exprToAccelerate.getShape()));
 
+  auto accessOriginal = to<AccessNode>(functionInterface.getNode()->getLHS().ptr);
+  IndexExpr e;
+  if (setByReference(functionInterface.getNode()->getLHS(), functionInterface.getNode()->getRHS())){
+    e = static_cast<IndexExpr>(Access(argumentMap.tensors[accessOriginal->tensorVar], indexingVec));
+  }else{
+    e = static_cast<IndexExpr>(Access(t, indexingVec));
+  }
+ 
+  ConcreteAccelerateCodeGenerator concreteCodeGen = ConcreteAccelerateCodeGenerator( functionInterface.getNode()->getFunctionName(),  functionInterface.getNode()->getReturnType(), e, exprToAccelerate, newArgs, {});
+  
   std::vector<IndexVar> oldVars = exprToAccelerate.getIndexVars();
   std::vector<IndexVar> precomputeVars;
 
