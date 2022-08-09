@@ -52,6 +52,45 @@ void AcceleratorExpr::accept(AcceleratorExprVisitorStrict *v) const {
   ptr->accept(v);
 }
 
+AcceleratorExpr::AcceleratorExpr(char val) : AcceleratorExpr(new AcceleratorLiteralNode(val)) {
+}
+
+AcceleratorExpr::AcceleratorExpr(int8_t val) : AcceleratorExpr(new AcceleratorLiteralNode(val)) {
+}
+
+AcceleratorExpr::AcceleratorExpr(int16_t val) : AcceleratorExpr(new AcceleratorLiteralNode(val)) {
+}
+
+AcceleratorExpr::AcceleratorExpr(int32_t val) : AcceleratorExpr(new AcceleratorLiteralNode(val)) {
+}
+
+AcceleratorExpr::AcceleratorExpr(int64_t val) : AcceleratorExpr(new AcceleratorLiteralNode(val)) {
+}
+
+AcceleratorExpr::AcceleratorExpr(uint8_t val) : AcceleratorExpr(new AcceleratorLiteralNode(val)) {
+}
+
+AcceleratorExpr::AcceleratorExpr(uint16_t val) : AcceleratorExpr(new AcceleratorLiteralNode(val)) {
+}
+
+AcceleratorExpr::AcceleratorExpr(uint32_t val) : AcceleratorExpr(new AcceleratorLiteralNode(val)) {
+}
+
+AcceleratorExpr::AcceleratorExpr(uint64_t val) : AcceleratorExpr(new AcceleratorLiteralNode(val)) {
+}
+
+AcceleratorExpr::AcceleratorExpr(float val) : AcceleratorExpr(new AcceleratorLiteralNode(val)) {
+}
+
+AcceleratorExpr::AcceleratorExpr(double val) : AcceleratorExpr(new AcceleratorLiteralNode(val)) {
+}
+
+AcceleratorExpr::AcceleratorExpr(std::complex<float> val) :AcceleratorExpr(new AcceleratorLiteralNode(val)){
+}
+
+AcceleratorExpr::AcceleratorExpr(std::complex<double> val) :AcceleratorExpr(new AcceleratorLiteralNode(val)){
+}
+
 Datatype AcceleratorExpr::getDataType() const {
   return const_cast<AcceleratorExprNode*>(this->ptr)->getDataType();
 }

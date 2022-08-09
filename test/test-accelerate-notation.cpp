@@ -16,7 +16,7 @@ TEST(accelerateNotation, AcceleratorExprNode) {
     TensorObject t("t", Type(taco::Float32, {Dimension()}));
     std::cout << t(i) << endl;
 
-    std::cout << AcceleratorLiteral(0) << endl;
-    std::cout << AcceleratorLiteral(2.3) << endl;
+    std::cout << AcceleratorExpr(0) << endl;
+    std::cout << AcceleratorExpr(2.3) << endl;
 
 }

@@ -44,26 +44,26 @@ public:
   /// Construct a scalar tensor access.
   AcceleratorExpr(TensorObject tensorObject);
 
-//   /// Consturct an integer literal.
-//   AcceleratorExpr(char);
-//   AcceleratorExpr(int8_t);
-//   AcceleratorExpr(int16_t);
-//   AcceleratorExpr(int32_t);
-//   AcceleratorExpr(int64_t);
+  /// Consturct an integer literal.
+  AcceleratorExpr(char);
+  AcceleratorExpr(int8_t);
+  AcceleratorExpr(int16_t);
+  AcceleratorExpr(int32_t);
+  AcceleratorExpr(int64_t);
 
-//   /// Consturct an unsigned integer literal.
-//   AcceleratorExpr(uint8_t);
-//   AcceleratorExpr(uint16_t);
-//   AcceleratorExpr(uint32_t);
-//   AcceleratorExpr(uint64_t);
+  /// Consturct an unsigned integer literal.
+  AcceleratorExpr(uint8_t);
+  AcceleratorExpr(uint16_t);
+  AcceleratorExpr(uint32_t);
+  AcceleratorExpr(uint64_t);
 
-//   /// Consturct double literal.
-//   AcceleratorExpr(float);
-//   AcceleratorExpr(double);
+  /// Consturct double literal.
+  AcceleratorExpr(float);
+  AcceleratorExpr(double);
 
-//   /// Construct complex literal.
-//   AcceleratorExpr(std::complex<float>);
-//   AcceleratorExpr(std::complex<double>);
+  /// Construct complex literal.
+  AcceleratorExpr(std::complex<float>);
+  AcceleratorExpr(std::complex<double>);
 
   void accept(AcceleratorExprVisitorStrict *) const;
 
