@@ -14,6 +14,11 @@ void AcceleratorNotationPrinter::print(const AcceleratorExpr& expr) {
   expr.accept(this);
 }
 
+void AcceleratorNotationPrinter::print(const AcceleratorStmt& expr) {
+  parentPrecedence = Precedence::TOP;
+  expr.accept(this);
+}
+
 void AcceleratorNotationPrinter::visit(const AcceleratorAccessNode* op) { 
   os << op->tensorObject.getName();
   if (op->isAccessingStructure) {
@@ -74,6 +79,13 @@ void AcceleratorNotationPrinter::visit(const AcceleratorLiteralNode* op) {
     case Datatype::Undefined:
       break;
   }
+}
+
+void AcceleratorNotationPrinter::visit(const AcceleratorAssignmentNode* op) {
+  op->lhs.accept(this);
+  // TODO: Right now, only supports = 
+  os << " = ";
+  op->rhs.accept(this);
 }
 
 }

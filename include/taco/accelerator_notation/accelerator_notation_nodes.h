@@ -33,7 +33,7 @@ struct AcceleratorAccessNode : public AcceleratorExprNode {
     v->visit(this);
   }
 
-  virtual void setAssignment(const Assignment& assignment) {}
+  // virtual void setAssignment(const Assignment& assignment) {}
 
   TensorObject tensorObject;
   std::vector<IndexVar> indexVars;
@@ -277,19 +277,19 @@ struct AcceleratorLiteralNode : public AcceleratorExprNode {
 //   std::string name;
 // };
 
-// // Index Statements
-// struct AssignmentNode : public IndexStmtNode {
-//   AssignmentNode(const Access& lhs, const IndexExpr& rhs, const IndexExpr& op)
-//       : lhs(lhs), rhs(rhs), op(op) {}
+// Accelerate Statements
+struct AcceleratorAssignmentNode : public AcceleratorStmtNode {
+  AcceleratorAssignmentNode(const AcceleratorAccess& lhs, const AcceleratorExpr& rhs, const AcceleratorExpr& op)
+      : lhs(lhs), rhs(rhs), op(op) {}
 
-//   void accept(IndexStmtVisitorStrict* v) const {
-//     v->visit(this);
-//   }
+  void accept(AcceleratorStmtVisitorStrict* v) const {
+    v->visit(this);
+  }
 
-//   Access    lhs;
-//   IndexExpr rhs;
-//   IndexExpr op;
-// };
+  AcceleratorAccess    lhs;
+  AcceleratorExpr rhs;
+  AcceleratorExpr op;
+};
 
 // struct YieldNode : public IndexStmtNode {
 //   YieldNode(const std::vector<IndexVar>& indexVars, IndexExpr expr)

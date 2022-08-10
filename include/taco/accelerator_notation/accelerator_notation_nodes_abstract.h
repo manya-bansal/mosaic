@@ -14,6 +14,7 @@ class TensorVar;
 class IndexVar;
 class Precompute;
 class AcceleratorExprVisitorStrict;
+class AcceleratorStmtVisitorStrict;
 
 /// A node of a scalar index expression tree.
 struct AcceleratorExprNode : public util::Manageable<AcceleratorExprNode>,
@@ -36,7 +37,7 @@ private:
 
 
 /// A node in a tensor index expression tree
-struct AcceleratorStmtNode : public util::Manageable<AcceleratorExprNode>,
+struct AcceleratorStmtNode : public util::Manageable<AcceleratorStmtNode>,
                        private util::Uncopyable {
 public:
   AcceleratorStmtNode() = default;
@@ -44,6 +45,7 @@ public:
   virtual ~AcceleratorStmtNode() = default;
 
   //TODO: NEED TO DEFINE VISITORS
+  virtual void accept(AcceleratorStmtVisitorStrict*) const = 0;
 
   Type getType() const;
 

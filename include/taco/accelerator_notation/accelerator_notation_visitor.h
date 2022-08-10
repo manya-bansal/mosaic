@@ -8,9 +8,12 @@
 namespace taco {
 
 class AcceleratorExpr;
+class AcceleratorStmt;
 
 struct AcceleratorAccessNode;
 struct AcceleratorLiteralNode;
+
+struct AcceleratorAssignmentNode;
 
 class AcceleratorExprVisitorStrict {
     public:
@@ -23,13 +26,24 @@ class AcceleratorExprVisitorStrict {
 
 };
 
+class AcceleratorStmtVisitorStrict {
+    public:
+        virtual ~AcceleratorStmtVisitorStrict() = default;
+
+        void visit(const AcceleratorStmt&);
+
+        virtual void visit(const AcceleratorAssignmentNode*) = 0;
+
+};
+
 /// Visit nodes in index notation
-class AcceleratorNotationVisitorStrict : public AcceleratorExprVisitorStrict {
+class AcceleratorNotationVisitorStrict : public AcceleratorExprVisitorStrict, 
+                                         public AcceleratorStmtVisitorStrict {
     public:
         virtual ~AcceleratorNotationVisitorStrict() = default;
 
         using AcceleratorExprVisitorStrict::visit;
-        // using IndexStmtVisitorStrict::visit;
+        using AcceleratorStmtVisitorStrict::visit;
 };
 
 class AcceleratorNotationVisitor : public AcceleratorNotationVisitorStrict {
@@ -39,6 +53,8 @@ public:
   using AcceleratorExprVisitorStrict::visit;
 
   virtual void visit(const AcceleratorAccessNode*);
+  virtual void visit(const AcceleratorLiteralNode*);
+  virtual void visit(const AcceleratorAssignmentNode* op);
 
 };
 
@@ -87,6 +103,8 @@ private:
   using AcceleratorNotationVisitor::visit;
   ACCEL_RULE(AcceleratorAccessNode)
   ACCEL_RULE(AcceleratorLiteralNode)
+
+  ACCEL_RULE(AcceleratorAssignmentNode)
 
 };
 

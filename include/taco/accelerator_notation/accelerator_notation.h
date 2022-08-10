@@ -31,10 +31,14 @@
 namespace taco {
 
 class AcceleratorExprVisitorStrict;
+class AcceleratorStmtVisitorStrict;
+class AcceleratorAssignment;
 class TensorObject;
 
 struct AcceleratorAccessNode;
 struct AcceleratorLiteralNode;
+
+struct AcceleratorAssignmentNode;
 
 class AcceleratorExpr : public util::IntrusivePtr<const AcceleratorExprNode> {
 public:
@@ -73,6 +77,17 @@ public:
 
 };
 
+class AcceleratorStmt : public util::IntrusivePtr<const AcceleratorStmtNode> {
+public:
+  AcceleratorStmt();
+  AcceleratorStmt(const AcceleratorStmtNode* n) : util::IntrusivePtr<const AcceleratorStmtNode>(n) {}
+
+  void accept(AcceleratorStmtVisitorStrict *) const;
+
+  friend std::ostream& operator<<(std::ostream&, const AcceleratorStmt&);
+
+};
+
 class AcceleratorAccess : public AcceleratorExpr {
 public:
     AcceleratorAccess() = default;
@@ -80,6 +95,21 @@ public:
     AcceleratorAccess(const AcceleratorAccessNode*);
     AcceleratorAccess(const TensorObject& tensorObject, const std::vector<IndexVar>& indices={},
             bool isAccessingStructure=false);
+
+    /// Assign the result of an expression to a left-hand-side tensor access.
+    /// ```
+    /// a(i) = b(i) * c(i);
+    /// ```
+    AcceleratorAssignment operator=(const AcceleratorExpr&);
+
+    /// Must override the default Access operator=, otherwise it is a copy.
+    AcceleratorAssignment operator=(const AcceleratorAccess&);
+
+    /// Must disambiguate TensorVar as it can be implicitly converted to IndexExpr
+    /// and AccesExpr.
+    AcceleratorAssignment operator=(const TensorObject&);
+
+    typedef AcceleratorAccess Node;
 };
 
 /// A literal index expression is a scalar literal that is embedded in the code.
@@ -118,6 +148,36 @@ public:
 
 };
 
+/// An assignment statement assigns an index expression to the locations in a
+/// tensor given by an lhs access expression.
+class AcceleratorAssignment : public AcceleratorStmt {
+public:
+  AcceleratorAssignment() = default;
+  AcceleratorAssignment(const AcceleratorAssignmentNode*);
+
+  /// Create an assignment. Can specify an optional operator `op` that turns the
+  /// assignment into a compound assignment, e.g. `+=`.
+  AcceleratorAssignment(AcceleratorAccess lhs, AcceleratorExpr rhs, AcceleratorExpr op = AcceleratorExpr());
+
+  /// Create an assignment. Can specify an optional operator `op` that turns the
+  /// assignment into a compound assignment, e.g. `+=`. Additionally, specify
+  /// any modifers on reduction index variables (windows, index sets, etc.).
+  AcceleratorAssignment(TensorObject tensor, std::vector<IndexVar> indices, AcceleratorExpr rhs,
+             AcceleratorExpr op = AcceleratorExpr());
+
+  /// Return the assignment's left-hand side.
+  AcceleratorAccess getLhs() const;
+
+  /// Return the assignment's right-hand side.
+  AcceleratorExpr getRhs() const;
+
+  /// Return the assignment compound operator (e.g., `+=`) or an undefined
+  /// expression if the assignment is not compound (`=`).
+  AcceleratorExpr getOperator() const;
+
+  typedef AcceleratorAssignmentNode Node;
+};
+
 
 class TensorObject : public util::Comparable<TensorObject> {
 public:
@@ -146,13 +206,17 @@ public:
     return static_cast<const TensorObject*>(this)->operator()({indices...});
   }
 
-  
-
   /// Create an index expression that accesses (reads or writes) this tensor.
   template <typename... IndexVars>
   AcceleratorAccess operator()(const IndexVars&... indices) {
     return this->operator()({indices...});
   }
+  
+  /// Assign a scalar expression to a scalar tensor.
+  AcceleratorAssignment operator=(AcceleratorExpr);
+
+  // /// Add a scalar expression to a scalar tensor.
+  // AcceleratorAssignment operator+=(AcceleratorExpr);
 
 
 private:

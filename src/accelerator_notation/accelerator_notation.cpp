@@ -102,6 +102,16 @@ std::ostream& operator<<(std::ostream& os, const AcceleratorExpr& expr) {
   return os;
 }
 
+void AcceleratorStmt::accept(AcceleratorStmtVisitorStrict *v) const {
+  ptr->accept(v);
+}
+
+std::ostream& operator<<(std::ostream& os, const AcceleratorStmt& expr) {
+  if (!expr.defined()) return os << "IndexStmt()";
+  AcceleratorNotationPrinter printer(os);
+  printer.print(expr);
+  return os;
+}
 
 AcceleratorAccess::AcceleratorAccess(const AcceleratorAccessNode* n) : AcceleratorExpr(n) {
 }
@@ -109,6 +119,23 @@ AcceleratorAccess::AcceleratorAccess(const AcceleratorAccessNode* n) : Accelerat
 AcceleratorAccess::AcceleratorAccess(const TensorObject& tensor, const std::vector<IndexVar>& indices,
                bool isAccessingStructure)
     : AcceleratorAccess(new AcceleratorAccessNode(tensor, indices, isAccessingStructure)) {
+}
+
+AcceleratorAssignment AcceleratorAccess::operator=(const AcceleratorExpr& expr){
+  AcceleratorAssignment assignment = AcceleratorAssignment(*this, expr);
+  //TODO: do some type checking
+  return assignment;
+}
+
+/// Must override the default Access operator=, otherwise it is a copy.
+AcceleratorAssignment AcceleratorAccess::operator=(const AcceleratorAccess& access){
+  return operator=(static_cast<AcceleratorExpr>(access));
+}
+
+/// Must disambiguate TensorVar as it can be implicitly converted to IndexExpr
+/// and AccesExpr.
+AcceleratorAssignment AcceleratorAccess::operator=(const TensorObject& tensor){
+  return operator=(AcceleratorAccess(tensor));
 }
 
 AcceleratorLiteral::AcceleratorLiteral(const AcceleratorLiteralNode* n) : AcceleratorExpr(n) {
@@ -191,6 +218,36 @@ void* AcceleratorLiteral::getValPtr() {
   return getNode(*this)->val;
 }
 
+//class AcceleratorAssigment
+
+AcceleratorAssignment::AcceleratorAssignment(const AcceleratorAssignmentNode* n) : AcceleratorStmt(n) {
+}
+
+AcceleratorAssignment::AcceleratorAssignment(AcceleratorAccess lhs, AcceleratorExpr rhs, AcceleratorExpr op)
+    : AcceleratorAssignment(new AcceleratorAssignmentNode(lhs, rhs, op)) {
+}
+
+AcceleratorAssignment::AcceleratorAssignment(TensorObject tensor, std::vector<IndexVar> indices, AcceleratorExpr rhs,
+             AcceleratorExpr op)
+      :  AcceleratorAssignment(AcceleratorAccess(tensor, indices), rhs, op) { 
+}
+
+/// Return the assignment's left-hand side.
+AcceleratorAccess AcceleratorAssignment::getLhs() const {
+  return getNode(*this)->lhs;
+}
+
+/// Return the assignment's right-hand side.
+AcceleratorExpr AcceleratorAssignment::getRhs() const{
+  return getNode(*this)->rhs;
+}
+
+/// Return the assignment compound operator (e.g., `+=`) or an undefined
+/// expression if the assignment is not compound (`=`).
+AcceleratorExpr AcceleratorAssignment::getOperator() const{
+  return getNode(*this)->op;
+}
+
 // class TensorObject
 struct TensorObject::Content {
   string name;
@@ -255,6 +312,15 @@ AcceleratorAccess TensorObject::operator()(const std::vector<IndexVar>& indices)
       "A tensor of order " << getOrder() << " must be indexed with " <<
       getOrder() << " variables, but is indexed with:  " << util::join(indices);
   return AcceleratorAccess(new AcceleratorAccessNode(*this, indices, false));
+}
+
+AcceleratorAssignment TensorObject::operator=(AcceleratorExpr expr) {
+  taco_uassert(getOrder() == 0)
+      << "Must use index variable on the left-hand-side when assigning an "
+      << "expression to a non-scalar tensor.";
+  AcceleratorAssignment assignment = AcceleratorAssignment(*this, {}, expr);
+  //TODOD: Maybe add some check here
+  return assignment;
 }
 
 

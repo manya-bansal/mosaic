@@ -8,11 +8,21 @@ namespace taco {
 
 
 void AcceleratorExprVisitorStrict::visit(const AcceleratorExpr& expr) {
-  cout << "here" << endl;
   expr.accept(this);
 }
 
 void AcceleratorNotationVisitor::visit(const AcceleratorAccessNode* op) {
+}
+
+void AcceleratorNotationVisitor::visit(const AcceleratorLiteralNode* op) {
+}
+
+void AcceleratorStmtVisitorStrict::visit(const AcceleratorStmt& expr) {
+  expr.accept(this);
+}
+
+void AcceleratorNotationVisitor::visit(const AcceleratorAssignmentNode* op) {
+  op->rhs.accept(this);
 }
 
 

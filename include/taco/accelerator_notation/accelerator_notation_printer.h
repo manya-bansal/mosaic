@@ -11,7 +11,7 @@ public:
   AcceleratorNotationPrinter(std::ostream& os);
 
   void print(const AcceleratorExpr& expr);
-//   void print(const IndexStmt& expr);
+  void print(const AcceleratorStmt& expr);
 
   using AcceleratorNotationVisitorStrict::visit;
 
@@ -31,7 +31,7 @@ public:
 //   void visit(const IndexVarNode*);
 
 //   // Tensor Expressions
-//   void visit(const AssignmentNode*);
+  void visit(const AcceleratorAssignmentNode*);
 //   void visit(const YieldNode*);
 //   void visit(const ForallNode*);
 //   void visit(const WhereNode*);
