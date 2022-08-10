@@ -3,7 +3,7 @@
 
 #include "taco/index_notation/index_notation.h"
 #include "taco/type.h"
-#include  "taco/accelerator_notation/accel_interface.h"
+#include "taco/accelerator_notation/accel_interface.h"
 
 using namespace taco;
 

@@ -16,14 +16,17 @@ TEST(accelerateNotation, AcceleratorExprNode) {
 
     TensorObject t("t", Type(taco::Float32, {Dimension()}));
     TensorObject x("x", Type(taco::Float32, {Dimension()}));
+    TensorObject y("y", Type(taco::Float32));
 
     std::cout << t(i) << endl;
 
     std::cout << AcceleratorExpr(0) << endl;
     std::cout << AcceleratorExpr(2.3) << endl;
 
-    AcceleratorStmt stmt = t(i) = x(i);
+    AcceleratorStmt stmt = y += -x(i) + x(i);
 
+
+    std::cout << y + x(i) << std::endl;
     std::cout << stmt << std::endl;
 
 }

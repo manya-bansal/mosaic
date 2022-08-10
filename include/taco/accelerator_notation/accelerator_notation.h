@@ -38,6 +38,7 @@ class TensorObject;
 struct AcceleratorAccessNode;
 struct AcceleratorLiteralNode;
 struct AcceleratorNegNode;
+struct AcceleratorAddNode;
 
 struct AcceleratorAssignmentNode;
 
@@ -78,6 +79,18 @@ public:
 
 };
 
+/// Construct and returns an expression that negates this expression.
+/// ```
+/// A(i,j) = -B(i,j);
+/// ```
+AcceleratorExpr operator-(const AcceleratorExpr&);
+
+/// Add two index expressions.
+/// ```
+/// A(i,j) = B(i,j) + C(i,j);
+/// ```
+AcceleratorExpr operator+(const AcceleratorExpr&, const AcceleratorExpr&);
+
 class AcceleratorStmt : public util::IntrusivePtr<const AcceleratorStmtNode> {
 public:
   AcceleratorStmt();
@@ -97,6 +110,9 @@ public:
     AcceleratorAccess(const TensorObject& tensorObject, const std::vector<IndexVar>& indices={},
             bool isAccessingStructure=false);
 
+    const TensorObject& getTensorObject() const;
+    const std::vector<IndexVar>& getIndexVars() const;
+
     /// Assign the result of an expression to a left-hand-side tensor access.
     /// ```
     /// a(i) = b(i) * c(i);
@@ -110,7 +126,9 @@ public:
     /// and AccesExpr.
     AcceleratorAssignment operator=(const TensorObject&);
 
-    typedef AcceleratorAccess Node;
+    AcceleratorAssignment operator+=(const AcceleratorExpr& expr);
+
+    typedef AcceleratorAccessNode Node;
 };
 
 /// A literal index expression is a scalar literal that is embedded in the code.
@@ -163,6 +181,24 @@ public:
 
   typedef AcceleratorNegNode Node;
 };
+
+/// An add expression adds two numbers.
+/// ```
+/// a(i) = b(i) + c(i);
+/// ```
+class AcceleratorAdd : public AcceleratorExpr {
+public:
+  AcceleratorAdd();
+  AcceleratorAdd(const AcceleratorAddNode*);
+  AcceleratorAdd(AcceleratorExpr a, AcceleratorExpr b);
+
+  AcceleratorExpr getA() const;
+  AcceleratorExpr getB() const;
+
+  typedef AcceleratorAddNode Node;
+};
+
+
 
 
 /// An assignment statement assigns an index expression to the locations in a
@@ -233,7 +269,7 @@ public:
   AcceleratorAssignment operator=(AcceleratorExpr);
 
   // /// Add a scalar expression to a scalar tensor.
-  // AcceleratorAssignment operator+=(AcceleratorExpr);
+  AcceleratorAssignment operator+=(AcceleratorExpr);
 
 
 private:

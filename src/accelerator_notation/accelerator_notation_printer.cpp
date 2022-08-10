@@ -100,11 +100,47 @@ void AcceleratorNotationPrinter::visit(const AcceleratorNegNode* op) {
   }
 }
 
+template <typename Node>
+void AcceleratorNotationPrinter::visitAcceleratedBinary(Node op, Precedence precedence) {
+  bool parenthesize =  precedence > parentPrecedence;
+  if (parenthesize) {
+    os << "(";
+  }
+  parentPrecedence = precedence;
+  op->a.accept(this);
+  os << " " << op->getOperatorString() << " ";
+  parentPrecedence = precedence;
+  op->b.accept(this);
+  if (parenthesize) {
+    os << ")";
+  }
+}
+
+void AcceleratorNotationPrinter::visit(const AcceleratorAddNode* op){
+  visitAcceleratedBinary(op, Precedence::ADD);
+}
+
 void AcceleratorNotationPrinter::visit(const AcceleratorAssignmentNode* op) {
+
+  struct OperatorName : AcceleratorNotationVisitor {
+    using AcceleratorNotationVisitor::visit;
+    std::string operatorName;
+    std::string get(AcceleratorExpr expr) {
+      if (!expr.defined()) return "";
+      expr.accept(this);
+      return operatorName;
+    }
+    void visit(const AcceleratorBinaryExprNode* node){
+      operatorName = node->getOperatorString();
+    }
+
+  };
   op->lhs.accept(this);
   // TODO: Right now, only supports = 
-  os << " = ";
+  os << " " << OperatorName().get(op->op) << "= ";
   op->rhs.accept(this);
 }
+
+
 
 }

@@ -13,6 +13,10 @@ class AcceleratorStmt;
 struct AcceleratorAccessNode;
 struct AcceleratorLiteralNode;
 struct AcceleratorNegNode;
+struct AcceleratorAddNode;
+
+struct AcceleratorBinaryExprNode;
+struct AcceleratorUnaryExprNode;
 
 struct AcceleratorAssignmentNode;
 
@@ -25,6 +29,7 @@ class AcceleratorExprVisitorStrict {
         virtual void visit(const AcceleratorAccessNode*) = 0;
         virtual void visit(const AcceleratorLiteralNode*) = 0;
         virtual void visit(const AcceleratorNegNode*) = 0;
+        virtual void visit(const AcceleratorAddNode*) = 0;
 
 };
 
@@ -57,8 +62,12 @@ public:
   virtual void visit(const AcceleratorAccessNode*);
   virtual void visit(const AcceleratorLiteralNode*);
   virtual void visit(const AcceleratorNegNode*);
+  virtual void visit(const AcceleratorAddNode*);
 
-  virtual void visit(const AcceleratorAssignmentNode* op);
+  virtual void visit(const AcceleratorAssignmentNode*);
+
+  virtual void visit(const AcceleratorBinaryExprNode*);
+  virtual void visit(const AcceleratorUnaryExprNode*);
 
 };
 
@@ -107,6 +116,8 @@ private:
   using AcceleratorNotationVisitor::visit;
   ACCEL_RULE(AcceleratorAccessNode)
   ACCEL_RULE(AcceleratorLiteralNode)
+  ACCEL_RULE(AcceleratorNegNode)
+  ACCEL_RULE(AcceleratorAddNode)
 
   ACCEL_RULE(AcceleratorAssignmentNode)
 

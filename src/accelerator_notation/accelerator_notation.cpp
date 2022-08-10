@@ -102,6 +102,14 @@ std::ostream& operator<<(std::ostream& os, const AcceleratorExpr& expr) {
   return os;
 }
 
+AcceleratorExpr operator-(const AcceleratorExpr& expr) {
+  return new AcceleratorNegNode(expr.ptr);
+}
+
+AcceleratorExpr operator+(const AcceleratorExpr& lhs, const AcceleratorExpr& rhs) {
+  return new AcceleratorAddNode(lhs, rhs);
+}
+
 void AcceleratorStmt::accept(AcceleratorStmtVisitorStrict *v) const {
   ptr->accept(v);
 }
@@ -121,6 +129,14 @@ AcceleratorAccess::AcceleratorAccess(const TensorObject& tensor, const std::vect
     : AcceleratorAccess(new AcceleratorAccessNode(tensor, indices, isAccessingStructure)) {
 }
 
+const TensorObject& AcceleratorAccess::getTensorObject() const {
+  return getNode(*this)->tensorObject;
+}
+
+const std::vector<IndexVar>& AcceleratorAccess::getIndexVars() const {
+  return getNode(*this)->indexVars;
+}
+
 AcceleratorAssignment AcceleratorAccess::operator=(const AcceleratorExpr& expr){
   AcceleratorAssignment assignment = AcceleratorAssignment(*this, expr);
   //TODO: do some type checking
@@ -137,6 +153,20 @@ AcceleratorAssignment AcceleratorAccess::operator=(const AcceleratorAccess& acce
 AcceleratorAssignment AcceleratorAccess::operator=(const TensorObject& tensor){
   return operator=(AcceleratorAccess(tensor));
 }
+
+AcceleratorAssignment AcceleratorAccess::operator+=(const AcceleratorExpr& expr){
+  TensorObject result = getTensorObject();
+  AcceleratorAssignment assignment = AcceleratorAssignment(
+    result,
+    getIndexVars(),
+    expr,
+    AcceleratorAdd()
+  );
+  return assignment;
+}
+
+
+
 
 AcceleratorLiteral::AcceleratorLiteral(const AcceleratorLiteralNode* n) : AcceleratorExpr(n) {
 }
@@ -227,6 +257,24 @@ AcceleratorNeg::AcceleratorNeg(AcceleratorExpr a) : AcceleratorNeg(new Accelerat
 
 AcceleratorExpr AcceleratorNeg::getA() const {
   return getNode(*this)->a;
+}
+
+// class AcceleratorAdd
+AcceleratorAdd::AcceleratorAdd() : AcceleratorAdd(new AcceleratorAddNode) {
+}
+
+AcceleratorAdd::AcceleratorAdd(const AcceleratorAddNode* n) : AcceleratorExpr(n) {
+}
+
+AcceleratorAdd::AcceleratorAdd(AcceleratorExpr a, AcceleratorExpr b) : AcceleratorAdd(new AcceleratorAddNode(a, b)) {
+}
+
+AcceleratorExpr AcceleratorAdd::getA() const {
+  return getNode(*this)->a;
+}
+
+AcceleratorExpr AcceleratorAdd::getB() const {
+  return getNode(*this)->b;
 }
 
 //class AcceleratorAssigment
@@ -331,6 +379,14 @@ AcceleratorAssignment TensorObject::operator=(AcceleratorExpr expr) {
       << "expression to a non-scalar tensor.";
   AcceleratorAssignment assignment = AcceleratorAssignment(*this, {}, expr);
   //TODOD: Maybe add some check here
+  return assignment;
+}
+
+AcceleratorAssignment TensorObject::operator+=(AcceleratorExpr expr) {
+  taco_uassert(getOrder() == 0)
+      << "Must use index variable on the left-hand-side when assigning an "
+      << "expression to a non-scalar tensor.";
+  AcceleratorAssignment assignment = AcceleratorAssignment(*this, {}, expr, new AcceleratorAddNode);
   return assignment;
 }
 

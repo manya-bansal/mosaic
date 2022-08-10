@@ -29,7 +29,7 @@ struct AcceleratorAccessNode : public AcceleratorExprNode {
         isAccessingStructure(isAccessingStructure) {
   }
 
-  void accept(AcceleratorExprVisitorStrict* v) const {
+  void accept(AcceleratorExprVisitorStrict* v) const override{
     v->visit(this);
   }
 
@@ -58,7 +58,7 @@ struct AcceleratorLiteralNode : public AcceleratorExprNode {
     free(val);
   }
 
-  void accept(AcceleratorExprVisitorStrict* v) const {
+  void accept(AcceleratorExprVisitorStrict* v) const override{
     v->visit(this);
   }
 
@@ -82,37 +82,37 @@ protected:
 struct AcceleratorNegNode : public AcceleratorUnaryExprNode {
   explicit AcceleratorNegNode(AcceleratorExpr operand) : AcceleratorUnaryExprNode(operand) {}
 
-  void accept(AcceleratorExprVisitorStrict* v) const {
+  void accept(AcceleratorExprVisitorStrict* v) const override{
     v->visit(this);
   }
 };
 
 
-// struct BinaryExprNode : public IndexExprNode {
-//   virtual std::string getOperatorString() const = 0;
+struct AcceleratorBinaryExprNode : public AcceleratorExprNode {
+  virtual std::string getOperatorString() const = 0;
 
-//   IndexExpr a;
-//   IndexExpr b;
+  AcceleratorExpr a;
+  AcceleratorExpr b;
 
-// protected:
-//   BinaryExprNode() : IndexExprNode() {}
-//   BinaryExprNode(IndexExpr a, IndexExpr b)
-//       : IndexExprNode(max_type(a.getDataType(), b.getDataType())), a(a), b(b) {}
-// };
+protected:
+  AcceleratorBinaryExprNode() : AcceleratorExprNode() {}
+  AcceleratorBinaryExprNode(AcceleratorExpr a, AcceleratorExpr b)
+      : AcceleratorExprNode(max_type(a.getDataType(), b.getDataType())), a(a), b(b) {}
+};
 
 
-// struct AddNode : public BinaryExprNode {
-//   AddNode() : BinaryExprNode() {}
-//   AddNode(IndexExpr a, IndexExpr b) : BinaryExprNode(a, b) {}
+struct AcceleratorAddNode : public AcceleratorBinaryExprNode {
+  AcceleratorAddNode() : AcceleratorBinaryExprNode() {}
+  AcceleratorAddNode(AcceleratorExpr a, AcceleratorExpr b) : AcceleratorBinaryExprNode(a, b) {}
 
-//   std::string getOperatorString() const {
-//     return "+";
-//   }
+  std::string getOperatorString() const override{
+    return "+";
+  }
 
-//   void accept(IndexExprVisitorStrict* v) const {
-//     v->visit(this);
-//   }
-// };
+  void accept(AcceleratorExprVisitorStrict* v) const override{
+    v->visit(this);
+  }
+};
 
 
 // struct SubNode : public BinaryExprNode {

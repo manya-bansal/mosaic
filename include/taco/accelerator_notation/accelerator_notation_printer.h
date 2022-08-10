@@ -19,8 +19,9 @@ public:
   void visit(const AcceleratorAccessNode*);
   void visit(const AcceleratorLiteralNode*);
   void visit(const AcceleratorNegNode*);
-//   void visit(const SqrtNode*);
-//   void visit(const AddNode*);
+  //   void visit(const SqrtNode*);
+  void visit(const AcceleratorAddNode*);
+
 //   void visit(const SubNode*);
 //   void visit(const MulNode*);
 //   void visit(const DivNode*);
@@ -58,7 +59,7 @@ private:
   };
   Precedence parentPrecedence;
 
-  template <typename Node> void visitBinary(Node op, Precedence p);
+  template <typename Node> void visitAcceleratedBinary(Node op, Precedence p);
   template <typename Node> void visitImmediate(Node op);
 };
 
