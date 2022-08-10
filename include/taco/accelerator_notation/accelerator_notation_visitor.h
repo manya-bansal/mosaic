@@ -12,6 +12,7 @@ class AcceleratorStmt;
 
 struct AcceleratorAccessNode;
 struct AcceleratorLiteralNode;
+struct AcceleratorNegNode;
 
 struct AcceleratorAssignmentNode;
 
@@ -23,6 +24,7 @@ class AcceleratorExprVisitorStrict {
 
         virtual void visit(const AcceleratorAccessNode*) = 0;
         virtual void visit(const AcceleratorLiteralNode*) = 0;
+        virtual void visit(const AcceleratorNegNode*) = 0;
 
 };
 
@@ -54,6 +56,8 @@ public:
 
   virtual void visit(const AcceleratorAccessNode*);
   virtual void visit(const AcceleratorLiteralNode*);
+  virtual void visit(const AcceleratorNegNode*);
+
   virtual void visit(const AcceleratorAssignmentNode* op);
 
 };

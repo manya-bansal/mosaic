@@ -71,21 +71,21 @@ struct AcceleratorLiteralNode : public AcceleratorExprNode {
   void* val;
 };
 
-// struct UnaryExprNode : public IndexExprNode {
-//   IndexExpr a;
+struct AcceleratorUnaryExprNode : public AcceleratorExprNode {
+  AcceleratorExpr a;
 
-// protected:
-//   UnaryExprNode(IndexExpr a) : IndexExprNode(a.getDataType()), a(a) {}
-// };
+protected:
+  explicit AcceleratorUnaryExprNode(AcceleratorExpr a) : AcceleratorExprNode(a.getDataType()), a(a) {}
+};
 
 
-// struct NegNode : public UnaryExprNode {
-//   NegNode(IndexExpr operand) : UnaryExprNode(operand) {}
+struct AcceleratorNegNode : public AcceleratorUnaryExprNode {
+  explicit AcceleratorNegNode(AcceleratorExpr operand) : AcceleratorUnaryExprNode(operand) {}
 
-//   void accept(IndexExprVisitorStrict* v) const {
-//     v->visit(this);
-//   }
-// };
+  void accept(AcceleratorExprVisitorStrict* v) const {
+    v->visit(this);
+  }
+};
 
 
 // struct BinaryExprNode : public IndexExprNode {

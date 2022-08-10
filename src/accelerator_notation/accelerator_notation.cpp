@@ -218,6 +218,17 @@ void* AcceleratorLiteral::getValPtr() {
   return getNode(*this)->val;
 }
 
+//class AcceleratorNegNode
+AcceleratorNeg::AcceleratorNeg(const AcceleratorNegNode* n) : AcceleratorExpr(n) {
+}
+
+AcceleratorNeg::AcceleratorNeg(AcceleratorExpr a) : AcceleratorNeg(new AcceleratorNegNode(a)) {
+};
+
+AcceleratorExpr AcceleratorNeg::getA() const {
+  return getNode(*this)->a;
+}
+
 //class AcceleratorAssigment
 
 AcceleratorAssignment::AcceleratorAssignment(const AcceleratorAssignmentNode* n) : AcceleratorStmt(n) {

@@ -37,6 +37,7 @@ class TensorObject;
 
 struct AcceleratorAccessNode;
 struct AcceleratorLiteralNode;
+struct AcceleratorNegNode;
 
 struct AcceleratorAssignmentNode;
 
@@ -147,6 +148,22 @@ public:
   typedef AcceleratorLiteralNode Node;
 
 };
+
+/// A neg expression computes negates a number.
+/// ```
+/// a(i) = -b(i);
+/// ```
+class AcceleratorNeg : public AcceleratorExpr {
+public:
+  AcceleratorNeg() = default;
+  AcceleratorNeg(const AcceleratorNegNode*);
+  AcceleratorNeg(AcceleratorExpr a);
+
+  AcceleratorExpr getA() const;
+
+  typedef AcceleratorNegNode Node;
+};
+
 
 /// An assignment statement assigns an index expression to the locations in a
 /// tensor given by an lhs access expression.

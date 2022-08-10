@@ -81,6 +81,25 @@ void AcceleratorNotationPrinter::visit(const AcceleratorLiteralNode* op) {
   }
 }
 
+void AcceleratorNotationPrinter::visit(const AcceleratorNegNode* op) {
+  Precedence precedence = Precedence::NEG;
+  bool parenthesize =  precedence > parentPrecedence;
+  parentPrecedence = precedence;
+  if(op->getDataType().isBool()) {
+    os << "!";
+  } else {
+    os << "-";
+  }
+
+  if (parenthesize) {
+    os << "(";
+  }
+  op->a.accept(this);
+  if (parenthesize) {
+    os << ")";
+  }
+}
+
 void AcceleratorNotationPrinter::visit(const AcceleratorAssignmentNode* op) {
   op->lhs.accept(this);
   // TODO: Right now, only supports = 

@@ -25,5 +25,9 @@ void AcceleratorNotationVisitor::visit(const AcceleratorAssignmentNode* op) {
   op->rhs.accept(this);
 }
 
+void AcceleratorNotationVisitor::visit(const AcceleratorNegNode* op) {
+  visit(static_cast<const AcceleratorUnaryExprNode*>(op));
+}
+
 
 }
