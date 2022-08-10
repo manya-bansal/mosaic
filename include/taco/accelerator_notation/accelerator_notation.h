@@ -43,6 +43,7 @@ struct AcceleratorSubNode;
 struct AcceleratorMulNode;
 struct AcceleratorDivNode;
 struct AcceleratorSqrtNode;
+struct AcceleratorReductionNode;
 
 struct AcceleratorForallNode;
 struct AcceleratorAssignmentNode;
@@ -285,6 +286,23 @@ public:
 
   typedef AcceleratorSqrtNode Node;
 };
+
+/// A reduction over the components AcceleratorExpr by the reduction variable.
+class AcceleratorReduction : public AcceleratorExpr {
+public:
+  AcceleratorReduction() = default;
+  AcceleratorReduction(const AcceleratorReductionNode*);
+  AcceleratorReduction(AcceleratorExpr op, IndexVar var, AcceleratorExpr expr);
+
+  AcceleratorExpr getOp() const;
+  IndexVar getVar() const;
+  AcceleratorExpr getExpr() const;
+
+  typedef AcceleratorReductionNode Node;
+};
+
+/// Create a summation index expression.
+AcceleratorReduction sum(IndexVar i, AcceleratorExpr expr);
 
 
 /// A forall statement binds an index variable to values and evaluates the

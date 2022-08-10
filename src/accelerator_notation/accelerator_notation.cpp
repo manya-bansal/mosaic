@@ -355,6 +355,28 @@ AcceleratorExpr AcceleratorSqrt::getA() const {
   return getNode(*this)->a;
 }
 
+//class AcceleratorReduction
+AcceleratorReduction::AcceleratorReduction(const AcceleratorReductionNode* n) : AcceleratorExpr(n){
+}
+
+AcceleratorReduction::AcceleratorReduction(AcceleratorExpr op, IndexVar var, AcceleratorExpr expr) : AcceleratorReduction(new AcceleratorReductionNode(op, var, expr)) {
+}
+
+AcceleratorExpr AcceleratorReduction::getOp() const{
+  return getNode(*this)->op;
+}
+
+IndexVar AcceleratorReduction::getVar() const{
+  return getNode(*this)->var;
+}
+
+AcceleratorExpr AcceleratorReduction::getExpr() const{
+  return getNode(*this)->a;
+}
+
+AcceleratorReduction sum(IndexVar i, AcceleratorExpr expr){
+  return AcceleratorReduction(new AcceleratorAddNode, i, expr);
+}
 
 //class AcceleratorForall
 AcceleratorForall::AcceleratorForall(const AcceleratorForallNode* n) : AcceleratorStmt(n) {}

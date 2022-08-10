@@ -140,6 +140,33 @@ void AcceleratorNotationPrinter::visit(const AcceleratorDivNode* op){
   visitAcceleratedBinary(op, Precedence::DIV);
 }
 
+void AcceleratorNotationPrinter::visit(const AcceleratorReductionNode* op) {
+
+  struct ReductionName : AcceleratorNotationVisitor {
+    std::string reductionName;
+    std::string get(AcceleratorExpr expr) {
+      expr.accept(this);
+      return reductionName;
+    }
+    using AcceleratorNotationVisitor::visit;
+    void visit(const AcceleratorAddNode* node) {
+      reductionName = "sum";
+    }
+    void visit(const  AcceleratorMulNode* node) {
+      reductionName = "product";
+    }
+    void visit(const  AcceleratorBinaryExprNode* node) {
+      reductionName = "reduction(" + node->getOperatorString() + ")";
+    }
+  };
+
+  parentPrecedence = Precedence::REDUCTION;
+  os << ReductionName().get(op->op) << "(" << op->var << ", ";
+  op->a.accept(this);
+  os << ")";
+}
+
+
 void AcceleratorNotationPrinter::visit(const AcceleratorForallNode* op) {
   os << "forall(" << op->indexVar << ", ";
   op->stmt.accept(this);

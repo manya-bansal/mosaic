@@ -166,6 +166,19 @@ struct AcceleratorSqrtNode : public AcceleratorUnaryExprNode {
 
 };
 
+struct AcceleratorReductionNode : public AcceleratorExprNode {
+  AcceleratorReductionNode(AcceleratorExpr op, IndexVar var, AcceleratorExpr a) : op(op), var(var), a(a) {}
+
+  void accept(AcceleratorExprVisitorStrict* v) const {
+     v->visit(this);
+  }
+
+  AcceleratorExpr op;  // The binary reduction operator, which is a `BinaryExprNode`
+                      // with undefined operands)
+  IndexVar var;
+  AcceleratorExpr a;
+};
+
 
 struct AcceleratorForallNode : public AcceleratorStmtNode {
   AcceleratorForallNode(IndexVar indexVar, AcceleratorStmt stmt)

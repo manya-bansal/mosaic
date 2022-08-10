@@ -24,6 +24,7 @@ public:
   void visit(const AcceleratorSubNode*);
   void visit(const AcceleratorMulNode*);
   void visit(const AcceleratorDivNode*);
+  void visit(const AcceleratorReductionNode*);
 
   // Tensor Expressions
   void visit(const AcceleratorForallNode*);
