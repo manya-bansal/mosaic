@@ -167,21 +167,17 @@ struct AcceleratorSqrtNode : public AcceleratorUnaryExprNode {
 };
 
 
-// struct ForallNode : public IndexStmtNode {
-//   ForallNode(IndexVar indexVar, IndexStmt stmt, MergeStrategy merge_strategy, ParallelUnit parallel_unit, OutputRaceStrategy  output_race_strategy, size_t unrollFactor = 0)
-//       : indexVar(indexVar), stmt(stmt), merge_strategy(merge_strategy), parallel_unit(parallel_unit), output_race_strategy(output_race_strategy), unrollFactor(unrollFactor) {}
+struct AcceleratorForallNode : public AcceleratorStmtNode {
+  AcceleratorForallNode(IndexVar indexVar, AcceleratorStmt stmt)
+      : indexVar(indexVar), stmt(stmt) {}
 
-//   void accept(IndexStmtVisitorStrict* v) const {
-//     v->visit(this);
-//   }
+  void accept(AcceleratorStmtVisitorStrict* v) const {
+    v->visit(this);
+  }
 
-//   IndexVar indexVar;
-//   IndexStmt stmt;
-//   MergeStrategy merge_strategy;
-//   ParallelUnit parallel_unit;
-//   OutputRaceStrategy  output_race_strategy;
-//   size_t unrollFactor = 0;
-// };
+  IndexVar indexVar;
+  AcceleratorStmt stmt;
+};
 
 // Accelerate Statements
 struct AcceleratorAssignmentNode : public AcceleratorStmtNode {

@@ -23,6 +23,7 @@ struct AcceleratorBinaryExprNode;
 struct AcceleratorUnaryExprNode;
 
 struct AcceleratorAssignmentNode;
+struct AcceleratorForallNode;
 
 class AcceleratorExprVisitorStrict {
     public:
@@ -48,8 +49,8 @@ class AcceleratorStmtVisitorStrict {
         void visit(const AcceleratorStmt&);
 
         virtual void visit(const AcceleratorAssignmentNode*) = 0;
-
-};
+        virtual void visit(const AcceleratorForallNode*) = 0; 
+ };
 
 /// Visit nodes in index notation
 class AcceleratorNotationVisitorStrict : public AcceleratorExprVisitorStrict, 
@@ -76,7 +77,8 @@ public:
   virtual void visit(const AcceleratorMulNode*);
   virtual void visit(const AcceleratorDivNode*);
 
-  virtual void visit(const AcceleratorAssignmentNode*);
+  virtual void visit(const AcceleratorForallNode*);
+  virtual void visit(const AcceleratorAssignmentNode*); 
 
   virtual void visit(const AcceleratorBinaryExprNode*);
   virtual void visit(const AcceleratorUnaryExprNode*);
@@ -136,6 +138,7 @@ private:
   ACCEL_RULE(AcceleratorMulNode)
 
 
+  ACCEL_RULE(AcceleratorForallNode)
   ACCEL_RULE(AcceleratorAssignmentNode)
 
 };

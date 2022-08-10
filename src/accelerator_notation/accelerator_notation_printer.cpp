@@ -140,6 +140,12 @@ void AcceleratorNotationPrinter::visit(const AcceleratorDivNode* op){
   visitAcceleratedBinary(op, Precedence::DIV);
 }
 
+void AcceleratorNotationPrinter::visit(const AcceleratorForallNode* op) {
+  os << "forall(" << op->indexVar << ", ";
+  op->stmt.accept(this);
+  os << ")";
+}
+
 void AcceleratorNotationPrinter::visit(const AcceleratorAssignmentNode* op) {
 
   struct OperatorName : AcceleratorNotationVisitor {

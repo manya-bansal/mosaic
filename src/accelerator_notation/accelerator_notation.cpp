@@ -356,9 +356,24 @@ AcceleratorExpr AcceleratorSqrt::getA() const {
 }
 
 
+//class AcceleratorForall
+AcceleratorForall::AcceleratorForall(const AcceleratorForallNode* n) : AcceleratorStmt(n) {}
+
+AcceleratorForall::AcceleratorForall(IndexVar indexVar, AcceleratorStmt stmt) : AcceleratorForall(new AcceleratorForallNode(indexVar, stmt)) {}
+
+IndexVar AcceleratorForall::getIndexVar() const{
+  return getNode(*this)->indexVar;
+}
+
+AcceleratorStmt AcceleratorForall::getStmt() const{
+  return getNode(*this)->stmt;
+}
+
+AcceleratorForall forall(IndexVar i, AcceleratorStmt stmt){
+  return AcceleratorForall(i, stmt);
+}
 
 //class AcceleratorAssigment
-
 AcceleratorAssignment::AcceleratorAssignment(const AcceleratorAssignmentNode* n) : AcceleratorStmt(n) {
 }
 

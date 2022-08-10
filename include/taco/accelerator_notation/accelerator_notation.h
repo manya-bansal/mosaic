@@ -44,6 +44,7 @@ struct AcceleratorMulNode;
 struct AcceleratorDivNode;
 struct AcceleratorSqrtNode;
 
+struct AcceleratorForallNode;
 struct AcceleratorAssignmentNode;
 
 class AcceleratorExpr : public util::IntrusivePtr<const AcceleratorExprNode> {
@@ -286,8 +287,22 @@ public:
 };
 
 
+/// A forall statement binds an index variable to values and evaluates the
+/// sub-statement for each of these values.
+class AcceleratorForall : public AcceleratorStmt {
+public:
+  AcceleratorForall() = default;
+  AcceleratorForall(const AcceleratorForallNode*);
+  AcceleratorForall(IndexVar indexVar, AcceleratorStmt stmt);
 
+  IndexVar getIndexVar() const;
+  AcceleratorStmt getStmt() const;
 
+  typedef AcceleratorForallNode Node;
+};
+
+/// Create a AcceleratorForall index statement.
+AcceleratorForall forall(IndexVar i, AcceleratorStmt stmt);
 
 
 /// An assignment statement assigns an index expression to the locations in a

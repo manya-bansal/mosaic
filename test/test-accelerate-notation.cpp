@@ -27,6 +27,6 @@ TEST(accelerateNotation, AcceleratorExprNode) {
 
 
     std::cout << y - x(i) / x(i) * x(i) << std::endl;
-    std::cout << stmt << std::endl;
+    std::cout << forall(i, stmt) << std::endl;
 
 }

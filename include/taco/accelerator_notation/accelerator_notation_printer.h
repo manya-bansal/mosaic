@@ -25,16 +25,9 @@ public:
   void visit(const AcceleratorMulNode*);
   void visit(const AcceleratorDivNode*);
 
-//   // Tensor Expressions
+  // Tensor Expressions
+  void visit(const AcceleratorForallNode*);
   void visit(const AcceleratorAssignmentNode*);
-//   void visit(const YieldNode*);
-//   void visit(const ForallNode*);
-//   void visit(const WhereNode*);
-//   void visit(const AccelerateNode*);
-//   void visit(const MultiNode*);
-//   void visit(const SequenceNode*);
-//   void visit(const AssembleNode*);
-//   void visit(const SuchThatNode*);
 
 private:
   std::ostream& os;

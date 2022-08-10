@@ -56,6 +56,10 @@ void AcceleratorNotationVisitor::visit(const AcceleratorDivNode* op) {
   visit(static_cast<const AcceleratorBinaryExprNode*>(op));
 }
 
+void AcceleratorNotationVisitor::visit(const AcceleratorForallNode* op) {
+  op->stmt.accept(this);
+}
+
 
 
 }
