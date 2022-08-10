@@ -100,6 +100,14 @@ void AcceleratorNotationPrinter::visit(const AcceleratorNegNode* op) {
   }
 }
 
+void AcceleratorNotationPrinter::visit(const AcceleratorSqrtNode* op) {
+  parentPrecedence = Precedence::FUNC;
+  os << "sqrt";
+  os << "(";
+  op->a.accept(this);
+  os << ")";
+}
+
 template <typename Node>
 void AcceleratorNotationPrinter::visitAcceleratedBinary(Node op, Precedence precedence) {
   bool parenthesize =  precedence > parentPrecedence;
@@ -118,6 +126,18 @@ void AcceleratorNotationPrinter::visitAcceleratedBinary(Node op, Precedence prec
 
 void AcceleratorNotationPrinter::visit(const AcceleratorAddNode* op){
   visitAcceleratedBinary(op, Precedence::ADD);
+}
+
+void AcceleratorNotationPrinter::visit(const AcceleratorSubNode* op){
+  visitAcceleratedBinary(op, Precedence::SUB);
+}
+
+void AcceleratorNotationPrinter::visit(const AcceleratorMulNode* op){
+  visitAcceleratedBinary(op, Precedence::MUL);
+}
+
+void AcceleratorNotationPrinter::visit(const AcceleratorDivNode* op){
+  visitAcceleratedBinary(op, Precedence::DIV);
 }
 
 void AcceleratorNotationPrinter::visit(const AcceleratorAssignmentNode* op) {

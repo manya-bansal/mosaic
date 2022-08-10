@@ -115,193 +115,57 @@ struct AcceleratorAddNode : public AcceleratorBinaryExprNode {
 };
 
 
-// struct SubNode : public BinaryExprNode {
-//   SubNode() : BinaryExprNode() {}
-//   SubNode(IndexExpr a, IndexExpr b) : BinaryExprNode(a, b) {}
+struct AcceleratorSubNode : public AcceleratorBinaryExprNode {
+  AcceleratorSubNode() : AcceleratorBinaryExprNode() {}
+  AcceleratorSubNode(AcceleratorExpr a, AcceleratorExpr b) : AcceleratorBinaryExprNode(a, b) {}
 
-//   std::string getOperatorString() const {
-//     return "-";
-//   }
+  std::string getOperatorString() const override{
+    return "-";
+  }
 
-//   void accept(IndexExprVisitorStrict* v) const {
-//     v->visit(this);
-//   }
-// };
-
-
-// struct MulNode : public BinaryExprNode {
-//   MulNode() : BinaryExprNode() {}
-//   MulNode(IndexExpr a, IndexExpr b) : BinaryExprNode(a, b) {}
-
-//   std::string getOperatorString() const {
-//     return "*";
-//   }
-
-//   void accept(IndexExprVisitorStrict* v) const {
-//     v->visit(this);
-//   }
-// };
+  void accept(AcceleratorExprVisitorStrict* v) const override{
+    v->visit(this);
+  }
+};
 
 
-// struct DivNode : public BinaryExprNode {
-//   DivNode() : BinaryExprNode() {}
-//   DivNode(IndexExpr a, IndexExpr b) : BinaryExprNode(a, b) {}
+struct AcceleratorMulNode : public AcceleratorBinaryExprNode {
+  AcceleratorMulNode() : AcceleratorBinaryExprNode() {}
+  AcceleratorMulNode(AcceleratorExpr a, AcceleratorExpr b) : AcceleratorBinaryExprNode(a, b) {}
 
-//   std::string getOperatorString() const {
-//     return "/";
-//   }
+  std::string getOperatorString() const {
+    return "*";
+  }
 
-//   void accept(IndexExprVisitorStrict* v) const {
-//     v->visit(this);
-//   }
-// };
-
-
-// struct SqrtNode : public UnaryExprNode {
-//   SqrtNode(IndexExpr operand) : UnaryExprNode(operand) {}
-
-//   void accept(IndexExprVisitorStrict* v) const {
-//     v->visit(this);
-//   }
-
-// };
+  void accept(AcceleratorExprVisitorStrict* v) const {
+    v->visit(this);
+  }
+};
 
 
-// struct CastNode : public IndexExprNode {
-//   CastNode(IndexExpr operand, Datatype newType);
+struct AcceleratorDivNode : public AcceleratorBinaryExprNode {
+  AcceleratorDivNode() : AcceleratorBinaryExprNode() {}
+  AcceleratorDivNode(AcceleratorExpr a, AcceleratorExpr b) : AcceleratorBinaryExprNode(a, b) {}
 
-//   void accept(IndexExprVisitorStrict* v) const {
-//     v->visit(this);
-//   }
+  std::string getOperatorString() const {
+    return "/";
+  }
 
-//   IndexExpr a;
-// };
+  void accept(AcceleratorExprVisitorStrict* v) const {
+    v->visit(this);
+  }
+};
 
 
-// struct CallIntrinsicNode : public IndexExprNode {
-//   CallIntrinsicNode(const std::shared_ptr<Intrinsic>& func,
-//                     const std::vector<IndexExpr>& args); 
+struct AcceleratorSqrtNode : public AcceleratorUnaryExprNode {
+  AcceleratorSqrtNode(AcceleratorExpr operand) : AcceleratorUnaryExprNode(operand) {}
 
-//   void accept(IndexExprVisitorStrict* v) const {
-//     v->visit(this);
-//   }
-
-//   std::shared_ptr<Intrinsic> func;
-//   std::vector<IndexExpr> args;
-// };
-
-// struct CallNode : public IndexExprNode {
-//   typedef std::function<ir::Expr(const std::vector<ir::Expr>&)> OpImpl;
-//   typedef std::function<IterationAlgebra(const std::vector<IndexExpr>&)> AlgebraImpl;
-
-//   CallNode(std::string name, const std::vector<IndexExpr>& args, OpImpl lowerFunc,
-//            const IterationAlgebra& iterAlg,
-//            const std::vector<Property>& properties,
-//            const std::map<std::vector<int>, OpImpl>& regionDefinitions,
-//            const std::vector<int>& definedRegions);
-
-//   CallNode(std::string name, const std::vector<IndexExpr>& args, OpImpl lowerFunc,
-//            const IterationAlgebra& iterAlg,
-//            const std::vector<Property>& properties,
-//            const std::map<std::vector<int>, OpImpl>& regionDefinitions);
-
-//   void accept(IndexExprVisitorStrict* v) const {
-//     v->visit(this);
-//   }
-
-//   std::string name;
-//   std::vector<IndexExpr> args;
-//   OpImpl defaultLowerFunc;
-//   IterationAlgebra iterAlg;
-//   std::vector<Property> properties;
-//   std::map<std::vector<int>, OpImpl> regionDefinitions;
-
-//   // Needed to track which inputs have been exhausted so the lowerer can know which lower func to use
-//   std::vector<int> definedRegions;
-
-// private:
-//   static Datatype inferReturnType(OpImpl f, const std::vector<IndexExpr>& inputs) {
-//     std::function<ir::Expr(IndexExpr)> getExprs = [](IndexExpr arg) { return ir::Var::make("t", arg.getDataType()); };
-//     std::vector<ir::Expr> exprs = util::map(inputs, getExprs);
-
-//     if(exprs.empty()) {
-//       return taco::Datatype();
-//     }
-
-//     return f(exprs).type();
-//   }
-
-//   static std::vector<int> definedIndices(std::vector<IndexExpr> args) {
-//     std::vector<int> v;
-//     for(int i = 0; i < (int) args.size(); ++i) {
-//       if(args[i].defined()) {
-//         v.push_back(i);
-//       }
-//     }
-//     return v;
-//   }
-// };
-
-// struct ReductionNode : public IndexExprNode {
-//   ReductionNode(IndexExpr op, IndexVar var, IndexExpr a);
-
-//   void accept(IndexExprVisitorStrict* v) const {
-//      v->visit(this);
-//   }
-
-//   IndexExpr op;  // The binary reduction operator, which is a `BinaryExprNode`
-//                  // with undefined operands)
-//   IndexVar var;
-//   IndexExpr a;
-// };
-
-// struct IndexVarNode : public IndexExprNode, public util::Comparable<IndexVarNode> {
-//   IndexVarNode() = delete;
-//   IndexVarNode(const std::string& name, const Datatype& type);
-
-//   void accept(IndexExprVisitorStrict* v) const {
-//     v->visit(this);
-//   }
-
-//   std::string getName() const;
-
-//   friend bool operator==(const IndexVarNode& a, const IndexVarNode& b);
-//   friend bool operator<(const IndexVarNode& a, const IndexVarNode& b);
-
-// private:
-//   struct Content;
-//   std::shared_ptr<Content> content;
-// };
-
-// struct IndexVarNode::Content {
-//   std::string name;
-// };
-
-// Accelerate Statements
-struct AcceleratorAssignmentNode : public AcceleratorStmtNode {
-  AcceleratorAssignmentNode(const AcceleratorAccess& lhs, const AcceleratorExpr& rhs, const AcceleratorExpr& op)
-      : lhs(lhs), rhs(rhs), op(op) {}
-
-  void accept(AcceleratorStmtVisitorStrict* v) const {
+  void accept(AcceleratorExprVisitorStrict* v) const {
     v->visit(this);
   }
 
-  AcceleratorAccess    lhs;
-  AcceleratorExpr rhs;
-  AcceleratorExpr op;
 };
 
-// struct YieldNode : public IndexStmtNode {
-//   YieldNode(const std::vector<IndexVar>& indexVars, IndexExpr expr)
-//       : indexVars(indexVars), expr(expr) {}
-
-//   void accept(IndexStmtVisitorStrict* v) const {
-//     v->visit(this);
-//   }
-
-//   std::vector<IndexVar> indexVars;
-//   IndexExpr expr;
-// };
 
 // struct ForallNode : public IndexStmtNode {
 //   ForallNode(IndexVar indexVar, IndexStmt stmt, MergeStrategy merge_strategy, ParallelUnit parallel_unit, OutputRaceStrategy  output_race_strategy, size_t unrollFactor = 0)
@@ -319,78 +183,19 @@ struct AcceleratorAssignmentNode : public AcceleratorStmtNode {
 //   size_t unrollFactor = 0;
 // };
 
-// struct WhereNode : public IndexStmtNode {
-//   WhereNode(IndexStmt consumer, IndexStmt producer)
-//       : consumer(consumer), producer(producer) {}
+// Accelerate Statements
+struct AcceleratorAssignmentNode : public AcceleratorStmtNode {
+  AcceleratorAssignmentNode(const AcceleratorAccess& lhs, const AcceleratorExpr& rhs, const AcceleratorExpr& op)
+      : lhs(lhs), rhs(rhs), op(op) {}
 
-//   void accept(IndexStmtVisitorStrict* v) const {
-//     v->visit(this);
-//   }
+  void accept(AcceleratorStmtVisitorStrict* v) const {
+    v->visit(this);
+  }
 
-//   IndexStmt consumer;
-//   IndexStmt producer;
-// };
-
-// struct AccelerateNode : public IndexStmtNode {
-//   AccelerateNode(IndexStmt consumer, IndexStmt producer, ConcreteAccelerateCodeGenerator accelGen)
-//       : consumer(consumer), producer(producer), accelGen(accelGen) {}
-
-//   void accept(IndexStmtVisitorStrict* v) const {
-//     v->visit(this);
-//   }
-
-//   IndexStmt consumer;
-//   IndexStmt producer;
-//   ConcreteAccelerateCodeGenerator accelGen;
-// };
-
-// struct MultiNode : public IndexStmtNode {
-//   MultiNode(IndexStmt stmt1, IndexStmt stmt2) : stmt1(stmt1), stmt2(stmt2) {}
-
-//   void accept(IndexStmtVisitorStrict* v) const {
-//     v->visit(this);
-//   }
-
-//   IndexStmt stmt1;
-//   IndexStmt stmt2;
-// };
-
-// struct SuchThatNode : public IndexStmtNode {
-//   SuchThatNode(IndexStmt stmt, std::vector<IndexVarRel> predicate) : stmt(stmt), predicate(predicate) {}
-
-//   void accept(IndexStmtVisitorStrict* v) const {
-//     v->visit(this);
-//   }
-
-//   IndexStmt stmt;
-//   std::vector<IndexVarRel> predicate;
-// };
-
-// struct SequenceNode : public IndexStmtNode {
-//   SequenceNode(IndexStmt definition, IndexStmt mutation)
-//       : definition(definition), mutation(mutation) {}
-
-//   void accept(IndexStmtVisitorStrict* v) const {
-//     v->visit(this);
-//   }
-
-//   IndexStmt definition;
-//   IndexStmt mutation;
-// };
-
-// struct AssembleNode : public IndexStmtNode {
-//   AssembleNode(IndexStmt queries, IndexStmt compute, 
-//                Assemble::AttrQueryResults results)
-//       : queries(queries), compute(compute), results(results) {}
-
-//   void accept(IndexStmtVisitorStrict* v) const {
-//     v->visit(this);
-//   }
-
-//   IndexStmt queries;
-//   IndexStmt compute;
-//   Assemble::AttrQueryResults results;
-// };
+  AcceleratorAccess    lhs;
+  AcceleratorExpr rhs;
+  AcceleratorExpr op;
+};
 
 
 // /// Returns true if expression e is of type E.

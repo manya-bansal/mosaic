@@ -19,17 +19,11 @@ public:
   void visit(const AcceleratorAccessNode*);
   void visit(const AcceleratorLiteralNode*);
   void visit(const AcceleratorNegNode*);
-  //   void visit(const SqrtNode*);
+  void visit(const AcceleratorSqrtNode*);
   void visit(const AcceleratorAddNode*);
-
-//   void visit(const SubNode*);
-//   void visit(const MulNode*);
-//   void visit(const DivNode*);
-//   void visit(const CastNode*);
-//   void visit(const CallNode*);
-//   void visit(const CallIntrinsicNode*);
-//   void visit(const ReductionNode*);
-//   void visit(const IndexVarNode*);
+  void visit(const AcceleratorSubNode*);
+  void visit(const AcceleratorMulNode*);
+  void visit(const AcceleratorDivNode*);
 
 //   // Tensor Expressions
   void visit(const AcceleratorAssignmentNode*);

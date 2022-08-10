@@ -39,6 +39,10 @@ struct AcceleratorAccessNode;
 struct AcceleratorLiteralNode;
 struct AcceleratorNegNode;
 struct AcceleratorAddNode;
+struct AcceleratorSubNode;
+struct AcceleratorMulNode;
+struct AcceleratorDivNode;
+struct AcceleratorSqrtNode;
 
 struct AcceleratorAssignmentNode;
 
@@ -90,6 +94,24 @@ AcceleratorExpr operator-(const AcceleratorExpr&);
 /// A(i,j) = B(i,j) + C(i,j);
 /// ```
 AcceleratorExpr operator+(const AcceleratorExpr&, const AcceleratorExpr&);
+
+/// Subtract two index expressions.
+/// ```
+/// A(i,j) = B(i,j) - C(i,j);
+/// ```
+AcceleratorExpr operator-(const AcceleratorExpr&, const AcceleratorExpr&);
+
+/// Multiply two index expressions.
+/// ```
+/// A(i,j) = B(i,j) * C(i,j);  // Component-wise multiplication
+/// ```
+AcceleratorExpr operator*(const AcceleratorExpr&, const AcceleratorExpr&);
+
+/// Divide an index expression by another.
+/// ```
+/// A(i,j) = B(i,j) / C(i,j);  // Component-wise division
+/// ```
+AcceleratorExpr operator/(const AcceleratorExpr&, const AcceleratorExpr&);
 
 class AcceleratorStmt : public util::IntrusivePtr<const AcceleratorStmtNode> {
 public:
@@ -197,6 +219,73 @@ public:
 
   typedef AcceleratorAddNode Node;
 };
+
+/// A sub expression subtracts two numbers.
+/// ```
+/// a(i) = b(i) - c(i);
+/// ```
+class AcceleratorSub : public AcceleratorExpr {
+public:
+  AcceleratorSub();
+  AcceleratorSub(const AcceleratorSubNode*);
+  AcceleratorSub(AcceleratorExpr a, AcceleratorExpr b);
+
+  AcceleratorExpr getA() const;
+  AcceleratorExpr getB() const;
+
+  typedef AcceleratorSubNode Node;
+};
+
+/// An mull expression multiplies two numbers.
+/// ```
+/// a(i) = b(i) * c(i);
+/// ```
+class AcceleratorMul : public AcceleratorExpr {
+public:
+  AcceleratorMul();
+  AcceleratorMul(const AcceleratorMulNode*);
+  AcceleratorMul(AcceleratorExpr a, AcceleratorExpr b);
+
+  AcceleratorExpr getA() const;
+  AcceleratorExpr getB() const;
+
+  typedef AcceleratorMulNode Node;
+};
+
+
+/// An div expression divides two numbers.
+/// ```
+/// a(i) = b(i) / c(i);
+/// ```
+class AcceleratorDiv : public AcceleratorExpr {
+public:
+  AcceleratorDiv();
+  AcceleratorDiv(const AcceleratorDivNode*);
+  AcceleratorDiv(AcceleratorExpr a, AcceleratorExpr b);
+
+  AcceleratorExpr getA() const;
+  AcceleratorExpr getB() const;
+
+  typedef AcceleratorDivNode Node;
+};
+
+
+/// A sqrt expression computes the square root of a number
+/// ```
+/// a(i) = sqrt(b(i));
+/// ```
+class AcceleratorSqrt : public AcceleratorExpr {
+public:
+  AcceleratorSqrt() = default;
+  AcceleratorSqrt(const AcceleratorSqrtNode*);
+  AcceleratorSqrt(AcceleratorExpr a);
+
+  AcceleratorExpr getA() const;
+
+  typedef AcceleratorSqrtNode Node;
+};
+
+
 
 
 

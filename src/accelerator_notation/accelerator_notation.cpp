@@ -110,6 +110,19 @@ AcceleratorExpr operator+(const AcceleratorExpr& lhs, const AcceleratorExpr& rhs
   return new AcceleratorAddNode(lhs, rhs);
 }
 
+AcceleratorExpr operator-(const AcceleratorExpr& lhs, const AcceleratorExpr& rhs) {
+  return new AcceleratorSubNode(lhs, rhs);
+}
+
+AcceleratorExpr operator*(const AcceleratorExpr& lhs, const AcceleratorExpr& rhs) {
+  return new AcceleratorMulNode(lhs, rhs);
+}
+
+AcceleratorExpr operator/(const AcceleratorExpr& lhs, const AcceleratorExpr& rhs) {
+  return new AcceleratorDivNode(lhs, rhs);
+}
+
+
 void AcceleratorStmt::accept(AcceleratorStmtVisitorStrict *v) const {
   ptr->accept(v);
 }
@@ -276,6 +289,73 @@ AcceleratorExpr AcceleratorAdd::getA() const {
 AcceleratorExpr AcceleratorAdd::getB() const {
   return getNode(*this)->b;
 }
+
+// class AcceleratorSub
+AcceleratorSub::AcceleratorSub() : AcceleratorSub(new AcceleratorSubNode) {
+}
+
+AcceleratorSub::AcceleratorSub(const AcceleratorSubNode* n) : AcceleratorExpr(n) {
+}
+
+AcceleratorSub::AcceleratorSub(AcceleratorExpr a, AcceleratorExpr b) : AcceleratorSub(new AcceleratorSubNode(a, b)) {
+}
+
+AcceleratorExpr AcceleratorSub::getA() const {
+  return getNode(*this)->a;
+}
+
+AcceleratorExpr AcceleratorSub::getB() const {
+  return getNode(*this)->b;
+}
+
+// class AcceleratorMul
+AcceleratorMul::AcceleratorMul() : AcceleratorMul(new AcceleratorMulNode) {
+}
+
+AcceleratorMul::AcceleratorMul(const AcceleratorMulNode* n) : AcceleratorExpr(n) {
+}
+
+AcceleratorMul::AcceleratorMul(AcceleratorExpr a, AcceleratorExpr b) : AcceleratorMul(new AcceleratorMulNode(a, b)) {
+}
+
+AcceleratorExpr AcceleratorMul::getA() const {
+  return getNode(*this)->a;
+}
+
+AcceleratorExpr AcceleratorMul::getB() const {
+  return getNode(*this)->b;
+}
+
+// class AcceleratorDiv
+AcceleratorDiv::AcceleratorDiv() : AcceleratorDiv(new AcceleratorDivNode) {
+}
+
+AcceleratorDiv::AcceleratorDiv(const AcceleratorDivNode* n) : AcceleratorExpr(n) {
+}
+
+AcceleratorDiv::AcceleratorDiv(AcceleratorExpr a, AcceleratorExpr b) : AcceleratorDiv(new AcceleratorDivNode(a, b)) {
+}
+
+AcceleratorExpr AcceleratorDiv::getA() const {
+  return getNode(*this)->a;
+}
+
+AcceleratorExpr AcceleratorDiv::getB() const {
+  return getNode(*this)->b;
+}
+
+//class AcceleratorSqrt
+AcceleratorSqrt::AcceleratorSqrt(const AcceleratorSqrtNode* n) : AcceleratorExpr(n) {
+}
+
+AcceleratorSqrt::AcceleratorSqrt(AcceleratorExpr a) : AcceleratorSqrt(new AcceleratorSqrtNode(a)) {
+};
+
+AcceleratorExpr AcceleratorSqrt::getA() const {
+  return getNode(*this)->a;
+}
+
+
 
 //class AcceleratorAssigment
 

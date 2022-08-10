@@ -38,9 +38,24 @@ void AcceleratorNotationVisitor::visit(const AcceleratorNegNode* op) {
   visit(static_cast<const AcceleratorUnaryExprNode*>(op));
 }
 
+void AcceleratorNotationVisitor::visit(const AcceleratorSqrtNode* op) {
+  visit(static_cast<const AcceleratorUnaryExprNode*>(op));
+}
+
 void AcceleratorNotationVisitor::visit(const AcceleratorAddNode* op) {
   visit(static_cast<const AcceleratorBinaryExprNode*>(op));
 }
+
+void AcceleratorNotationVisitor::visit(const AcceleratorSubNode* op) {
+  visit(static_cast<const AcceleratorBinaryExprNode*>(op));
+}
+void AcceleratorNotationVisitor::visit(const AcceleratorMulNode* op) {
+  visit(static_cast<const AcceleratorBinaryExprNode*>(op));
+}
+void AcceleratorNotationVisitor::visit(const AcceleratorDivNode* op) {
+  visit(static_cast<const AcceleratorBinaryExprNode*>(op));
+}
+
 
 
 }

@@ -23,10 +23,10 @@ TEST(accelerateNotation, AcceleratorExprNode) {
     std::cout << AcceleratorExpr(0) << endl;
     std::cout << AcceleratorExpr(2.3) << endl;
 
-    AcceleratorStmt stmt = y += -x(i) + x(i);
+    AcceleratorStmt stmt = y += -x(i) / x(i) * x(i);
 
 
-    std::cout << y + x(i) << std::endl;
+    std::cout << y - x(i) / x(i) * x(i) << std::endl;
     std::cout << stmt << std::endl;
 
 }
