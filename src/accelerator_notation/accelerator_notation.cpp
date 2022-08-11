@@ -296,7 +296,7 @@ AcceleratorNeg::AcceleratorNeg(const AcceleratorNegNode* n) : AcceleratorExpr(n)
 }
 
 AcceleratorNeg::AcceleratorNeg(AcceleratorExpr a) : AcceleratorNeg(new AcceleratorNegNode(a)) {
-};
+}
 
 AcceleratorExpr AcceleratorNeg::getA() const {
   return getNode(*this)->a;
@@ -379,7 +379,7 @@ AcceleratorSqrt::AcceleratorSqrt(const AcceleratorSqrtNode* n) : AcceleratorExpr
 }
 
 AcceleratorSqrt::AcceleratorSqrt(AcceleratorExpr a) : AcceleratorSqrt(new AcceleratorSqrtNode(a)) {
-};
+}
 
 AcceleratorExpr AcceleratorSqrt::getA() const {
   return getNode(*this)->a;
@@ -610,7 +610,7 @@ TensorObject::TensorObject() : content(new Content) {
 
 std::string TensorObject::getName() const {
   return content->name;
-};
+}
 
 /// Sets the name of the tensor object.
 void TensorObject::setName(const std::string& name) const{
