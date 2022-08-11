@@ -48,6 +48,7 @@ struct AcceleratorReductionNode;
 struct AcceleratorForallNode;
 struct AcceleratorAssignmentNode;
 
+
 class AcceleratorExpr : public util::IntrusivePtr<const AcceleratorExprNode> {
 public:
   AcceleratorExpr() : util::IntrusivePtr<const AcceleratorExprNode>(nullptr) {}
@@ -84,6 +85,14 @@ public:
   friend std::ostream& operator<<(std::ostream&, const AcceleratorExpr&);
 
 };
+
+/// Return true if the index statement is of the given subtype.  The subtypes
+/// are Assignment, Forall, Where, Sequence, and Multi.
+template <typename SubType> bool isa(AcceleratorExpr);
+
+/// Casts the index statement to the given subtype. Assumes S is a subtype and
+/// the subtypes are Assignment, Forall, Where, Sequence, and Multi.
+template <typename SubType> SubType to(AcceleratorExpr);
 
 /// Construct and returns an expression that negates this expression.
 /// ```
@@ -129,6 +138,12 @@ public:
   friend std::ostream& operator<<(std::ostream&, const AcceleratorStmt&);
 
 };
+
+template <typename SubType> bool isa(AcceleratorStmt);
+
+/// Casts the index statement to the given subtype. Assumes S is a subtype and
+/// the subtypes are Assignment, Forall, Where, Multi, and Sequence.
+template <typename SubType> SubType to(AcceleratorStmt);
 
 class AcceleratorAccess : public AcceleratorExpr {
 public:

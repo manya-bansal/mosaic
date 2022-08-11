@@ -208,8 +208,14 @@ AcceleratorAssignment AcceleratorAccess::operator+=(const AcceleratorExpr& expr)
   return assignment;
 }
 
+template <> bool isa<AcceleratorAccess>(AcceleratorExpr e) {
+  return isa<AcceleratorAccessNode>(e.ptr);
+}
 
-
+template <> AcceleratorAccess to<AcceleratorAccess>(AcceleratorExpr e) {
+  taco_iassert(isa<AcceleratorAccess>(e));
+  return AcceleratorAccess(to<AcceleratorAccessNode>(e.ptr));
+}
 
 AcceleratorLiteral::AcceleratorLiteral(const AcceleratorLiteralNode* n) : AcceleratorExpr(n) {
 }
@@ -291,6 +297,15 @@ void* AcceleratorLiteral::getValPtr() {
   return getNode(*this)->val;
 }
 
+template <> bool isa<AcceleratorLiteral>(AcceleratorExpr e) {
+  return isa<AcceleratorLiteralNode>(e.ptr);
+}
+
+template <> AcceleratorLiteral to<AcceleratorLiteral>(AcceleratorExpr e) {
+  taco_iassert(isa<AcceleratorLiteral>(e));
+  return AcceleratorLiteral(to<AcceleratorLiteralNode>(e.ptr));
+}
+
 //class AcceleratorNegNode
 AcceleratorNeg::AcceleratorNeg(const AcceleratorNegNode* n) : AcceleratorExpr(n) {
 }
@@ -301,6 +316,16 @@ AcceleratorNeg::AcceleratorNeg(AcceleratorExpr a) : AcceleratorNeg(new Accelerat
 AcceleratorExpr AcceleratorNeg::getA() const {
   return getNode(*this)->a;
 }
+
+template <> bool isa<AcceleratorNeg>(AcceleratorExpr e) {
+  return isa<AcceleratorNegNode>(e.ptr);
+}
+
+template <> AcceleratorNeg to<AcceleratorNeg>(AcceleratorExpr e) {
+  taco_iassert(isa<AcceleratorNeg>(e));
+  return AcceleratorNeg(to<AcceleratorNegNode>(e.ptr));
+}
+
 
 // class AcceleratorAdd
 AcceleratorAdd::AcceleratorAdd() : AcceleratorAdd(new AcceleratorAddNode) {
@@ -318,6 +343,15 @@ AcceleratorExpr AcceleratorAdd::getA() const {
 
 AcceleratorExpr AcceleratorAdd::getB() const {
   return getNode(*this)->b;
+}
+
+template <> bool isa<AcceleratorAdd>(AcceleratorExpr e) {
+  return isa<AcceleratorAddNode>(e.ptr);
+}
+
+template <> AcceleratorAdd to<AcceleratorAdd>(AcceleratorExpr e) {
+  taco_iassert(isa<AcceleratorAdd>(e));
+  return AcceleratorAdd(to<AcceleratorAddNode>(e.ptr));
 }
 
 // class AcceleratorSub
@@ -338,6 +372,15 @@ AcceleratorExpr AcceleratorSub::getB() const {
   return getNode(*this)->b;
 }
 
+template <> bool isa<AcceleratorSub>(AcceleratorExpr e) {
+  return isa<AcceleratorSubNode>(e.ptr);
+}
+
+template <> AcceleratorSub to<AcceleratorSub>(AcceleratorExpr e) {
+  taco_iassert(isa<AcceleratorSub>(e));
+  return AcceleratorSub(to<AcceleratorSubNode>(e.ptr));
+}
+
 // class AcceleratorMul
 AcceleratorMul::AcceleratorMul() : AcceleratorMul(new AcceleratorMulNode) {
 }
@@ -354,6 +397,15 @@ AcceleratorExpr AcceleratorMul::getA() const {
 
 AcceleratorExpr AcceleratorMul::getB() const {
   return getNode(*this)->b;
+}
+
+template <> bool isa<AcceleratorMul>(AcceleratorExpr e) {
+  return isa<AcceleratorMulNode>(e.ptr);
+}
+
+template <> AcceleratorMul to<AcceleratorMul>(AcceleratorExpr e) {
+  taco_iassert(isa<AcceleratorMul>(e));
+  return AcceleratorMul(to<AcceleratorMulNode>(e.ptr));
 }
 
 // class AcceleratorDiv
@@ -374,6 +426,15 @@ AcceleratorExpr AcceleratorDiv::getB() const {
   return getNode(*this)->b;
 }
 
+template <> bool isa<AcceleratorDiv>(AcceleratorExpr e) {
+  return isa<AcceleratorDivNode>(e.ptr);
+}
+
+template <> AcceleratorDiv to<AcceleratorDiv>(AcceleratorExpr e) {
+  taco_iassert(isa<AcceleratorDiv>(e));
+  return AcceleratorDiv(to<AcceleratorDivNode>(e.ptr));
+}
+
 //class AcceleratorSqrt
 AcceleratorSqrt::AcceleratorSqrt(const AcceleratorSqrtNode* n) : AcceleratorExpr(n) {
 }
@@ -383,6 +444,15 @@ AcceleratorSqrt::AcceleratorSqrt(AcceleratorExpr a) : AcceleratorSqrt(new Accele
 
 AcceleratorExpr AcceleratorSqrt::getA() const {
   return getNode(*this)->a;
+}
+
+template <> bool isa<AcceleratorSqrt>(AcceleratorExpr e) {
+  return isa<AcceleratorSqrtNode>(e.ptr);
+}
+
+template <> AcceleratorSqrt to<AcceleratorSqrt>(AcceleratorExpr e) {
+  taco_iassert(isa<AcceleratorSqrt>(e));
+  return AcceleratorSqrt(to<AcceleratorSqrtNode>(e.ptr));
 }
 
 //class AcceleratorReduction
@@ -408,6 +478,15 @@ AcceleratorReduction sum(IndexVar i, AcceleratorExpr expr){
   return AcceleratorReduction(new AcceleratorAddNode, i, expr);
 }
 
+template <> bool isa<AcceleratorReduction>(AcceleratorExpr s) {
+  return isa<AcceleratorReductionNode>(s.ptr);
+}
+
+template <> AcceleratorReduction to<AcceleratorReduction>(AcceleratorExpr s) {
+  taco_iassert(isa<AcceleratorReduction>(s));
+  return AcceleratorReduction(to<AcceleratorReductionNode>(s.ptr));
+}
+
 //class AcceleratorForall
 AcceleratorForall::AcceleratorForall(const AcceleratorForallNode* n) : AcceleratorStmt(n) {}
 
@@ -423,6 +502,15 @@ AcceleratorStmt AcceleratorForall::getStmt() const{
 
 AcceleratorForall forall(IndexVar i, AcceleratorStmt stmt){
   return AcceleratorForall(i, stmt);
+}
+
+template <> bool isa<AcceleratorForall>(AcceleratorStmt s) {
+  return isa<AcceleratorForallNode>(s.ptr);
+}
+
+template <> AcceleratorForall to<AcceleratorForall>(AcceleratorStmt s) {
+  taco_iassert(isa<AcceleratorForall>(s));
+  return AcceleratorForall(to<AcceleratorForallNode>(s.ptr));
 }
 
 //class AcceleratorAssigment
@@ -456,6 +544,15 @@ AcceleratorExpr AcceleratorAssignment::getOperator() const{
 
 const std::vector<IndexVar>& AcceleratorAssignment::getFreeVars() const {
   return getLhs().getIndexVars();
+}
+
+template <> bool isa<AcceleratorAssignment>(AcceleratorStmt s) {
+  return isa<AcceleratorAssignmentNode>(s.ptr);
+}
+
+template <> AcceleratorAssignment to<AcceleratorAssignment>(AcceleratorStmt s) {
+  taco_iassert(isa<AcceleratorAssignment>(s));
+  return AcceleratorAssignment(to<AcceleratorAssignmentNode>(s.ptr));
 }
 
 const std::vector<IndexVar> AcceleratorAssignment::getImplicitReducionVars() const{
