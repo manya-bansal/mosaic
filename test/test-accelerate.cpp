@@ -2,7 +2,6 @@
 #include <cstdint>
 #include <iostream>
 #include <vector>
-#include <Accelerate/Accelerate.h>
 #include <taco/index_notation/transformations.h>
 #include <codegen/codegen_c.h>
 #include <codegen/codegen_cuda.h>

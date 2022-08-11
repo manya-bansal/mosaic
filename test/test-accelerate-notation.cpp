@@ -2,7 +2,6 @@
 #include "taco/accelerator_notation/accelerator_notation.h"
 #include "taco/index_notation/index_notation.h"
 #include "taco/accelerator_notation/accelerator_notation_nodes.h"
-
 #include "op_factory.h"
 
 
