@@ -149,14 +149,14 @@ struct TransferWithArgs : public TransferTypeArgs{
 
 std::ostream& operator<<(std::ostream&, const TransferWithArgs&);
 
-inline void addArg(std::vector<Argument>& argument, const TensorVar& t) { argument.push_back(new TensorVarArg(t)); };
-inline void addArg(std::vector<Argument>& argument, const Argument&  arg) { argument.push_back(arg); };
-inline void addArg(std::vector<Argument>& argument, TransferWithArgs * arg) { argument.push_back(arg); };
-inline void addArg(std::vector<Argument>& argument, const Dim& dim) { argument.push_back(new DimArg(dim)); };
-inline void addArg(std::vector<Argument>& argument, const int32_t& integer) { argument.push_back(new LiteralArg(Datatype(UInt32), integer)); };
+inline void addArg(std::vector<Argument>& argument, const TensorVar& t) { argument.push_back(new TensorVarArg(t)); }
+inline void addArg(std::vector<Argument>& argument, const Argument&  arg) { argument.push_back(arg); }
+inline void addArg(std::vector<Argument>& argument, TransferWithArgs * arg) { argument.push_back(arg); }
+inline void addArg(std::vector<Argument>& argument, const Dim& dim) { argument.push_back(new DimArg(dim)); }
+inline void addArg(std::vector<Argument>& argument, const int32_t& integer) { argument.push_back(new LiteralArg(Datatype(UInt32), integer)); }
 
 template <typename CType>
-inline void addArg(std::vector<Argument>& argument, const Tensor<CType>& t) { argument.push_back(new TensorArg(t)); };
+inline void addArg(std::vector<Argument>& argument, const Tensor<CType>& t) { argument.push_back(new TensorArg(t)); }
 
 template <typename T, typename ...Next>
 void addArg(std::vector<Argument>& argument, T first, Next...next){
