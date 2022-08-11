@@ -25,6 +25,7 @@
 #include "taco/index_notation/index_notation_rewriter.h"
 #include "taco/accelerator_notation/accelerator_notation_printer.h"
 #include "taco/accelerator_notation/accelerate_search.h"
+#include "taco/accelerator_notation/accelerator_notation_rewriter.h"
 #include "taco/ir/ir.h"
 #include "taco/codegen/module.h"
 #include "taco/tensor.h"
@@ -125,6 +126,35 @@ AcceleratorExpr operator/(const AcceleratorExpr& lhs, const AcceleratorExpr& rhs
 
 void AcceleratorStmt::accept(AcceleratorStmtVisitorStrict *v) const {
   ptr->accept(v);
+}
+
+std::vector<IndexVar> AcceleratorStmt::getIndexVars() const{
+  std::vector<IndexVar> vars;
+  std::set<IndexVar> seen;
+
+  acceleratorMatch(*this,
+    std::function<void(const AcceleratorAssignmentNode*,AcceleratorMatcher*)>([&](
+        const AcceleratorAssignmentNode* op, AcceleratorMatcher* ctx) {
+      for (auto& var : op->lhs.getIndexVars()) {
+        if (!util::contains(seen, var)) {
+          vars.push_back(var);
+          seen.insert(var);
+        }
+      }
+      ctx->acceleratorMatch(op->rhs);
+   }),
+   std::function<void(const AcceleratorAccessNode*)>([&](const AcceleratorAccessNode* op) {
+      for (auto& var : op->indexVars) {
+        if (!util::contains(seen, var)) {
+          vars.push_back(var);
+          seen.insert(var);
+        }
+      }
+    })
+  );
+
+  return vars;
+
 }
 
 std::ostream& operator<<(std::ostream& os, const AcceleratorStmt& expr) {
@@ -422,6 +452,126 @@ AcceleratorExpr AcceleratorAssignment::getRhs() const{
 /// expression if the assignment is not compound (`=`).
 AcceleratorExpr AcceleratorAssignment::getOperator() const{
   return getNode(*this)->op;
+}
+
+const std::vector<IndexVar>& AcceleratorAssignment::getFreeVars() const {
+  return getLhs().getIndexVars();
+}
+
+const std::vector<IndexVar> AcceleratorAssignment::getImplicitReducionVars() const{
+  std::vector<IndexVar> lhsVars = getLhs().getIndexVars();
+  std::vector<IndexVar> rhsVars;
+  std::set<IndexVar> seen; 
+
+  acceleratorMatch(getRhs(),
+   std::function<void(const AcceleratorAccessNode*)>([&](const AcceleratorAccessNode* op) {
+      for (auto& var : op->indexVars) {
+        if (!util::contains(seen, var)) {
+          rhsVars.push_back(var);
+          seen.insert(var);
+        }
+      }
+    })
+  );
+
+  std::vector<IndexVar> reducedVars;
+  for (auto rhsVar: rhsVars){
+    if(!util::contains(lhsVars, rhsVar)) {
+      reducedVars.push_back(rhsVar);
+    }
+  }
+  
+  return reducedVars;
+}
+
+static std::vector<IndexVar> getIndexVars(AcceleratorExpr expr){
+  std::vector<IndexVar> vars;
+  std::set<IndexVar> seen; 
+
+  acceleratorMatch(expr,
+   std::function<void(const AcceleratorAccessNode*)>([&](const AcceleratorAccessNode* op) {
+      for (auto& var : op->indexVars) {
+        if (!util::contains(seen, var)) {
+          vars.push_back(var);
+          seen.insert(var);
+        }
+      }
+    })
+  );
+
+  return vars;
+
+}
+
+
+AcceleratorAssignment makeReductionNotation(AcceleratorAssignment assignment){
+  AcceleratorExpr expr = assignment.getRhs();
+  std::vector<IndexVar> free = assignment.getLhs().getIndexVars();
+
+  struct MakeReductionNotation : AcceleratorNotationRewriter { 
+    MakeReductionNotation(const vector<IndexVar>& free)
+        : free(free.begin(), free.end()){}
+
+    std::set<IndexVar> free;
+    bool onlyOneTerm;
+
+    AcceleratorExpr addReductions(AcceleratorExpr expr) {
+      auto vars = getIndexVars(expr);
+      for (auto& var : util::reverse(vars)) {
+        if (!util::contains(free, var)) {
+          expr = sum(var,expr);
+        }
+      }
+      return expr;
+    }
+
+    AcceleratorExpr einsum(const AcceleratorExpr& expr) {
+      onlyOneTerm = true;
+      AcceleratorExpr einsumexpr = rewrite(expr);
+
+      if (onlyOneTerm) {
+        einsumexpr = addReductions(einsumexpr);
+      }
+
+      return einsumexpr;
+    }
+
+    using AcceleratorNotationRewriter::visit;
+
+    void visit(const AcceleratorAddNode* op) {
+      // Sum every reduction variables over each term
+      onlyOneTerm = false;
+
+      AcceleratorExpr a = addReductions(op->a);
+      AcceleratorExpr b = addReductions(op->b);
+      if (a == op->a && b == op->b) {
+        expr = op;
+      }
+      else {
+        expr = new AcceleratorAddNode(a, b);
+      }
+    }
+
+    void visit(const AcceleratorSubNode* op) {
+      // Sum every reduction variables over each term
+      onlyOneTerm = false;
+
+      AcceleratorExpr a = addReductions(op->a);
+      AcceleratorExpr b = addReductions(op->b);
+      if (a == op->a && b == op->b) {
+        expr = op;
+      }
+      else {
+        expr = new AcceleratorSubNode(a, b);
+      }
+    }
+  };
+
+  return AcceleratorAssignment(assignment.getLhs(),
+                    MakeReductionNotation(free).einsum(expr),
+                    assignment.getOperator());
+
+
 }
 
 // class TensorObject

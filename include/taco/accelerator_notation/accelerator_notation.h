@@ -115,12 +115,16 @@ AcceleratorExpr operator*(const AcceleratorExpr&, const AcceleratorExpr&);
 /// ```
 AcceleratorExpr operator/(const AcceleratorExpr&, const AcceleratorExpr&);
 
+
+
 class AcceleratorStmt : public util::IntrusivePtr<const AcceleratorStmtNode> {
 public:
-  AcceleratorStmt();
+  AcceleratorStmt() : util::IntrusivePtr<const AcceleratorStmtNode>(nullptr) {}
   AcceleratorStmt(const AcceleratorStmtNode* n) : util::IntrusivePtr<const AcceleratorStmtNode>(n) {}
 
   void accept(AcceleratorStmtVisitorStrict *) const;
+
+  std::vector<IndexVar> getIndexVars() const;
 
   friend std::ostream& operator<<(std::ostream&, const AcceleratorStmt&);
 
@@ -350,8 +354,17 @@ public:
   /// expression if the assignment is not compound (`=`).
   AcceleratorExpr getOperator() const;
 
+  /// Return the free index variables in the assignment, which are those used to
+  /// access the left-hand side.
+  const std::vector<IndexVar>& getFreeVars() const;
+
+  /// get reduction vars 
+  const std::vector<IndexVar> getImplicitReducionVars() const;
+
   typedef AcceleratorAssignmentNode Node;
 };
+
+AcceleratorAssignment makeReductionNotation(AcceleratorAssignment assignment);
 
 
 class TensorObject : public util::Comparable<TensorObject> {
