@@ -3697,7 +3697,7 @@ struct ReplaceReductionsWithWheres : IndexNotationRewriter {
   }
 };
 
-std::string flattenStmt(IndexStmt stmt){
+static std::string flattenStmt(IndexStmt stmt){
 
   std::string flattenedTree;
 
@@ -3770,7 +3770,7 @@ std::string flattenStmt(IndexStmt stmt){
 
 }
 
-std::string flattenExpr(IndexExpr expr){
+static std::string flattenExpr(IndexExpr expr){
 
   std::string flattenedTree;
 
@@ -3843,7 +3843,7 @@ std::string flattenExpr(IndexExpr expr){
 
 }
 
-IndexExprNode* findSubexpresionStmt(IndexStmt stmt, std::string flattenedExpr){
+static IndexExprNode* findSubexpresionStmt(IndexStmt stmt, std::string flattenedExpr){
   
   std::string flattenedTree;
   IndexExprNode* subExpressionRoot;
@@ -3973,7 +3973,7 @@ IndexExprNode* findSubexpresionStmt(IndexStmt stmt, std::string flattenedExpr){
 
 }
 
-IndexStmt isADirectSubexpression(IndexStmt stmt, IndexExpr expr){
+static IndexStmt isADirectSubexpression(IndexStmt stmt, IndexExpr expr){
 
 
   std::string flattenedExpr = flattenExpr(expr);
