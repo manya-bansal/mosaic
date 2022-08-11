@@ -20,9 +20,9 @@ TEST(generateEquivExpressions, addExpr) {
    TensorVar b("a", Type(taco::Float32, {Dimension()}), taco::dense);
    IndexVar i("i");
 
-   Tensor<float32_t> actuala("actuala", {3}, dense, 0);
-   Tensor<float32_t> actualb("actualb", {3}, dense, 1);
-   Tensor<float32_t> actualc("actualc", {3}, dense, 1);
+   Tensor<float> actuala("actuala", {3}, dense, 0);
+   Tensor<float> actualb("actualb", {3}, dense, 1);
+   Tensor<float> actualc("actualc", {3}, dense, 1);
 
 
    IndexStmt stmt = actualc(i) = actuala(i) + actualb(i) + actualb(i);
@@ -41,9 +41,9 @@ TEST(generateEquivExpressions, subExpr) {
    TensorVar b("a", Type(taco::Float32, {Dimension()}), taco::dense);
    IndexVar i("i");
 
-   Tensor<float32_t> actuala("actuala", {3}, dense, 0);
-   Tensor<float32_t> actualb("actualb", {3}, dense, 1);
-   Tensor<float32_t> actualc("actualc", {3}, dense, 1);
+   Tensor<float> actuala("actuala", {3}, dense, 0);
+   Tensor<float> actualb("actualb", {3}, dense, 1);
+   Tensor<float> actualc("actualc", {3}, dense, 1);
 
 
    IndexStmt stmt = actualc(i) = actuala(i) - actualb(i);
@@ -59,9 +59,9 @@ TEST(generateEquivExpressions, addMulExpr) {
    TensorVar b("a", Type(taco::Float32, {Dimension()}), taco::dense);
    IndexVar i("i");
 
-   Tensor<float32_t> actuala("actuala", {3}, dense, 0);
-   Tensor<float32_t> actualb("actualb", {3}, dense, 1);
-   Tensor<float32_t> actualc("actualc", {3}, dense, 1);
+   Tensor<float> actuala("actuala", {3}, dense, 0);
+   Tensor<float> actualb("actualb", {3}, dense, 1);
+   Tensor<float> actualc("actualc", {3}, dense, 1);
 
 
    IndexStmt stmt = actualc(i) = actuala(i) + actualb(i) * 5;
@@ -81,9 +81,9 @@ TEST(generateEquivExpressions, mulExpr) {
    TensorVar b("a", Type(taco::Float32, {Dimension()}), taco::dense);
    IndexVar i("i");
 
-   Tensor<float32_t> actuala("actuala", {3}, dense, 0);
-   Tensor<float32_t> actualb("actualb", {3}, dense, 1);
-   Tensor<float32_t> actualc("actualc", {3}, dense, 1);
+   Tensor<float> actuala("actuala", {3}, dense, 0);
+   Tensor<float> actualb("actualb", {3}, dense, 1);
+   Tensor<float> actualc("actualc", {3}, dense, 1);
 
 
    IndexStmt stmt = actualc(i) = actuala(i) * actualb(i) * 5;
@@ -100,9 +100,9 @@ TEST(generateEquivExpressions, divExpr) {
    TensorVar b("a", Type(taco::Float32, {Dimension()}), taco::dense);
    IndexVar i("i");
 
-   Tensor<float32_t> actuala("actuala", {3}, dense, 0);
-   Tensor<float32_t> actualb("actualb", {3}, dense, 1);
-   Tensor<float32_t> actualc("actualc", {3}, dense, 1);
+   Tensor<float> actuala("actuala", {3}, dense, 0);
+   Tensor<float> actualb("actualb", {3}, dense, 1);
+   Tensor<float> actualc("actualc", {3}, dense, 1);
 
 
    IndexStmt stmt = actualc(i) = (actuala(i) + actualb(i)) / 5;
@@ -121,9 +121,9 @@ TEST(generateEquivExpressions, takeCommonTerms) {
    TensorVar b("a", Type(taco::Float32, {Dimension()}), taco::dense);
    IndexVar i("i");
 
-   Tensor<float32_t> actuala("actuala", {3}, dense, 0);
-   Tensor<float32_t> actualb("actualb", {3}, dense, 1);
-   Tensor<float32_t> actualc("actualc", {3}, dense, 1);
+   Tensor<float> actuala("actuala", {3}, dense, 0);
+   Tensor<float> actualb("actualb", {3}, dense, 1);
+   Tensor<float> actualc("actualc", {3}, dense, 1);
 
 
    IndexStmt stmt = actualc(i) = (actuala(i)*5 + actualb(i)*5);
@@ -148,9 +148,9 @@ TEST(generateEquivExpressions, takeCommonTerms) {
 //    TensorVar b("a", Type(taco::Float32, {Dimension()}), taco::dense);
 //    IndexVar i("i");
 
-//    Tensor<float32_t> actuala("actuala", {3}, dense, 0);
-//    Tensor<float32_t> actualb("actualb", {3}, dense, 1);
-//    Tensor<float32_t> actualc("actualc", {3}, dense, 1);
+//    Tensor<float> actuala("actuala", {3}, dense, 0);
+//    Tensor<float> actualb("actualb", {3}, dense, 1);
+//    Tensor<float> actualc("actualc", {3}, dense, 1);
 
 
 //    IndexStmt stmt = actualc(i) = (actuala(i) + (-actualb(i));

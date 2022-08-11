@@ -62,14 +62,14 @@ TEST(interface, pluginInterface) {
 
 TEST(interface, concretepluginInterface) {
 
-   Tensor<float32_t> A("A", {16}, Format{Dense}, 0);
-   Tensor<float32_t> B("B", {16}, Format{Dense});
-   Tensor<float32_t> C("C", {16}, Format{Dense});
-   Tensor<float32_t> expected("expected", {16}, Format{Dense});
+   Tensor<float> A("A", {16}, Format{Dense}, 0);
+   Tensor<float> B("B", {16}, Format{Dense});
+   Tensor<float> C("C", {16}, Format{Dense});
+   Tensor<float> expected("expected", {16}, Format{Dense});
 
    for (int i = 0; i < 16; i++) {
-      C.insert({i}, (float32_t) i);
-      B.insert({i}, (float32_t) i);
+      C.insert({i}, (float) i);
+      B.insert({i}, (float) i);
    }
 
    C.pack();
@@ -115,13 +115,13 @@ TEST(interface, endToEndPlugin) {
    AcceleratorDescription accelDesc({cblas_saxpy(Dim(i), 1, y, 1, x, 1)});
 
    // actual computation
-   Tensor<float32_t> A("A", {16}, Format{Dense});
-   Tensor<float32_t> B("B", {16}, Format{Dense});
-   Tensor<float32_t> C("C", {16}, Format{Dense});
+   Tensor<float> A("A", {16}, Format{Dense});
+   Tensor<float> B("B", {16}, Format{Dense});
+   Tensor<float> C("C", {16}, Format{Dense});
 
    for (int i = 0; i < 16; i++) {
-      C.insert({i}, (float32_t) i);
-      B.insert({i}, (float32_t) i);
+      C.insert({i}, (float) i);
+      B.insert({i}, (float) i);
    }
 
    C.pack();
@@ -138,7 +138,7 @@ TEST(interface, endToEndPlugin) {
    A.assemble();
    A.compute();
 
-   Tensor<float32_t> expected("expected", {16}, Format{Dense});
+   Tensor<float> expected("expected", {16}, Format{Dense});
    expected(i) = B(i) + C(i) + B(i);
    expected.compile();
    expected.assemble();
@@ -151,17 +151,17 @@ TEST(interface, endToEndPlugin) {
 TEST(interface, interfaceClass) {
 
 
-   Tensor<float32_t> A("A", {16}, Format{Dense}, 0);
-   Tensor<float32_t> B("B", {16}, Format{Dense});
-   Tensor<float32_t> C("C", {16}, Format{Dense});
-   Tensor<float32_t> expected("expected", {16}, Format{Dense});
+   Tensor<float> A("A", {16}, Format{Dense}, 0);
+   Tensor<float> B("B", {16}, Format{Dense});
+   Tensor<float> C("C", {16}, Format{Dense});
+   Tensor<float> expected("expected", {16}, Format{Dense});
    TensorVar accelWorkspace("accelWorkspace", Type(taco::Float32, {16}), taco::dense);
    IndexVar i("i");
    IndexVar iw("iw");
 
    for (int i = 0; i < 16; i++) {
-      C.insert({i}, (float32_t) i);
-      B.insert({i}, (float32_t) i);
+      C.insert({i}, (float) i);
+      B.insert({i}, (float) i);
    }
 
    C.pack();
@@ -189,14 +189,14 @@ TEST(interface, interfaceClass) {
 TEST(interface, endToEndPluginInterfaceClass) {
 
    // actual computation
-   Tensor<float32_t> A("A", {16}, Format{Dense});
-   Tensor<float32_t> B("B", {16}, Format{Dense});
-   Tensor<float32_t> C("C", {16}, Format{Dense});
+   Tensor<float> A("A", {16}, Format{Dense});
+   Tensor<float> B("B", {16}, Format{Dense});
+   Tensor<float> C("C", {16}, Format{Dense});
    IndexVar i("i");
 
    for (int i = 0; i < 16; i++) {
-      C.insert({i}, (float32_t) i);
-      B.insert({i}, (float32_t) i);
+      C.insert({i}, (float) i);
+      B.insert({i}, (float) i);
    }
 
    C.pack();
@@ -213,7 +213,7 @@ TEST(interface, endToEndPluginInterfaceClass) {
    A.assemble();
    A.compute();
 
-   Tensor<float32_t> expected("expected", {16}, Format{Dense});
+   Tensor<float> expected("expected", {16}, Format{Dense});
    expected(i) = B(i) + C(i) + B(i);
    expected.compile();
    expected.assemble();
@@ -226,17 +226,17 @@ TEST(interface, endToEndPluginInterfaceClass) {
 TEST(interface, mismatchInterfaceClass) {
 
 
-   Tensor<float32_t> A("A", {16}, Format{Dense}, 0);
-   Tensor<float32_t> B("B", {16}, Format{Dense});
-   Tensor<float32_t> C("C", {16}, Format{Dense});
-   Tensor<float32_t> expected("expected", {16}, Format{Dense});
+   Tensor<float> A("A", {16}, Format{Dense}, 0);
+   Tensor<float> B("B", {16}, Format{Dense});
+   Tensor<float> C("C", {16}, Format{Dense});
+   Tensor<float> expected("expected", {16}, Format{Dense});
    TensorVar accelWorkspace("accelWorkspace", Type(taco::Float32, {16}), taco::dense);
    IndexVar i("i");
    IndexVar iw("iw");
 
    for (int i = 0; i < 16; i++) {
-      C.insert({i}, (float32_t) i);
-      B.insert({i}, (float32_t) i);
+      C.insert({i}, (float) i);
+      B.insert({i}, (float) i);
    }
 
    Test1 test;
@@ -256,19 +256,19 @@ TEST(interface, mismatchInterfaceClass) {
 TEST(interface, classInterfaceSdsdot) {
 
 
-   Tensor<float32_t> A("A");
-   Tensor<float32_t> B("B", {16}, Format{Dense});
-   Tensor<float32_t> C("C", {16}, Format{Dense});
+   Tensor<float> A("A");
+   Tensor<float> B("B", {16}, Format{Dense});
+   Tensor<float> C("C", {16}, Format{Dense});
 
-   Tensor<float32_t> expected("expected");
+   Tensor<float> expected("expected");
    TensorVar accelWorkspace((Type(taco::Float32)));
 
    IndexVar i("i");
    IndexVar iw("iw");
 
    for (int i = 0; i < 16; i++) {
-      C.insert({i}, (float32_t) i);
-      B.insert({i}, (float32_t) i);
+      C.insert({i}, (float) i);
+      B.insert({i}, (float) i);
    }
 
    Test1 test;

@@ -28,9 +28,9 @@ TEST(blasTest, simpleBlasCall) {
    TensorVar b("a", Type(taco::Float32, {Dimension()}), taco::dense);
    IndexVar i("i");
 
-   Tensor<float32_t> test_a("actuala", {3}, dense, 0);
-   Tensor<float32_t> test_b("actualb", {3}, dense, 1);
-   Tensor<float32_t> test_c("actualc", {3}, dense, 1);
+   Tensor<float> test_a("actuala", {3}, dense, 0);
+   Tensor<float> test_b("actualb", {3}, dense, 1);
+   Tensor<float> test_c("actualc", {3}, dense, 1);
 
    TensorVar workspace(Type(taco::Float32, {1}), taco::dense, 0) ;
 
@@ -53,7 +53,7 @@ TEST(blasTest, simpleBlasCall) {
    test_c.assemble();
    test_c.compute();
 
-   auto it = iterate<float32_t>(test_c);
+   auto it = iterate<float>(test_c);
    auto iit = it.begin();
 
    while (iit != it.end()){
@@ -80,13 +80,13 @@ bool trivialChecker(IndexExpr expr){
 
 TEST(accelerateScheduleLower, simpleBlasCallFunction) {
 
-  Tensor<float32_t> A("A", {16}, Format{Dense}, 0);
-  Tensor<float32_t> B("B", {16}, Format{Dense});
-  Tensor<float32_t> C("C", {16}, Format{Dense});
+  Tensor<float> A("A", {16}, Format{Dense}, 0);
+  Tensor<float> B("B", {16}, Format{Dense});
+  Tensor<float> C("C", {16}, Format{Dense});
 
   for (int i = 0; i < 16; i++) {
-      C.insert({i}, (float32_t) i);
-      B.insert({i}, (float32_t) i);
+      C.insert({i}, (float) i);
+      B.insert({i}, (float) i);
   }
 
   C.pack();
@@ -116,7 +116,7 @@ TEST(accelerateScheduleLower, simpleBlasCallFunction) {
    // A.assemble();
    // A.compute();
 
-   // auto it = iterate<float32_t>(A);
+   // auto it = iterate<float>(A);
    // auto iit = it.begin();
 
    // while (iit != it.end()){
