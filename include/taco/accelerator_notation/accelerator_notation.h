@@ -82,6 +82,8 @@ public:
 
   Datatype getDataType() const;
 
+  std::vector<IndexVar> getIndexVars() const;
+
   friend std::ostream& operator<<(std::ostream&, const AcceleratorExpr&);
 
 };
@@ -162,8 +164,12 @@ public:
     /// ```
     AcceleratorAssignment operator=(const AcceleratorExpr&);
 
+    AcceleratorAssignment operator=(const AcceleratorExpr&) const;
+
     /// Must override the default Access operator=, otherwise it is a copy.
     AcceleratorAssignment operator=(const AcceleratorAccess&);
+
+    AcceleratorAssignment operator=(const AcceleratorAccess&) const;
 
     /// Must disambiguate TensorVar as it can be implicitly converted to IndexExpr
     /// and AccesExpr.
@@ -387,6 +393,7 @@ public:
   TensorObject();
   TensorObject(const Type& type);
   TensorObject(const std::string& name, const Type& type);
+  TensorObject(const Type& type, const Format& format);
   TensorObject(const std::string& name, const Type& type, const Format& format);
 
   /// Returns the name of the tensor object.
@@ -398,16 +405,21 @@ public:
   /// Returns the type of the tensor object.
   const Type& getType() const;
 
+  const Format& getFormat() const;
+
   /// Returns the order of the tensor object.
   int getOrder() const;
 
-  const AcceleratorAccess operator()(const std::vector<IndexVar>& indices) const;
-  AcceleratorAccess operator()(const std::vector<IndexVar>& indices);
+  std::set<std::string> getProperties() const;
 
+  const AcceleratorAccess operator()(const std::vector<IndexVar>& indices) const;
+ 
   template <typename... IndexVars>
   const AcceleratorAccess operator()(const IndexVars&... indices) const {
     return static_cast<const TensorObject*>(this)->operator()({indices...});
   }
+
+  AcceleratorAccess operator()(const std::vector<IndexVar>& indices);
 
   /// Create an index expression that accesses (reads or writes) this tensor.
   template <typename... IndexVars>
@@ -418,9 +430,16 @@ public:
   /// Assign a scalar expression to a scalar tensor.
   AcceleratorAssignment operator=(AcceleratorExpr);
 
+  AcceleratorAssignment operator=(AcceleratorExpr) const;
+
   // /// Add a scalar expression to a scalar tensor.
   AcceleratorAssignment operator+=(AcceleratorExpr);
 
+  AcceleratorAssignment operator+=(AcceleratorExpr) const;
+
+  friend bool operator==(const TensorObject& a, const TensorObject& b);
+
+  friend bool operator<(const TensorObject& a, const TensorObject& b);
 
 private:
   struct Content;

@@ -2,6 +2,7 @@
 #define ACCEL_INTERFACE_H
 
 #include "taco/index_notation/index_notation.h"
+#include "taco/accelerator_notation/accelerator_notation.h"
 #include "taco/lower/iterator.h"
 #include "taco/type.h"
 
@@ -17,7 +18,7 @@ template <typename CType>
 class Tensor;
 
 
-enum ArgType {DIM, TENSORVAR, TENSOR, EXPR, LITERAL, USER_DEFINED, UNKNOWN};
+enum ArgType {DIM, TENSORVAR, TENSOR_OBJECT, TENSOR, EXPR, LITERAL, USER_DEFINED, UNKNOWN};
 
 // QUESTION: do we need different functions for runtime versus compile time 
 // conversions (are there good cases for compile time conversions?)
@@ -67,6 +68,13 @@ struct TensorVarArg : public TransferTypeArgs{
 
     std::ostream& print(std::ostream& os) const override;
     TensorVar t; 
+};
+
+struct TensorObjectArg : public TransferTypeArgs{
+    explicit TensorObjectArg(const TensorObject& t) : TransferTypeArgs(TENSOR_OBJECT), t(t) {}
+
+    std::ostream& print(std::ostream& os) const override;
+    TensorObject t; 
 };
 
 struct irExprArg : public TransferTypeArgs{
@@ -339,7 +347,7 @@ class ConcreteAccelerateCodeGenerator {
     }
 
     // ConcreteAccelerateCodeGenerator& operator=(const ConcreteAccelerateCodeGenerator& concreteAccelerateCodeGenerator);
-
+  private:
       std::string functionName;
       std::string returnType;
       //there is a smal problem with using 
@@ -369,8 +377,7 @@ struct AbstractFunctionInterface :  public util::Manageable<AbstractFunctionInte
     AbstractFunctionInterface() = default;
     virtual ~AbstractFunctionInterface() = default;
 
-    virtual taco::IndexExpr getLHS()    const  = 0; 
-    virtual taco::IndexExpr getRHS()    const  = 0;
+    virtual taco::AcceleratorStmt getStmt()    const  = 0; 
     virtual std::vector<Argument> getArguments() const= 0;
     virtual std::string getReturnType()   const = 0;
     virtual std::string getFunctionName() const = 0;

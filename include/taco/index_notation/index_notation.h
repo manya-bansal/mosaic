@@ -185,6 +185,8 @@ public:
 
   std::vector<IndexVar> getIndexVars();
 
+  std::map<IndexVar,Dimension> getIndexVarDomains() const;
+
   /// Returns the schedule of the index expression.
   const Schedule& getSchedule() const;
 

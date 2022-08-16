@@ -48,6 +48,11 @@ std::ostream& TensorVarArg::print(std::ostream& os) const{
     return os;
 }
 
+std::ostream& TensorObjectArg::print(std::ostream& os) const{
+  os << t << endl;
+  return os;
+}
+
 std::ostream& irExprArg::print(std::ostream& os) const{
   os << irExpr;
   return os;
@@ -95,8 +100,8 @@ std::ostream& operator<<(std::ostream& os, const ForeignFunctionDescription& for
 // }
 
 std::ostream& operator<<(std::ostream& os,  const ConcreteAccelerateCodeGenerator& accelGen){
-  os << accelGen.returnType << " " << accelGen.functionName << "(" << util::join(accelGen.args) 
-    << ") targets " << accelGen.lhs << " = " << accelGen.rhs << endl;
+  os << accelGen.getReturnType() << " " << accelGen.getFunctionName() << "(" << util::join(accelGen.getArguments()) 
+    << ") targets " << accelGen.getLHS() << " = " << accelGen.getRHS() << endl;
   return os;
 }
 

@@ -626,14 +626,15 @@ void TensorBase::registerAccelerator(AcceleratorDescription acceleratorDescripti
 }
 
 void TensorBase::registerAccelerator(FunctionInterface functionInterface){
-  acceleratorDescriptions.push_back(AcceleratorDescription({
-                                      ForeignFunctionDescription(
-                                        functionInterface.getNode()->getFunctionName(),
-                                        functionInterface.getNode()->getReturnType(),
-                                        functionInterface.getNode()->getLHS(),
-                                        functionInterface.getNode()->getRHS(),
-                                        functionInterface.getNode()->getArguments()
-                                    )}));
+  // acceleratorDescriptions.push_back(AcceleratorDescription({
+  //                                     ForeignFunctionDescription(
+  //                                       functionInterface.getNode()->getFunctionName(),
+  //                                       functionInterface.getNode()->getReturnType(),
+  //                                       functionInterface.getNode()->getLHS(),
+  //                                       functionInterface.getNode()->getRHS(),
+  //                                       functionInterface.getNode()->getArguments()
+  //                                   )}));
+  taco_uerror << "Unimplemented" << endl;
 }
 
 

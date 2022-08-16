@@ -5,6 +5,7 @@
 #include <memory>
 #include <vector>
 #include <utility>
+#include <functional>
 #include <set>
 #include <taco/ir/simplify.h>
 #include "lower/mode_access.h"
@@ -19,6 +20,7 @@
 #include "taco/index_notation/schedule.h"
 #include "taco/accelerator_notation/accel_interface.h"
 #include "taco/index_notation/transformations.h"
+#include "taco/index_notation/index_notation_nodes.h"
 #include "taco/accelerator_notation/accelerator_notation_nodes.h"
 #include "taco/accelerator_notation/accelerator_notation.h"
 #include "taco/index_notation/index_notation.h"
@@ -94,6 +96,24 @@ AcceleratorExpr::AcceleratorExpr(std::complex<double> val) :AcceleratorExpr(new 
 
 Datatype AcceleratorExpr::getDataType() const {
   return const_cast<AcceleratorExprNode*>(this->ptr)->getDataType();
+}
+
+std::vector<IndexVar> AcceleratorExpr::getIndexVars() const{
+  std::vector<IndexVar> vars;
+  std::set<IndexVar> seen;
+
+  acceleratorMatch(*this,
+   std::function<void(const AcceleratorAccessNode*)>([&](const AcceleratorAccessNode* op) {
+      for (auto& var : op->indexVars) {
+        if (!util::contains(seen, var)) {
+          vars.push_back(var);
+          seen.insert(var);
+        }
+      }
+    })
+  );
+
+  return vars;
 }
 
 std::ostream& operator<<(std::ostream& os, const AcceleratorExpr& expr) {
@@ -186,8 +206,19 @@ AcceleratorAssignment AcceleratorAccess::operator=(const AcceleratorExpr& expr){
   return assignment;
 }
 
+AcceleratorAssignment AcceleratorAccess::operator=(const AcceleratorExpr& expr) const{
+  AcceleratorAssignment assignment = AcceleratorAssignment(*this, expr);
+  //TODO: do some type checking
+  return assignment;
+}
+
+
 /// Must override the default Access operator=, otherwise it is a copy.
 AcceleratorAssignment AcceleratorAccess::operator=(const AcceleratorAccess& access){
+  return operator=(static_cast<AcceleratorExpr>(access));
+}
+
+AcceleratorAssignment AcceleratorAccess::operator=(const AcceleratorAccess& access) const{
   return operator=(static_cast<AcceleratorExpr>(access));
 }
 
@@ -693,6 +724,10 @@ TensorObject::TensorObject(const std::string& name, const Type& type)
 : TensorObject(name, type, createDenseFormat(type)) {
 }
 
+TensorObject::TensorObject(const Type& type, const Format& format)
+: TensorObject(util::uniqueName('A'), type, format) {
+}
+
 TensorObject::TensorObject(const std::string& name, const Type& type, const Format& format)
     : content(new Content) {
   
@@ -719,8 +754,16 @@ const Type& TensorObject::getType() const{
   return content->type;
 }
 
+const Format& TensorObject::getFormat() const{
+  return content->format;
+}
+
 int TensorObject::getOrder() const {
   return content->type.getShape().getOrder();
+}
+
+std::set<std::string> TensorObject::getProperties() const{
+  return content->properties;
 }
 
 const AcceleratorAccess TensorObject::operator()(const std::vector<IndexVar>& indices) const {
@@ -746,12 +789,41 @@ AcceleratorAssignment TensorObject::operator=(AcceleratorExpr expr) {
   return assignment;
 }
 
+AcceleratorAssignment TensorObject::operator=(AcceleratorExpr expr) const {
+  taco_uassert(getOrder() == 0)
+      << "Must use index variable on the left-hand-side when assigning an "
+      << "expression to a non-scalar tensor.";
+  AcceleratorAssignment assignment = AcceleratorAssignment(*this, {}, expr);
+  //TODOD: Maybe add some check here
+  return assignment;
+}
+
 AcceleratorAssignment TensorObject::operator+=(AcceleratorExpr expr) {
   taco_uassert(getOrder() == 0)
       << "Must use index variable on the left-hand-side when assigning an "
       << "expression to a non-scalar tensor.";
   AcceleratorAssignment assignment = AcceleratorAssignment(*this, {}, expr, new AcceleratorAddNode);
   return assignment;
+}
+
+AcceleratorAssignment TensorObject::operator+=(AcceleratorExpr expr) const {
+  taco_uassert(getOrder() == 0)
+      << "Must use index variable on the left-hand-side when assigning an "
+      << "expression to a non-scalar tensor.";
+  AcceleratorAssignment assignment = AcceleratorAssignment(*this, {}, expr, new AcceleratorAddNode);
+  return assignment;
+}
+
+bool operator==(const TensorObject& a, const TensorObject& b) {
+  return a.content == b.content;
+}
+
+bool operator<(const TensorObject& a, const TensorObject& b) {
+  return a.content < b.content;
+}
+
+std::ostream& operator<<(std::ostream& os, const TensorObject& var){
+  return os << var.getName() << " : " << var.getType();
 }
 
 

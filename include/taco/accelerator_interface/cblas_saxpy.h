@@ -3,25 +3,25 @@
 
 #include "taco/index_notation/index_notation.h"
 #include "taco/type.h"
+#include "taco/accelerator_notation/accelerator_notation.h"
 #include "taco/accelerator_notation/accel_interface.h"
 
 using namespace taco;
 
 class Saxpy : public AbstractFunctionInterface{
     public: 
-        Saxpy() : x(TensorVar(Type(taco::Float32, {Dimension()}), dense)),
-                  y(TensorVar(Type(taco::Float32, {Dimension()}), dense)),
+        Saxpy() : x(TensorObject(Type(taco::Float32, {Dimension()}), dense)),
+                  y(TensorObject(Type(taco::Float32, {Dimension()}), dense)),
                   i(IndexVar()) {};
 
-        IndexExpr getRHS() const override {return x(i) + y(i);}
-        IndexExpr getLHS() const override {return x(i);}
+        taco::AcceleratorStmt getStmt() const override{ return x(i) = x(i) + y(i);}
         std::vector<Argument> getArguments() const override {return 
                                                 {
                                                     new DimArg(i), 
                                                     new LiteralArg(Datatype(taco::UInt32), 1),
-                                                    new TensorVarArg(y), 
+                                                    new TensorObjectArg(y), 
                                                     new LiteralArg(Datatype(taco::UInt32), 1),
-                                                    new TensorVarArg(x), 
+                                                    new TensorObjectArg(x), 
                                                     new LiteralArg(Datatype(taco::UInt32), 1)
                                                 };}
         std::string getReturnType() const override {return "void";}
@@ -29,37 +29,37 @@ class Saxpy : public AbstractFunctionInterface{
         bool checkerFunction(IndexStmt stmt) const override{return true;}
 
     private: 
-        TensorVar x;
-        TensorVar y;
+        TensorObject x;
+        TensorObject y;
         IndexVar i;
 };
 
-class Sdsdot : public AbstractFunctionInterface{
-    public: 
-        Sdsdot() : x(TensorVar(Type(taco::Float32, {Dimension()}), dense)),
-                  y(TensorVar(Type(taco::Float32, {Dimension()}), dense)),
-                  s(TensorVar(Type(taco::Float32))), i(IndexVar()) {};
+// class Sdsdot : public AbstractFunctionInterface{
+//     public: 
+//         Sdsdot() : x(TensorVar(Type(taco::Float32, {Dimension()}), dense)),
+//                   y(TensorVar(Type(taco::Float32, {Dimension()}), dense)),
+//                   s(TensorVar(Type(taco::Float32))), i(IndexVar()) {};
 
-        IndexExpr getRHS() const override {return x(i) * y(i);}
-        IndexExpr getLHS() const override {return s;}
-        std::vector<Argument> getArguments() const override {return 
-                                                {
-                                                    new DimArg(i), 
-                                                    new LiteralArg(Datatype(taco::UInt32), 0),
-                                                    new TensorVarArg(y), 
-                                                    new LiteralArg(Datatype(taco::UInt32), 1),
-                                                    new TensorVarArg(x), 
-                                                    new LiteralArg(Datatype(taco::UInt32), 1)
-                                                };}
-        std::string getReturnType() const override {return "float";}
-        std::string getFunctionName() const override{return "cblas_sdsdot";}
+//         IndexExpr getRHS() const override {return x(i) * y(i);}
+//         IndexExpr getLHS() const override {return s;}
+//         std::vector<Argument> getArguments() const override {return 
+//                                                 {
+//                                                     new DimArg(i), 
+//                                                     new LiteralArg(Datatype(taco::UInt32), 0),
+//                                                     new TensorVarArg(y), 
+//                                                     new LiteralArg(Datatype(taco::UInt32), 1),
+//                                                     new TensorVarArg(x), 
+//                                                     new LiteralArg(Datatype(taco::UInt32), 1)
+//                                                 };}
+//         std::string getReturnType() const override {return "float";}
+//         std::string getFunctionName() const override{return "cblas_sdsdot";}
 
-    private: 
-        TensorVar x;
-        TensorVar y;
-        TensorVar s;
-        IndexVar i;
-};
+//     private: 
+//         TensorVar x;
+//         TensorVar y;
+//         TensorVar s;
+//         IndexVar i;
+// };
 
 
 
