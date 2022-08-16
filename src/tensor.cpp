@@ -621,29 +621,12 @@ std::shared_ptr<Module> TensorBase::getComputeKernel(const IndexStmt stmt) {
   return nullptr;
 }
 
-void TensorBase::registerAccelerator(AcceleratorDescription acceleratorDescription){
-  acceleratorDescriptions.push_back(acceleratorDescription);
-}
-
 void TensorBase::registerAccelerator(FunctionInterface functionInterface){
-  // acceleratorDescriptions.push_back(AcceleratorDescription({
-  //                                     ForeignFunctionDescription(
-  //                                       functionInterface.getNode()->getFunctionName(),
-  //                                       functionInterface.getNode()->getReturnType(),
-  //                                       functionInterface.getNode()->getLHS(),
-  //                                       functionInterface.getNode()->getRHS(),
-  //                                       functionInterface.getNode()->getArguments()
-  //                                   )}));
-  taco_uerror << "Unimplemented" << endl;
+  functionInterfaces.push_back(functionInterface);
 }
 
-
-void TensorBase::registerAccelerators(std::vector<AcceleratorDescription> acceleratorDescriptionVec){
-  acceleratorDescriptions.insert(acceleratorDescriptions.end(), acceleratorDescriptionVec.begin(), acceleratorDescriptionVec.end());
-}
-
-std::vector<AcceleratorDescription> TensorBase::getRegisteredAccelerators(){
-  return acceleratorDescriptions;
+std::vector<FunctionInterface> TensorBase::getRegisteredAccelerators(){
+  return functionInterfaces;
 }
 
 void TensorBase::accelerateOn(){
@@ -707,7 +690,6 @@ void TensorBase::compile() {
 
 void TensorBase::compileAccelerated(std::vector<IndexExpr> AcceleratedExpressions) {
  
-
   Assignment assignment = getAssignment();
   taco_uassert(assignment.defined())
       << error::compile_without_expr;
@@ -777,7 +759,7 @@ void TensorBase::compile(taco::IndexStmt stmt, bool assembleWhileCompute) {
   cacheComputeKernel(concretizedAssign, content->module);
 }
 
-void TensorBase::compileAccelerated(taco::IndexStmt stmt, std::vector<AcceleratorDescription> acceleratorDescriptions, bool assembleWhileCompute) {
+void TensorBase::compileAccelerated(taco::IndexStmt stmt, std::vector<FunctionInterface> functionInterface, bool assembleWhileCompute) {
   if (!needsCompile()) {
     return;
   }
@@ -786,7 +768,7 @@ void TensorBase::compileAccelerated(taco::IndexStmt stmt, std::vector<Accelerato
   IndexStmt concretizedAssign = stmt;
 
   cout << "calling concretizeAccelerated" << endl;
-  IndexStmt stmtToCompile = stmt.concretizeAccelerated(acceleratorDescriptions);
+  IndexStmt stmtToCompile = stmt.concretizeAccelerated(functionInterface);
   
   cout << stmtToCompile << endl;
 

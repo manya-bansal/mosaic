@@ -444,10 +444,9 @@ public:
   void pack();
 
   /// register a backend that we can autoschedule to
-  void registerAccelerator(AcceleratorDescription acceleratorDescription);
-  void registerAccelerators(std::vector<AcceleratorDescription> acceleratorDescriptionVec);
   void registerAccelerator(FunctionInterface functionInterface);
-  std::vector<AcceleratorDescription> getRegisteredAccelerators();
+
+  std::vector<FunctionInterface> getRegisteredAccelerators();
 
   void accelerateOn();
   void accelerateOff();
@@ -457,7 +456,7 @@ public:
   void compileAccelerated(std::vector<IndexExpr> AcceleratedExpressions);
 
   void compile(IndexStmt stmt, bool assembleWhileCompute=false);
-  void compileAccelerated(taco::IndexStmt stmt, std::vector<AcceleratorDescription> acceleratorDescriptions, bool assembleWhileCompute=false);
+  void compileAccelerated(taco::IndexStmt stmt, std::vector<FunctionInterface> functionInterface, bool assembleWhileCompute=false);
 
   /// Assemble the tensor storage, including index and value arrays.
   void assemble();
@@ -588,7 +587,7 @@ private:
                                 std::shared_ptr<ir::Module>>> KernelsCache;
   static KernelsCache computeKernels;
   static std::mutex computeKernelsMutex;
-  std::vector<AcceleratorDescription> acceleratorDescriptions;
+  std::vector<FunctionInterface> functionInterfaces;
   
 };
 

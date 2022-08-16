@@ -606,9 +606,9 @@ public:
 
   /// Takes any index notation and concretizes unknowns to make it concrete notation
   IndexStmt concretize() const;
-  IndexStmt concretizeAccelerated(const std::vector<AcceleratorDescription>& acceleratorDescriptions) const;
+  IndexStmt concretizeAccelerated(const std::vector<FunctionInterface>& functionInterface) const;
 
-  IndexStmt autoAccelerate(IndexStmt stmt, std::vector<AcceleratorDescription> acceleratorDescriptions) const;
+  IndexStmt autoAccelerate(IndexStmt stmt, std::vector<FunctionInterface> functionInterface) const;
 
   /// Takes any index notation and concretizes unknowns to make it concrete notation
   /// given a Provenance Graph of indexVars
@@ -775,7 +775,7 @@ public:
   IndexStmt accelerate(ConcreteAccelerateCodeGenerator accelGen, std::vector<IndexVar> i_vars,
                        std::vector<IndexVar> iw_vars, TensorVar workspace) const;
 
-  IndexStmt accelerate(FunctionInterface functionInterface, IndexExpr exprToAccelerate, IndexVar i, IndexVar iw, TensorVar workspace) const;
+  IndexStmt accelerate(FunctionInterface functionInterface, IndexExpr exprToAccelerate) const;
 
   /// bound specifies a compile-time constraint on an index variable's
   /// iteration space that allows knowledge of the

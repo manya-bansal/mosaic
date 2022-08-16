@@ -29,7 +29,7 @@ struct ArgumentMap{
 
 };
 
-// std::vector<IndexExpr> allMatchedOpPatterns(IndexStmt s, IndexExpr e);
+std::vector<IndexExpr> allMatchedOpPatterns(IndexStmt s, AcceleratorExpr e);
 
 bool hasOpMatch(IndexExpr e1, AcceleratorExpr e2);
 

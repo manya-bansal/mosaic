@@ -19,56 +19,56 @@ do {                                                      \
     }                                                     \
 } while(false)
 
-// std::vector<IndexExpr> allMatchedOpPatterns(IndexStmt s, IndexExpr e){
+std::vector<IndexExpr> allMatchedOpPatterns(IndexStmt s, AcceleratorExpr e){
 
-//     std::vector<IndexExpr> matchedPatterns;
+    std::vector<IndexExpr> matchedPatterns;
 
-//     match(s,
-//         std::function<void(const AddNode*, Matcher*)>([&](const AddNode* op, Matcher* ctx) {
-//             CHECK_AND_ADD_EXPR;   
-//             ctx->match(op->a);
-//             ctx->match(op->b);
-//         }),
-//         std::function<void(const MulNode*, Matcher*)>([&](const MulNode* op, Matcher* ctx) {
-//             CHECK_AND_ADD_EXPR;
-//             ctx->match(op->a);
-//             ctx->match(op->b);
-//         }),
-//         std::function<void(const SubNode*, Matcher*)>([&](const SubNode* op, Matcher* ctx) {
-//             CHECK_AND_ADD_EXPR;
-//             ctx->match(op->a);
-//             ctx->match(op->b);
-//         }),
-//         std::function<void(const NegNode*, Matcher*)>([&](const NegNode* op, Matcher* ctx) {
-//             CHECK_AND_ADD_EXPR;
-//             ctx->match(op->a);
-//         }),
-//         std::function<void(const SqrtNode*, Matcher*)>([&](const SqrtNode* op, Matcher* ctx) {
-//             CHECK_AND_ADD_EXPR;
-//             ctx->match(op->a);
-//         }),
-//         std::function<void(const DivNode*, Matcher*)>([&](const DivNode* op, Matcher* ctx) {
-//             CHECK_AND_ADD_EXPR;
-//             ctx->match(op->a);
-//             ctx->match(op->b);
-//         }),
-//         std::function<void(const ReductionNode*, Matcher*)>([&](const ReductionNode* op, Matcher* ctx) {
-//             CHECK_AND_ADD_EXPR;
-//             ctx->match(op->a);
-//         }),
-//         std::function<void(const WhereNode*, Matcher*)>([&](const WhereNode* op, Matcher* ctx) {
-//             /// do not want to explore within a where node
-//             return;
-//         }),
-//         std::function<void(const AccelerateNode*, Matcher*)>([&](const AccelerateNode* op, Matcher* ctx) {
-//             /// do not want to explore within an accelerate node
-//             return;
-//         })
-//     );
+    match(s,
+        std::function<void(const AddNode*, Matcher*)>([&](const AddNode* op, Matcher* ctx) {
+            CHECK_AND_ADD_EXPR;   
+            ctx->match(op->a);
+            ctx->match(op->b);
+        }),
+        std::function<void(const MulNode*, Matcher*)>([&](const MulNode* op, Matcher* ctx) {
+            CHECK_AND_ADD_EXPR;
+            ctx->match(op->a);
+            ctx->match(op->b);
+        }),
+        std::function<void(const SubNode*, Matcher*)>([&](const SubNode* op, Matcher* ctx) {
+            CHECK_AND_ADD_EXPR;
+            ctx->match(op->a);
+            ctx->match(op->b);
+        }),
+        std::function<void(const NegNode*, Matcher*)>([&](const NegNode* op, Matcher* ctx) {
+            CHECK_AND_ADD_EXPR;
+            ctx->match(op->a);
+        }),
+        std::function<void(const SqrtNode*, Matcher*)>([&](const SqrtNode* op, Matcher* ctx) {
+            CHECK_AND_ADD_EXPR;
+            ctx->match(op->a);
+        }),
+        std::function<void(const DivNode*, Matcher*)>([&](const DivNode* op, Matcher* ctx) {
+            CHECK_AND_ADD_EXPR;
+            ctx->match(op->a);
+            ctx->match(op->b);
+        }),
+        std::function<void(const ReductionNode*, Matcher*)>([&](const ReductionNode* op, Matcher* ctx) {
+            CHECK_AND_ADD_EXPR;
+            ctx->match(op->a);
+        }),
+        std::function<void(const WhereNode*, Matcher*)>([&](const WhereNode* op, Matcher* ctx) {
+            /// do not want to explore within a where node
+            return;
+        }),
+        std::function<void(const AccelerateNode*, Matcher*)>([&](const AccelerateNode* op, Matcher* ctx) {
+            /// do not want to explore within an accelerate node
+            return;
+        })
+    );
 
-//     return matchedPatterns;
+    return matchedPatterns;
 
-// }
+}
 
 static std::vector<OpTypes> getOpPattern(IndexExpr e){
 

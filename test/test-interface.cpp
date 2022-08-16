@@ -53,10 +53,6 @@ TEST(interface, pluginInterface) {
 
    Tensor<double> A("A", {16}, Format{Dense});
 
-    //need to register AcceleratorDescription
-    //so that the TACO can use it
-
-
 }
 
 
@@ -127,19 +123,19 @@ TEST(interface, endToEndPlugin) {
    C.pack();
    B.pack();
 
-   A(i) = B(i) + C(i) + B(i);
+   A(i) = B(i) + C(i);
 
    // register the description
-   A.registerAccelerator(accelDesc);
+   // A.registerAccelerator(accelDesc);
    // enable targeting
-   A.accelerateOn();
+   // A.accelerateOn();
    
    A.compile();
    A.assemble();
    A.compute();
 
    Tensor<float> expected("expected", {16}, Format{Dense});
-   expected(i) = B(i) + C(i) + B(i);
+   expected(i) = B(i) + C(i);
    expected.compile();
    expected.assemble();
    expected.compute();
@@ -171,7 +167,7 @@ TEST(interface, interfaceClass1) {
    A(i) = accelerateExpr;
 
    IndexStmt stmt = A.getAssignment().concretize();
-   stmt = stmt.accelerate(new Saxpy(), accelerateExpr, i, iw, accelWorkspace);
+   stmt = stmt.accelerate(new Saxpy(), accelerateExpr);
 
     
    A.compile(stmt);
@@ -209,7 +205,7 @@ TEST(interface, interfaceClass2) {
    A(i) = accelerateExpr;
 
    IndexStmt stmt = A.getAssignment().concretize();
-   stmt = stmt.accelerate(new DotProduct(), accelerateExpr, i, iw, accelWorkspace);
+   stmt = stmt.accelerate(new DotProduct(), accelerateExpr);
 
     
    A.compile(stmt);

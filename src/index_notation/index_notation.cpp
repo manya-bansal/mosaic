@@ -2217,90 +2217,48 @@ IndexStmt IndexStmt::concretize() const {
   return stmt;
 }
 
-IndexStmt IndexStmt::concretizeAccelerated(const std::vector<AcceleratorDescription>& acceleratorDescriptions) const {
+IndexStmt IndexStmt::concretizeAccelerated(const std::vector<FunctionInterface>& functionInterface) const {
 
   IndexStmt stmt = *this;
   if (isEinsumNotation(stmt)) {
     stmt = makeReductionNotation(stmt);
   }
-  
+
   if (isReductionNotation(stmt)) {
     stmt = makeConcreteNotation(stmt);
   }
-  stmt = autoAccelerate(stmt, acceleratorDescriptions);
+  stmt = autoAccelerate(stmt, functionInterface);
   return stmt;
 }
 
-IndexStmt IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<AcceleratorDescription> acceleratorDescriptions) const{
+IndexStmt IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<FunctionInterface> functionInterfaces) const{
   
-  taco_uerror << "Unimplemented" << std::endl;
-  // ArgumentMap argumentMap;
-  // std::vector<Argument>  newArgs; 
-  // //TODO: need to add logic for repeated matches
-  // for (auto descripton: acceleratorDescriptions){
-  //   for (auto funcDesc: descripton.getFuncDescriptions()){  
-  //     std::vector<IndexExpr> matchedExprs = allMatchedOpPatterns(stmt, funcDesc.getExpr());
-
-  //       for (auto expr: matchedExprs){
-  //         if (hasPreciseMatch(expr, funcDesc.getExpr(), argumentMap)){
-  //             //now we need to construct the construct the concrete
-  //             //code gen object to use the accelerate stmt 
-  //             assert(argumentMap.possible);
-
-  //             for (auto arg : funcDesc.getArgs()){
-  //               switch (arg.getArgType())
-  //               {
-  //               case DIM:
-  //                 {
-  //                   newArgs.push_back(new DimArg(argumentMap.indexVars[arg.getNode<DimArg>()->indexVar]));
-  //                   break;
-  //                 }
-  //               case TENSOR:
-  //                 taco_uerror << "Unimplemented: Tensor Case" << endl;
-  //                 break; 
-  //               case TENSORVAR:
-  //                 newArgs.push_back(new TensorVarArg(argumentMap.tensors[arg.getNode<TensorVarArg>()->t]));
-  //                 break;
-  //               case LITERAL:
-  //                 newArgs.push_back(arg);
-  //                 break;
-  //               default:
-  //                 cout << arg.getArgType() << endl;
-  //                 taco_uerror << "Unimplemented" << endl;
-  //                 break;
-  //               }
-  //             }
-            
-  //           std::vector<IndexVar> indexingVec;
-  //           for (auto var: funcDesc.getLHS().getIndexVars()){
-  //             indexingVec.push_back(argumentMap.indexVars[var]);
-  //           } 
-
-
-  //           assert(isa<AccessNode>(funcDesc.getLHS().ptr));
-
-  //           auto accessOriginal = to<AccessNode>(funcDesc.getLHS().ptr);
-            
-  //           IndexExpr e = static_cast<IndexExpr>(Access(argumentMap.tensors[accessOriginal->tensorVar], indexingVec));
-
-  //           ConcreteAccelerateCodeGenerator concreteCodeGen = ConcreteAccelerateCodeGenerator(funcDesc.functionName, funcDesc.returnType, e, expr, newArgs, funcDesc.temporaries);
-            
-  //           TensorVar t = TensorVar(Type(expr.getDataType(), expr.getShape()));
-
-  //           std::vector<IndexVar> oldVars = expr.getIndexVars();
-  //           std::vector<IndexVar> precomputeVars;
-
-  //           for (size_t i = 0; i < oldVars.size(); i++) { precomputeVars.push_back(IndexVar()); }
-
-  //           stmt = stmt.accelerate(concreteCodeGen, oldVars, precomputeVars, t);
-
-  //         }
-  //       }
-  //   }
+  ArgumentMap argumentMap;
+  std::vector<Argument>  newArgs; 
+  //TODO: need to add logic for repeated matches
+  for (auto descripton: functionInterfaces){
+    AcceleratorStmt referenceStmt = descripton.getNode()->getStmt();
     
+    if (!isa<AcceleratorAssignment>(referenceStmt)){
+      taco_uerror << "Reference statement in function interface must be an assignemnt" << endl;
+    }
+    AcceleratorAssignment assign = to<AcceleratorAssignment>(referenceStmt);
+    
+    IndexStmt reduxStmt = makeReductionNotation(stmt);
+    AcceleratorAssignment reduxRefStmt = makeReductionNotation(assign);
+    std::cout << reduxRefStmt << std::endl;
+    // taco_uerror << "stmt " << stmt << std::endl;
+    std::vector<IndexExpr> matchedExprs = allMatchedOpPatterns(reduxStmt, reduxRefStmt.getRhs());
 
-  // }
-  return *this;
+    for (auto expr: matchedExprs){
+      argumentMap = hasPreciseMatch(expr, reduxRefStmt.getRhs());
+      if (argumentMap.possible){
+        stmt = accelerate(descripton, expr);
+        }
+      }
+  }
+  
+  return stmt;
 }
 
 IndexStmt IndexStmt::split(IndexVar i, IndexVar i1, IndexVar i2, size_t splitFactor) const {
@@ -2444,7 +2402,7 @@ static bool setByReference(AcceleratorStmt stmt){
   return setResultByRef;
 }
 
-IndexStmt IndexStmt::accelerate(FunctionInterface functionInterface, IndexExpr exprToAccelerate, IndexVar i, IndexVar iw, TensorVar workspace) const{
+IndexStmt IndexStmt::accelerate(FunctionInterface functionInterface, IndexExpr exprToAccelerate) const{
 
   AcceleratorStmt referenceStmt = functionInterface.getNode()->getStmt();
   if (!isa<AcceleratorAssignment>(referenceStmt)){
@@ -3697,9 +3655,39 @@ Assignment makeReductionNotation(Assignment assignment) {
                     assignment.getOperator());
 }
 
-IndexStmt makeReductionNotation(IndexStmt stmt) {
-  taco_iassert(isEinsumNotation(stmt));
-  return makeReductionNotation(to<Assignment>(stmt));
+IndexStmt makeReductionNotation(IndexStmt stmtOriginal) {
+  taco_iassert(isEinsumNotation(stmtOriginal));
+  if (!isa<Assignment>(stmtOriginal)){
+
+    struct MakeReductionNotation : IndexNotationRewriter {
+      MakeReductionNotation() = default;
+
+      IndexStmt rewriteReduction(const IndexStmt& s) {
+        IndexStmt rewriteReductionStmt = rewrite(s);
+        return rewriteReductionStmt;
+      }
+
+      using IndexNotationRewriter::visit;
+
+      void visit(const AssignmentNode* op) {
+        // Sum every reduction variables over each term
+        stmt = makeReductionNotation(Assignment(op));
+      }
+
+      void visit(const WhereNode* op) {
+        return;
+      }
+
+      void visit(const AccelerateNode* op) {
+        return;
+      }
+
+    };
+
+    return MakeReductionNotation().rewriteReduction(stmtOriginal);
+
+  }
+  return makeReductionNotation(to<Assignment>(stmtOriginal));
 }
 
 // Replace other reductions with where and forall statements
