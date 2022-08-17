@@ -2243,13 +2243,10 @@ IndexStmt IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<FunctionInterfac
       taco_uerror << "Reference statement in function interface must be an assignemnt" << endl;
     }
     AcceleratorAssignment assign = to<AcceleratorAssignment>(referenceStmt);
-    
     IndexStmt reduxStmt = makeReductionNotation(stmt);
     AcceleratorAssignment reduxRefStmt = makeReductionNotation(assign);
-    std::cout << reduxRefStmt << std::endl;
-    // taco_uerror << "stmt " << stmt << std::endl;
     std::vector<IndexExpr> matchedExprs = allMatchedOpPatterns(reduxStmt, reduxRefStmt.getRhs());
-
+    
     for (auto expr: matchedExprs){
       argumentMap = hasPreciseMatch(expr, reduxRefStmt.getRhs());
       if (argumentMap.possible){
@@ -2257,7 +2254,8 @@ IndexStmt IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<FunctionInterfac
         }
       }
   }
-  
+  // taco_uerror << stmt << endl;
+  // stmt = makeConcreteNotation(stmt);
   return stmt;
 }
 
@@ -3413,6 +3411,7 @@ bool isReductionNotation(IndexStmt stmt, std::string* reason) {
       }
     })
   );
+
   return isReduction;
 }
 
@@ -3658,7 +3657,6 @@ Assignment makeReductionNotation(Assignment assignment) {
 IndexStmt makeReductionNotation(IndexStmt stmtOriginal) {
   taco_iassert(isEinsumNotation(stmtOriginal));
   if (!isa<Assignment>(stmtOriginal)){
-
     struct MakeReductionNotation : IndexNotationRewriter {
       MakeReductionNotation() = default;
 
@@ -3675,11 +3673,11 @@ IndexStmt makeReductionNotation(IndexStmt stmtOriginal) {
       }
 
       void visit(const WhereNode* op) {
-        return;
+        stmt = Where(op);
       }
 
       void visit(const AccelerateNode* op) {
-        return;
+        stmt = Accelerate(op);
       }
 
     };
@@ -4114,7 +4112,10 @@ IndexStmt makeConcreteNotation(IndexStmt stmt) {
 
   struct RemoveTopLevelReductions : IndexNotationRewriter {
     using IndexNotationRewriter::visit;
-
+    //take no action in an accelerate node
+    void visit(const AccelerateNode* node) {
+      return;
+    }
     void visit(const AssignmentNode* node) {
       // Easiest to just walk down the reduction node until we find something
       // that's not a reduction

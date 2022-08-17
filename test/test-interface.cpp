@@ -80,7 +80,6 @@ TEST(interface, concretepluginInterface) {
 
    //due the way rewrite indexstmt works, need the same object
    ConcreteAccelerateCodeGenerator concrete_cblas_saxpy("cblas_saxpy", "void",  C(i), accelerateExpr, {});
-   cout << concrete_cblas_saxpy(Dim(i), 1, A, 1, B, 1) << endl;
 
    TensorVar accelWorkspace("accelWorkspace", Type(taco::Float32, {16}), taco::dense);
 
@@ -322,5 +321,42 @@ TEST(interface, classInterfaceSdsdot) {
    // IndexStmt stmt = A.getAssignment().concretize();
 
    // ASSERT_THROW(stmt.accelerate(new Test1(), accelerateExpr, i, iw, accelWorkspace), taco::TacoException);
+
+}
+
+TEST(interface, endToEndDotProduct) {
+
+   // actual computation
+   Tensor<float> A("A", {16}, Format{Dense});
+   Tensor<float> B("B", {16}, Format{Dense});
+   Tensor<float> C("C", {16}, Format{Dense});
+   IndexVar i("i");
+
+   for (int i = 0; i < 16; i++) {
+      C.insert({i}, (float) i);
+      B.insert({i}, (float) i);
+   }
+
+   C.pack();
+   B.pack();
+
+   A(i) = sum(i, B(i) * C(i)) + B(i);
+
+   // register the description
+   A.registerAccelerator(new DotProduct());
+   // enable targeting
+   A.accelerateOn();
+   
+   A.compile();
+   A.assemble();
+   A.compute();
+
+   Tensor<float> expected("expected", {16}, Format{Dense});
+   expected(i) = B(i) + C(i) + B(i);
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+   ASSERT_TENSOR_EQ(expected, A);
 
 }
