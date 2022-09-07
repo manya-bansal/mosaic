@@ -19,7 +19,7 @@ do {                                                      \
     }                                                     \
 } while(false)
 
-std::vector<IndexExpr> allMatchedOpPatterns(IndexStmt s, AcceleratorExpr e){
+std::vector<IndexExpr> allMatchedOpPatterns(IndexExpr s, AcceleratorExpr e){
 
     std::vector<IndexExpr> matchedPatterns;
 

@@ -675,17 +675,21 @@ void TensorBase::compile() {
   CollisionFinder dupes = CollisionFinder();
   assignment.getLhs().accept(&dupes);
   assignment.accept(&dupes);
-  IndexStmt stmt = makeConcreteNotation(makeReductionNotation(assignment));
+
+  IndexStmt stmt;
+  if (content->accelerate){
+    stmt = assignment.concretizeAccelerated(getRegisteredAccelerators());
+  }
+  else{
+    stmt = assignment.concretize();
+  }
+
   stmt = reorderLoopsTopologically(stmt);
   stmt = insertTemporaries(stmt);
   stmt = parallelizeOuterLoop(stmt);
   
-  if (content->accelerate){
-    compileAccelerated(stmt, getRegisteredAccelerators(), content->assembleWhileCompute);
-  }
-  else{
-    compile(stmt, content->assembleWhileCompute);
-  }
+  compile(stmt, content->assembleWhileCompute);
+  
 }
 
 void TensorBase::compileAccelerated(std::vector<IndexExpr> AcceleratedExpressions) {
@@ -720,8 +724,8 @@ void TensorBase::compileAccelerated(std::vector<IndexExpr> AcceleratedExpression
   CollisionFinder dupes = CollisionFinder();
   assignment.getLhs().accept(&dupes);
   assignment.accept(&dupes);
-  IndexStmt stmt = makeAcceleratedConcreteNotation(assignment, AcceleratedExpressions);
-  // stmt = reorderLoopsTopologically(stmt);
+  IndexStmt stmt = makeConcreteNotation(assignment);
+  stmt = reorderLoopsTopologically(stmt);
   stmt = insertTemporaries(stmt); 
   stmt = parallelizeOuterLoop(stmt);
   compileAccelerated(stmt, getRegisteredAccelerators(), content->assembleWhileCompute);

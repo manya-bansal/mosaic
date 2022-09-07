@@ -2224,38 +2224,12 @@ IndexStmt IndexStmt::concretizeAccelerated(const std::vector<FunctionInterface>&
     stmt = makeReductionNotation(stmt);
   }
 
+  stmt = autoAccelerate(stmt, functionInterface);
+
   if (isReductionNotation(stmt)) {
     stmt = makeConcreteNotation(stmt);
   }
-  stmt = autoAccelerate(stmt, functionInterface);
-  return stmt;
-}
-
-IndexStmt IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<FunctionInterface> functionInterfaces) const{
   
-  ArgumentMap argumentMap;
-  std::vector<Argument>  newArgs; 
-  //TODO: need to add logic for repeated matches
-  for (auto descripton: functionInterfaces){
-    AcceleratorStmt referenceStmt = descripton.getNode()->getStmt();
-    
-    if (!isa<AcceleratorAssignment>(referenceStmt)){
-      taco_uerror << "Reference statement in function interface must be an assignemnt" << endl;
-    }
-    AcceleratorAssignment assign = to<AcceleratorAssignment>(referenceStmt);
-    IndexStmt reduxStmt = makeReductionNotation(stmt);
-    AcceleratorAssignment reduxRefStmt = makeReductionNotation(assign);
-    std::vector<IndexExpr> matchedExprs = allMatchedOpPatterns(reduxStmt, reduxRefStmt.getRhs());
-    
-    for (auto expr: matchedExprs){
-      argumentMap = hasPreciseMatch(expr, reduxRefStmt.getRhs());
-      if (argumentMap.possible){
-        stmt = accelerate(descripton, expr);
-        }
-      }
-  }
-  // taco_uerror << stmt << endl;
-  // stmt = makeConcreteNotation(stmt);
   return stmt;
 }
 
@@ -2333,6 +2307,31 @@ IndexStmt IndexStmt::precompute(IndexExpr expr, IndexVar i, IndexVar iw, TensorV
   return precompute(expr, i_vars, iw_vars, workspace);
 }
 
+static bool setByReference(AcceleratorStmt stmt){
+
+  if (!isa<AcceleratorAssignment>(stmt)){
+    taco_uerror << "Reference statement in function interface must be an assignemnt" << endl;
+  }
+  AcceleratorAssignment assign = to<AcceleratorAssignment>(stmt);
+
+  TensorObject resultVar;
+  acceleratorMatch((assign.getLhs()),
+      // should only be one var on the lhs
+      std::function<void(const AcceleratorAccessNode*)>([&](const AcceleratorAccessNode* op) {
+            resultVar = op->tensorObject;
+        })
+  );
+
+  bool setResultByRef = false;
+  acceleratorMatch((assign.getRhs()),
+      std::function<void(const AcceleratorAccessNode*)>([&](const AcceleratorAccessNode* op) {
+            if (resultVar == op->tensorObject){
+              setResultByRef = true;
+            }
+        })
+  );
+  return setResultByRef;
+}
 
 IndexStmt IndexStmt::accelerate(ConcreteAccelerateCodeGenerator accelGen, std::vector<IndexVar> i_vars,
                                 std::vector<IndexVar> iw_vars, TensorVar workspace) const {
@@ -2372,32 +2371,6 @@ IndexStmt IndexStmt::accelerate(ConcreteAccelerateCodeGenerator accelGen, IndexV
   std::vector<IndexVar> iw_vars{iw};
 
   return accelerate(accelGen, i_vars, iw_vars, workspace);
-}
-
-static bool setByReference(AcceleratorStmt stmt){
-
-  if (!isa<AcceleratorAssignment>(stmt)){
-    taco_uerror << "Reference statement in function interface must be an assignemnt" << endl;
-  }
-  AcceleratorAssignment assign = to<AcceleratorAssignment>(stmt);
-
-  TensorObject resultVar;
-  acceleratorMatch((assign.getLhs()),
-      // should only be one var on the lhs
-      std::function<void(const AcceleratorAccessNode*)>([&](const AcceleratorAccessNode* op) {
-            resultVar = op->tensorObject;
-        })
-  );
-
-  bool setResultByRef = false;
-  acceleratorMatch((assign.getRhs()),
-      std::function<void(const AcceleratorAccessNode*)>([&](const AcceleratorAccessNode* op) {
-            if (resultVar == op->tensorObject){
-              setResultByRef = true;
-            }
-        })
-  );
-  return setResultByRef;
 }
 
 IndexStmt IndexStmt::accelerate(FunctionInterface functionInterface, IndexExpr exprToAccelerate) const{
@@ -3729,376 +3702,72 @@ struct ReplaceReductionsWithWheres : IndexNotationRewriter {
   }
 };
 
-static std::string flattenStmt(IndexStmt stmt){
+static IndexStmt replaceTemporary(IndexStmt stmt, IndexExpr expr, AcceleratorAssignment assign, ArgumentMap argumentMap){
 
-  std::string flattenedTree;
+  taco_uassert(argumentMap.possible);
+  map<IndexVar, Dimension> indexVarDomains = expr.getIndexVarDomains();
+  std::vector<Dimension> lhsDimension; 
+  std::vector<IndexVar> indexingVec;
 
-  match(stmt,
-   std::function<void(const AddNode*,Matcher*)>([&](const AddNode* op,
-                                                     Matcher* ctx) {
-       flattenedTree += "Add";    
-       ctx ->match(op->a); 
-       ctx ->match(op->b);                                      
-    }),
-    std::function<void(const SubNode*,Matcher*)>([&](const SubNode* op,
-                                                     Matcher* ctx) {
-      flattenedTree += "Sub"; 
-      ctx ->match(op->a); 
-      ctx ->match(op->b);                                             
-    }),
-    std::function<void(const MulNode*,Matcher*)>([&](const MulNode* op,
-                                                     Matcher* ctx) {
-       flattenedTree += "Mul";
-       ctx ->match(op->a); 
-       ctx ->match(op->b);                                       
-    }),  
-    std::function<void(const AccessNode*,Matcher*)>([&](const AccessNode* op,
-                                                     Matcher* ctx) {
-      flattenedTree += to_string(op->tensorVar.getOrder());                   
-    }),
-    std::function<void(const LiteralNode*,Matcher*)>([&](const LiteralNode* op,
-                                                     Matcher* ctx) {
-       flattenedTree += "Literal";                                          
-    }),  
-    std::function<void(const NegNode*,Matcher*)>([&](const NegNode* op,
-                                                     Matcher* ctx) {
-       flattenedTree += "Neg"; 
-       ctx ->match(op->a);                                          
-    }),  
-    std::function<void(const DivNode*,Matcher*)>([&](const DivNode* op,
-                                                     Matcher* ctx) {
-       flattenedTree += "Div";  
-       ctx ->match(op->a);                                        
-    }),  
-    std::function<void(const SqrtNode*,Matcher*)>([&](const SqrtNode* op,
-                                                     Matcher* ctx) {
-       flattenedTree += "Sqrt";  
-       ctx ->match(op->a);                                       
-    }),
-    std::function<void(const CastNode*,Matcher*)>([&](const CastNode* op,
-                                                     Matcher* ctx) {
-       taco_uerror;                                       
-    }),
-    std::function<void(const CallNode*,Matcher*)>([&](const CallNode* op,
-                                                     Matcher* ctx) {
-       taco_uerror;                                       
-    }),
-    std::function<void(const CallIntrinsicNode*,Matcher*)>([&](const CallIntrinsicNode* op,
-                                                     Matcher* ctx) {
-       taco_uerror;                                       
-    }),  
-    std::function<void(const ReductionNode*,Matcher*)>([&](const ReductionNode* op,
-                                                     Matcher* ctx) {
-      flattenedTree += "Redux";
-      ctx->match(op->a);                               
-    }),
-    std::function<void(const IndexVarNode*,Matcher*)>([&](const IndexVarNode* op,
-                                                     Matcher* ctx) {
-      flattenedTree += "IndexVar";                             
-    })                              
-  );
 
-  return flattenedTree;
+  for (auto var: assign.getLhs().getIndexVars()){
+    lhsDimension.push_back(indexVarDomains[argumentMap.indexVars[var]]);
+    indexingVec.push_back(argumentMap.indexVars[var]);
+  }
 
-}
+  TensorVar t = TensorVar(Type(expr.getDataType(), Shape(lhsDimension)));
+  IndexExpr access = static_cast<IndexExpr>(Access(t, indexingVec));
 
-static std::string flattenExpr(IndexExpr expr){
+  std::map<IndexExpr,IndexExpr> subsitution = {{expr, access}};
 
-  std::string flattenedTree;
+  IndexStmt stmtRewrite =  replace(stmt, subsitution);
 
-  match(expr,
-   std::function<void(const AddNode*,Matcher*)>([&](const AddNode* op,
-                                                     Matcher* ctx) {
-       flattenedTree += "Add";    
-       ctx ->match(op->a); 
-       ctx ->match(op->b);                                      
-    }),
-    std::function<void(const SubNode*,Matcher*)>([&](const SubNode* op,
-                                                     Matcher* ctx) {
-      flattenedTree += "Sub"; 
-      ctx ->match(op->a); 
-      ctx ->match(op->b);                                             
-    }),
-    std::function<void(const MulNode*,Matcher*)>([&](const MulNode* op,
-                                                     Matcher* ctx) {
-       flattenedTree += "Mul";
-       ctx ->match(op->a); 
-       ctx ->match(op->b);                                       
-    }),  
-    std::function<void(const AccessNode*,Matcher*)>([&](const AccessNode* op,
-                                                     Matcher* ctx) {
-      flattenedTree += to_string(op->tensorVar.getOrder());                   
-    }),
-    std::function<void(const LiteralNode*,Matcher*)>([&](const LiteralNode* op,
-                                                     Matcher* ctx) {
-       flattenedTree += "Literal";                                          
-    }),  
-    std::function<void(const NegNode*,Matcher*)>([&](const NegNode* op,
-                                                     Matcher* ctx) {
-       flattenedTree += "Neg"; 
-       ctx ->match(op->a);                                          
-    }),  
-    std::function<void(const DivNode*,Matcher*)>([&](const DivNode* op,
-                                                     Matcher* ctx) {
-       flattenedTree += "Div";  
-       ctx ->match(op->a);                                        
-    }),  
-    std::function<void(const SqrtNode*,Matcher*)>([&](const SqrtNode* op,
-                                                     Matcher* ctx) {
-       flattenedTree += "Sqrt";  
-       ctx ->match(op->a);                                       
-    }),
-    std::function<void(const CastNode*,Matcher*)>([&](const CastNode* op,
-                                                     Matcher* ctx) {
-       taco_uerror;                                       
-    }),
-    std::function<void(const CallNode*,Matcher*)>([&](const CallNode* op,
-                                                     Matcher* ctx) {
-       taco_uerror;                                       
-    }),
-    std::function<void(const CallIntrinsicNode*,Matcher*)>([&](const CallIntrinsicNode* op,
-                                                     Matcher* ctx) {
-       taco_uerror;                                       
-    }),  
-    std::function<void(const ReductionNode*,Matcher*)>([&](const ReductionNode* op,
-                                                     Matcher* ctx) {
-      flattenedTree += "Redux";
-      ctx->match(op->a);                               
-    }),
-    std::function<void(const IndexVarNode*,Matcher*)>([&](const IndexVarNode* op,
-                                                     Matcher* ctx) {
-      flattenedTree += "IndexVar";                             
-    })                              
-  );
-
-  return flattenedTree;
-
-}
-
-static IndexExprNode* findSubexpresionStmt(IndexStmt stmt, std::string flattenedExpr){
-  
-  std::string flattenedTree;
-  IndexExprNode* subExpressionRoot;
-
-   match(stmt,                                            
-   std::function<void(const AddNode*,Matcher*)>([&](const AddNode* op,
-                                                     Matcher* ctx) {
-       if (flattenedTree.compare(flattenedExpr) == 0){
-         return subExpressionRoot;
-       }
-       
-       if (flattenedExpr.find(flattenedTree+"Add") == std::string::npos || flattenedTree.empty()){
-        //  cout << op << endl;
-         subExpressionRoot = (IndexExprNode*) op;
-         flattenedTree = "Add";
-       }else{
-         flattenedTree += "Add";   
-       }
-
-       ctx ->match(op->a); 
-       ctx ->match(op->b);                                      
-    }),
-    std::function<void(const SubNode*,Matcher*)>([&](const SubNode* op,
-                                                     Matcher* ctx) {
-      if (flattenedTree.compare(flattenedExpr) == 0){
-         return subExpressionRoot;
-       }                                                
-      flattenedTree += "Sub"; 
-
-      if (flattenedExpr.find(flattenedTree) == std::string::npos){
-         subExpressionRoot = (IndexExprNode*) op;
-         flattenedTree = "Sub";
-       }
-      ctx ->match(op->a); 
-      ctx ->match(op->b);                                             
-    }),
-    std::function<void(const MulNode*,Matcher*)>([&](const MulNode* op,
-                                                     Matcher* ctx) {
-      if (flattenedTree.compare(flattenedExpr) == 0){
-         return subExpressionRoot;
-       }
-       flattenedTree += "Mul";
-      if (flattenedExpr.find(flattenedTree) == std::string::npos){
-          subExpressionRoot = (IndexExprNode*) op;
-          flattenedTree = "Mul";
-      }
-       ctx ->match(op->a); 
-       ctx ->match(op->b);                                       
-    }),  
-    std::function<void(const AccessNode*,Matcher*)>([&](const AccessNode* op,
-                                                     Matcher* ctx) {
-       if (flattenedTree.compare(flattenedExpr) == 0){
-         return subExpressionRoot;
-       }
-      flattenedTree += to_string(op->tensorVar.getOrder()); 
-      if (flattenedExpr.find(flattenedTree) == std::string::npos){
-          subExpressionRoot = (IndexExprNode*) op;
-          flattenedTree =  to_string(op->tensorVar.getOrder()); 
-      }                  
-    }),
-    std::function<void(const LiteralNode*,Matcher*)>([&](const LiteralNode* op,
-                                                     Matcher* ctx) {
-      if (flattenedTree.compare(flattenedExpr) == 0){
-         return subExpressionRoot;
-       }
-       flattenedTree += "Literal";                                          
-    }),  
-    std::function<void(const NegNode*,Matcher*)>([&](const NegNode* op,
-                                                     Matcher* ctx) {
-      if (flattenedTree.compare(flattenedExpr) == 0){
-         return subExpressionRoot;
-       }
-       flattenedTree += "Neg"; 
-       ctx ->match(op->a);                                          
-    }),  
-    std::function<void(const DivNode*,Matcher*)>([&](const DivNode* op,
-                                                     Matcher* ctx) {
-      if (flattenedTree.compare(flattenedExpr) == 0){
-         return subExpressionRoot;
-       }
-       flattenedTree += "Div";  
-       ctx ->match(op->a);                                        
-    }),  
-    std::function<void(const SqrtNode*,Matcher*)>([&](const SqrtNode* op,
-                                                     Matcher* ctx) {
-      if (flattenedTree.compare(flattenedExpr) == 0){
-         return subExpressionRoot;
-       }
-       flattenedTree += "Sqrt";  
-       ctx ->match(op->a);                                       
-    }),
-    std::function<void(const CastNode*,Matcher*)>([&](const CastNode* op,
-                                                     Matcher* ctx) {
-       taco_uerror;                                       
-    }),
-    std::function<void(const CallNode*,Matcher*)>([&](const CallNode* op,
-                                                     Matcher* ctx) {
-       taco_uerror;                                       
-    }),
-    std::function<void(const CallIntrinsicNode*,Matcher*)>([&](const CallIntrinsicNode* op,
-                                                     Matcher* ctx) {
-       taco_uerror;                                       
-    }),  
-    std::function<void(const ReductionNode*,Matcher*)>([&](const ReductionNode* op,
-                                                     Matcher* ctx) {
-      if (flattenedTree.compare(flattenedExpr) == 0){
-         return subExpressionRoot;
-       }
-      flattenedTree += "Redux";
-      ctx->match(op->a);                               
-    }),
-    std::function<void(const IndexVarNode*,Matcher*)>([&](const IndexVarNode* op,
-                                                     Matcher* ctx) {
-      if (flattenedTree.compare(flattenedExpr) == 0){
-         return subExpressionRoot;
-       }
-      flattenedTree += "IndexVar";                             
-    })                              
-  );
-
-  if (flattenedTree.compare(flattenedExpr) == 0){
-        // cout << IndexExpr(subExpressionRoot) << endl;
-        return subExpressionRoot;
+  auto accessOriginal = to<AcceleratorAccessNode>(assign.getLhs().ptr);
+  IndexExpr e;
+  if (setByReference(assign)){
+    e = static_cast<IndexExpr>(Access(argumentMap.tensors[accessOriginal->tensorObject], indexingVec));
   }else{
-    return NULL;
+    e = static_cast<IndexExpr>(Access(t, indexingVec));
   }
+
+  taco_uerror << e << endl;  
 
 }
 
-static IndexStmt isADirectSubexpression(IndexStmt stmt, IndexExpr expr){
+IndexStmt IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<FunctionInterface> functionInterfaces) const{
 
 
-  std::string flattenedExpr = flattenExpr(expr);
-  std::string flattenedStmt = flattenStmt(stmt);
-
-  // cout << flattenedStmt << endl;
-  // cout << flattenedExpr << endl;
-
-  if (flattenedStmt.find(flattenedExpr) != std::string::npos){
-    IndexExprNode* subExpressionRoot = findSubexpresionStmt(stmt, flattenedExpr);
-    IndexExpr subExpression(subExpressionRoot);
-    // cout << "after " << endl;
-    // cout << stmt << endl;
-    // cout << "shape " << subExpression.getShape() << endl;
-    // stmt = stmt.accelerate(subExpression, subExpression.getIndexVars()[0], IndexVar(), TensorVar(Type(subExpression.getDataType(), subExpression.getShape()), 0));
-    // cout << "apply accel " << endl;
-    // cout << stmt << endl;
-  }
-
-  return stmt;
-  
-
-}
-
-IndexStmt annotateConcreteNotation(IndexStmt stmt, std::vector<IndexExpr> AcceleratedExpressions){
-    
-    for (IndexExpr expr: AcceleratedExpressions){
-      stmt = isADirectSubexpression(stmt, expr);
-    }
+  if (!isa<Assignment>(stmt)) {
+    cout << "Cannot autoscheudle this expression since it is not an assignment" << endl;
     return stmt;
-
-}
-
-IndexStmt makeAcceleratedConcreteNotation(IndexStmt stmt, std::vector<IndexExpr> AcceleratedExpressions) {
-
-
-  std::string reason;
-
-  taco_iassert(isReductionNotation(stmt, &reason))
-      << "Not reduction notation: " << stmt << std::endl << reason;
-  taco_iassert(isa<Assignment>(stmt));
-
-  // Free variables and reductions covering the whole rhs become top level loops
-  vector<IndexVar> freeVars = to<Assignment>(stmt).getFreeVars();
-
-  struct RemoveTopLevelReductions : IndexNotationRewriter {
-    using IndexNotationRewriter::visit;
-
-    void visit(const AssignmentNode* node) {
-      // Easiest to just walk down the reduction node until we find something
-      // that's not a reduction
-      // cout << "assignent node" << *node << endl;
-      vector<IndexVar> topLevelReductions;
-      IndexExpr rhs = node->rhs;
-      IndexExpr reductionOp;
-      while (isa<Reduction>(rhs)) {
-        Reduction reduction = to<Reduction>(rhs);
-        // Hack: explicit reductions with user defined functions shouldn't be rewritten.
-        if (util::getFromEnv("TACO_CONCRETIZE_HACK", "0") != "0" && isa<Call>(reduction.getOp())) {
-          break;
-        }
-        topLevelReductions.push_back(reduction.getVar());
-        rhs = reduction.getExpr();
-        reductionOp = reduction.getOp();
-      }
-
-      if (rhs != node->rhs) {
-        stmt = Assignment(node->lhs, rhs, reductionOp);
-        for (auto& i : util::reverse(topLevelReductions)) {
-          stmt = forall(i, stmt);
-        }
-      }
-      else {
-        stmt = node;
-      }
-    }
-  };
-
-  stmt = RemoveTopLevelReductions().rewrite(stmt);
-
-
-  for (auto& i : util::reverse(freeVars)) {
-    stmt = forall(i, stmt);
   }
 
-  stmt = ReplaceReductionsWithWheres().rewrite(stmt);
 
-  cout << "final statement " << stmt << endl;
+  for (auto descripton: functionInterfaces){
+  AcceleratorStmt referenceStmt = descripton.getNode()->getStmt();
+  
+  if (!isa<AcceleratorAssignment>(referenceStmt)){
+    taco_uerror << "Reference statement in function interface must be an assignemnt" << endl;
+  }
 
-  return annotateConcreteNotation(stmt, AcceleratedExpressions);
+  AcceleratorAssignment assign = to<AcceleratorAssignment>(referenceStmt);
+  AcceleratorAssignment reduxRefStmt = makeReductionNotation(assign);
+  std::vector<IndexExpr> matchedExprs = allMatchedOpPatterns(to<Assignment>(stmt).getRhs(), assign.getRhs());
+
+  ArgumentMap argumentMap;
+
+  for (auto expr: matchedExprs){
+    argumentMap = hasPreciseMatch(expr, assign.getRhs());
+    if (argumentMap.possible){
+      stmt = replaceTemporary(stmt, expr, assign, argumentMap);
+      taco_uerror << stmt << endl;
+      }
+    }
+  }
+  taco_uerror << stmt << endl;
+  stmt = makeConcreteNotation(stmt);
+  return stmt;
 }
-
-
 
 IndexStmt makeConcreteNotation(IndexStmt stmt) {
 

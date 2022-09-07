@@ -698,8 +698,6 @@ AcceleratorAssignment makeReductionNotation(AcceleratorAssignment assignment){
   return AcceleratorAssignment(assignment.getLhs(),
                     MakeReductionNotation(free).einsum(expr),
                     assignment.getOperator());
-
-
 }
 
 // class TensorObject

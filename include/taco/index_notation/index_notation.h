@@ -1297,12 +1297,6 @@ bool isConcreteNotation(IndexStmt, std::string* reason=nullptr);
 Assignment makeReductionNotation(Assignment);
 IndexStmt makeReductionNotation(IndexStmt);
 
-//annotates the index stmt with possible blos calls
-IndexStmt annotateConcreteNotation(IndexStmt stmt, std::vector<IndexExpr> AcceleratedExpressions);
-
-IndexStmt makeAcceleratedConcreteNotation(IndexStmt stmt, std::vector<IndexExpr> AcceleratedExpressions);
-
-
 /// Convert reduction notation to concrete notation, by inserting forall nodes,
 /// replacing reduction nodes by compound assignments, and inserting temporaries
 /// as needed.
