@@ -3702,7 +3702,66 @@ struct ReplaceReductionsWithWheres : IndexNotationRewriter {
   }
 };
 
-static IndexStmt replaceTemporary(IndexStmt stmt, IndexExpr expr, AcceleratorAssignment assign, ArgumentMap argumentMap){
+static ConcreteAccelerateCodeGenerator getConcreteCodeGenerator(IndexExpr expr, IndexExpr workspace, ArgumentMap argumentMap, FunctionInterface functionInterface){
+  assert(argumentMap.possible);
+
+  AcceleratorStmt referenceStmt = functionInterface.getNode()->getStmt();
+  if (!isa<AcceleratorAssignment>(referenceStmt)){
+    taco_uerror << "Reference statement in function interface must be an assignemnt" << endl;
+  }
+  AcceleratorAssignment assign = to<AcceleratorAssignment>(referenceStmt);
+
+  std::vector<Argument> newArgs;
+  for (auto arg : functionInterface.getNode()->getArguments()){
+    switch (arg.getArgType())
+    {
+    case DIM:
+      {
+        newArgs.push_back(new DimArg(argumentMap.indexVars[arg.getNode<DimArg>()->indexVar]));
+        break;
+      }
+    case TENSOR:
+      taco_uerror << "Arguments can only use TensorObjects, tried using a TensorVar." << endl;
+      break; 
+    case TENSOR_OBJECT:
+      newArgs.push_back(new TensorVarArg(argumentMap.tensors[arg.getNode<TensorObjectArg>()->t]));
+      break;
+    case TENSORVAR:
+      taco_uerror << "Arguments can only use TensorObjects, tried using a TensorVar." << endl;
+      break;
+    case LITERAL:
+      newArgs.push_back(arg);
+      break;
+    default:
+      cout << arg.getArgType() << endl;
+      taco_uerror << "Unimplemented" << endl;
+      break;
+    }
+  }
+
+  map<IndexVar, Dimension> indexVarDomains = expr.getIndexVarDomains();
+  std::vector<Dimension> lhsDimension; 
+  std::vector<IndexVar> indexingVec;
+
+  for (auto var: assign.getLhs().getIndexVars()){
+    lhsDimension.push_back(indexVarDomains[argumentMap.indexVars[var]]);
+    indexingVec.push_back(argumentMap.indexVars[var]);
+  }
+
+  auto accessOriginal = to<AcceleratorAccessNode>(assign.getLhs().ptr);
+  IndexExpr e;
+  if (setByReference(referenceStmt)){
+    e = static_cast<IndexExpr>(Access(argumentMap.tensors[accessOriginal->tensorObject], indexingVec));
+  }else{
+    e = workspace;
+  }
+
+  ConcreteAccelerateCodeGenerator concreteCodeGen = ConcreteAccelerateCodeGenerator( functionInterface.getNode()->getFunctionName(),  functionInterface.getNode()->getReturnType(), e, expr, newArgs, {});
+  cout << concreteCodeGen << endl;
+  return concreteCodeGen;
+}
+
+static Access replaceTemporary(IndexStmt stmt, IndexExpr expr, AcceleratorAssignment assign, ArgumentMap argumentMap){
 
   taco_uassert(argumentMap.possible);
   map<IndexVar, Dimension> indexVarDomains = expr.getIndexVarDomains();
@@ -3716,57 +3775,47 @@ static IndexStmt replaceTemporary(IndexStmt stmt, IndexExpr expr, AcceleratorAss
   }
 
   TensorVar t = TensorVar(Type(expr.getDataType(), Shape(lhsDimension)));
-  IndexExpr access = static_cast<IndexExpr>(Access(t, indexingVec));
-
-  std::map<IndexExpr,IndexExpr> subsitution = {{expr, access}};
-
-  IndexStmt stmtRewrite =  replace(stmt, subsitution);
-
-  auto accessOriginal = to<AcceleratorAccessNode>(assign.getLhs().ptr);
-  IndexExpr e;
-  if (setByReference(assign)){
-    e = static_cast<IndexExpr>(Access(argumentMap.tensors[accessOriginal->tensorObject], indexingVec));
-  }else{
-    e = static_cast<IndexExpr>(Access(t, indexingVec));
-  }
-
-  taco_uerror << e << endl;  
-
+  return Access(t, indexingVec);
 }
 
 IndexStmt IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<FunctionInterface> functionInterfaces) const{
 
+  std::map<Access, ConcreteAccelerateCodeGenerator> varCodeGen;
 
   if (!isa<Assignment>(stmt)) {
     cout << "Cannot autoscheudle this expression since it is not an assignment" << endl;
     return stmt;
   }
 
-
+  IndexStmt stmtRewrite = stmt;
   for (auto descripton: functionInterfaces){
-  AcceleratorStmt referenceStmt = descripton.getNode()->getStmt();
-  
-  if (!isa<AcceleratorAssignment>(referenceStmt)){
-    taco_uerror << "Reference statement in function interface must be an assignemnt" << endl;
-  }
-
-  AcceleratorAssignment assign = to<AcceleratorAssignment>(referenceStmt);
-  AcceleratorAssignment reduxRefStmt = makeReductionNotation(assign);
-  std::vector<IndexExpr> matchedExprs = allMatchedOpPatterns(to<Assignment>(stmt).getRhs(), assign.getRhs());
-
-  ArgumentMap argumentMap;
-
-  for (auto expr: matchedExprs){
-    argumentMap = hasPreciseMatch(expr, assign.getRhs());
-    if (argumentMap.possible){
-      stmt = replaceTemporary(stmt, expr, assign, argumentMap);
-      taco_uerror << stmt << endl;
-      }
+    AcceleratorStmt referenceStmt = descripton.getNode()->getStmt();
+    
+    if (!isa<AcceleratorAssignment>(referenceStmt)){
+      taco_uerror << "Reference statement in function interface must be an assignemnt" << endl;
     }
+
+    AcceleratorAssignment assign = to<AcceleratorAssignment>(referenceStmt);
+    AcceleratorAssignment reduxRefStmt = makeReductionNotation(assign);
+    std::vector<IndexExpr> matchedExprs = allMatchedOpPatterns(to<Assignment>(stmt).getRhs(), reduxRefStmt.getRhs());
+    ArgumentMap argumentMap;
+
+    for (auto expr: matchedExprs){
+      argumentMap = hasPreciseMatch(expr, reduxRefStmt.getRhs());
+      if (argumentMap.possible){
+        auto access = replaceTemporary(stmt, expr, reduxRefStmt, argumentMap);
+        std::map<IndexExpr,IndexExpr> subsitution = {{expr, access}};
+        stmtRewrite =  replace(stmtRewrite, subsitution);
+        varCodeGen[access] = getConcreteCodeGenerator(expr, access, argumentMap, descripton);
+        break;
+        }
+      }
   }
-  taco_uerror << stmt << endl;
-  stmt = makeConcreteNotation(stmt);
-  return stmt;
+  
+  stmtRewrite = makeConcreteNotation(stmtRewrite);
+
+  taco_uerror << stmtRewrite << endl;
+  return stmtRewrite;
 }
 
 IndexStmt makeConcreteNotation(IndexStmt stmt) {
