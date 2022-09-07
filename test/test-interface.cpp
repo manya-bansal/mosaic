@@ -168,7 +168,6 @@ TEST(interface, interfaceClass1) {
    IndexStmt stmt = A.getAssignment().concretize();
    stmt = stmt.accelerate(new Saxpy(), accelerateExpr);
 
-    
    A.compile(stmt);
    A.assemble();
    A.compute();
@@ -205,7 +204,6 @@ TEST(interface, interfaceClass2) {
 
    IndexStmt stmt = A.getAssignment().concretize();
    stmt = stmt.accelerate(new DotProduct(), accelerateExpr);
-
     
    A.compile(stmt);
    A.assemble();

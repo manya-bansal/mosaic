@@ -921,8 +921,6 @@ AccelerateRelNode::AccelerateRelNode(taco::IndexVar parentVar, taco::IndexVar pr
   : IndexVarRelNode(ACCELERATE), content (new Content) {
   content->parentVar = parentVar;
   content->precomputeVar = precomputeVar;
-  cout << "here" << endl;
-  cout << accelGen << endl;
   content->accelGen = accelGen;
   // content->accelGen.functionName = accelGen.functionName;
   // content->accelGen.returnType = accelGen.returnType;

@@ -6,6 +6,7 @@
 #include <vector>
 #include <utility>
 #include <set>
+#include <stack>
 #include <taco/ir/simplify.h>
 #include "lower/mode_access.h"
 
@@ -2347,11 +2348,8 @@ IndexStmt IndexStmt::accelerate(ConcreteAccelerateCodeGenerator accelGen, std::v
 
     std::cout  << accelGen << std::endl;
     if (i != iw) {
-      std::cout << "in" << endl;
       IndexVarRel rel = IndexVarRel(new AccelerateRelNode(i, iw, accelGen));
-      std::cout << "out" << endl;
       transformed = Transformation(AddSuchThatPredicates({rel})).apply(transformed, &reason);
-      // cout << "transformed " << transformed << endl; 
       if (!transformed.defined()) {
         taco_uerror << reason;
       }
@@ -3702,7 +3700,7 @@ struct ReplaceReductionsWithWheres : IndexNotationRewriter {
   }
 };
 
-static ConcreteAccelerateCodeGenerator getConcreteCodeGenerator(IndexExpr expr, IndexExpr workspace, ArgumentMap argumentMap, FunctionInterface functionInterface){
+static ConcreteAccelerateCodeGenerator getConcreteCodeGenerator(IndexExpr expr, IndexExpr& workspace, ArgumentMap argumentMap, FunctionInterface functionInterface){
   assert(argumentMap.possible);
 
   AcceleratorStmt referenceStmt = functionInterface.getNode()->getStmt();
@@ -3757,7 +3755,7 @@ static ConcreteAccelerateCodeGenerator getConcreteCodeGenerator(IndexExpr expr, 
   }
 
   ConcreteAccelerateCodeGenerator concreteCodeGen = ConcreteAccelerateCodeGenerator( functionInterface.getNode()->getFunctionName(),  functionInterface.getNode()->getReturnType(), e, expr, newArgs, {});
-  cout << concreteCodeGen << endl;
+
   return concreteCodeGen;
 }
 
@@ -3778,9 +3776,92 @@ static Access replaceTemporary(IndexStmt stmt, IndexExpr expr, AcceleratorAssign
   return Access(t, indexingVec);
 }
 
+
+static Assignment getTensorAccess(IndexStmt stmt, TensorVar t)
+{ 
+  Assignment assign;
+  bool tensorAccess = false;
+
+  match(stmt,
+    function<void(const AccessNode*)>([&](const AccessNode* n) {
+      if (n->tensorVar.getName() == t.getName()){
+        tensorAccess = true;
+      }
+    }),
+    function<void(const AssignmentNode*,Matcher*)>([&](const AssignmentNode* n,
+                                                       Matcher* ctx) {
+      ctx->match(n->rhs);
+      cout << tensorAccess << endl;
+      if (tensorAccess){
+        assign = n;
+      }
+    })
+  );
+
+  return assign;
+}
+
+static Forall getForAllTensor(IndexStmt stmt, TensorVar t)
+{ 
+  Forall forall;
+  bool tensorForall= false;
+
+  match(stmt,
+    function<void(const AccessNode*)>([&](const AccessNode* n) {
+      if (n->tensorVar.getName() == t.getName()){
+        tensorForall = true;
+      }
+    }),
+    function<void(const ForallNode*,Matcher*)>([&](const ForallNode* n,
+                                                       Matcher* ctx) {
+      ctx->match(n->stmt);
+      if (tensorForall){
+        forall = n;
+      }
+    })
+  );
+
+  return forall;
+}
+
+static std::set<IndexVar> getAllMatchingForallVars(IndexStmt stmt, std::vector<IndexVar> toMatch){
+
+  std::set<IndexVar> result;
+
+  match(stmt,
+        function<void(const ForallNode*,Matcher*)>([&](const ForallNode* n,
+                                                       Matcher* ctx) {
+
+      if (util::contains(toMatch, n->indexVar)){
+        result.insert(n->indexVar);   
+      }                                           
+      ctx->match(n->stmt);
+    })
+  );
+
+  return result;
+}
+
+static std::set<IndexVar> getAllNonMatchingForallVars(IndexStmt stmt, std::vector<IndexVar> toMatch){
+
+  std::set<IndexVar> result;
+
+  match(stmt,
+        function<void(const ForallNode*,Matcher*)>([&](const ForallNode* n,
+                                                       Matcher* ctx) {
+      if (!util::contains(toMatch, n->indexVar)){
+        result.insert(n->indexVar);   
+      }                                                  
+      ctx->match(n->stmt);
+    })
+  );
+
+  return result;
+}
+
 IndexStmt IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<FunctionInterface> functionInterfaces) const{
 
-  std::map<Access, ConcreteAccelerateCodeGenerator> varCodeGen;
+  std::stack<std::pair<Access, ConcreteAccelerateCodeGenerator>> varCodeGen;
 
   if (!isa<Assignment>(stmt)) {
     cout << "Cannot autoscheudle this expression since it is not an assignment" << endl;
@@ -3806,7 +3887,7 @@ IndexStmt IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<FunctionInterfac
         auto access = replaceTemporary(stmt, expr, reduxRefStmt, argumentMap);
         std::map<IndexExpr,IndexExpr> subsitution = {{expr, access}};
         stmtRewrite =  replace(stmtRewrite, subsitution);
-        varCodeGen[access] = getConcreteCodeGenerator(expr, access, argumentMap, descripton);
+        varCodeGen.push(make_pair(access, getConcreteCodeGenerator(expr, access, argumentMap, descripton)));
         break;
         }
       }
@@ -3814,7 +3895,62 @@ IndexStmt IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<FunctionInterfac
   
   stmtRewrite = makeConcreteNotation(stmtRewrite);
 
-  taco_uerror << stmtRewrite << endl;
+  while (!varCodeGen.empty()){
+    auto tensorCodeGen = varCodeGen.top();
+    auto tensorAccess = getTensorAccess(stmtRewrite, tensorCodeGen.first.getTensorVar());
+    if (tensorAccess.defined()){
+      IndexExpr rhs =  tensorCodeGen.second.getRHS();
+      IndexStmt producer = Assignment(tensorCodeGen.first, rhs);
+
+      std::map<IndexVar, IndexVar> precomputeMap;
+      std::vector<IndexVar> precomputeVars;
+
+      for (auto iVar : tensorAccess.getLhs().getIndexVars()){ 
+        IndexVar iv;
+        precomputeMap[iVar] = iv;
+        precomputeVars.push_back(iv);
+      }
+
+      producer = replace(producer, precomputeMap);
+
+      string reason;
+      for (int l = 0; l < (int) precomputeVars.size(); l++) {
+      IndexVar i = tensorAccess.getLhs().getIndexVars().at(l);
+      IndexVar iw = precomputeVars.at(l);
+
+      if (i != iw) {
+        IndexVarRel rel = IndexVarRel(new AccelerateRelNode(i, iw, tensorCodeGen.second));
+        stmtRewrite = Transformation(AddSuchThatPredicates({rel})).apply(stmtRewrite, &reason);
+        if (!stmtRewrite.defined()) {
+          taco_uerror << reason;
+        }
+      }
+    }
+
+    Forall forall = getForAllTensor(stmtRewrite, tensorCodeGen.first.getTensorVar());
+
+    std::set<IndexVar> scheduledVars = getAllMatchingForallVars(forall, tensorAccess.getLhs().getIndexVars());
+    std::set<IndexVar> unscheduledVars = getAllNonMatchingForallVars(forall, tensorAccess.getLhs().getIndexVars());
+
+    IndexStmt consumer;
+
+    for (auto iVar: scheduledVars){
+      consumer = taco::forall(iVar, tensorAccess);
+    }
+
+    Accelerate accel(consumer, producer,  tensorCodeGen.second);
+
+    IndexStmt accelStmt = static_cast<IndexStmt>(accel);
+
+    for (auto iVar: unscheduledVars){
+      accelStmt = taco::forall(iVar, accelStmt);
+    }
+
+    stmtRewrite = replace(stmtRewrite, {{forall, accelStmt}});
+    }
+    varCodeGen.pop();
+  }
+
   return stmtRewrite;
 }
 
