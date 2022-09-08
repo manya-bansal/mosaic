@@ -3806,6 +3806,9 @@ static Forall getForAllTensor(IndexStmt stmt, TensorVar t)
   Forall forall;
   bool tensorForall= false;
 
+  //want the innermost forall
+  bool matched = false;
+
   match(stmt,
     function<void(const AccessNode*)>([&](const AccessNode* n) {
       if (n->tensorVar.getName() == t.getName()){
@@ -3815,8 +3818,9 @@ static Forall getForAllTensor(IndexStmt stmt, TensorVar t)
     function<void(const ForallNode*,Matcher*)>([&](const ForallNode* n,
                                                        Matcher* ctx) {
       ctx->match(n->stmt);
-      if (tensorForall){
+      if (tensorForall && !matched){
         forall = n;
+        matched = true;
       }
     })
   );
@@ -3888,6 +3892,7 @@ IndexStmt IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<FunctionInterfac
         std::map<IndexExpr,IndexExpr> subsitution = {{expr, access}};
         stmtRewrite =  replace(stmtRewrite, subsitution);
         varCodeGen.push(make_pair(access, getConcreteCodeGenerator(expr, access, argumentMap, descripton)));
+        // TODO: need to change this break to enable multiple matches
         break;
         }
       }
