@@ -186,9 +186,10 @@ TEST(interface, interfaceClass2) {
    Tensor<float> A("A", {16}, Format{Dense}, 0);
    Tensor<float> B("B", {16}, Format{Dense});
    Tensor<float> C("C", {16}, Format{Dense});
-   Tensor<float> expected("expected", {16}, Format{Dense});
+   Tensor<float> expected("expected", {16}, Format{Dense}, 0);
    TensorVar accelWorkspace("accelWorkspace", Type(taco::Float32, {16}), taco::dense);
    IndexVar i("i");
+   IndexVar j("j");
    IndexVar iw("iw");
 
    for (int i = 0; i < 16; i++) {
@@ -199,8 +200,8 @@ TEST(interface, interfaceClass2) {
    C.pack();
    B.pack();
 
-   IndexExpr accelerateExpr = B(i) + C(i);
-   A(i) = accelerateExpr;
+   IndexExpr accelerateExpr = B(j) * C(j);
+   A(i) = sum(j, accelerateExpr);
 
    IndexStmt stmt = A.getAssignment().concretize();
    stmt = stmt.accelerate(new DotProduct(), accelerateExpr);
@@ -209,7 +210,7 @@ TEST(interface, interfaceClass2) {
    A.assemble();
    A.compute();
 
-   expected(i) = accelerateExpr;
+   expected(i) = sum(j, accelerateExpr);
    expected.compile();
    expected.assemble();
    expected.compute();
