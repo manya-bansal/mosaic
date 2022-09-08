@@ -2662,7 +2662,7 @@ vector<Stmt> LowererImplImperative::codeToInitializeTemporary(Accelerate acceler
   cout << "in codeToInitializeTemporary" << endl;
   TensorVar temporary = accelerate.getTemporary();
 
-  const bool accelerateDense = false;
+  // const bool accelerateDense = false;
 
   Stmt freeTemporary = Stmt();
   Stmt initializeTemporary = Stmt();
@@ -2807,7 +2807,7 @@ Stmt LowererImplImperative::makeAcceleratedProducer(Accelerate accelerate){
   Stmt copyTemp;
   if(setResultByRef){
 
-    std::map<TensorVar, ir::Expr> newTensorVars;
+    // std::map<TensorVar, ir::Expr> newTensorVars;
     std::vector<IndexVar> newIndices;
     std::vector<IndexVar> newPrecomputeIndices;
     for (int i = 0; i < resultVar.getOrder(); i++){
@@ -2841,12 +2841,19 @@ Stmt LowererImplImperative::makeAcceleratedProducer(Accelerate accelerate){
       }else{
         taco_uerror << "Unimplimented: need to add user defined" << endl;
       }
-      functionCall = VoidCall::make(accelGen.getFunctionName(), loweredArguments);
-
     }
+    functionCall = VoidCall::make(accelGen.getFunctionName(), loweredArguments);
 
   }else{
-    taco_uerror << "Unimplimented" << endl;
+      for (auto argument: arguments){
+        if (argument.getArgType() != USER_DEFINED){
+          loweredArguments.push_back(lowerArgument(argument, resultVar, temporary, true));
+        }else{
+          taco_uerror << "Unimplimented: need to add user defined" << endl;
+        }
+      }
+      functionCall = Assign::make(tensorVars[temporary], ir::Call::make(accelGen.getFunctionName(), loweredArguments));
+      
   }
 
   //TODO: Emit code to check for error code
@@ -2865,12 +2872,12 @@ Stmt LowererImplImperative::lowerAccelerate(Accelerate accelerate) {
 
   //set this explicitly to false rn for simplicity
   bool accelerateDenseWorkSpace = false;
-  bool sortAccelerator = false;
+  // bool sortAccelerator = false;
 
   vector<Stmt> temporaryValuesInitFree = {Stmt(), Stmt()};
 
   // cout << "temporary " << temporary << endl;
-  bool temporaryHoisted = false;
+  // bool temporaryHoisted = false;
 
     Expr values;
 

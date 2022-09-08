@@ -350,7 +350,7 @@ TEST(interface, endToEndDotProduct) {
    A.compute();
 
    Tensor<float> expected("expected", {16}, Format{Dense});
-   expected(i) = B(i) + C(i) + B(i);
+   expected(i) = sum(i, B(i) * C(i)) + B(i);
    expected.compile();
    expected.assemble();
    expected.compute();

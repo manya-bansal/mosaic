@@ -18,9 +18,17 @@ class DotProduct : public AbstractFunctionInterface{
         // IndexExpr getRHS() const override {return x(i);}
         // IndexExpr getLHS() const override {return x(i);}
         AcceleratorStmt getStmt() const override {return s = x(i) * y(i);}
-        std::vector<Argument> getArguments() const override {return {new DimArg(i), new TensorObjectArg(x), new TensorObjectArg(y)};}
-        std::string getReturnType() const override {return "void";}
-        std::string getFunctionName() const override {return "dotProduct";}
+        std::vector<Argument> getArguments() const override {return 
+                                                {
+                                                    new DimArg(i), 
+                                                    new TensorObjectArg(y), 
+                                                    new LiteralArg(Datatype(taco::UInt32), 1),
+                                                    new TensorObjectArg(x), 
+                                                    new LiteralArg(Datatype(taco::UInt32), 1)
+
+                                                };}
+        std::string getReturnType() const override {return "float";}
+        std::string getFunctionName() const override {return "cblas_sdot";}
 
     private: 
         TensorObject x;

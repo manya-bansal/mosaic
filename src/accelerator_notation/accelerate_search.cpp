@@ -55,14 +55,6 @@ std::vector<IndexExpr> allMatchedOpPatterns(IndexExpr s, AcceleratorExpr e){
         std::function<void(const ReductionNode*, Matcher*)>([&](const ReductionNode* op, Matcher* ctx) {
             CHECK_AND_ADD_EXPR;
             ctx->match(op->a);
-        }),
-        std::function<void(const WhereNode*, Matcher*)>([&](const WhereNode* op, Matcher* ctx) {
-            /// do not want to explore within a where node
-            return;
-        }),
-        std::function<void(const AccelerateNode*, Matcher*)>([&](const AccelerateNode* op, Matcher* ctx) {
-            /// do not want to explore within an accelerate node
-            return;
         })
     );
 
