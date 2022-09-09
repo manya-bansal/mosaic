@@ -2758,7 +2758,7 @@ ir::Expr LowererImplImperative::lowerArgument(Argument argument, TensorVar resul
         return argument.getNode<irExprArg>()->irExpr;
 
       case LITERAL:
-        {
+      {
           switch (argument.getNode<LiteralArg>()->datatype.getKind()){
             case Datatype::UInt32:
               {int val = argument.getNode<LiteralArg>()->getVal<int32_t>();
@@ -2766,8 +2766,22 @@ ir::Expr LowererImplImperative::lowerArgument(Argument argument, TensorVar resul
             default:
               taco_uerror << "Unimplimented" << endl;
             }
-
+      }
+      case USER_DEFINED:
+      { 
+        std::vector<Expr> userDefArgs;
+        auto t = argument.getNode<TransferWithArgs>();
+        if (t->getReturnType() == "void"){
+           taco_uerror << "Trying to use void function " << argument << " to set an argument value,"
+           << " add this functiion in callBefore() to call void function before main function.";
         }
+        
+        for (auto args: t->getArgs()){
+          userDefArgs.push_back(lowerArgument(args, resultVar, temporary, true));
+        }
+
+        return ir::Call::make(t->getName(), userDefArgs);
+      }
       default:
         taco_uerror << "Should not reach" << endl;
     }
@@ -2830,30 +2844,18 @@ Stmt LowererImplImperative::makeAcceleratedProducer(Accelerate accelerate){
   std::vector<Argument> arguments = accelGen.getArguments();
   std::vector<Expr> loweredArguments;
 
+  for (auto argument: arguments){
+      loweredArguments.push_back(lowerArgument(argument, resultVar, temporary, true));
+  }
+
   Stmt functionCall; 
   if (accelGen.getReturnType() == "void"){
     // if return value is not set by reference
     // then we have no idea how it is being set
     assert(setResultByRef == true);
-    for (auto argument: arguments){
-      if (argument.getArgType() != USER_DEFINED){
-        loweredArguments.push_back(lowerArgument(argument, resultVar, temporary, true));
-      }else{
-        taco_uerror << "Unimplimented: need to add user defined" << endl;
-      }
-    }
     functionCall = VoidCall::make(accelGen.getFunctionName(), loweredArguments);
-
   }else{
-      for (auto argument: arguments){
-        if (argument.getArgType() != USER_DEFINED){
-          loweredArguments.push_back(lowerArgument(argument, resultVar, temporary, true));
-        }else{
-          taco_uerror << "Unimplimented: need to add user defined" << endl;
-        }
-      }
       functionCall = Assign::make(tensorVars[temporary], ir::Call::make(accelGen.getFunctionName(), loweredArguments));
-      
   }
 
   //TODO: Emit code to check for error code

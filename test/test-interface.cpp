@@ -361,7 +361,7 @@ TEST(interface, endToEndSdot) {
 
 }
 
-TEST(interface, endToEndTblisDummy) {
+TEST(interface, endToEndUserDefinedDummy) {
 
    // actual computation
    Tensor<float> A("A", {16, 16}, Format{Dense, Dense});
@@ -378,7 +378,29 @@ TEST(interface, endToEndTblisDummy) {
    IndexStmt stmt = A.getAssignment().concretize();
    stmt = stmt.accelerate(new TestInterface(), accelerateExpr);
    
+   A.compile(stmt);
+   A.assemble();
+   A.compute();
 
-   cout << stmt << endl;
+}
+
+TEST(interface, endToEndUserDefinedErrorDummy) {
+
+   // actual computation
+   Tensor<float> A("A", {16, 16}, Format{Dense, Dense});
+   Tensor<float> B("B", {16, 16}, Format{Dense, Dense});
+   Tensor<float> C("C", {16, 16}, Format{Dense, Dense});
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar k("k");
+
+   IndexExpr accelerateExpr = B(i, j) * C(j, k);
+   A(i, k) = accelerateExpr;
+
+
+   IndexStmt stmt = A.getAssignment().concretize();
+   stmt = stmt.accelerate(new TestInterfaceIncorrect(), accelerateExpr);
+
+   ASSERT_THROW(A.compile(stmt), taco::TacoException);
 
 }

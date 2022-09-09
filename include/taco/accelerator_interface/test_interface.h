@@ -20,11 +20,42 @@ class TestInterface : public AbstractFunctionInterface{
 
         AcceleratorStmt getStmt() const override {return z(i, k) = x(i, j) * y(j, k);}
         std::vector<Argument> getArguments() const override {
-                                                taco::TransferLoad load("check", "void");
+                                                taco::TransferLoad load1("test1", "int");
+                                                taco::TransferLoad load2("test2", "int");
                                                 return 
                                                 {
                                                     new DimArg(i), 
-                                                    load(load(Dim(i), x), y)
+                                                    load1(load2(Dim(i)), x, y)
+                                                };}
+        std::string getReturnType() const override {return "void";}
+        std::string getFunctionName() const override {return "tblis_init_tensor_d";}
+
+    private: 
+        TensorObject x;
+        TensorObject y;
+        TensorObject z;
+        IndexVar i;
+        IndexVar j;
+        IndexVar k;
+};
+
+class TestInterfaceIncorrect : public AbstractFunctionInterface{
+    public: 
+        TestInterfaceIncorrect() : 
+                    x(TensorObject(Type(taco::Float32, {Dimension(), Dimension()}),  Format{Dense, Dense})),
+                    y(TensorObject(Type(taco::Float32, {Dimension(), Dimension()}),  Format{Dense, Dense})),
+                    z(TensorObject(Type(taco::Float32, {Dimension(), Dimension()}),  Format{Dense, Dense})),
+                    i(IndexVar()),
+                    j(IndexVar()),
+                    k(IndexVar()) {};
+
+        AcceleratorStmt getStmt() const override {return z(i, k) = x(i, j) * y(j, k);}
+        std::vector<Argument> getArguments() const override {
+                                                taco::TransferLoad load("test", "void");
+                                                return 
+                                                {
+                                                    new DimArg(i), 
+                                                    load(Dim(i), x, y)
                                                 };}
         std::string getReturnType() const override {return "void";}
         std::string getFunctionName() const override {return "tblis_init_tensor_d";}
