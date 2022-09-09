@@ -158,6 +158,7 @@ struct TransferWithArgs : public TransferTypeArgs{
 std::ostream& operator<<(std::ostream&, const TransferWithArgs&);
 
 inline void addArg(std::vector<Argument>& argument, const TensorVar& t) { argument.push_back(new TensorVarArg(t)); }
+inline void addArg(std::vector<Argument>& argument, const TensorObject& t) { argument.push_back(new TensorObjectArg(t)); }
 inline void addArg(std::vector<Argument>& argument, const Argument&  arg) { argument.push_back(arg); }
 inline void addArg(std::vector<Argument>& argument, TransferWithArgs * arg) { argument.push_back(arg); }
 inline void addArg(std::vector<Argument>& argument, const Dim& dim) { argument.push_back(new DimArg(dim)); }
@@ -231,6 +232,16 @@ class TransferType{
   private:
     struct Content;
     std::shared_ptr<Content> content;
+
+};
+
+
+class Declvar {
+  public:
+    Declvar(const std::string& typeString) :  typeString(typeString) {}
+    std::string getTypeString() {return typeString;}
+  private:
+    std::string typeString;
 
 };
 
@@ -318,11 +329,11 @@ class ConcreteAccelerateCodeGenerator {
     ConcreteAccelerateCodeGenerator() = default;
 
     ConcreteAccelerateCodeGenerator(const std::string& functionName, const std::string& returnType, const taco::IndexExpr& lhs, const taco::IndexExpr& rhs, const std::vector<Argument>& args, 
-                                    const std::vector<taco::TensorVar>& declarations)
+                                    const std::vector<taco::Declvar>& declarations)
                                     : functionName(functionName), returnType(returnType), lhs(lhs), rhs(rhs), args(args), declarations(declarations) {}
 
     ConcreteAccelerateCodeGenerator(const std::string& functionName, const std::string& returnType, taco::IndexExpr lhs, taco::IndexExpr rhs,
-                                    const std::vector<taco::TensorVar>& declarations)
+                                    const std::vector<taco::Declvar>& declarations)
                                     : functionName(functionName), returnType(returnType), lhs(lhs), rhs(rhs), declarations(declarations) {}
   
     taco::IndexExpr getExpr() const     {return rhs;};
@@ -331,6 +342,7 @@ class ConcreteAccelerateCodeGenerator {
     std::vector<Argument> getArguments() const {return args;};
     std::string getReturnType() const   {return returnType;};
     std::string getFunctionName() const {return functionName;};
+    std::vector<Declvar> getVarDecelerations() const {return declarations;};
 
     template <typename Exprs> 
     ConcreteAccelerateCodeGenerator operator()(Exprs expr)
@@ -355,7 +367,7 @@ class ConcreteAccelerateCodeGenerator {
       taco::IndexExpr lhs;
       taco::IndexExpr rhs;
       std::vector<Argument> args;
-      std::vector<taco::TensorVar> declarations;
+      std::vector<Declvar> declarations;
 
 };
 
@@ -381,8 +393,9 @@ struct AbstractFunctionInterface :  public util::Manageable<AbstractFunctionInte
     virtual std::vector<Argument> getArguments() const= 0;
     virtual std::string getReturnType()   const = 0;
     virtual std::string getFunctionName() const = 0;
-
+    virtual std::vector<Declvar> getDecelerations() const {return {};}
     virtual bool checkerFunction(IndexStmt stmt) const {return true;}
+    
 
 };
 

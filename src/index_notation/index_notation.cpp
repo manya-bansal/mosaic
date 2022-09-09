@@ -2371,6 +2371,44 @@ IndexStmt IndexStmt::accelerate(ConcreteAccelerateCodeGenerator accelGen, IndexV
   return accelerate(accelGen, i_vars, iw_vars, workspace);
 }
 
+static std::vector<Argument> getConcreteArgs(const std::vector<Argument>& abstractArgs, const ArgumentMap& argumentMap){
+    std::vector<Argument> newArgs;
+    for (auto arg : abstractArgs){
+    switch (arg.getArgType())
+    {
+    case DIM:
+      {
+        newArgs.push_back(new DimArg(argumentMap.indexVars.at(arg.getNode<DimArg>()->indexVar)));
+        break;
+      }
+    case TENSOR:
+      taco_uerror << "Arguments can only use TensorObjects, tried using a TensorVar." << endl;
+      break; 
+    case TENSOR_OBJECT:
+      newArgs.push_back(new TensorVarArg(argumentMap.tensors.at(arg.getNode<TensorObjectArg>()->t)));
+      break;
+    case TENSORVAR:
+      taco_uerror << "Arguments can only use TensorObjects, tried using a TensorVar." << endl;
+      break;
+    case LITERAL:
+      newArgs.push_back(arg);
+      break;
+    case USER_DEFINED: 
+    {
+      std::vector<Argument> userDefinedArgs = getConcreteArgs(arg.getNode<TransferWithArgs>()->getArgs(), argumentMap);
+      newArgs.push_back(new TransferWithArgs(arg.getNode<TransferWithArgs>()->getName(), arg.getNode<TransferWithArgs>()->getReturnType(), userDefinedArgs));
+      break;
+    }
+    default:
+      cout << arg.getArgType() << endl;
+      taco_uerror << "Unimplemented" << endl;
+      break;
+    }
+  }
+  return newArgs;
+
+}
+
 IndexStmt IndexStmt::accelerate(FunctionInterface functionInterface, IndexExpr exprToAccelerate) const{
 
   AcceleratorStmt referenceStmt = functionInterface.getNode()->getStmt();
@@ -2394,33 +2432,9 @@ IndexStmt IndexStmt::accelerate(FunctionInterface functionInterface, IndexExpr e
   }
   assert(argumentMap.possible);
 
-  std::vector<Argument> newArgs;
-  for (auto arg : functionInterface.getNode()->getArguments()){
-    switch (arg.getArgType())
-    {
-    case DIM:
-      {
-        newArgs.push_back(new DimArg(argumentMap.indexVars[arg.getNode<DimArg>()->indexVar]));
-        break;
-      }
-    case TENSOR:
-      taco_uerror << "Arguments can only use TensorObjects, tried using a TensorVar." << endl;
-      break; 
-    case TENSOR_OBJECT:
-      newArgs.push_back(new TensorVarArg(argumentMap.tensors[arg.getNode<TensorObjectArg>()->t]));
-      break;
-    case TENSORVAR:
-      taco_uerror << "Arguments can only use TensorObjects, tried using a TensorVar." << endl;
-      break;
-    case LITERAL:
-      newArgs.push_back(arg);
-      break;
-    default:
-      cout << arg.getArgType() << endl;
-      taco_uerror << "Unimplemented" << endl;
-      break;
-    }
-  }
+  std::vector<Argument> newArgs = getConcreteArgs(functionInterface.getNode()->getArguments(), argumentMap);
+
+  cout << util::join(newArgs) << endl;
 
   map<IndexVar, Dimension> indexVarDomains = exprToAccelerate.getIndexVarDomains();
   std::vector<Dimension> lhsDimension; 
@@ -2441,7 +2455,7 @@ IndexStmt IndexStmt::accelerate(FunctionInterface functionInterface, IndexExpr e
     e = static_cast<IndexExpr>(Access(t, indexingVec));
   }
  
-  ConcreteAccelerateCodeGenerator concreteCodeGen = ConcreteAccelerateCodeGenerator( functionInterface.getNode()->getFunctionName(),  functionInterface.getNode()->getReturnType(), e, exprToAccelerate, newArgs, {});
+  ConcreteAccelerateCodeGenerator concreteCodeGen = ConcreteAccelerateCodeGenerator( functionInterface.getNode()->getFunctionName(),  functionInterface.getNode()->getReturnType(), e, exprToAccelerate, newArgs, functionInterface.getNode()->getDecelerations());
 
   std::vector<IndexVar> precomputeVars;
   for (size_t i = 0; i < indexingVec.size(); i++) { precomputeVars.push_back(IndexVar()); }
@@ -3754,7 +3768,7 @@ static ConcreteAccelerateCodeGenerator getConcreteCodeGenerator(IndexExpr expr, 
     e = workspace;
   }
 
-  ConcreteAccelerateCodeGenerator concreteCodeGen = ConcreteAccelerateCodeGenerator( functionInterface.getNode()->getFunctionName(),  functionInterface.getNode()->getReturnType(), e, expr, newArgs, {});
+  ConcreteAccelerateCodeGenerator concreteCodeGen = ConcreteAccelerateCodeGenerator( functionInterface.getNode()->getFunctionName(),  functionInterface.getNode()->getReturnType(), e, expr, newArgs, functionInterface.getNode()->getDecelerations());
 
   return concreteCodeGen;
 }

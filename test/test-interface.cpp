@@ -17,6 +17,7 @@
 #include "taco/error/error_messages.h"
 
 #include "taco/accelerator_interface/cblas_saxpy.h"
+#include "taco/accelerator_interface/cblas_sdot.h"
 #include "taco/accelerator_interface/test_interface.h"
 
 
@@ -204,7 +205,7 @@ TEST(interface, interfaceClass2) {
    A(i) = sum(j, accelerateExpr);
 
    IndexStmt stmt = A.getAssignment().concretize();
-   stmt = stmt.accelerate(new DotProduct(), accelerateExpr);
+   stmt = stmt.accelerate(new Sdot(), accelerateExpr);
     
    A.compile(stmt);
    A.assemble();
@@ -323,7 +324,7 @@ TEST(interface, classInterfaceSdsdot) {
 
 }
 
-TEST(interface, endToEndDotProduct) {
+TEST(interface, endToEndSdot) {
 
    // actual computation
    Tensor<float> A("A", {16}, Format{Dense});
@@ -342,7 +343,7 @@ TEST(interface, endToEndDotProduct) {
    A(i) = sum(i, B(i) * C(i)) + B(i);
 
    // register the description
-   A.registerAccelerator(new DotProduct());
+   A.registerAccelerator(new Sdot());
    // enable targeting
    A.accelerateOn();
    
@@ -357,5 +358,27 @@ TEST(interface, endToEndDotProduct) {
    expected.compute();
 
    ASSERT_TENSOR_EQ(expected, A);
+
+}
+
+TEST(interface, endToEndTblisDummy) {
+
+   // actual computation
+   Tensor<float> A("A", {16, 16}, Format{Dense, Dense});
+   Tensor<float> B("B", {16, 16}, Format{Dense, Dense});
+   Tensor<float> C("C", {16, 16}, Format{Dense, Dense});
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar k("k");
+
+   IndexExpr accelerateExpr = B(i, j) * C(j, k);
+   A(i, k) = accelerateExpr;
+
+
+   IndexStmt stmt = A.getAssignment().concretize();
+   stmt = stmt.accelerate(new TestInterface(), accelerateExpr);
+   
+
+   cout << stmt << endl;
 
 }

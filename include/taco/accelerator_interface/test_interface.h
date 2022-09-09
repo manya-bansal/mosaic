@@ -1,41 +1,41 @@
-#ifndef TEST_INTERFACE_H
-#define TEST_INTERFACE_H
+#ifndef TBLIS_INTERFACE_H
+#define TBLIS_INTERFACE_H
+
+using namespace taco;
 
 #include "taco/index_notation/index_notation.h"
 #include "taco/type.h"
 #include "taco/accelerator_notation/accel_interface.h"
 #include "taco/accelerator_notation/accelerator_notation.h"
 
-using namespace taco;
-
-class DotProduct : public AbstractFunctionInterface{
+class TestInterface : public AbstractFunctionInterface{
     public: 
-        DotProduct() : x(TensorObject(Type(taco::Float32, {Dimension()}), dense)),
-                  y(TensorObject(Type(taco::Float32, {Dimension()}), dense)),
-                  s(TensorObject(Type(taco::Float32))),
-                  i(IndexVar()) {};
+        TestInterface() : 
+                    x(TensorObject(Type(taco::Float32, {Dimension(), Dimension()}),  Format{Dense, Dense})),
+                    y(TensorObject(Type(taco::Float32, {Dimension(), Dimension()}),  Format{Dense, Dense})),
+                    z(TensorObject(Type(taco::Float32, {Dimension(), Dimension()}),  Format{Dense, Dense})),
+                    i(IndexVar()),
+                    j(IndexVar()),
+                    k(IndexVar()) {};
 
-        // IndexExpr getRHS() const override {return x(i);}
-        // IndexExpr getLHS() const override {return x(i);}
-        AcceleratorStmt getStmt() const override {return s = x(i) * y(i);}
-        std::vector<Argument> getArguments() const override {return 
+        AcceleratorStmt getStmt() const override {return z(i, k) = x(i, j) * y(j, k);}
+        std::vector<Argument> getArguments() const override {
+                                                taco::TransferLoad load("check", "void");
+                                                return 
                                                 {
                                                     new DimArg(i), 
-                                                    new TensorObjectArg(y), 
-                                                    new LiteralArg(Datatype(taco::UInt32), 1),
-                                                    new TensorObjectArg(x), 
-                                                    new LiteralArg(Datatype(taco::UInt32), 1)
-
+                                                    load(load(Dim(i), x), y)
                                                 };}
-        std::string getReturnType() const override {return "float";}
-        std::string getFunctionName() const override {return "cblas_sdot";}
+        std::string getReturnType() const override {return "void";}
+        std::string getFunctionName() const override {return "tblis_init_tensor_d";}
 
     private: 
         TensorObject x;
         TensorObject y;
-        TensorObject s;
+        TensorObject z;
         IndexVar i;
+        IndexVar j;
+        IndexVar k;
 };
 
-
-#endif 
+#endif
