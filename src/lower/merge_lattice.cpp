@@ -437,7 +437,9 @@ private:
   }
 
   void visit(const InterfaceCallNode* node) {
-    taco_not_supported_yet;
+    // taco_uerror << lattice << endl;
+    lattice = build(node->producer);
+    cout << lattice << endl;
   }
 
   void visit(const MultiNode* node) {
@@ -1050,6 +1052,7 @@ MergeLattice::removePointsThatLackFullIterators(const std::vector<MergePoint>& p
   vector<MergePoint> result;
   vector<Iterator> fullIterators = filter(points[0].iterators(),
                                           [](Iterator it){return it.isFull();});
+
   for (auto& point : points) {
     bool missingFullIterator = false;
     for (auto& fullIterator : fullIterators) {

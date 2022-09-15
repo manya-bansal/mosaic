@@ -6,13 +6,14 @@
     "configurations": [
 
 
+
         
         {
             "name": "(lldb) Launch",
             "type": "lldb",
             "request": "launch",
             "program": "${workspaceFolder}/build/bin/taco-test",
-            "args" : ["endToEndPluginInterfaceClass"],
+            "args" : ["tiledSaxpyInterface"],
             // "args": ["where_vector_sum/lower.compile/0"],
             "stopAtEntry": false,
             "cwd": "${fileDirname}", 

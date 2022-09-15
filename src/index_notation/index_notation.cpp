@@ -2280,6 +2280,19 @@ IndexStmt IndexStmt::split(IndexVar i, IndexVar i1, IndexVar i2, size_t splitFac
   return transformed;
 }
 
+IndexStmt IndexStmt::splitWithoutSuchThat(IndexVar i, IndexVar i1, IndexVar i2, size_t splitFactor) const {
+  IndexVarRel rel = IndexVarRel(new SplitRelNode(i, i1, i2, splitFactor));
+  string reason;
+  // Replace all occurrences of i with nested i1, i2
+  IndexStmt transformed = Transformation(ForAllReplace({i}, {i1, i2})).apply(*this, &reason);
+  if (!transformed.defined()) {
+    taco_uerror << reason;
+  }
+
+  return transformed;
+}
+
+
 IndexStmt IndexStmt::divide(IndexVar i, IndexVar i1, IndexVar i2, size_t splitFactor) const {
   IndexVarRel rel = IndexVarRel(new DivideRelNode(i, i1, i2, splitFactor));
   string reason;
@@ -3748,8 +3761,8 @@ static IndexStmt rewriteStmt(IndexStmt stmtRewrite, Access workspace, ConcreteAc
     auto tensorAccess = getTensorAccess(stmtRewrite, workspace.getTensorVar());
     if (tensorAccess.defined()){
       IndexExpr rhs =  codeGen.getRHS();
-      IndexStmt producer = Assignment(workspace, rhs);
-
+      IndexStmt producerExpr = Assignment(workspace, rhs);
+     
       std::map<IndexVar, IndexVar> precomputeMap;
       std::vector<IndexVar> precomputeVars;
 
@@ -3759,9 +3772,10 @@ static IndexStmt rewriteStmt(IndexStmt stmtRewrite, Access workspace, ConcreteAc
         precomputeVars.push_back(iv);
       }
 
-      producer = replace(producer, precomputeMap);
+      producerExpr = replace(producerExpr, precomputeMap);
+      Assignment producerAssign = to<Assignment>(producerExpr);
 
-      Assignment producerAssign = to<Assignment>(producer);
+      IndexStmt producer = InterfaceCall(producerAssign, codeGen, workspace.getTensorVar()); 
 
       string reason;
       for (int l = 0; l < (int) precomputeVars.size(); l++) {
@@ -3796,8 +3810,9 @@ static IndexStmt rewriteStmt(IndexStmt stmtRewrite, Access workspace, ConcreteAc
     for (auto iv: argumentMap.indexVars){
       if (!pluginDim.at(iv.first).isVariable() && pluginDim.at(iv.first) !=  exprDim.at(iv.second)){
         if (pluginDim.at(iv.first).getSize() < exprDim.at(iv.second).getSize()){
+          taco_uerror << "broken" << endl;
           producer = forall(precomputeMap[iv.second], producer);
-          producer = producer.split(precomputeMap[iv.second], IndexVar(), IndexVar(), pluginDim.at(iv.first).getSize());
+          producer = producer.splitWithoutSuchThat(precomputeMap[iv.second], IndexVar(), IndexVar(), pluginDim.at(iv.first).getSize());
         }
         else{
           cout << "Size dont match and tiling is not possible" << endl;
@@ -3809,8 +3824,7 @@ static IndexStmt rewriteStmt(IndexStmt stmtRewrite, Access workspace, ConcreteAc
     Forall forall = getForAllTensor(stmtRewrite, workspace.getTensorVar());
 
     IndexStmt consumer = makeConcreteNotation(tensorAccess);
-    InterfaceCall interface(producerAssign, codeGen, workspace.getTensorVar());
-    Accelerate accel(consumer, interface,  codeGen);
+    Accelerate accel(consumer, producer,  codeGen);
     IndexStmt accelStmt = static_cast<IndexStmt>(accel);
 
     stmtRewrite = replace(stmtRewrite, {{forall, accelStmt}}); 

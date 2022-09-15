@@ -628,6 +628,8 @@ public:
   /// Preconditions: splitFactor is a positive nonzero integer
   IndexStmt split(IndexVar i, IndexVar i1, IndexVar i2, size_t splitFactor) const; // TODO: TailStrategy
 
+  IndexStmt splitWithoutSuchThat(IndexVar i, IndexVar i1, IndexVar i2, size_t splitFactor) const;
+
   /// The divide transformation splits one index variable into
   /// two nested index variables, where the size of the outer
   /// index variable is constant.  The size of the inner index variable
