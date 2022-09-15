@@ -770,11 +770,6 @@ public:
                        std::vector<IndexVar> iw_vars, TensorVar workspace) const;
 
 
-  IndexStmt accelerate(ConcreteAccelerateCodeGenerator accelGen, IndexVar i, IndexVar iw, TensorVar workspace) const;
-
-  IndexStmt accelerate(ConcreteAccelerateCodeGenerator accelGen, std::vector<IndexVar> i_vars,
-                       std::vector<IndexVar> iw_vars, TensorVar workspace) const;
-
   IndexStmt accelerate(FunctionInterface functionInterface, IndexExpr exprToAccelerate) const;
 
   /// bound specifies a compile-time constraint on an index variable's

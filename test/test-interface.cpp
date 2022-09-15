@@ -58,48 +58,48 @@ TEST(interface, pluginInterface) {
 }
 
 
-TEST(interface, concretepluginInterface) {
+// TEST(interface, concretepluginInterface) {
 
-   Tensor<float> A("A", {16}, Format{Dense}, 0);
-   Tensor<float> B("B", {16}, Format{Dense});
-   Tensor<float> C("C", {16}, Format{Dense});
-   Tensor<float> expected("expected", {16}, Format{Dense});
+//    Tensor<float> A("A", {16}, Format{Dense}, 0);
+//    Tensor<float> B("B", {16}, Format{Dense});
+//    Tensor<float> C("C", {16}, Format{Dense});
+//    Tensor<float> expected("expected", {16}, Format{Dense});
 
-   for (int i = 0; i < 16; i++) {
-      C.insert({i}, (float) i);
-      B.insert({i}, (float) i);
-   }
+//    for (int i = 0; i < 16; i++) {
+//       C.insert({i}, (float) i);
+//       B.insert({i}, (float) i);
+//    }
 
-   C.pack();
-   B.pack();
+//    C.pack();
+//    B.pack();
 
-   IndexVar i("i");
-   IndexVar iw("iw");
-   IndexExpr accelerateExpr = B(i) + C(i);
-   A(i) = accelerateExpr;
+//    IndexVar i("i");
+//    IndexVar iw("iw");
+//    IndexExpr accelerateExpr = B(i) + C(i);
+//    A(i) = accelerateExpr;
 
-   IndexStmt stmt = A.getAssignment().concretize();
+//    IndexStmt stmt = A.getAssignment().concretize();
 
-   //due the way rewrite indexstmt works, need the same object
-   ConcreteAccelerateCodeGenerator concrete_cblas_saxpy("cblas_saxpy", "void",  C(i), accelerateExpr, {});
+//    //due the way rewrite indexstmt works, need the same object
+//    ConcreteAccelerateCodeGenerator concrete_cblas_saxpy("cblas_saxpy", "void",  C(i), accelerateExpr, {});
 
-   TensorVar accelWorkspace("accelWorkspace", Type(taco::Float32, {16}), taco::dense);
+//    TensorVar accelWorkspace("accelWorkspace", Type(taco::Float32, {16}), taco::dense);
 
-   stmt = stmt.accelerate(concrete_cblas_saxpy(Dim(i), 1, B, 1, C, 1), i, iw, accelWorkspace);
+//    stmt = stmt.accelerate(concrete_cblas_saxpy(Dim(i), 1, B, 1, C, 1), i, iw, accelWorkspace);
    
-   A.compile(stmt);
-   A.assemble();
-   A.compute();
+//    A.compile(stmt);
+//    A.assemble();
+//    A.compute();
 
-   expected(i) = accelerateExpr;
-   expected.compile();
-   expected.assemble();
-   expected.compute();
+//    expected(i) = accelerateExpr;
+//    expected.compile();
+//    expected.assemble();
+//    expected.compute();
 
-   ASSERT_TENSOR_EQ(expected, A);
+//    ASSERT_TENSOR_EQ(expected, A);
 
 
-}
+// }
 
 TEST(interface, endToEndPlugin) {
 

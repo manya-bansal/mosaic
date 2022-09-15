@@ -2334,43 +2334,6 @@ static bool setByReference(AcceleratorStmt stmt){
   return setResultByRef;
 }
 
-IndexStmt IndexStmt::accelerate(ConcreteAccelerateCodeGenerator accelGen, std::vector<IndexVar> i_vars,
-                                std::vector<IndexVar> iw_vars, TensorVar workspace) const {
-
-  IndexStmt transformed = *this;
-  string reason;
-
- taco_uassert(i_vars.size() == iw_vars.size()) << "The precompute transformation requires"
-                                               << "i_vars and iw_vars to be the same size";
- for (int l = 0; l < (int) i_vars.size(); l++) {
-    IndexVar i = i_vars.at(l);
-    IndexVar iw = iw_vars.at(l);
-
-    std::cout  << accelGen << std::endl;
-    if (i != iw) {
-      IndexVarRel rel = IndexVarRel(new AccelerateRelNode(i, iw, accelGen));
-      transformed = Transformation(AddSuchThatPredicates({rel})).apply(transformed, &reason);
-      if (!transformed.defined()) {
-        taco_uerror << reason;
-      }
-    }
-  }
-
-  transformed = Transformation(AccelerateExpr(accelGen, i_vars, iw_vars, workspace)).apply(transformed, &reason);
-
-  if (!transformed.defined()) {
-    taco_uerror << reason;
-  }
-  return transformed;
-}
-
-IndexStmt IndexStmt::accelerate(ConcreteAccelerateCodeGenerator accelGen, IndexVar i, IndexVar iw, TensorVar workspace) const{
-  std::vector<IndexVar> i_vars{i};
-  std::vector<IndexVar> iw_vars{iw};
-
-  return accelerate(accelGen, i_vars, iw_vars, workspace);
-}
-
 IndexStmt IndexStmt::reorder(taco::IndexVar i, taco::IndexVar j) const {
   string reason;
   IndexStmt transformed = Reorder(i, j).apply(*this, &reason);
@@ -3689,40 +3652,40 @@ static Forall getForAllTensor(IndexStmt stmt, TensorVar t)
   return forall;
 }
 
-static std::set<IndexVar> getAllMatchingForallVars(IndexStmt stmt, std::vector<IndexVar> toMatch){
+// static std::set<IndexVar> getAllMatchingForallVars(IndexStmt stmt, std::vector<IndexVar> toMatch){
 
-  std::set<IndexVar> result;
+//   std::set<IndexVar> result;
 
-  match(stmt,
-        function<void(const ForallNode*,Matcher*)>([&](const ForallNode* n,
-                                                       Matcher* ctx) {
+//   match(stmt,
+//         function<void(const ForallNode*,Matcher*)>([&](const ForallNode* n,
+//                                                        Matcher* ctx) {
 
-      if (util::contains(toMatch, n->indexVar)){
-        result.insert(n->indexVar);   
-      }                                           
-      ctx->match(n->stmt);
-    })
-  );
+//       if (util::contains(toMatch, n->indexVar)){
+//         result.insert(n->indexVar);   
+//       }                                           
+//       ctx->match(n->stmt);
+//     })
+//   );
 
-  return result;
-}
+//   return result;
+// }
 
-static std::set<IndexVar> getAllNonMatchingForallVars(IndexStmt stmt, std::vector<IndexVar> toMatch){
+// static std::set<IndexVar> getAllNonMatchingForallVars(IndexStmt stmt, std::vector<IndexVar> toMatch){
 
-  std::set<IndexVar> result;
+//   std::set<IndexVar> result;
 
-  match(stmt,
-        function<void(const ForallNode*,Matcher*)>([&](const ForallNode* n,
-                                                       Matcher* ctx) {
-      if (!util::contains(toMatch, n->indexVar)){
-        result.insert(n->indexVar);   
-      }                                                  
-      ctx->match(n->stmt);
-    })
-  );
+//   match(stmt,
+//         function<void(const ForallNode*,Matcher*)>([&](const ForallNode* n,
+//                                                        Matcher* ctx) {
+//       if (!util::contains(toMatch, n->indexVar)){
+//         result.insert(n->indexVar);   
+//       }                                                  
+//       ctx->match(n->stmt);
+//     })
+//   );
 
-  return result;
-}
+//   return result;
+// }
 
 static IndexStmt rewriteStmt(IndexStmt stmtRewrite, Access workspace, ConcreteAccelerateCodeGenerator codeGen){
     auto tensorAccess = getTensorAccess(stmtRewrite, workspace.getTensorVar());
@@ -3757,19 +3720,12 @@ static IndexStmt rewriteStmt(IndexStmt stmtRewrite, Access workspace, ConcreteAc
 
     Forall forall = getForAllTensor(stmtRewrite, workspace.getTensorVar());
 
-    // std::set<IndexVar> scheduledVars = getAllMatchingForallVars(forall, tensorAccess.getLhs().getIndexVars());
-    // std::set<IndexVar> unscheduledVars = getAllNonMatchingForallVars(forall, tensorAccess.getLhs().getIndexVars());
-
     IndexStmt consumer = makeConcreteNotation(tensorAccess);
-    
     Accelerate accel(consumer, producer,  codeGen);
-
     IndexStmt accelStmt = static_cast<IndexStmt>(accel);
 
 
-    stmtRewrite = replace(stmtRewrite, {{forall, accelStmt}});
-
-    
+    stmtRewrite = replace(stmtRewrite, {{forall, accelStmt}}); 
  }
   return stmtRewrite;
 }
@@ -3875,34 +3831,6 @@ IndexStmt IndexStmt::accelerate(FunctionInterface functionInterface, IndexExpr e
   IndexStmt stmt =  replace(*this, subsitution);
 
   stmt = rewriteStmt(stmt, access, getConcreteCodeGenerator(exprToAccelerate, access, argumentMap, functionInterface));
-
-  // taco_uerror << stmt << endl;
-
-  // map<IndexVar, Dimension> indexVarDomains = exprToAccelerate.getIndexVarDomains();
-  // std::vector<Dimension> lhsDimension; 
-  // std::vector<IndexVar> indexingVec;
-
-  // for (auto var: assign.getLhs().getIndexVars()){
-  //   lhsDimension.push_back(indexVarDomains[argumentMap.indexVars[var]]);
-  //   indexingVec.push_back(argumentMap.indexVars[var]);
-  // }
-
-  // TensorVar t = TensorVar(Type(exprToAccelerate.getDataType(), Shape(lhsDimension)));
-
-  // auto accessOriginal = to<AcceleratorAccessNode>(assign.getLhs().ptr);
-  // IndexExpr e;
-  // if (setByReference(referenceStmt)){
-  //   e = static_cast<IndexExpr>(Access(argumentMap.tensors[accessOriginal->tensorObject], indexingVec));
-  // }else{
-  //   e = static_cast<IndexExpr>(Access(t, indexingVec));
-  // }
-
-  // ConcreteAccelerateCodeGenerator concreteCodeGen = getConcreteCodeGenerator(exprToAccelerate, e, argumentMap, functionInterface);
-
-  // std::vector<IndexVar> precomputeVars;
-  // for (size_t i = 0; i < indexingVec.size(); i++) { precomputeVars.push_back(IndexVar()); }
-
-  // IndexStmt stmt = accelerate(concreteCodeGen, indexingVec, precomputeVars, t);
 
   return stmt;
 }
