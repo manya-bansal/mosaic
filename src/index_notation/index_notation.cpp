@@ -7,6 +7,7 @@
 #include <utility>
 #include <set>
 #include <stack>
+#include <tuple>
 #include <taco/ir/simplify.h>
 #include "lower/mode_access.h"
 
@@ -573,6 +574,19 @@ struct Isomorphic : public IndexNotationVisitorStrict {
       auto bnode = to<AccelerateNode>(bStmt.ptr);
       if (!check(anode->consumer, bnode->consumer) ||
           !check(anode->producer, bnode->producer)) {
+        eq = false;
+        return;
+      }
+      eq = true;
+  }
+
+  void visit(const InterfaceCallNode* anode) {
+      if (!isa<InterfaceCallNode>(bStmt.ptr)) {
+        eq = false;
+        return;
+      }
+      auto bnode = to<InterfaceCallNode>(bStmt.ptr);
+      if (!check(anode->producer, bnode->producer)) {
         eq = false;
         return;
       }
@@ -1321,6 +1335,19 @@ struct Equals : public IndexNotationVisitorStrict {
     auto bnode = to<AccelerateNode>(bStmt.ptr);
     if (!equals(anode->consumer, bnode->consumer) ||
         !equals(anode->producer, bnode->producer)) {
+      eq = false;
+      return;
+    }
+    eq = true;
+  }
+
+  void visit(const InterfaceCallNode* anode) {
+    if (!isa<InterfaceCallNode>(bStmt.ptr)) {
+      eq = false;
+      return;
+    }
+    auto bnode = to<InterfaceCallNode>(bStmt.ptr);
+    if (!equals(anode->producer, bnode->producer)) {
       eq = false;
       return;
     }
@@ -2708,6 +2735,34 @@ template <> Accelerate to<Accelerate>(IndexStmt s) {
   return Accelerate(to<AccelerateNode>(s.ptr));
 }
 
+//class InterfaceCall
+InterfaceCall::InterfaceCall(const InterfaceCallNode* n) : IndexStmt(n) {
+}
+
+InterfaceCall::InterfaceCall(Assignment producer, ConcreteAccelerateCodeGenerator accelGen, TensorVar temp)
+  : InterfaceCall(new InterfaceCallNode(producer, accelGen, temp)){
+}
+
+Assignment InterfaceCall::getProducer(){
+  return getNode(*this)->producer;
+}
+
+ConcreteAccelerateCodeGenerator InterfaceCall::getAccelGen(){
+  return getNode(*this)->codeGen;
+}
+
+TensorVar InterfaceCall::getTemporary(){
+  return getNode(*this)->temp;
+}
+
+template <> bool isa<InterfaceCall>(IndexStmt s) {
+  return isa<InterfaceCallNode>(s.ptr);
+}
+
+template <> InterfaceCall to<InterfaceCall>(IndexStmt s) {
+  taco_iassert(isa<InterfaceCall>(s));
+  return InterfaceCall(to<InterfaceCallNode>(s.ptr));
+}
 
 // class Sequence
 Sequence::Sequence(const SequenceNode* n) :IndexStmt(n) {
@@ -3348,6 +3403,7 @@ bool isConcreteNotation(IndexStmt stmt, std::string* reason) {
     std::function<void(const ForallNode*,Matcher*)>([&](const ForallNode* op,
                                                         Matcher* ctx) {
       boundVars.scope();
+      cout << op->indexVar << endl;
       boundVars.insert({op->indexVar});
       definedVars.insert(op->indexVar);
       ctx->match(op->stmt);
@@ -3360,6 +3416,8 @@ bool isConcreteNotation(IndexStmt stmt, std::string* reason) {
            (provGraph.isFullyDerived(var) || !provGraph.isRecoverable(var, definedVars))) {
           *reason = "all variables in concrete notation must be bound by a "
                     "forall statement";
+          cout << boundVars.contains(var) << endl;
+          cout << "Not bound" << var << endl;
           isConcrete = false;
         }
       }
@@ -3412,7 +3470,6 @@ bool isConcreteNotation(IndexStmt stmt, std::string* reason) {
         isConcrete = false;
         return;
       }
-
       ctx->match(op->lhs);
       ctx->match(op->rhs);
     }),
@@ -3687,7 +3744,7 @@ static Forall getForAllTensor(IndexStmt stmt, TensorVar t)
 //   return result;
 // }
 
-static IndexStmt rewriteStmt(IndexStmt stmtRewrite, Access workspace, ConcreteAccelerateCodeGenerator codeGen){
+static IndexStmt rewriteStmt(IndexStmt stmtRewrite, Access workspace, ConcreteAccelerateCodeGenerator codeGen, FunctionInterface functionInterface, ArgumentMap argumentMap){
     auto tensorAccess = getTensorAccess(stmtRewrite, workspace.getTensorVar());
     if (tensorAccess.defined()){
       IndexExpr rhs =  codeGen.getRHS();
@@ -3704,6 +3761,8 @@ static IndexStmt rewriteStmt(IndexStmt stmtRewrite, Access workspace, ConcreteAc
 
       producer = replace(producer, precomputeMap);
 
+      Assignment producerAssign = to<Assignment>(producer);
+
       string reason;
       for (int l = 0; l < (int) precomputeVars.size(); l++) {
         IndexVar i = tensorAccess.getLhs().getIndexVars().at(l);
@@ -3718,12 +3777,41 @@ static IndexStmt rewriteStmt(IndexStmt stmtRewrite, Access workspace, ConcreteAc
         }
     }
 
+    AcceleratorStmt referenceStmt = functionInterface.getNode()->getStmt();
+    if (!isa<AcceleratorAssignment>(referenceStmt)){
+    taco_uerror << "Reference statement in function interface must be an assignemnt" << endl;
+    }
+    AcceleratorAssignment assign = to<AcceleratorAssignment>(referenceStmt);
+
+
+    auto exprDim = codeGen.getRHS().getIndexVarDomains();
+    auto pluginDim = assign.getRhs().getIndexVarDomains();
+
+    cout << util::join(codeGen.getRHS().getIndexVarDomains()) << endl;
+    cout << util::join(assign.getRhs().getIndexVarDomains()) << endl;
+    cout << util::join(argumentMap.indexVars) << endl;
+    cout << "Precompute map " << util::join(precomputeMap) << endl;
+
+
+    for (auto iv: argumentMap.indexVars){
+      if (!pluginDim.at(iv.first).isVariable() && pluginDim.at(iv.first) !=  exprDim.at(iv.second)){
+        if (pluginDim.at(iv.first).getSize() < exprDim.at(iv.second).getSize()){
+          producer = forall(precomputeMap[iv.second], producer);
+          producer = producer.split(precomputeMap[iv.second], IndexVar(), IndexVar(), pluginDim.at(iv.first).getSize());
+        }
+        else{
+          cout << "Size dont match and tiling is not possible" << endl;
+          return stmtRewrite;
+        }
+      }
+    }
+
     Forall forall = getForAllTensor(stmtRewrite, workspace.getTensorVar());
 
     IndexStmt consumer = makeConcreteNotation(tensorAccess);
-    Accelerate accel(consumer, producer,  codeGen);
+    InterfaceCall interface(producerAssign, codeGen, workspace.getTensorVar());
+    Accelerate accel(consumer, interface,  codeGen);
     IndexStmt accelStmt = static_cast<IndexStmt>(accel);
-
 
     stmtRewrite = replace(stmtRewrite, {{forall, accelStmt}}); 
  }
@@ -3830,14 +3918,15 @@ IndexStmt IndexStmt::accelerate(FunctionInterface functionInterface, IndexExpr e
   std::map<IndexExpr,IndexExpr> subsitution = {{exprToAccelerate, access}};
   IndexStmt stmt =  replace(*this, subsitution);
 
-  stmt = rewriteStmt(stmt, access, getConcreteCodeGenerator(exprToAccelerate, access, argumentMap, functionInterface));
+  stmt = rewriteStmt(stmt, access, getConcreteCodeGenerator(exprToAccelerate, access, argumentMap, functionInterface), functionInterface, argumentMap);
 
   return stmt;
 }
 
 IndexStmt IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<FunctionInterface> functionInterfaces) const{
 
-  std::stack<std::pair<Access, ConcreteAccelerateCodeGenerator>> varCodeGen;
+  std::stack<std::tuple<Access, ConcreteAccelerateCodeGenerator, FunctionInterface, ArgumentMap>> varCodeGen;
+  // std::map<ConcreteAccelerateCodeGenerator, FunctionInterface> abstractInterface;
 
   if (!isa<Assignment>(stmt)) {
     cout << "Cannot autoscheudle this expression since it is not an assignment" << endl;
@@ -3863,7 +3952,9 @@ IndexStmt IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<FunctionInterfac
         auto access = replaceTemporary(stmt, expr, reduxRefStmt, argumentMap);
         std::map<IndexExpr,IndexExpr> subsitution = {{expr, access}};
         stmtRewrite =  replace(stmtRewrite, subsitution);
-        varCodeGen.push(make_pair(access, getConcreteCodeGenerator(expr, access, argumentMap, descripton)));
+        auto codeGen = getConcreteCodeGenerator(expr, access, argumentMap, descripton);
+        varCodeGen.push(std::make_tuple(access, codeGen, descripton, argumentMap));
+        // abstractInterface[codeGen] = descripton;
         // TODO: need to change this break to enable multiple matches
         break;
         }
@@ -3874,7 +3965,7 @@ IndexStmt IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<FunctionInterfac
 
   while (!varCodeGen.empty()){
     auto tensorCodeGen = varCodeGen.top();
-    stmtRewrite = rewriteStmt(stmtRewrite, tensorCodeGen.first, tensorCodeGen.second);
+    stmtRewrite = rewriteStmt(stmtRewrite, std::get<0>(tensorCodeGen), std::get<1>(tensorCodeGen), std::get<2>(tensorCodeGen), std::get<3>(tensorCodeGen));
     varCodeGen.pop();
   }
   return stmtRewrite;
@@ -4887,6 +4978,20 @@ private:
     }
     else {
       stmt = new AccelerateNode(consumer, producer, op->accelGen);
+    }
+  }
+
+  void visit(const InterfaceCallNode* op) {
+    IndexStmt producer = rewrite(op->producer);
+
+    if (!producer.defined()) {
+      stmt = op;
+    }
+    else if (producer == op->producer) {
+      stmt = op;
+    }
+    else {
+      stmt = new InterfaceCallNode(op->producer, op->codeGen, op->temp);
     }
   }
 

@@ -439,6 +439,19 @@ struct AccelerateNode : public IndexStmtNode {
   ConcreteAccelerateCodeGenerator accelGen;
 };
 
+struct InterfaceCallNode : public IndexStmtNode {
+  InterfaceCallNode(Assignment producer, ConcreteAccelerateCodeGenerator codeGen, TensorVar temp) 
+    : producer(producer), codeGen(codeGen), temp(temp) {} 
+
+  void accept(IndexStmtVisitorStrict* v) const {
+    v->visit(this);
+  }
+  
+  Assignment producer;
+  ConcreteAccelerateCodeGenerator codeGen;
+  TensorVar temp;
+};
+
 struct MultiNode : public IndexStmtNode {
   MultiNode(IndexStmt stmt1, IndexStmt stmt2) : stmt1(stmt1), stmt2(stmt2) {}
 

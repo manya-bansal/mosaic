@@ -69,6 +69,7 @@ struct YieldNode;
 struct ForallNode;
 struct WhereNode;
 struct AccelerateNode;
+struct InterfaceCallNode;
 struct SequenceNode;
 struct AssembleNode;
 struct MultiNode;
@@ -940,6 +941,20 @@ public:
   TensorVar getTemporary();
 
   typedef AccelerateNode Node;
+};
+
+class InterfaceCall : public IndexStmt {
+public:
+  InterfaceCall() = default;
+  InterfaceCall(const InterfaceCallNode*);
+  InterfaceCall(Assignment producer, ConcreteAccelerateCodeGenerator accelGen, TensorVar temp);
+
+  Assignment getProducer();
+  ConcreteAccelerateCodeGenerator getAccelGen();
+  TensorVar getTemporary();
+
+  typedef InterfaceCallNode Node;
+
 };
 
 /// Create an accelerate stmt index statement.

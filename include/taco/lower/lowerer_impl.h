@@ -22,6 +22,7 @@ class IndexStmt;
 class Assignment;
 class Yield;
 class Forall;
+class InterfaceCall;
 class Where;
 class Accelerate;
 class Multi;
@@ -73,6 +74,8 @@ protected:
 
   /// Lower a where statement.
   virtual ir::Stmt lowerWhere(Where where) = 0;
+
+  virtual ir::Stmt lowerInterface(InterfaceCall interface) = 0;
 
   /// Lower a where statement.
   virtual ir::Stmt lowerAccelerate(Accelerate accelerate) = 0;

@@ -265,6 +265,12 @@ void IndexNotationPrinter::visit(const AccelerateNode* op) {
   os << ")";
 }
 
+void IndexNotationPrinter::visit(const InterfaceCallNode* op){
+    op->producer.accept(this);
+    os << "using ";
+    os << op->codeGen;
+  }
+
 void IndexNotationPrinter::visit(const MultiNode* op) {
   os << "multi(";
   op->stmt1.accept(this);

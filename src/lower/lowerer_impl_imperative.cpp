@@ -52,6 +52,7 @@ private:
   void visit(const ForallNode* node)        { stmt = impl->lowerForall(node); }
   void visit(const WhereNode* node)         { stmt = impl->lowerWhere(node); }
   void visit(const AccelerateNode* node)    { stmt = impl->lowerAccelerate(node); }
+  void visit(const InterfaceCallNode* node)    { stmt = impl->lowerInterface(node); }
   void visit(const MultiNode* node)         { stmt = impl->lowerMulti(node); }
   void visit(const SuchThatNode* node)      { stmt = impl->lowerSuchThat(node); }
   void visit(const SequenceNode* node)      { stmt = impl->lowerSequence(node); }
@@ -2864,6 +2865,54 @@ Stmt LowererImplImperative::makeAcceleratedProducer(Accelerate accelerate){
 }
 
 
+Stmt LowererImplImperative::lowerInterface(InterfaceCall interface){
+    // first check whether the rhs contains the rhs
+  // if it does, we know that the ffi is setting
+  // its values by reference as oppoosed to returning a new 
+  // object
+  ConcreteAccelerateCodeGenerator accelGen = interface.getAccelGen();
+
+  TensorVar resultVar;
+  match((accelGen.getLHS()),
+      // should only be one var on the lhs
+      std::function<void(const AccessNode*)>([&](const AccessNode* op) {
+            resultVar = op->tensorVar;
+        })
+  );
+
+  bool setResultByRef = false;
+      match((accelGen.getRHS()),
+          std::function<void(const AccessNode*)>([&](const AccessNode* op) {
+                if (resultVar == op->tensorVar){
+                  setResultByRef = true;
+                }
+            })
+      );
+
+  //now we need to make the ffi call 
+  std::vector<Argument> arguments = accelGen.getArguments();
+  std::vector<Expr> loweredArguments;
+
+  TensorVar temporary = interface.getTemporary();
+
+  for (auto argument: arguments){
+      loweredArguments.push_back(lowerArgument(argument, resultVar, temporary, true));
+  }
+
+  Stmt functionCall; 
+  if (accelGen.getReturnType() == "void"){
+    // if return value is not set by reference
+    // then we have no idea how it is being set
+    assert(setResultByRef == true);
+    functionCall = VoidCall::make(accelGen.getFunctionName(), loweredArguments);
+  }else{
+      functionCall = Assign::make(tensorVars[temporary], ir::Call::make(accelGen.getFunctionName(), loweredArguments));
+  }
+
+  //TODO: Emit code to check for error code
+  
+  return Block::make({functionCall});
+}
 
 Stmt LowererImplImperative::lowerAccelerate(Accelerate accelerate) {
   //initiailze temporary workspace
@@ -2936,9 +2985,54 @@ Stmt LowererImplImperative::lowerAccelerate(Accelerate accelerate) {
 
   //TODO: NEED TO LOWER PRODUCER HERE 
   Stmt producer;
+  Stmt copyTemp;
+
   if (this->compute){
-    // cout << "####" << endl;
-    producer = makeAcceleratedProducer(accelerate);
+
+      TensorVar resultVar;
+      match((accelGen.getLHS()),
+      // should only be one var on the lhs
+      std::function<void(const AccessNode*)>([&](const AccessNode* op) {
+            resultVar = op->tensorVar;
+        })
+      );
+
+     bool setResultByRef = false;
+      match((accelGen.getRHS()),
+          std::function<void(const AccessNode*)>([&](const AccessNode* op) {
+                if (resultVar == op->tensorVar){
+                  setResultByRef = true;
+                }
+            })
+      );
+
+      //if it is setting by reference copy in the 
+      //value of the result var into teh temp var
+      //the result will aotomatically be stored in the
+      //temp var
+      TensorVar temporary = accelerate.getTemporary();
+
+      if(setResultByRef){
+
+        // std::map<TensorVar, ir::Expr> newTensorVars;
+        std::vector<IndexVar> newIndices;
+        std::vector<IndexVar> newPrecomputeIndices;
+        for (int i = 0; i < resultVar.getOrder(); i++){
+          newIndices.push_back(IndexVar());
+          newPrecomputeIndices.push_back(IndexVar());
+        
+        }
+
+        Access resultAccess(resultVar, newIndices);
+        IndexStmt newAssign = IndexStmt(new AssignmentNode(resultAccess, resultAccess, IndexExpr())).concretize();
+        newAssign = newAssign.precompute(resultAccess, newIndices, newPrecomputeIndices, temporary);
+
+        LowererImplImperative newLower;
+        newLower.lower(newAssign, "assemble", true, true, false, false);
+        copyTemp = newLower.getProducerCode();
+      
+      }
+    producer = lower(accelerate.getProducer());
     // taco_uerror << producer << endl;
   }
   
@@ -2950,7 +3044,7 @@ Stmt LowererImplImperative::lowerAccelerate(Accelerate accelerate) {
   whereTempsToResult.erase(accelerate.getTemporary());
 
   cout << Block::make(initializeTemporary, producer, consumer, freeTemporary) << endl;
-  return Block::make(initializeTemporary, producer, consumer, freeTemporary);
+  return Block::make(initializeTemporary, copyTemp, producer, consumer, freeTemporary);
 
 }
 

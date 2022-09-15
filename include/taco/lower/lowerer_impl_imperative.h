@@ -25,6 +25,7 @@ class Yield;
 class Forall;
 class Where;
 class Accelerate;
+class InterfaceCall;
 class Multi;
 class SuchThat;
 class Sequence;
@@ -200,6 +201,8 @@ protected:
 
   /// Lower a where statement.
   virtual ir::Stmt lowerWhere(Where where);
+
+  virtual ir::Stmt lowerInterface(InterfaceCall interface);
 
   virtual ir::Stmt lowerAccelerate(Accelerate accelerate);
 

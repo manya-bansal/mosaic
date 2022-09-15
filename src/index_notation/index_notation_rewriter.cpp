@@ -210,6 +210,10 @@ void IndexNotationRewriter::visit(const AccelerateNode* op) {
   }
 }
 
+void IndexNotationRewriter::visit(const InterfaceCallNode* op){
+  stmt = op;
+}
+
 void IndexNotationRewriter::visit(const SequenceNode* op) {
   IndexStmt definition = rewrite(op->definition);
   IndexStmt mutation = rewrite(op->mutation);
@@ -354,6 +358,10 @@ struct ReplaceRewriter : public IndexNotationRewriter {
   }
 
   void visit(const AccelerateNode* op) {
+    SUBSTITUTE_STMT;
+  }
+
+  void visit(const InterfaceCallNode* op) {
     SUBSTITUTE_STMT;
   }
 

@@ -392,8 +392,6 @@ TEST(interface, tiledSaxpyInterface) {
    IndexStmt stmt = A.getAssignment().concretize();
    stmt = stmt.accelerate(new TileSaxpy(), accelerateExpr);
 
-   taco_uerror << stmt << endl;
-
    A.compile(stmt);
    A.assemble();
    A.compute();

@@ -436,6 +436,10 @@ private:
     lattice = build(node->consumer);
   }
 
+  void visit(const InterfaceCallNode* node) {
+    taco_not_supported_yet;
+  }
+
   void visit(const MultiNode* node) {
     lattice = unionLattices(build(node->stmt1), build(node->stmt2));
   }
