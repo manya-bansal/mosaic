@@ -116,6 +116,29 @@ std::vector<IndexVar> AcceleratorExpr::getIndexVars() const{
   return vars;
 }
 
+std::map<IndexVar,Dimension> AcceleratorExpr::getIndexVarDomains() const {
+  map<IndexVar, Dimension> indexVarDomains;
+  acceleratorMatch(*this,
+    std::function<void(const AcceleratorAccessNode*)>([&indexVarDomains](const AcceleratorAccessNode* op) {
+      auto& type = op->tensorObject.getType();
+      auto& vars = op->indexVars;
+      for (size_t i = 0; i < vars.size(); i++) {
+        if (!util::contains(indexVarDomains, vars[i])) {
+          indexVarDomains.insert({vars[i], type.getShape().getDimension(i)});
+        }
+        else {
+          taco_iassert(indexVarDomains.at(vars[i]) ==
+                       type.getShape().getDimension(i))
+              << "Index variable used to index incompatible dimensions";
+        }
+      }
+    })
+  );
+
+  return indexVarDomains;
+
+}
+
 std::ostream& operator<<(std::ostream& os, const AcceleratorExpr& expr) {
   if (!expr.defined()) return os << "AcceleratorExpr()";
   AcceleratorNotationPrinter printer(os);

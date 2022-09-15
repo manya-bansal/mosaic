@@ -84,6 +84,8 @@ public:
 
   std::vector<IndexVar> getIndexVars() const;
 
+  std::map<IndexVar,Dimension> getIndexVarDomains() const;
+
   friend std::ostream& operator<<(std::ostream&, const AcceleratorExpr&);
 
 };

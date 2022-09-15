@@ -2371,100 +2371,6 @@ IndexStmt IndexStmt::accelerate(ConcreteAccelerateCodeGenerator accelGen, IndexV
   return accelerate(accelGen, i_vars, iw_vars, workspace);
 }
 
-static std::vector<Argument> getConcreteArgs(const std::vector<Argument>& abstractArgs, const ArgumentMap& argumentMap){
-    std::vector<Argument> newArgs;
-    for (auto arg : abstractArgs){
-    switch (arg.getArgType())
-    {
-    case DIM:
-      {
-        newArgs.push_back(new DimArg(argumentMap.indexVars.at(arg.getNode<DimArg>()->indexVar)));
-        break;
-      }
-    case TENSOR:
-      taco_uerror << "Arguments can only use TensorObjects, tried using a TensorVar." << endl;
-      break; 
-    case TENSOR_OBJECT:
-      newArgs.push_back(new TensorVarArg(argumentMap.tensors.at(arg.getNode<TensorObjectArg>()->t)));
-      break;
-    case TENSORVAR:
-      taco_uerror << "Arguments can only use TensorObjects, tried using a TensorVar." << endl;
-      break;
-    case LITERAL:
-      newArgs.push_back(arg);
-      break;
-    case USER_DEFINED: 
-    {
-      std::vector<Argument> userDefinedArgs = getConcreteArgs(arg.getNode<TransferWithArgs>()->getArgs(), argumentMap);
-      newArgs.push_back(new TransferWithArgs(arg.getNode<TransferWithArgs>()->getName(), arg.getNode<TransferWithArgs>()->getReturnType(), userDefinedArgs));
-      break;
-    }
-    default:
-      cout << arg.getArgType() << endl;
-      taco_uerror << "Unimplemented" << endl;
-      break;
-    }
-  }
-  return newArgs;
-
-}
-
-IndexStmt IndexStmt::accelerate(FunctionInterface functionInterface, IndexExpr exprToAccelerate) const{
-
-  AcceleratorStmt referenceStmt = functionInterface.getNode()->getStmt();
-  if (!isa<AcceleratorAssignment>(referenceStmt)){
-    taco_uerror << "Reference statement in function interface must be an assignemnt" << endl;
-  }
-  AcceleratorAssignment assign = to<AcceleratorAssignment>(referenceStmt);
-  // explictly add the reduction nodes
-  AcceleratorAssignment assignRedux = makeReductionNotation(assign);
-
-  ArgumentMap argumentMap;
-  AcceleratorExpr rhs = assignRedux.getRhs();
-  argumentMap = hasPreciseMatch(exprToAccelerate, rhs);
-  if (!argumentMap.possible){
-    argumentMap = hasPreciseMatch(exprToAccelerate, assign.getRhs());
-    if (argumentMap.possible){
-       std::cout << "Warning : Implicit Reduction is being added, given function is caluclating " << assignRedux.getRhs() << "." << std::endl;
-    }else{
-      taco_uerror << "Expressions " << assign.getRhs() << " and " << exprToAccelerate << " do not match." << endl;
-    }
-  }
-  assert(argumentMap.possible);
-
-  std::vector<Argument> newArgs = getConcreteArgs(functionInterface.getNode()->getArguments(), argumentMap);
-
-  cout << util::join(newArgs) << endl;
-
-  map<IndexVar, Dimension> indexVarDomains = exprToAccelerate.getIndexVarDomains();
-  std::vector<Dimension> lhsDimension; 
-  std::vector<IndexVar> indexingVec;
-
-  for (auto var: assign.getLhs().getIndexVars()){
-    lhsDimension.push_back(indexVarDomains[argumentMap.indexVars[var]]);
-    indexingVec.push_back(argumentMap.indexVars[var]);
-  }
-
-  TensorVar t = TensorVar(Type(exprToAccelerate.getDataType(), Shape(lhsDimension)));
-
-  auto accessOriginal = to<AcceleratorAccessNode>(assign.getLhs().ptr);
-  IndexExpr e;
-  if (setByReference(referenceStmt)){
-    e = static_cast<IndexExpr>(Access(argumentMap.tensors[accessOriginal->tensorObject], indexingVec));
-  }else{
-    e = static_cast<IndexExpr>(Access(t, indexingVec));
-  }
- 
-  ConcreteAccelerateCodeGenerator concreteCodeGen = ConcreteAccelerateCodeGenerator( functionInterface.getNode()->getFunctionName(),  functionInterface.getNode()->getReturnType(), e, exprToAccelerate, newArgs, functionInterface.getNode()->getDecelerations());
-
-  std::vector<IndexVar> precomputeVars;
-  for (size_t i = 0; i < indexingVec.size(); i++) { precomputeVars.push_back(IndexVar()); }
-
-  IndexStmt stmt = accelerate(concreteCodeGen, indexingVec, precomputeVars, t);
-
-  return stmt;
-}
-
 IndexStmt IndexStmt::reorder(taco::IndexVar i, taco::IndexVar j) const {
   string reason;
   IndexStmt transformed = Reorder(i, j).apply(*this, &reason);
@@ -3714,65 +3620,6 @@ struct ReplaceReductionsWithWheres : IndexNotationRewriter {
   }
 };
 
-static ConcreteAccelerateCodeGenerator getConcreteCodeGenerator(IndexExpr expr, IndexExpr& workspace, ArgumentMap argumentMap, FunctionInterface functionInterface){
-  assert(argumentMap.possible);
-
-  AcceleratorStmt referenceStmt = functionInterface.getNode()->getStmt();
-  if (!isa<AcceleratorAssignment>(referenceStmt)){
-    taco_uerror << "Reference statement in function interface must be an assignemnt" << endl;
-  }
-  AcceleratorAssignment assign = to<AcceleratorAssignment>(referenceStmt);
-
-  std::vector<Argument> newArgs;
-  for (auto arg : functionInterface.getNode()->getArguments()){
-    switch (arg.getArgType())
-    {
-    case DIM:
-      {
-        newArgs.push_back(new DimArg(argumentMap.indexVars[arg.getNode<DimArg>()->indexVar]));
-        break;
-      }
-    case TENSOR:
-      taco_uerror << "Arguments can only use TensorObjects, tried using a TensorVar." << endl;
-      break; 
-    case TENSOR_OBJECT:
-      newArgs.push_back(new TensorVarArg(argumentMap.tensors[arg.getNode<TensorObjectArg>()->t]));
-      break;
-    case TENSORVAR:
-      taco_uerror << "Arguments can only use TensorObjects, tried using a TensorVar." << endl;
-      break;
-    case LITERAL:
-      newArgs.push_back(arg);
-      break;
-    default:
-      cout << arg.getArgType() << endl;
-      taco_uerror << "Unimplemented" << endl;
-      break;
-    }
-  }
-
-  map<IndexVar, Dimension> indexVarDomains = expr.getIndexVarDomains();
-  std::vector<Dimension> lhsDimension; 
-  std::vector<IndexVar> indexingVec;
-
-  for (auto var: assign.getLhs().getIndexVars()){
-    lhsDimension.push_back(indexVarDomains[argumentMap.indexVars[var]]);
-    indexingVec.push_back(argumentMap.indexVars[var]);
-  }
-
-  auto accessOriginal = to<AcceleratorAccessNode>(assign.getLhs().ptr);
-  IndexExpr e;
-  if (setByReference(referenceStmt)){
-    e = static_cast<IndexExpr>(Access(argumentMap.tensors[accessOriginal->tensorObject], indexingVec));
-  }else{
-    e = workspace;
-  }
-
-  ConcreteAccelerateCodeGenerator concreteCodeGen = ConcreteAccelerateCodeGenerator( functionInterface.getNode()->getFunctionName(),  functionInterface.getNode()->getReturnType(), e, expr, newArgs, functionInterface.getNode()->getDecelerations());
-
-  return concreteCodeGen;
-}
-
 static Access replaceTemporary(IndexStmt stmt, IndexExpr expr, AcceleratorAssignment assign, ArgumentMap argumentMap){
 
   taco_uassert(argumentMap.possible);
@@ -3821,7 +3668,7 @@ static Forall getForAllTensor(IndexStmt stmt, TensorVar t)
   bool tensorForall= false;
 
   //want the innermost forall
-  bool matched = false;
+  // bool matched = false;
 
   match(stmt,
     function<void(const AccessNode*)>([&](const AccessNode* n) {
@@ -3832,9 +3679,9 @@ static Forall getForAllTensor(IndexStmt stmt, TensorVar t)
     function<void(const ForallNode*,Matcher*)>([&](const ForallNode* n,
                                                        Matcher* ctx) {
       ctx->match(n->stmt);
-      if (tensorForall && !matched){
+      if (tensorForall){
         forall = n;
-        matched = true;
+        // matched = true;
       }
     })
   );
@@ -3877,6 +3724,189 @@ static std::set<IndexVar> getAllNonMatchingForallVars(IndexStmt stmt, std::vecto
   return result;
 }
 
+static IndexStmt rewriteStmt(IndexStmt stmtRewrite, Access workspace, ConcreteAccelerateCodeGenerator codeGen){
+    auto tensorAccess = getTensorAccess(stmtRewrite, workspace.getTensorVar());
+    if (tensorAccess.defined()){
+      IndexExpr rhs =  codeGen.getRHS();
+      IndexStmt producer = Assignment(workspace, rhs);
+
+      std::map<IndexVar, IndexVar> precomputeMap;
+      std::vector<IndexVar> precomputeVars;
+
+      for (auto iVar : tensorAccess.getRhs().getIndexVars()){ 
+        IndexVar iv;
+        precomputeMap[iVar] = iv;
+        precomputeVars.push_back(iv);
+      }
+
+      producer = replace(producer, precomputeMap);
+
+      string reason;
+      for (int l = 0; l < (int) precomputeVars.size(); l++) {
+        IndexVar i = tensorAccess.getLhs().getIndexVars().at(l);
+        IndexVar iw = precomputeVars.at(l);
+
+        if (i != iw) {
+          IndexVarRel rel = IndexVarRel(new AccelerateRelNode(i, iw, codeGen));
+          stmtRewrite = Transformation(AddSuchThatPredicates({rel})).apply(stmtRewrite, &reason);
+          if (!stmtRewrite.defined()) {
+            taco_uerror << reason;
+          }
+        }
+    }
+
+    Forall forall = getForAllTensor(stmtRewrite, workspace.getTensorVar());
+
+    // std::set<IndexVar> scheduledVars = getAllMatchingForallVars(forall, tensorAccess.getLhs().getIndexVars());
+    // std::set<IndexVar> unscheduledVars = getAllNonMatchingForallVars(forall, tensorAccess.getLhs().getIndexVars());
+
+    IndexStmt consumer = makeConcreteNotation(tensorAccess);
+    
+    Accelerate accel(consumer, producer,  codeGen);
+
+    IndexStmt accelStmt = static_cast<IndexStmt>(accel);
+
+
+    stmtRewrite = replace(stmtRewrite, {{forall, accelStmt}});
+
+    
+ }
+  return stmtRewrite;
+}
+
+static std::vector<Argument> getConcreteArgs(const std::vector<Argument>& abstractArgs, const ArgumentMap& argumentMap){
+    std::vector<Argument> newArgs;
+    for (auto arg : abstractArgs){
+    switch (arg.getArgType())
+    {
+    case DIM:
+      {
+        newArgs.push_back(new DimArg(argumentMap.indexVars.at(arg.getNode<DimArg>()->indexVar)));
+        break;
+      }
+    case TENSOR:
+      taco_uerror << "Arguments can only use TensorObjects, tried using a TensorVar." << endl;
+      break; 
+    case TENSOR_OBJECT:
+      newArgs.push_back(new TensorVarArg(argumentMap.tensors.at(arg.getNode<TensorObjectArg>()->t)));
+      break;
+    case TENSORVAR:
+      taco_uerror << "Arguments can only use TensorObjects, tried using a TensorVar." << endl;
+      break;
+    case LITERAL:
+      newArgs.push_back(arg);
+      break;
+    case USER_DEFINED: 
+    {
+      std::vector<Argument> userDefinedArgs = getConcreteArgs(arg.getNode<TransferWithArgs>()->getArgs(), argumentMap);
+      newArgs.push_back(new TransferWithArgs(arg.getNode<TransferWithArgs>()->getName(), arg.getNode<TransferWithArgs>()->getReturnType(), userDefinedArgs));
+      break;
+    }
+    default:
+      cout << arg.getArgType() << endl;
+      taco_uerror << "Unimplemented" << endl;
+      break;
+    }
+  }
+  return newArgs;
+
+}
+
+static ConcreteAccelerateCodeGenerator getConcreteCodeGenerator(IndexExpr expr, IndexExpr& workspace, ArgumentMap argumentMap, FunctionInterface functionInterface){
+  assert(argumentMap.possible);
+
+  AcceleratorStmt referenceStmt = functionInterface.getNode()->getStmt();
+  if (!isa<AcceleratorAssignment>(referenceStmt)){
+    taco_uerror << "Reference statement in function interface must be an assignemnt" << endl;
+  }
+  AcceleratorAssignment assign = to<AcceleratorAssignment>(referenceStmt);
+
+  std::vector<Argument> newArgs = getConcreteArgs(functionInterface.getNode()->getArguments(), argumentMap);
+
+  map<IndexVar, Dimension> indexVarDomains = expr.getIndexVarDomains();
+  std::vector<Dimension> lhsDimension; 
+  std::vector<IndexVar> indexingVec;
+
+  for (auto var: assign.getLhs().getIndexVars()){
+    lhsDimension.push_back(indexVarDomains[argumentMap.indexVars[var]]);
+    indexingVec.push_back(argumentMap.indexVars[var]);
+  }
+
+  auto accessOriginal = to<AcceleratorAccessNode>(assign.getLhs().ptr);
+  IndexExpr e;
+  if (setByReference(referenceStmt)){
+    e = static_cast<IndexExpr>(Access(argumentMap.tensors[accessOriginal->tensorObject], indexingVec));
+  }else{
+    e = workspace;
+  }
+
+  ConcreteAccelerateCodeGenerator concreteCodeGen = ConcreteAccelerateCodeGenerator( functionInterface.getNode()->getFunctionName(),  functionInterface.getNode()->getReturnType(), e, expr, newArgs, functionInterface.getNode()->getDecelerations());
+
+  return concreteCodeGen;
+}
+
+IndexStmt IndexStmt::accelerate(FunctionInterface functionInterface, IndexExpr exprToAccelerate) const{
+
+  AcceleratorStmt referenceStmt = functionInterface.getNode()->getStmt();
+  if (!isa<AcceleratorAssignment>(referenceStmt)){
+    taco_uerror << "Reference statement in function interface must be an assignemnt" << endl;
+  }
+  AcceleratorAssignment assign = to<AcceleratorAssignment>(referenceStmt);
+  // explictly add the reduction nodes
+  AcceleratorAssignment assignRedux = makeReductionNotation(assign);
+
+  ArgumentMap argumentMap;
+  AcceleratorExpr rhs = assignRedux.getRhs();
+  argumentMap = hasPreciseMatch(exprToAccelerate, rhs);
+  if (!argumentMap.possible){
+    // get reduction notation for assignment using exprToAccelerate and then check
+    argumentMap = hasPreciseMatch(exprToAccelerate, assign.getRhs());
+    if (argumentMap.possible){
+       std::cout << "Warning : Implicit Reduction is being added, given function is caluclating " << assignRedux.getRhs() << "." << std::endl;
+    }else{
+      taco_uerror << "Expressions " << assign.getRhs() << " and " << exprToAccelerate << " do not match." << endl;
+    }
+  }
+
+  assert(argumentMap.possible);
+
+  auto access = replaceTemporary(*this, exprToAccelerate, assign, argumentMap);
+  std::map<IndexExpr,IndexExpr> subsitution = {{exprToAccelerate, access}};
+  IndexStmt stmt =  replace(*this, subsitution);
+
+  stmt = rewriteStmt(stmt, access, getConcreteCodeGenerator(exprToAccelerate, access, argumentMap, functionInterface));
+
+  // taco_uerror << stmt << endl;
+
+  // map<IndexVar, Dimension> indexVarDomains = exprToAccelerate.getIndexVarDomains();
+  // std::vector<Dimension> lhsDimension; 
+  // std::vector<IndexVar> indexingVec;
+
+  // for (auto var: assign.getLhs().getIndexVars()){
+  //   lhsDimension.push_back(indexVarDomains[argumentMap.indexVars[var]]);
+  //   indexingVec.push_back(argumentMap.indexVars[var]);
+  // }
+
+  // TensorVar t = TensorVar(Type(exprToAccelerate.getDataType(), Shape(lhsDimension)));
+
+  // auto accessOriginal = to<AcceleratorAccessNode>(assign.getLhs().ptr);
+  // IndexExpr e;
+  // if (setByReference(referenceStmt)){
+  //   e = static_cast<IndexExpr>(Access(argumentMap.tensors[accessOriginal->tensorObject], indexingVec));
+  // }else{
+  //   e = static_cast<IndexExpr>(Access(t, indexingVec));
+  // }
+
+  // ConcreteAccelerateCodeGenerator concreteCodeGen = getConcreteCodeGenerator(exprToAccelerate, e, argumentMap, functionInterface);
+
+  // std::vector<IndexVar> precomputeVars;
+  // for (size_t i = 0; i < indexingVec.size(); i++) { precomputeVars.push_back(IndexVar()); }
+
+  // IndexStmt stmt = accelerate(concreteCodeGen, indexingVec, precomputeVars, t);
+
+  return stmt;
+}
+
 IndexStmt IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<FunctionInterface> functionInterfaces) const{
 
   std::stack<std::pair<Access, ConcreteAccelerateCodeGenerator>> varCodeGen;
@@ -3916,60 +3946,9 @@ IndexStmt IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<FunctionInterfac
 
   while (!varCodeGen.empty()){
     auto tensorCodeGen = varCodeGen.top();
-    auto tensorAccess = getTensorAccess(stmtRewrite, tensorCodeGen.first.getTensorVar());
-    if (tensorAccess.defined()){
-      IndexExpr rhs =  tensorCodeGen.second.getRHS();
-      IndexStmt producer = Assignment(tensorCodeGen.first, rhs);
-
-      std::map<IndexVar, IndexVar> precomputeMap;
-      std::vector<IndexVar> precomputeVars;
-
-      for (auto iVar : tensorAccess.getLhs().getIndexVars()){ 
-        IndexVar iv;
-        precomputeMap[iVar] = iv;
-        precomputeVars.push_back(iv);
-      }
-
-      producer = replace(producer, precomputeMap);
-
-      string reason;
-      for (int l = 0; l < (int) precomputeVars.size(); l++) {
-      IndexVar i = tensorAccess.getLhs().getIndexVars().at(l);
-      IndexVar iw = precomputeVars.at(l);
-
-      if (i != iw) {
-        IndexVarRel rel = IndexVarRel(new AccelerateRelNode(i, iw, tensorCodeGen.second));
-        stmtRewrite = Transformation(AddSuchThatPredicates({rel})).apply(stmtRewrite, &reason);
-        if (!stmtRewrite.defined()) {
-          taco_uerror << reason;
-        }
-      }
-    }
-
-    Forall forall = getForAllTensor(stmtRewrite, tensorCodeGen.first.getTensorVar());
-
-    std::set<IndexVar> scheduledVars = getAllMatchingForallVars(forall, tensorAccess.getLhs().getIndexVars());
-    std::set<IndexVar> unscheduledVars = getAllNonMatchingForallVars(forall, tensorAccess.getLhs().getIndexVars());
-
-    IndexStmt consumer;
-
-    for (auto iVar: scheduledVars){
-      consumer = taco::forall(iVar, tensorAccess);
-    }
-
-    Accelerate accel(consumer, producer,  tensorCodeGen.second);
-
-    IndexStmt accelStmt = static_cast<IndexStmt>(accel);
-
-    for (auto iVar: unscheduledVars){
-      accelStmt = taco::forall(iVar, accelStmt);
-    }
-
-    stmtRewrite = replace(stmtRewrite, {{forall, accelStmt}});
-    }
+    stmtRewrite = rewriteStmt(stmtRewrite, tensorCodeGen.first, tensorCodeGen.second);
     varCodeGen.pop();
   }
-
   return stmtRewrite;
 }
 

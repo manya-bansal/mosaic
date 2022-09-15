@@ -12,7 +12,7 @@
             "type": "lldb",
             "request": "launch",
             "program": "${workspaceFolder}/build/bin/taco-test",
-            "args" : ["endToEndPlugin"],
+            "args" : ["endToEndPluginInterfaceClass"],
             // "args": ["where_vector_sum/lower.compile/0"],
             "stopAtEntry": false,
             "cwd": "${fileDirname}", 

@@ -19,6 +19,7 @@
 #include "taco/accelerator_interface/cblas_saxpy.h"
 #include "taco/accelerator_interface/cblas_sdot.h"
 #include "taco/accelerator_interface/test_interface.h"
+#include "taco/accelerator_interface/tile_interface.h"
 
 
 using namespace taco;
@@ -272,8 +273,6 @@ TEST(interface, mismatchInterfaceClass) {
       B.insert({i}, (float) i);
    }
 
-   // Test1 test;
-
    C.pack();
    B.pack();
 
@@ -282,47 +281,10 @@ TEST(interface, mismatchInterfaceClass) {
 
    IndexStmt stmt = A.getAssignment().concretize();
 
-   // ASSERT_THROW(stmt.accelerate(new Test1(), accelerateExpr, i, iw, accelWorkspace), taco::TacoException);
+   ASSERT_THROW(stmt.accelerate(new Sdot(), accelerateExpr), taco::TacoException);
 
 }
 
-TEST(interface, classInterfaceSdsdot) {
-
-
-   Tensor<float> A("A");
-   Tensor<float> B("B", {16}, Format{Dense});
-   Tensor<float> C("C", {16}, Format{Dense});
-
-   Tensor<float> expected("expected");
-   TensorVar accelWorkspace((Type(taco::Float32)));
-
-   IndexVar i("i");
-   IndexVar iw("iw");
-
-   for (int i = 0; i < 16; i++) {
-      C.insert({i}, (float) i);
-      B.insert({i}, (float) i);
-   }
-
-   // Test1 test;
-
-   C.pack();
-   B.pack();
-
-   IndexExpr accelerateExpr = B(i) * C(i);
-   A = accelerateExpr;
-
-   IndexStmt stmt = A.getAssignment().concretize();
-   // stmt = stmt.accelerate(new Sdsdot(), accelerateExpr, i, iw, accelWorkspace);
-// 
-   // IndexExpr accelerateExpr = B(i) + C(i);
-   // A(i) = accelerateExpr;
-
-   // IndexStmt stmt = A.getAssignment().concretize();
-
-   // ASSERT_THROW(stmt.accelerate(new Test1(), accelerateExpr, i, iw, accelWorkspace), taco::TacoException);
-
-}
 
 TEST(interface, endToEndSdot) {
 
@@ -361,7 +323,7 @@ TEST(interface, endToEndSdot) {
 
 }
 
-TEST(interface, endToEndUserDefinedDummy) {
+TEST(DISABLED_interface, endToEndUserDefinedDummy) {
 
    // actual computation
    Tensor<float> A("A", {16, 16}, Format{Dense, Dense});
@@ -403,4 +365,43 @@ TEST(interface, endToEndUserDefinedErrorDummy) {
 
    ASSERT_THROW(A.compile(stmt), taco::TacoException);
 
+}
+
+TEST(interface, tiledSaxpyInterface) {
+
+
+   Tensor<float> A("A", {16}, Format{Dense}, 0);
+   Tensor<float> B("B", {16}, Format{Dense});
+   Tensor<float> C("C", {16}, Format{Dense});
+   Tensor<float> expected("expected", {16}, Format{Dense});
+   TensorVar accelWorkspace("accelWorkspace", Type(taco::Float32, {16}), taco::dense);
+   IndexVar i("i");
+   IndexVar iw("iw");
+
+   for (int i = 0; i < 16; i++) {
+      C.insert({i}, (float) i);
+      B.insert({i}, (float) i);
+   }
+
+   C.pack();
+   B.pack();
+
+   IndexExpr accelerateExpr = B(i) + C(i);
+   A(i) = accelerateExpr;
+
+   IndexStmt stmt = A.getAssignment().concretize();
+   stmt = stmt.accelerate(new TileSaxpy(), accelerateExpr);
+
+   taco_uerror << stmt << endl;
+
+   A.compile(stmt);
+   A.assemble();
+   A.compute();
+
+   expected(i) = accelerateExpr;
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+   ASSERT_TENSOR_EQ(expected, A);
 }

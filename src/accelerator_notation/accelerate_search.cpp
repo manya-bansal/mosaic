@@ -157,7 +157,8 @@ bool hasOpMatch(IndexExpr e1, AcceleratorExpr e2){
 }
 
 /// Checks whether e1 is a precise match for e2
-/// this is not a symmetric relation! 
+/// this does not check whether the dimesnions match
+/// that matching can be forced using a tiling op!
 ArgumentMap hasPreciseMatch(IndexExpr e1, AcceleratorExpr e2){
 
     std::cout << e2 << std::endl;
@@ -229,24 +230,22 @@ ArgumentMap hasPreciseMatch(IndexExpr e1, AcceleratorExpr e2){
                         return  ArgumentMap(false);
                     }   
 
-                    int order = node1->tensorVar.getType().getOrder();
-                    Shape shape1  = node1->tensorVar.getType().getShape();
-                    Shape shape2  = node2->tensorObject.getType().getShape();
+                    // int order = node1->tensorVar.getType().getOrder();
+                    // Shape shape1  = node1->tensorVar.getType().getShape();
+                    // Shape shape2  = node2->tensorObject.getType().getShape();
 
-                    // this is what makes this check non-symmetric
-                    // if e2 has dynamic dimension, but e1 has fixed dimension, 
-                    // then we retrun true, but not vice-a-versa
-                    for (int i = 0; i<order; i++){
-                        if (shape2.getDimension(i).isVariable()){
-                            continue;
-                        }
-                        // if it is fixed, then we need exact match
-                        if (shape2.getDimension(i).isFixed()){
-                            if (shape1.getDimension(i).getSize() != shape2.getDimension(i).getSize()){
-                                return false;
-                            }
-                        }
-                    }
+
+                    // for (int i = 0; i<order; i++){
+                    //     if (shape2.getDimension(i).isVariable()){
+                    //         continue;
+                    //     }
+                    //     // if it is fixed, then we need exact match
+                    //     if (shape2.getDimension(i).isFixed()){
+                    //         if (shape1.getDimension(i).getSize() != shape2.getDimension(i).getSize()){
+                    //             return false;
+                    //         }
+                    //     }
+                    // }
 
                     if (!node1->tensorVar.hasProperties(node2->tensorObject.getProperties())){
                          return false;

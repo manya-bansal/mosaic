@@ -24,11 +24,16 @@ class TestInterface : public AbstractFunctionInterface{
                                                 taco::TransferLoad load2("test2", "int");
                                                 return 
                                                 {
-                                                    new DimArg(i), 
+                                                    new DimArg(i),
                                                     load1(load2(Dim(i)), x, y)
-                                                };}
+                                                }; }
+
         std::string getReturnType() const override {return "void";}
         std::string getFunctionName() const override {return "tblis_init_tensor_d";}
+        std::vector<Argument>  callBefore() const override {
+                                taco::TransferLoad call("callBefore", "void");
+                                return { call(x, y) };
+                            }
 
     private: 
         TensorObject x;
@@ -52,11 +57,10 @@ class TestInterfaceIncorrect : public AbstractFunctionInterface{
         AcceleratorStmt getStmt() const override {return z(i, k) = x(i, j) * y(j, k);}
         std::vector<Argument> getArguments() const override {
                                                 taco::TransferLoad load("test", "void");
-                                                return 
-                                                {
+                                                return {
                                                     new DimArg(i), 
-                                                    load(Dim(i), x, y)
-                                                };}
+                                                    load(Dim(i), x, y)};
+                                            }
         std::string getReturnType() const override {return "void";}
         std::string getFunctionName() const override {return "tblis_init_tensor_d";}
 

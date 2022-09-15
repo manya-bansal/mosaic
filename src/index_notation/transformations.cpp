@@ -737,6 +737,11 @@ IndexStmt AccelerateExpr::apply(IndexStmt stmt, std::string* reason) const {
       return returnStmt;
     }
 
+    // IndexStmt tileTensors(Assigment consumer, Assignment producer){
+
+    //   return producer;
+    // }
+
     bool containsIndexVarScheduled(vector<IndexVar> indexVars,
                                  IndexVar indexVar) {
       bool contains = false;
@@ -827,11 +832,11 @@ IndexStmt AccelerateExpr::apply(IndexStmt stmt, std::string* reason) const {
             }
           }
 
+          // IndexStmt producer = tileTensors(consumerAssignment, producerAssignment);
+
+          cout << producerAssignment << endl;
           IndexStmt consumer = generateForalls(consumerAssignment, consumerForallIndexVars);
-
-          IndexStmt producer = generateForalls(producerAssignment, producerForallIndexVars);
-          Accelerate accel(consumer, producer, accelGen);
-
+          Accelerate accel(consumer, producerAssignment, accelGen);
           stmt = generateForalls(accel, outerForallIndexVars);
           return;
         }

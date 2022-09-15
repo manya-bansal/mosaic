@@ -39,7 +39,6 @@ class Argument : public util::IntrusivePtr<const TransferTypeArgs> {
 
     ArgType getArgType() const;
 
-    
 };
 
 //We need to types of args: args that we provide to the user
@@ -160,7 +159,7 @@ std::ostream& operator<<(std::ostream&, const TransferWithArgs&);
 inline void addArg(std::vector<Argument>& argument, const TensorVar& t) { argument.push_back(new TensorVarArg(t)); }
 inline void addArg(std::vector<Argument>& argument, const TensorObject& t) { argument.push_back(new TensorObjectArg(t)); }
 inline void addArg(std::vector<Argument>& argument, const Argument&  arg) { argument.push_back(arg); }
-inline void addArg(std::vector<Argument>& argument, TransferWithArgs * arg) { argument.push_back(arg); }
+inline void addArg(std::vector<Argument>& argument, TransferWithArgs arg) { argument.push_back(new TransferWithArgs(arg.getName(), arg.getReturnType(), arg.getArgs())); }
 inline void addArg(std::vector<Argument>& argument, const Dim& dim) { argument.push_back(new DimArg(dim)); }
 inline void addArg(std::vector<Argument>& argument, const int32_t& integer) { argument.push_back(new LiteralArg(Datatype(UInt32), integer)); }
 
@@ -191,7 +190,7 @@ class TransferLoad{
     Argument operator()(FirstT first, Args...remaining){
       std::vector<Argument> argument;
       addArg(argument, first, remaining...);
-      return  new TransferWithArgs(name, returnType, argument); 
+      return new TransferWithArgs(name, returnType, argument); 
     }
 
   private:
@@ -217,7 +216,7 @@ class TransferStore{
     Argument operator()(FirstT first, Args...remaining){
       std::vector<Argument> argument;
       addArg(argument, first, remaining...);
-      return  new TransferWithArgs(name, returnType, argument);
+      return new TransferWithArgs(name, returnType, argument);
     }
 
   private:
@@ -397,10 +396,10 @@ struct AbstractFunctionInterface :  public util::Manageable<AbstractFunctionInte
 
     /// call any functions before main function (useful to call "void"
     /// functions)
-    virtual std::vector<FunctionInterface> callBefore() const {return {};}
+    virtual std::vector<Argument> callBefore() const {return {};}
 
     /// call any functions after main function (useful for error checking)
-    virtual std::vector<FunctionInterface> callAfter() const {return {};}
+    virtual std::vector<Argument> callAfter() const {return {};}
     virtual bool checkerFunction(IndexStmt stmt) const {return true;}
     
 
