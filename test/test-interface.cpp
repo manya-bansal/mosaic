@@ -391,7 +391,7 @@ TEST(interface, tiledSaxpyInterface) {
 
    IndexStmt stmt = A.getAssignment().concretize();
    stmt = stmt.accelerate(new TileSaxpy(), accelerateExpr);
-   // taco_uerror << stmt << endl;
+
    A.compile(stmt);
    A.assemble();
    A.compute();
@@ -402,4 +402,57 @@ TEST(interface, tiledSaxpyInterface) {
    expected.compute();
 
    ASSERT_TENSOR_EQ(expected, A);
+}
+
+
+TEST(interface, sampleSplitExample) {
+
+
+   Tensor<float> A("A", {16}, Format{Dense}, 0);
+   Tensor<float> B("B", {16}, Format{Dense});
+   Tensor<float> C("C", {16}, Format{Dense});
+   Tensor<float> expected("expected", {16}, Format{Dense});
+   TensorVar accelWorkspace("accelWorkspace", Type(taco::Float32, {16}), taco::dense);
+   IndexVar i("i");
+   IndexVar iw("iw");
+
+   for (int i = 0; i < 16; i++) {
+      C.insert({i}, (float) i);
+      B.insert({i}, (float) i);
+   }
+
+   C.pack();
+   B.pack();
+
+   IndexExpr accelerateExpr = B(i) + C(i);
+   A(i) = accelerateExpr;
+
+   IndexStmt stmt = A.getAssignment().concretize();
+   stmt = stmt.split(i, IndexVar(), IndexVar(), 4);
+   // taco_uerror << stmt << endl;
+   A.compile(stmt);
+   A.assemble();
+   A.compute();
+}
+
+TEST(interface, sampleMatrixMultiplyExample) {
+
+
+   Tensor<float> A("A", {16, 16}, Format{Dense, Dense}, 0);
+   Tensor<float> B("B", {16, 16}, Format{Dense, Dense});
+   Tensor<float> C("C", {16, 16}, Format{Dense, Dense});
+   Tensor<float> expected("expected", {16}, Format{Dense});
+
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar k("k");
+
+   A(i, k) = B(i, j) * C(j, k);
+
+   IndexStmt stmt = A.getAssignment().concretize();
+   stmt = stmt.split(j, IndexVar(), IndexVar(), 4);
+   // taco_uerror << stmt << endl;
+   A.compile(stmt);
+   A.assemble();
+   A.compute();
 }

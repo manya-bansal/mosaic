@@ -2284,7 +2284,8 @@ IndexStmt IndexStmt::splitWithoutSuchThat(IndexVar i, IndexVar i1, IndexVar i2, 
   IndexVarRel rel = IndexVarRel(new SplitRelNode(i, i1, i2, splitFactor));
   string reason;
   // Replace all occurrences of i with nested i1, i2
-  IndexStmt transformed = Transformation(ForAllReplace({i}, {i1, i2})).apply(*this, &reason);
+  IndexStmt transformed = Transformation(AddSuchThatPredicates({rel})).apply(*this, &reason);
+  transformed = Transformation(ForAllReplace({i}, {i1, i2})).apply(*this, &reason);
   if (!transformed.defined()) {
     taco_uerror << reason;
   }
@@ -3806,13 +3807,15 @@ static IndexStmt rewriteStmt(IndexStmt stmtRewrite, Access workspace, ConcreteAc
     cout << util::join(argumentMap.indexVars) << endl;
     cout << "Precompute map " << util::join(precomputeMap) << endl;
 
+    std::map<IndexVar, size_t> toSplit;
 
     for (auto iv: argumentMap.indexVars){
       if (!pluginDim.at(iv.first).isVariable() && pluginDim.at(iv.first) !=  exprDim.at(iv.second)){
         if (pluginDim.at(iv.first).getSize() < exprDim.at(iv.second).getSize()){
-          taco_uerror << "broken" << endl;
+          taco_uerror << "Broken" << endl;
           producer = forall(precomputeMap[iv.second], producer);
-          producer = producer.splitWithoutSuchThat(precomputeMap[iv.second], IndexVar(), IndexVar(), pluginDim.at(iv.first).getSize());
+          toSplit[precomputeMap[iv.second]] = pluginDim.at(iv.first).getSize();
+          // producer = producer.splitWithoutSuchThat(precomputeMap[iv.second], IndexVar(), IndexVar(), pluginDim.at(iv.first).getSize());
         }
         else{
           cout << "Size dont match and tiling is not possible" << endl;
@@ -3828,6 +3831,10 @@ static IndexStmt rewriteStmt(IndexStmt stmtRewrite, Access workspace, ConcreteAc
     IndexStmt accelStmt = static_cast<IndexStmt>(accel);
 
     stmtRewrite = replace(stmtRewrite, {{forall, accelStmt}}); 
+
+    for (auto tiling: toSplit){
+      stmtRewrite = stmtRewrite.split(tiling.first, IndexVar(), IndexVar(), tiling.second);
+    }
  }
   return stmtRewrite;
 }
