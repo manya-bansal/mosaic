@@ -257,6 +257,13 @@ Expr Var::make(std::string name, Datatype type,
   return var;
 }
 
+Expr CustomObject::make(std::string name){
+  CustomObject *customObject = new CustomObject;
+  customObject->name = name;
+  return customObject;
+}
+
+
 Expr Neg::make(Expr a) {
   Neg *neg = new Neg;
   neg->a = a;
@@ -866,6 +873,14 @@ Stmt VoidCall::make(std::string functionName,std::vector<Expr> args) {
   return voidCall;
 }
 
+
+Stmt DeclObject::make(std::string name, std::string typeString) {
+  DeclObject* declObject = new DeclObject;
+  declObject->name = name;
+  declObject->typeString = typeString;
+  return declObject;
+}
+
 // GetProperty
 Expr GetProperty::make(Expr tensor, TensorProperty property, int mode) {
   GetProperty* gp = new GetProperty;
@@ -918,6 +933,8 @@ template<> void ExprNode<Literal>::accept(IRVisitorStrict *v)
     const { v->visit((const Literal*)this); }
 template<> void ExprNode<Var>::accept(IRVisitorStrict *v) 
     const { v->visit((const Var*)this); }
+template<> void ExprNode<CustomObject>::accept(IRVisitorStrict *v) 
+    const { v->visit((const CustomObject*)this); }
 template<> void ExprNode<Neg>::accept(IRVisitorStrict *v)
     const { v->visit((const Neg*)this); }
 template<> void ExprNode<Sqrt>::accept(IRVisitorStrict *v)
@@ -1012,6 +1029,8 @@ template<> void StmtNode<Break>::accept(IRVisitorStrict *v)
   const { v->visit((const Break*)this); }
 template<> void StmtNode<VoidCall>::accept(IRVisitorStrict *v)
   const { v->visit((const VoidCall*)this); }
+template<> void StmtNode<DeclObject>::accept(IRVisitorStrict *v)
+  const { v->visit((const DeclObject*)this); }
 
 // printing methods
 std::ostream& operator<<(std::ostream& os, const Stmt& stmt) {

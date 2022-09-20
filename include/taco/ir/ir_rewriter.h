@@ -25,6 +25,7 @@ protected:
   using IRVisitorStrict::visit;
   virtual void visit(const Literal* op);
   virtual void visit(const Var* op);
+  virtual void visit(const CustomObject* op);
   virtual void visit(const Neg* op);
   virtual void visit(const Sqrt* op);
   virtual void visit(const Add* op);
@@ -72,6 +73,7 @@ protected:
   virtual void visit(const Sort *op);
   virtual void visit(const Break *op);
   virtual void visit(const VoidCall *op);
+  virtual void visit(const DeclObject *op);
 };
 
 }}

@@ -2720,7 +2720,7 @@ vector<Stmt> LowererImplImperative::codeToInitializeTemporary(Accelerate acceler
   return {initializeTemporary, freeTemporary};
 }
 
-ir::Expr LowererImplImperative::lowerArgument(Argument argument, TensorVar resultVar, TensorVar temporary, bool replace){
+ir::Expr LowererImplImperative::lowerArgument(Argument argument, TensorVar resultVar, TensorVar temporary, std::vector<DeclVarArg>& varsToDeclare, bool replace){
 
     switch(argument.getArgType()){
       case DIM:
@@ -2778,92 +2778,27 @@ ir::Expr LowererImplImperative::lowerArgument(Argument argument, TensorVar resul
         }
         
         for (auto args: t->getArgs()){
-          userDefArgs.push_back(lowerArgument(args, resultVar, temporary, true));
+          userDefArgs.push_back(lowerArgument(args, resultVar, temporary, varsToDeclare, true));
+        }
+        return ir::Call::make(t->getName(), userDefArgs);
+      }
+      case DECLVAR :
+      {
+        auto t = argument.getNode<DeclVarArg>();
+
+        if (!declaredVars.count(t->var.getName())){
+          declaredVars.insert(t->var.getName());
+          varsToDeclare.push_back(*t);
         }
 
-        return ir::Call::make(t->getName(), userDefArgs);
+        return CustomObject::make(t->var.getName());
+
       }
       default:
         taco_uerror << "Should not reach" << endl;
     }
   return Expr();
 }
-
-Stmt LowererImplImperative::makeAcceleratedProducer(Accelerate accelerate){
-  // first check whether the rhs contains the rhs
-  // if it does, we know that the ffi is setting
-  // its values by reference as oppoosed to returning a new 
-  // object
-  ConcreteAccelerateCodeGenerator accelGen = accelerate.getAccelGen();
-
-  TensorVar resultVar;
-  match((accelGen.getLHS()),
-      // should only be one var on the lhs
-      std::function<void(const AccessNode*)>([&](const AccessNode* op) {
-            resultVar = op->tensorVar;
-        })
-  );
-
-  bool setResultByRef = false;
-  match((accelGen.getRHS()),
-      std::function<void(const AccessNode*)>([&](const AccessNode* op) {
-            if (resultVar == op->tensorVar){
-              setResultByRef = true;
-            }
-        })
-  );
-
-  //if it is setting by reference copy in the 
-  //value of the result var into teh temp var
-  //the result will aotomatically be stored in the
-  //temp var
-  TensorVar temporary = accelerate.getTemporary();
-
-  Stmt copyTemp;
-  if(setResultByRef){
-
-    // std::map<TensorVar, ir::Expr> newTensorVars;
-    std::vector<IndexVar> newIndices;
-    std::vector<IndexVar> newPrecomputeIndices;
-    for (int i = 0; i < resultVar.getOrder(); i++){
-      newIndices.push_back(IndexVar());
-      newPrecomputeIndices.push_back(IndexVar());
-     
-    }
-
-    Access resultAccess(resultVar, newIndices);
-    IndexStmt newAssign = IndexStmt(new AssignmentNode(resultAccess, resultAccess, IndexExpr())).concretize();
-    newAssign = newAssign.precompute(resultAccess, newIndices, newPrecomputeIndices, temporary);
-
-    LowererImplImperative newLower;
-    newLower.lower(newAssign, "assemble", true, true, false, false);
-    copyTemp = newLower.getProducerCode();
-  
-  }
-
-  //now we need to make the ffi call 
-  std::vector<Argument> arguments = accelGen.getArguments();
-  std::vector<Expr> loweredArguments;
-
-  for (auto argument: arguments){
-      loweredArguments.push_back(lowerArgument(argument, resultVar, temporary, true));
-  }
-
-  Stmt functionCall; 
-  if (accelGen.getReturnType() == "void"){
-    // if return value is not set by reference
-    // then we have no idea how it is being set
-    assert(setResultByRef == true);
-    functionCall = VoidCall::make(accelGen.getFunctionName(), loweredArguments);
-  }else{
-      functionCall = Assign::make(tensorVars[temporary], ir::Call::make(accelGen.getFunctionName(), loweredArguments));
-  }
-
-  //TODO: Emit code to check for error code
-  
-  return Block::make({copyTemp, functionCall});
-}
-
 
 Stmt LowererImplImperative::lowerInterface(InterfaceCall interface){
     // first check whether the rhs contains the rhs
@@ -2894,9 +2829,10 @@ Stmt LowererImplImperative::lowerInterface(InterfaceCall interface){
   std::vector<Expr> loweredArguments;
 
   TensorVar temporary = interface.getTemporary();
+   std::vector<DeclVarArg> varsToDeclare;
 
   for (auto argument: arguments){
-      loweredArguments.push_back(lowerArgument(argument, resultVar, temporary, true));
+      loweredArguments.push_back(lowerArgument(argument, resultVar, temporary, varsToDeclare, true));
   }
 
   Stmt functionCall; 
@@ -2909,9 +2845,16 @@ Stmt LowererImplImperative::lowerInterface(InterfaceCall interface){
       functionCall = Assign::make(tensorVars[temporary], ir::Call::make(accelGen.getFunctionName(), loweredArguments));
   }
 
-  //TODO: Emit code to check for error code
+
+  std::vector<Stmt> loweredCode;
+
+  for (auto a: varsToDeclare){
+    loweredCode.push_back(DeclObject::make(a.var.getName(), a.var.getTypeString()));
+  }
+
+  loweredCode.push_back(functionCall);
   
-  return Block::make({functionCall});
+  return Block::make(loweredCode);
 }
 
 Stmt LowererImplImperative::lowerAccelerate(Accelerate accelerate) {

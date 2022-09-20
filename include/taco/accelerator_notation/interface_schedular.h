@@ -10,10 +10,10 @@ class Pile {
     public:
         Pile(const taco::AcceleratorStmt& targetStmt) : targetStmt(targetStmt) {}
         taco::AcceleratorStmt getTargetStmt() const { return targetStmt; }
-
+       std::vector<taco::FunctionInterface> getFunctionInterface() const {return functionInterfaces; }
     private:
         taco::AcceleratorStmt targetStmt;
-    // std::vector<Target> targets;
+        std::vector<taco::FunctionInterface> functionInterfaces;
 
 
 };

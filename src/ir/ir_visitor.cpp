@@ -20,6 +20,9 @@ void IRVisitor::visit(const Literal*) {
 void IRVisitor::visit(const Var*) {
 }
 
+void IRVisitor::visit(const CustomObject*) {
+}
+
 void IRVisitor::visit(const Neg* op) {
   op->a.accept(this);
 }
@@ -242,6 +245,9 @@ void IRVisitor::visit(const Break*) {
 void IRVisitor::visit(const VoidCall* op) {
    for (auto e: op->args)
     e.accept(this);
+}
+
+void IRVisitor::visit(const DeclObject*) {
 }
 
 void IRVisitor::visit(const Print* op) {

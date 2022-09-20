@@ -18,7 +18,7 @@ template <typename CType>
 class Tensor;
 
 
-enum ArgType {DIM, TENSORVAR, TENSOR_OBJECT, TENSOR, EXPR, LITERAL, USER_DEFINED, UNKNOWN};
+enum ArgType {DIM, TENSORVAR, TENSOR_OBJECT, TENSOR, EXPR, LITERAL, USER_DEFINED, DECLVAR, UNKNOWN};
 
 // QUESTION: do we need different functions for runtime versus compile time 
 // conversions (are there good cases for compile time conversions?)
@@ -99,6 +99,26 @@ struct DimArg : public TransferTypeArgs{
     IndexVar indexVar;
 };
 
+struct  DeclVar {
+  public:
+    DeclVar(const std::string& typeString, const std::string& name) : typeString(typeString), name(name) {}
+    explicit DeclVar(const std::string& typeString) : DeclVar(typeString, util::uniqueName('v')) {} 
+    
+    std::string getTypeString() const {return typeString;}
+    std::string getName() const {return name;}
+  private:
+    std::string typeString;
+    std::string name;
+
+};
+
+struct DeclVarArg : public TransferTypeArgs {
+
+  explicit DeclVarArg(const DeclVar& var): TransferTypeArgs(DECLVAR), var(var) {}
+  DeclVar var; 
+
+};
+
 struct TensorArg : public TransferTypeArgs{
     template <typename CType>
     explicit TensorArg(const Tensor<CType>& tensor) : 
@@ -162,6 +182,7 @@ inline void addArg(std::vector<Argument>& argument, const Argument&  arg) { argu
 inline void addArg(std::vector<Argument>& argument, TransferWithArgs arg) { argument.push_back(new TransferWithArgs(arg.getName(), arg.getReturnType(), arg.getArgs())); }
 inline void addArg(std::vector<Argument>& argument, const Dim& dim) { argument.push_back(new DimArg(dim)); }
 inline void addArg(std::vector<Argument>& argument, const int32_t& integer) { argument.push_back(new LiteralArg(Datatype(UInt32), integer)); }
+inline void addArg(std::vector<Argument>& argument, const DeclVar& var) { argument.push_back(new DeclVarArg(var)); }
 
 template <typename CType>
 inline void addArg(std::vector<Argument>& argument, const Tensor<CType>& t) { argument.push_back(new TensorArg(t)); }
@@ -233,17 +254,6 @@ class TransferType{
     std::shared_ptr<Content> content;
 
 };
-
-
-class Declvar {
-  public:
-    Declvar(const std::string& typeString) :  typeString(typeString) {}
-    std::string getTypeString() {return typeString;}
-  private:
-    std::string typeString;
-
-};
-
 
 
 class ForeignFunctionDescription {
@@ -327,13 +337,11 @@ class ConcreteAccelerateCodeGenerator {
     // dont pass in any legal IndexExpr
     ConcreteAccelerateCodeGenerator() = default;
 
-    ConcreteAccelerateCodeGenerator(const std::string& functionName, const std::string& returnType, const taco::IndexExpr& lhs, const taco::IndexExpr& rhs, const std::vector<Argument>& args, 
-                                    const std::vector<taco::Declvar>& declarations)
-                                    : functionName(functionName), returnType(returnType), lhs(lhs), rhs(rhs), args(args), declarations(declarations) {}
+    ConcreteAccelerateCodeGenerator(const std::string& functionName, const std::string& returnType, const taco::IndexExpr& lhs, const taco::IndexExpr& rhs, const std::vector<Argument>& args)
+                                    : functionName(functionName), returnType(returnType), lhs(lhs), rhs(rhs), args(args) {}
 
-    ConcreteAccelerateCodeGenerator(const std::string& functionName, const std::string& returnType, taco::IndexExpr lhs, taco::IndexExpr rhs,
-                                    const std::vector<taco::Declvar>& declarations)
-                                    : functionName(functionName), returnType(returnType), lhs(lhs), rhs(rhs), declarations(declarations) {}
+    ConcreteAccelerateCodeGenerator(const std::string& functionName, const std::string& returnType, taco::IndexExpr lhs, taco::IndexExpr rhs)
+                                    : functionName(functionName), returnType(returnType), lhs(lhs), rhs(rhs) {}
   
     taco::IndexExpr getExpr() const     {return rhs;};
     taco::IndexExpr getLHS() const      {return lhs;};
@@ -341,20 +349,19 @@ class ConcreteAccelerateCodeGenerator {
     std::vector<Argument> getArguments() const {return args;};
     std::string getReturnType() const   {return returnType;};
     std::string getFunctionName() const {return functionName;};
-    std::vector<Declvar> getVarDecelerations() const {return declarations;};
 
     template <typename Exprs> 
     ConcreteAccelerateCodeGenerator operator()(Exprs expr)
     {  std::vector<Argument> argument;
       addArg(argument, expr);
-      return ConcreteAccelerateCodeGenerator(functionName, returnType, lhs, rhs, argument, declarations);
+      return ConcreteAccelerateCodeGenerator(functionName, returnType, lhs, rhs, argument);
     }
 
     template <typename FirstT, typename ...Args>
     ConcreteAccelerateCodeGenerator operator()(FirstT first, Args...remaining){
         std::vector<Argument> argument;
         addArg(argument, first, remaining...);
-        return ConcreteAccelerateCodeGenerator(functionName, returnType, lhs, rhs, argument, declarations);
+        return ConcreteAccelerateCodeGenerator(functionName, returnType, lhs, rhs, argument);
     }
 
     // ConcreteAccelerateCodeGenerator& operator=(const ConcreteAccelerateCodeGenerator& concreteAccelerateCodeGenerator);
@@ -366,7 +373,6 @@ class ConcreteAccelerateCodeGenerator {
       taco::IndexExpr lhs;
       taco::IndexExpr rhs;
       std::vector<Argument> args;
-      std::vector<Declvar> declarations;
 
 };
 
@@ -392,7 +398,7 @@ struct AbstractFunctionInterface :  public util::Manageable<AbstractFunctionInte
     virtual std::vector<Argument> getArguments() const= 0;
     virtual std::string getReturnType()   const = 0;
     virtual std::string getFunctionName() const = 0;
-    virtual std::vector<Declvar> getDecelerations() const {return {};}
+    // virtual std::vector<DeclVar> getDecelerations() const {return {};}
 
     /// call any functions before main function (useful to call "void"
     /// functions)

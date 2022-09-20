@@ -451,6 +451,7 @@ private:
 
 std::ostream& operator<<(std::ostream&, const TensorObject&);
 
+
 }
 
 #endif 

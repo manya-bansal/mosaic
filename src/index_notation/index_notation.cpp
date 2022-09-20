@@ -3867,6 +3867,9 @@ static std::vector<Argument> getConcreteArgs(const std::vector<Argument>& abstra
       newArgs.push_back(new TransferWithArgs(arg.getNode<TransferWithArgs>()->getName(), arg.getNode<TransferWithArgs>()->getReturnType(), userDefinedArgs));
       break;
     }
+    case DECLVAR:
+      newArgs.push_back(arg);
+      break;
     default:
       cout << arg.getArgType() << endl;
       taco_uerror << "Unimplemented" << endl;
@@ -3905,7 +3908,7 @@ static ConcreteAccelerateCodeGenerator getConcreteCodeGenerator(IndexExpr expr, 
     e = workspace;
   }
 
-  ConcreteAccelerateCodeGenerator concreteCodeGen = ConcreteAccelerateCodeGenerator( functionInterface.getNode()->getFunctionName(),  functionInterface.getNode()->getReturnType(), e, expr, newArgs, functionInterface.getNode()->getDecelerations());
+  ConcreteAccelerateCodeGenerator concreteCodeGen = ConcreteAccelerateCodeGenerator( functionInterface.getNode()->getFunctionName(),  functionInterface.getNode()->getReturnType(), e, expr, newArgs);
 
   return concreteCodeGen;
 }

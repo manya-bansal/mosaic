@@ -70,6 +70,10 @@ void IRRewriter::visit(const Var* op) {
   expr = op;
 }
 
+void IRRewriter::visit(const CustomObject* op) {
+  expr = op;
+}
+
 void IRRewriter::visit(const Neg* op) {
   expr = visitUnaryOp(op, this);
 }
@@ -462,6 +466,10 @@ void IRRewriter::visit(const Continue* op) {
 }
 
 void IRRewriter::visit(const Break* op) {
+  stmt = op;
+}
+
+void IRRewriter::visit(const DeclObject* op) {
   stmt = op;
 }
 

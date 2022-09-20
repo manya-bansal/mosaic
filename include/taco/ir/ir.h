@@ -69,7 +69,9 @@ enum class IRNodeType {
   Continue,
   Sort,
   Break,
-  VoidCall
+  VoidCall,
+  DeclObject,
+  CustomObject
 };
 
 enum class TensorProperty {
@@ -273,6 +275,13 @@ struct Var : public ExprNode<Var> {
                    bool is_tensor=false, bool is_parameter=false);
 
   static const IRNodeType _type_info = IRNodeType::Var;
+};
+
+struct CustomObject : public ExprNode<Var> {
+  std::string name;
+  static Expr make(std::string name);
+
+  static const IRNodeType _type_info = IRNodeType::CustomObject;
 };
 
 
@@ -771,6 +780,17 @@ struct VoidCall : public StmtNode<VoidCall> {
 
   static const IRNodeType _type_info = IRNodeType::VoidCall;
 };
+
+struct DeclObject : public StmtNode<DeclObject> {
+
+  std::string name;
+  std::string typeString;
+  
+  static Stmt make(std::string name, std::string typeString);
+
+  static const IRNodeType _type_info = IRNodeType::DeclObject;
+};
+
 
 struct Sort : public StmtNode<Sort> {
   std::vector<Expr> args;

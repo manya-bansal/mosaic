@@ -134,6 +134,10 @@ void IRPrinter::visit(const Var* op) {
   }
 }
 
+void IRPrinter::visit(const CustomObject* op) {
+  stream << op->name;
+}
+
 void IRPrinter::visit(const Neg* op) {
   if(op->type.isBool()) {
     stream << "!";
@@ -585,6 +589,11 @@ void IRPrinter::visit(const VoidCall* op) {
   parentPrecedence = Precedence::CALL;
   acceptJoin(this, stream, op->args, ", ");
   stream << ");";
+  stream << endl;
+}
+
+void IRPrinter::visit(const DeclObject* op) {
+  stream << op->typeString << " " << op->name << ";";
   stream << endl;
 }
 

@@ -275,10 +275,8 @@ protected:
   /// Retrieve the values array of the tensor var.
   ir::Expr getValuesArray(TensorVar) const;
 
-  ir::Stmt makeAcceleratedProducer(Accelerate accelerate);
-
   /// lowerArgs for ffi
-  ir::Expr lowerArgument(Argument argument, TensorVar resulltVar, TensorVar temporary, bool replace=false);
+  ir::Expr lowerArgument(Argument argument, TensorVar resulltVar, TensorVar temporary, std::vector<DeclVarArg>& varsToDeclare, bool replace);
 
   /// Retrieve the dimension of an index variable (the values it iterates over),
   /// which is encoded as the interval [0, result).
@@ -554,6 +552,8 @@ private:
 
   /// Map from tensor variables in index notation to variables in the IR
   std::map<TensorVar, ir::Expr> tensorVars;
+
+  std::set<std::string> declaredVars;
 
   struct TemporaryArrays {
     ir::Expr values;
