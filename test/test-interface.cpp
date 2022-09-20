@@ -324,7 +324,7 @@ TEST(interface, endToEndUserDefinedErrorDummy) {
 
 }
 
-TEST(interface, tiledSaxpyInterface) {
+TEST(DISABLED_interface, tiledSaxpyInterface) {
 
 
    Tensor<float> A("A", {16}, Format{Dense}, 0);

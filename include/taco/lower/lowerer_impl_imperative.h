@@ -277,6 +277,7 @@ protected:
 
   /// lowerArgs for ffi
   ir::Expr lowerArgument(Argument argument, TensorVar resulltVar, TensorVar temporary, std::vector<DeclVarArg>& varsToDeclare, bool replace);
+  ir::Stmt prepareFunctionCall(ConcreteAccelerateCodeGenerator accelGen, TensorVar resultVar, TensorVar temp, std::vector<DeclVarArg>& varsToDeclare);
 
   /// Retrieve the dimension of an index variable (the values it iterates over),
   /// which is encoded as the interval [0, result).

@@ -2800,6 +2800,30 @@ ir::Expr LowererImplImperative::lowerArgument(Argument argument, TensorVar resul
   return Expr();
 }
 
+Stmt LowererImplImperative::prepareFunctionCall(ConcreteAccelerateCodeGenerator accelGen, TensorVar resultVar, TensorVar temp, std::vector<DeclVarArg>& varsToDeclare){
+
+
+  std::vector<Argument> arguments = accelGen.getArguments();
+  std::vector<Expr> loweredArguments;
+
+  for (auto argument: arguments){
+      loweredArguments.push_back(lowerArgument(argument, resultVar, temp, varsToDeclare, true));
+  }
+
+  Stmt functionCall; 
+  if (accelGen.getReturnType() == "void"){
+    // if return value is not set by reference
+    // then we have no idea how it is being set
+    // assert(setResultByRef == true);
+    functionCall = VoidCall::make(accelGen.getFunctionName(), loweredArguments);
+  }else{
+      functionCall = Assign::make(tensorVars[temp], ir::Call::make(accelGen.getFunctionName(), loweredArguments));
+  }
+
+  return functionCall;
+
+}
+
 Stmt LowererImplImperative::lowerInterface(InterfaceCall interface){
     // first check whether the rhs contains the rhs
   // if it does, we know that the ffi is setting
@@ -2829,22 +2853,11 @@ Stmt LowererImplImperative::lowerInterface(InterfaceCall interface){
   std::vector<Expr> loweredArguments;
 
   TensorVar temporary = interface.getTemporary();
-   std::vector<DeclVarArg> varsToDeclare;
+  std::vector<DeclVarArg> varsToDeclare;
+  std::vector<Stmt> functionCalls;
 
-  for (auto argument: arguments){
-      loweredArguments.push_back(lowerArgument(argument, resultVar, temporary, varsToDeclare, true));
-  }
-
-  Stmt functionCall; 
-  if (accelGen.getReturnType() == "void"){
-    // if return value is not set by reference
-    // then we have no idea how it is being set
-    assert(setResultByRef == true);
-    functionCall = VoidCall::make(accelGen.getFunctionName(), loweredArguments);
-  }else{
-      functionCall = Assign::make(tensorVars[temporary], ir::Call::make(accelGen.getFunctionName(), loweredArguments));
-  }
-
+  // add call before logic here
+  functionCalls.push_back(prepareFunctionCall(accelGen, resultVar, temporary, varsToDeclare));
 
   std::vector<Stmt> loweredCode;
 
@@ -2852,7 +2865,8 @@ Stmt LowererImplImperative::lowerInterface(InterfaceCall interface){
     loweredCode.push_back(DeclObject::make(a.var.getName(), a.var.getTypeString()));
   }
 
-  loweredCode.push_back(functionCall);
+  loweredCode.insert(loweredCode.end(), functionCalls.begin(), functionCalls.end());
+
   
   return Block::make(loweredCode);
 }
