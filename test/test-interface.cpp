@@ -415,7 +415,7 @@ TEST(interface, sampleMatrixMultiplyExample) {
 }
 
 
-TEST(DISABLED_interface, endToEndDeclVar) {
+TEST(interface, endToEndDeclVar) {
 
    // actual computation
    Tensor<float> A("A", {16, 16}, Format{Dense, Dense});

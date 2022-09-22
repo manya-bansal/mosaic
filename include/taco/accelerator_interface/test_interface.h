@@ -83,7 +83,8 @@ class TestInterfaceDeclVar : public AbstractFunctionInterface{
                     i(IndexVar()),
                     j(IndexVar()),
                     k(IndexVar()),
-                    var(DeclVar("custom_type", "var1")) {};
+                    var(DeclVar("custom_type", "var1")),
+                    var2(DeclVar("custom_type", "var2")) {};
 
         AcceleratorStmt getStmt() const override {return z(i, k) = x(i, j) * y(j, k);}
         std::vector<Argument> getArguments() const override {
@@ -100,7 +101,7 @@ class TestInterfaceDeclVar : public AbstractFunctionInterface{
         std::string getFunctionName() const override {return "tblis_init_tensor_d";}
         std::vector<Argument>  callBefore() const override {
                                 taco::TransferLoad call("callBefore", "void");
-                                return { call(x, y) };
+                                return { call(x, y, var, var2) };
                             }
 
     private: 
@@ -111,6 +112,7 @@ class TestInterfaceDeclVar : public AbstractFunctionInterface{
         IndexVar j;
         IndexVar k;
         DeclVar var;
+        DeclVar var2;
 };
 
 #endif

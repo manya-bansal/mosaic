@@ -337,11 +337,12 @@ class ConcreteAccelerateCodeGenerator {
     // dont pass in any legal IndexExpr
     ConcreteAccelerateCodeGenerator() = default;
 
-    ConcreteAccelerateCodeGenerator(const std::string& functionName, const std::string& returnType, const taco::IndexExpr& lhs, const taco::IndexExpr& rhs, const std::vector<Argument>& args)
-                                    : functionName(functionName), returnType(returnType), lhs(lhs), rhs(rhs), args(args) {}
+    ConcreteAccelerateCodeGenerator(const std::string& functionName, const std::string& returnType, const taco::IndexExpr& lhs, const taco::IndexExpr& rhs, const std::vector<Argument>& args, 
+                                    const std::vector<Argument>& callBefore)
+                                    : functionName(functionName), returnType(returnType), lhs(lhs), rhs(rhs), args(args), callBefore(callBefore) {}
 
-    ConcreteAccelerateCodeGenerator(const std::string& functionName, const std::string& returnType, taco::IndexExpr lhs, taco::IndexExpr rhs)
-                                    : functionName(functionName), returnType(returnType), lhs(lhs), rhs(rhs) {}
+    ConcreteAccelerateCodeGenerator(const std::string& functionName, const std::string& returnType, taco::IndexExpr lhs, taco::IndexExpr rhs, const std::vector<Argument>& callBefore)
+                                    : functionName(functionName), returnType(returnType), lhs(lhs), rhs(rhs), callBefore(callBefore) {}
   
     taco::IndexExpr getExpr() const     {return rhs;};
     taco::IndexExpr getLHS() const      {return lhs;};
@@ -349,30 +350,30 @@ class ConcreteAccelerateCodeGenerator {
     std::vector<Argument> getArguments() const {return args;};
     std::string getReturnType() const   {return returnType;};
     std::string getFunctionName() const {return functionName;};
+    std::vector<Argument> getCallBefore() const {return callBefore;};
 
     template <typename Exprs> 
     ConcreteAccelerateCodeGenerator operator()(Exprs expr)
     {  std::vector<Argument> argument;
       addArg(argument, expr);
-      return ConcreteAccelerateCodeGenerator(functionName, returnType, lhs, rhs, argument);
+      return ConcreteAccelerateCodeGenerator(functionName, returnType, lhs, rhs, argument, callBefore);
     }
 
     template <typename FirstT, typename ...Args>
     ConcreteAccelerateCodeGenerator operator()(FirstT first, Args...remaining){
         std::vector<Argument> argument;
         addArg(argument, first, remaining...);
-        return ConcreteAccelerateCodeGenerator(functionName, returnType, lhs, rhs, argument);
+        return ConcreteAccelerateCodeGenerator(functionName, returnType, lhs, rhs, argument, callBefore);
     }
 
     // ConcreteAccelerateCodeGenerator& operator=(const ConcreteAccelerateCodeGenerator& concreteAccelerateCodeGenerator);
   private:
       std::string functionName;
       std::string returnType;
-      //there is a smal problem with using 
-      //indexStmts
       taco::IndexExpr lhs;
       taco::IndexExpr rhs;
       std::vector<Argument> args;
+      std::vector<Argument> callBefore;
 
 };
 

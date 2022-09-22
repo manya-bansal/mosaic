@@ -2800,17 +2800,51 @@ ir::Expr LowererImplImperative::lowerArgument(Argument argument, TensorVar resul
   return Expr();
 }
 
-Stmt LowererImplImperative::prepareFunctionCall(ConcreteAccelerateCodeGenerator accelGen, TensorVar resultVar, TensorVar temp, std::vector<DeclVarArg>& varsToDeclare){
+
+Stmt LowererImplImperative::prepareCallBefore(Argument argument, TensorVar resultVar, TensorVar temp, std::vector<DeclVarArg>& varsToDeclare, bool replace){
+
+  taco_uassert(argument.getArgType() == USER_DEFINED);
+  auto t = argument.getNode<TransferWithArgs>();
+
+   std::vector<Argument> arguments = t->getArgs();
+
+  std::vector<Expr> loweredArguments;
+
+  for (auto argument: arguments){
+      loweredArguments.push_back(lowerArgument(argument, resultVar, temp, varsToDeclare, replace));
+  }
+
+  Stmt functionCall; 
+  if (t->getReturnType() == "void"){
+    // if return value is not set by reference
+    // then we have no idea how it is being set
+    // assert(setResultByRef == true);
+    functionCall = VoidCall::make(t->getName(), loweredArguments);
+  }else{
+      taco_uerror << "Unimplemented";
+  }
+
+  return functionCall;
+
+}
+std::vector<Stmt> LowererImplImperative::prepareFunctionCall(ConcreteAccelerateCodeGenerator accelGen, TensorVar resultVar, TensorVar temp, std::vector<DeclVarArg>& varsToDeclare){
 
 
   std::vector<Argument> arguments = accelGen.getArguments();
   std::vector<Expr> loweredArguments;
 
+  std::vector<Stmt> functionCalls; 
+
+  for (auto callBefore: accelGen.getCallBefore()){
+    functionCalls.push_back(prepareCallBefore(callBefore, resultVar, temp, varsToDeclare, true));
+  }
+
   for (auto argument: arguments){
       loweredArguments.push_back(lowerArgument(argument, resultVar, temp, varsToDeclare, true));
   }
 
-  Stmt functionCall; 
+
+  Stmt functionCall;
   if (accelGen.getReturnType() == "void"){
     // if return value is not set by reference
     // then we have no idea how it is being set
@@ -2820,7 +2854,9 @@ Stmt LowererImplImperative::prepareFunctionCall(ConcreteAccelerateCodeGenerator 
       functionCall = Assign::make(tensorVars[temp], ir::Call::make(accelGen.getFunctionName(), loweredArguments));
   }
 
-  return functionCall;
+  functionCalls.push_back(functionCall);
+
+  return functionCalls;
 
 }
 
@@ -2854,10 +2890,7 @@ Stmt LowererImplImperative::lowerInterface(InterfaceCall interface){
 
   TensorVar temporary = interface.getTemporary();
   std::vector<DeclVarArg> varsToDeclare;
-  std::vector<Stmt> functionCalls;
-
-  // add call before logic here
-  functionCalls.push_back(prepareFunctionCall(accelGen, resultVar, temporary, varsToDeclare));
+  std::vector<Stmt> functionCalls = prepareFunctionCall(accelGen, resultVar, temporary, varsToDeclare);
 
   std::vector<Stmt> loweredCode;
 
