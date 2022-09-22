@@ -2856,6 +2856,10 @@ std::vector<Stmt> LowererImplImperative::prepareFunctionCall(ConcreteAccelerateC
 
   functionCalls.push_back(functionCall);
 
+  for (auto callAfter: accelGen.getCallAfter()){
+    functionCalls.push_back(prepareCallBefore(callAfter, resultVar, temp, varsToDeclare, true));
+  }
+
   return functionCalls;
 
 }

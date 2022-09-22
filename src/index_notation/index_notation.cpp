@@ -3891,6 +3891,7 @@ static ConcreteAccelerateCodeGenerator getConcreteCodeGenerator(IndexExpr expr, 
 
   std::vector<Argument> newArgs = getConcreteArgs(functionInterface.getNode()->getArguments(), argumentMap);
   std::vector<Argument> callBefore = getConcreteArgs(functionInterface.getNode()->callBefore(), argumentMap);
+  std::vector<Argument> callAfter = getConcreteArgs(functionInterface.getNode()->callAfter(), argumentMap);
 
   map<IndexVar, Dimension> indexVarDomains = expr.getIndexVarDomains();
   std::vector<Dimension> lhsDimension; 
@@ -3909,7 +3910,7 @@ static ConcreteAccelerateCodeGenerator getConcreteCodeGenerator(IndexExpr expr, 
     e = workspace;
   }
 
-  ConcreteAccelerateCodeGenerator concreteCodeGen = ConcreteAccelerateCodeGenerator( functionInterface.getNode()->getFunctionName(),  functionInterface.getNode()->getReturnType(), e, expr, newArgs, callBefore);
+  ConcreteAccelerateCodeGenerator concreteCodeGen = ConcreteAccelerateCodeGenerator( functionInterface.getNode()->getFunctionName(),  functionInterface.getNode()->getReturnType(), e, expr, newArgs, callBefore, callAfter);
 
   return concreteCodeGen;
 }

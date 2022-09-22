@@ -104,6 +104,11 @@ class TestInterfaceDeclVar : public AbstractFunctionInterface{
                                 return { call(x, y, var, var2) };
                             }
 
+        std::vector<Argument>  callAfter() const override {
+                        taco::TransferLoad call("callAfter", "void");
+                        return { call(x, y, var, var2) };
+                    }
+
     private: 
         TensorObject x;
         TensorObject y;
