@@ -41,16 +41,26 @@ std::ostream& TransferWithArgs::print(std::ostream& os) const{
   return os;
 }
 
-
-
 std::ostream& TensorVarArg::print(std::ostream& os) const{
     os << t.getName();
     return os;
 }
 
+Argument TensorVarArg::operator=(Argument func) const{
+  taco_uassert(func.getArgType() == USER_DEFINED);
+  auto f = func.getNode<TransferWithArgs>();
+  return new TransferWithArgs(*f, new TensorVarArg(t));
+}
+
 std::ostream& TensorObjectArg::print(std::ostream& os) const{
   os << t << endl;
   return os;
+}
+
+Argument TensorObjectArg::operator=(Argument func) const{
+  taco_uassert(func.getArgType() == USER_DEFINED);
+  auto f = func.getNode<TransferWithArgs>();
+  return new TransferWithArgs(*f, new TensorObjectArg(t));
 }
 
 std::ostream& irExprArg::print(std::ostream& os) const{
@@ -81,6 +91,12 @@ std::ostream& LiteralArg::print(std::ostream& os) const{
   return os;
 }
 
+
+Argument DeclVar::operator=(Argument func) const{
+  taco_uassert(func.getArgType() == USER_DEFINED);
+  auto t = func.getNode<TransferWithArgs>();
+  return new TransferWithArgs(*t, new DeclVarArg(*this));
+}
 
 
 std::ostream& operator<<(std::ostream& os, const ForeignFunctionDescription& foreignFunctionDescription){

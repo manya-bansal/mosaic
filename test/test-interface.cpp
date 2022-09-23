@@ -414,6 +414,27 @@ TEST(interface, sampleMatrixMultiplyExample) {
    A.compute();
 }
 
+TEST(interface, endToEndDeclVarIncorrect) {
+
+   // actual computation
+   Tensor<float> A("A", {16, 16}, Format{Dense, Dense});
+   Tensor<float> B("B", {16, 16}, Format{Dense, Dense});
+   Tensor<float> C("C", {16, 16}, Format{Dense, Dense});
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar k("k");
+
+   IndexExpr accelerateExpr = B(i, j) * C(j, k);
+   A(i, k) = accelerateExpr;
+
+
+   IndexStmt stmt = A.getAssignment().concretize();
+   stmt = stmt.accelerate(new TestInterfaceDeclVarIncorrect(), accelerateExpr);
+   
+   ASSERT_THROW(A.compile(stmt), taco::TacoException);
+
+}
+
 
 TEST(DISABLED_interface, endToEndDeclVar) {
 

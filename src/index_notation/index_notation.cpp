@@ -3862,9 +3862,15 @@ static std::vector<Argument> getConcreteArgs(const std::vector<Argument>& abstra
       newArgs.push_back(arg);
       break;
     case USER_DEFINED: 
-    {
+    { 
       std::vector<Argument> userDefinedArgs = getConcreteArgs(arg.getNode<TransferWithArgs>()->getArgs(), argumentMap);
-      newArgs.push_back(new TransferWithArgs(arg.getNode<TransferWithArgs>()->getName(), arg.getNode<TransferWithArgs>()->getReturnType(), userDefinedArgs));
+      auto node = arg.getNode<TransferWithArgs>();
+      if (node->getReturnStore().getArgType() == UNKNOWN){
+        newArgs.push_back(new TransferWithArgs(node->getName(), node->getReturnType(), userDefinedArgs));
+      }else{
+        std::vector<Argument> returnStore = getConcreteArgs({node->getReturnStore()}, argumentMap);
+        newArgs.push_back(new TransferWithArgs(node->getName(), node->getReturnType(), userDefinedArgs, returnStore[0]));
+      }
       break;
     }
     case DECLVAR:
@@ -3892,6 +3898,8 @@ static ConcreteAccelerateCodeGenerator getConcreteCodeGenerator(IndexExpr expr, 
   std::vector<Argument> newArgs = getConcreteArgs(functionInterface.getNode()->getArguments(), argumentMap);
   std::vector<Argument> callBefore = getConcreteArgs(functionInterface.getNode()->callBefore(), argumentMap);
   std::vector<Argument> callAfter = getConcreteArgs(functionInterface.getNode()->callAfter(), argumentMap);
+
+
 
   map<IndexVar, Dimension> indexVarDomains = expr.getIndexVarDomains();
   std::vector<Dimension> lhsDimension; 

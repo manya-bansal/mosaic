@@ -2816,12 +2816,12 @@ Stmt LowererImplImperative::prepareCallBefore(Argument argument, TensorVar resul
 
   Stmt functionCall; 
   if (t->getReturnType() == "void"){
-    // if return value is not set by reference
-    // then we have no idea how it is being set
-    // assert(setResultByRef == true);
+    taco_uassert(t->getReturnStore().getArgType() == UNKNOWN);
     functionCall = VoidCall::make(t->getName(), loweredArguments);
   }else{
-      taco_uerror << "Unimplemented";
+      taco_uassert(t->getReturnStore().getArgType() != UNKNOWN);
+      Expr returnStore = lowerArgument(t->getReturnStore(), resultVar, temp, varsToDeclare, replace);
+      functionCall = Assign::make(returnStore, ir::Call::make(t->getName(), loweredArguments));
   }
 
   return functionCall;
@@ -2851,7 +2851,7 @@ std::vector<Stmt> LowererImplImperative::prepareFunctionCall(ConcreteAccelerateC
     // assert(setResultByRef == true);
     functionCall = VoidCall::make(accelGen.getFunctionName(), loweredArguments);
   }else{
-      functionCall = Assign::make(tensorVars[temp], ir::Call::make(accelGen.getFunctionName(), loweredArguments));
+    functionCall = Assign::make(tensorVars[temp], ir::Call::make(accelGen.getFunctionName(), loweredArguments));
   }
 
   functionCalls.push_back(functionCall);

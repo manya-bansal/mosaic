@@ -12,6 +12,7 @@
 namespace taco {
 
 struct TransferTypeArgs;
+struct TransferWithArgs;
 struct AbstractFunctionInterface;
 class TensorVar;
 template <typename CType>
@@ -19,30 +20,6 @@ class Tensor;
 
 
 enum ArgType {DIM, TENSORVAR, TENSOR_OBJECT, TENSOR, EXPR, LITERAL, USER_DEFINED, DECLVAR, UNKNOWN};
-
-// QUESTION: do we need different functions for runtime versus compile time 
-// conversions (are there good cases for compile time conversions?)
-
-class Argument : public util::IntrusivePtr<const TransferTypeArgs> {
-  public: 
-    Argument() : IntrusivePtr(nullptr) {}
-    Argument(TransferTypeArgs * arg) : IntrusivePtr(arg) {}
-
-    template<typename T>
-    const T* getNode() const {
-      return static_cast<const T*>(ptr);
-    }
-
-    const TransferTypeArgs* getNode() const {
-      return ptr;
-    }
-
-    ArgType getArgType() const;
-
-};
-
-//We need to types of args: args that we provide to the user
-//dimension of a user etc, and a way for them to call a special function
 
 struct TransferTypeArgs : public util::Manageable<TransferTypeArgs>{
 
@@ -60,12 +37,34 @@ struct TransferTypeArgs : public util::Manageable<TransferTypeArgs>{
     ArgType argType;
 };
 
+class Argument : public util::IntrusivePtr<const TransferTypeArgs> {
+  public: 
+    Argument(TransferTypeArgs * arg) : IntrusivePtr(arg) {}
+    Argument() : Argument(new TransferTypeArgs())  {}
+
+    template<typename T>
+    const T* getNode() const {
+      return static_cast<const T*>(ptr);
+    }
+
+    const TransferTypeArgs* getNode() const {
+      return ptr;
+    }
+
+    ArgType getArgType() const;
+    
+
+};
+
 std::ostream& operator<<(std::ostream&,  const Argument&);
 
 struct TensorVarArg : public TransferTypeArgs{
     explicit TensorVarArg(const TensorVar& t) : TransferTypeArgs(TENSORVAR), t(t) {}
 
     std::ostream& print(std::ostream& os) const override;
+
+    Argument operator=(Argument) const;
+
     TensorVar t; 
 };
 
@@ -73,6 +72,7 @@ struct TensorObjectArg : public TransferTypeArgs{
     explicit TensorObjectArg(const TensorObject& t) : TransferTypeArgs(TENSOR_OBJECT), t(t) {}
 
     std::ostream& print(std::ostream& os) const override;
+    Argument operator=(Argument) const;
     TensorObject t; 
 };
 
@@ -100,13 +100,13 @@ struct DimArg : public TransferTypeArgs{
 };
 
 struct  DeclVar {
-  public:
     DeclVar(const std::string& typeString, const std::string& name) : typeString(typeString), name(name) {}
     explicit DeclVar(const std::string& typeString) : DeclVar(typeString, util::uniqueName('v')) {} 
     
     std::string getTypeString() const {return typeString;}
     std::string getName() const {return name;}
-  private:
+    Argument operator=(Argument) const;
+
     std::string typeString;
     std::string name;
 
@@ -152,17 +152,23 @@ struct LiteralArg : public TransferTypeArgs{
     Datatype datatype;
 };
 
-
 struct TransferWithArgs : public TransferTypeArgs{
     TransferWithArgs() = default;
 
-    TransferWithArgs(const std::string& name, const std::string& returnType , const std::vector<Argument>& args) : TransferTypeArgs(USER_DEFINED), name(name), returnType(returnType), args(args) {};
+    TransferWithArgs(const std::string& name, const std::string& returnType , const std::vector<Argument>& args) : TransferTypeArgs(USER_DEFINED), name(name), returnType(returnType), args(args) {
+    }
 
-    // TransferWithArgs(const std::string& name, const std::string& returnType, const TransferWithArgs& transferWithArgs)
+    TransferWithArgs(const std::string& name, const std::string& returnType , const std::vector<Argument>& args, const Argument& returnStore) 
+    : TransferTypeArgs(USER_DEFINED), name(name), returnType(returnType), args(args), returnStore(returnStore) {
+    }
+
+    TransferWithArgs(const TransferWithArgs& func, const Argument& returnStore) : TransferTypeArgs(USER_DEFINED), name(func.name), returnType(func.returnType), args(func.args), returnStore(returnStore) {
+    }
 
     std::string getName() const { return name; };
     std::string getReturnType() const { return returnType; };
     std::vector<Argument> getArgs() const { return args; };
+    Argument getReturnStore() const {return returnStore;};
 
     void lower() const;
 
@@ -171,8 +177,10 @@ struct TransferWithArgs : public TransferTypeArgs{
     std::string name;
     std::string returnType;
     std::vector<Argument> args; 
+    Argument returnStore;
 
 };
+
 
 std::ostream& operator<<(std::ostream&, const TransferWithArgs&);
 
