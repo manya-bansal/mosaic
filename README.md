@@ -97,6 +97,29 @@ To run the Python test suite individually:
     cd <taco-directory>
     python3 build/python_bindings/unit_tests.py
 
+## Running benchmarks 
+
+If cmake complains that it cannot find the Google Test Suite run:
+
+    cmake \
+    -DCMAKE_BUILD_TYPE='Release' \
+    -DCMAKE_INSTALL_PREFIX="${HOME}" \
+    -DBENCHMARK_DOWNLOAD_DEPENDENCIES=ON \
+    ../
+
+Run all benchmarks 
+
+    cd <taco-directory>/build/bin
+    ./taco-bench
+
+
+You can run a particular benchmark by:
+
+    cd <taco-directory>/build/bin
+    ./taco-bench --benchmark_filter=<regex>
+
+
+
 
 ## Code coverage analysis
 

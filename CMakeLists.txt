@@ -132,9 +132,12 @@ add_subdirectory(src)
 add_subdirectory(test)
 add_subdirectory(tools)
 add_subdirectory(apps)
+add_subdirectory(bench)
 string(REPLACE " -Wmissing-declarations" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
 find_package(Git QUIET)
+find_package(benchmark REQUIRED)
+
 if(GIT_FOUND AND EXISTS "${TACO_PROJECT_DIR}/.git")
   # Update submodules as needed
   option(GIT_SUBMODULE "Check submodules during build" ON)
@@ -170,6 +173,7 @@ endif()
 find_package( BLAS REQUIRED )
 include_directories(${BLAS_INCLUDE_DIRS})
 target_link_libraries(taco PRIVATE ${BLAS_LIBRARIES})
+# target_link_libraries(taco benchmark::benchmark)
 
 if(PYTHON)
   add_subdirectory(python_bindings)
@@ -194,11 +198,17 @@ if(COVERAGE)
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
   )
   add_dependencies(gcovr taco-test)
+  add_dependencies(gcovr taco-bench)
   if(PYTHON)
     add_dependencies(gcovr core_modules)
   endif(PYTHON)
   set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES coverage)
 endif(COVERAGE)
+
+
+# add_executable(taco-bench ${TEST_SOURCES} bench.h)
+# target_link_libraries(taco-bench benchmark::benchmark)
+# target_link_libraries(taco-bench taco)
 
 string(TIMESTAMP TACO_BUILD_DATE "%Y-%m-%d")
 configure_file("include/taco/version.h.in" "include/taco/version.h" @ONLY)
