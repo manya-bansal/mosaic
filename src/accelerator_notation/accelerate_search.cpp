@@ -161,9 +161,9 @@ bool hasOpMatch(IndexExpr e1, AcceleratorExpr e2){
 /// that matching can be forced using a tiling op!
 ArgumentMap hasPreciseMatch(IndexExpr e1, AcceleratorExpr e2){
 
-    std::cout << e2 << std::endl;
-    std::cout << util::join(getOpPattern(e2)) << std::endl;
-    std::cout << util::join(getOpPattern(e1)) << std::endl;
+    // std::cout << e2 << std::endl;
+    // std::cout << util::join(getOpPattern(e2)) << std::endl;
+    // std::cout << util::join(getOpPattern(e1)) << std::endl;
 
     if (!hasOpMatch(e1, e2)) {
         return ArgumentMap(false);

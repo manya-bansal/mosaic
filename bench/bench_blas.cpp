@@ -10,8 +10,6 @@ using namespace taco;
 
 static void bench_cblas_saxpy(benchmark::State& state) {
   int dim = state.range(0);
-
-  std::cout << "dim " << dim << std::endl;
    
    Tensor<float> B("B", {dim}, Format{Dense});
    Tensor<float> C("C", {dim}, Format{Dense});
@@ -42,5 +40,5 @@ static void bench_cblas_saxpy(benchmark::State& state) {
   }
 }
 
-TACO_BENCH(bench_cblas_saxpy)->DenseRange(20, 1024, 128);
+TACO_BENCH(bench_cblas_saxpy)->DenseRange(20, 100, 20);
 

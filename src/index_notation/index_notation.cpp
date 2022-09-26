@@ -165,13 +165,9 @@ Shape IndexExpr::getShape() const {
       }
 
       if (seenVars.find(var) == seenVars.end()){
-        // cout << "Pushing " << endl;
          indexVarDims.push_back(dimension);
          seenVars.insert(var);
       }
-      
-      // cout << var << endl;
-     
 
     }
   }
@@ -899,8 +895,6 @@ static void takeCommonTermsOut(IndexStmt stmt, std::map<IndexExpr, std::vector<I
          const MulNode * mulNodeB = to<MulNode>((op->b).ptr);
 
         if (equals(mulNodeA->a, mulNodeB->a)){
-          cout << mulNodeA->a << endl;
-          cout << mulNodeB->a << endl;
           exprToreplace[op].push_back(new MulNode(mulNodeA->a, new AddNode(mulNodeA->b, mulNodeB->b)));
         }
 
@@ -1004,7 +998,6 @@ std::vector<IndexStmt> generateEquivalentStmts(IndexStmt stmt){
   addCommutativityRewrite(stmt, exprToreplace);
   addDistributivityRewrites(stmt, exprToreplace);
   takeCommonTermsOut(stmt, exprToreplace); 
-  // simplifyNegatives(stmt, exprToreplace);
 
   cout << "stmt : " << stmt << endl;
 
@@ -2334,9 +2327,7 @@ IndexStmt IndexStmt::precompute(IndexExpr expr, std::vector<IndexVar> i_vars,
     }
   }
 
-  // cout << "transformed " << transformed << endl;
   transformed = Transformation(Precompute(expr, i_vars, iw_vars, workspace)).apply(transformed, &reason);
-  // cout << "transformed " << transformed << endl;
   if (!transformed.defined()) {
     taco_uerror << reason;
   }
@@ -3417,7 +3408,6 @@ bool isConcreteNotation(IndexStmt stmt, std::string* reason) {
     std::function<void(const ForallNode*,Matcher*)>([&](const ForallNode* op,
                                                         Matcher* ctx) {
       boundVars.scope();
-      cout << op->indexVar << endl;
       boundVars.insert({op->indexVar});
       definedVars.insert(op->indexVar);
       ctx->match(op->stmt);
@@ -3430,8 +3420,6 @@ bool isConcreteNotation(IndexStmt stmt, std::string* reason) {
            (provGraph.isFullyDerived(var) || !provGraph.isRecoverable(var, definedVars))) {
           *reason = "all variables in concrete notation must be bound by a "
                     "forall statement";
-          cout << boundVars.contains(var) << endl;
-          cout << "Not bound" << var << endl;
           isConcrete = false;
         }
       }
@@ -3686,7 +3674,6 @@ static Assignment getTensorAccess(IndexStmt stmt, TensorVar t)
     function<void(const AssignmentNode*,Matcher*)>([&](const AssignmentNode* n,
                                                        Matcher* ctx) {
       ctx->match(n->rhs);
-      cout << tensorAccess << endl;
       if (tensorAccess){
         assign = n;
       }
@@ -3802,10 +3789,10 @@ static IndexStmt rewriteStmt(IndexStmt stmtRewrite, Access workspace, ConcreteAc
     auto exprDim = codeGen.getRHS().getIndexVarDomains();
     auto pluginDim = assign.getRhs().getIndexVarDomains();
 
-    cout << util::join(codeGen.getRHS().getIndexVarDomains()) << endl;
-    cout << util::join(assign.getRhs().getIndexVarDomains()) << endl;
-    cout << util::join(argumentMap.indexVars) << endl;
-    cout << "Precompute map " << util::join(precomputeMap) << endl;
+    // cout << util::join(codeGen.getRHS().getIndexVarDomains()) << endl;
+    // cout << util::join(assign.getRhs().getIndexVarDomains()) << endl;
+    // cout << util::join(argumentMap.indexVars) << endl;
+    // cout << "Precompute map " << util::join(precomputeMap) << endl;
 
     std::map<IndexVar, size_t> toSplit;
 

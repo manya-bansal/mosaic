@@ -2492,7 +2492,6 @@ vector<Stmt> LowererImplImperative::codeToInitializeTemporaryParallel(Where wher
 }
 
 vector<Stmt> LowererImplImperative::codeToInitializeTemporary(Where where) {
-  cout << "in codeToInitializeTemporary" << endl;
   TensorVar temporary = where.getTemporary();
 
   const bool accelerateDense = canAccelerateDenseTemp(where).first;
@@ -2506,7 +2505,6 @@ vector<Stmt> LowererImplImperative::codeToInitializeTemporary(Where where) {
     initializeTemporary = Block::make(initializeTemporary, initTempSet);
     tempToBitGuard[temporary] = tempSet;
   } else {
-    // cout << "3" << endl; 
     // TODO: Need to support keeping track of initialized elements for
     //       temporaries that don't have sparse accelerator
     taco_iassert(!util::contains(guardedTemps, temporary) || accelerateDense);
@@ -2514,7 +2512,6 @@ vector<Stmt> LowererImplImperative::codeToInitializeTemporary(Where where) {
     // When emitting code to accelerate dense workspaces with sparse iteration, we need the following arrays
     // to construct the result indices
     if(accelerateDense) {
-      // cout << "4" << endl; 
       vector<Stmt> initAndFree = codeToInitializeDenseAcceleratorArrays(where);
       initializeTemporary = initAndFree[0];
       freeTemporary = initAndFree[1];
@@ -2523,13 +2520,10 @@ vector<Stmt> LowererImplImperative::codeToInitializeTemporary(Where where) {
     Expr values;
     if (util::contains(needCompute, temporary) &&
         needComputeValues(where, temporary)) {
-          // cout << "5" << endl; 
       values = ir::Var::make(temporary.getName(),
                              temporary.getType().getDataType(), true, false);
 
       Expr size = getTemporarySize(where);
-
-      cout << values << endl;
 
       // no decl needed for shared memory
       Stmt decl = Stmt();
@@ -2546,16 +2540,13 @@ vector<Stmt> LowererImplImperative::codeToInitializeTemporary(Where where) {
     /// temporary value arrays from.
     TemporaryArrays arrays;
     arrays.values = values;
-    // cout << "temp " << temporary << " vals " << values << endl; 
     this->temporaryArrays.insert({temporary, arrays});
   }
   return {initializeTemporary, freeTemporary};
 }
 
 Stmt LowererImplImperative::lowerWhere(Where where) {
-  // cout << "enter lower where" << endl;
   TensorVar temporary = where.getTemporary();
-  cout << temporary << endl;
   bool accelerateDenseWorkSpace, sortAccelerator;
   std::tie(accelerateDenseWorkSpace, sortAccelerator) =
       canAccelerateDenseTemp(where);
@@ -2566,13 +2557,11 @@ Stmt LowererImplImperative::lowerWhere(Where where) {
   for (auto it = temporaryInitialization.begin(); it != temporaryInitialization.end(); ++it) {
     if (it->second == where && it->first.getParallelUnit() ==
         ParallelUnit::NotParallel && !isScalar(temporary.getType())) {
-          // cout << "1" << endl;
       temporaryHoisted = true;
     } else if (it->second == where && it->first.getParallelUnit() ==
                ParallelUnit::CPUThread && !isScalar(temporary.getType())) {
       temporaryHoisted = true;
       auto decls = codeToInitializeLocalTemporaryParallel(where, it->first.getParallelUnit());
-      // cout << "2" << endl;
       temporaryValuesInitFree[0] = ir::Block::make(decls);
     }
   }
@@ -2580,7 +2569,6 @@ Stmt LowererImplImperative::lowerWhere(Where where) {
   
 
   if (!temporaryHoisted) {
-      // cout << "3" << endl;
     temporaryValuesInitFree = codeToInitializeTemporary(where);
   }
   
@@ -2651,16 +2639,13 @@ Stmt LowererImplImperative::lowerWhere(Where where) {
   whereTemps.pop_back();
   whereTempsToResult.erase(where.getTemporary());
   producerCode = producer;
-  // cout << "producer " << producer << endl;
-  // cout << "initilze " << initializeTemporary << endl;
-  // taco_uerror << Block::make(initializeTemporary, producer, markAssignsAtomicDepth > 0 ? capturedLocatePos : ir::Stmt(), consumer,  freeTemporary) << endl;
+
   return Block::make(initializeTemporary, producer, markAssignsAtomicDepth > 0 ? capturedLocatePos : ir::Stmt(), consumer,  freeTemporary);
 }
 
 
 
 vector<Stmt> LowererImplImperative::codeToInitializeTemporary(Accelerate accelerate) {
-  cout << "in codeToInitializeTemporary" << endl;
   TensorVar temporary = accelerate.getTemporary();
 
   // const bool accelerateDense = false;
@@ -2674,7 +2659,6 @@ vector<Stmt> LowererImplImperative::codeToInitializeTemporary(Accelerate acceler
     initializeTemporary = Block::make(initializeTemporary, initTempSet);
     tempToBitGuard[temporary] = tempSet;
   } else {
-    // cout << "3" << endl; 
     // TODO: Need to support keeping track of initialized elements for
     //       temporaries that don't have sparse accelerator
     taco_iassert(!util::contains(guardedTemps, temporary) || accelerateDense);
@@ -2682,7 +2666,6 @@ vector<Stmt> LowererImplImperative::codeToInitializeTemporary(Accelerate acceler
     // When emitting code to accelerate dense workspaces with sparse iteration, we need the following arrays
     // to construct the result indices
     // if(accelerateDense) {
-    //   cout << "4" << endl; 
     //   vector<Stmt> initAndFree = codeToInitializeDenseAcceleratorArrays(accelerate);
     //   initializeTemporary = initAndFree[0];
     //   freeTemporary = initAndFree[1];
@@ -2691,13 +2674,10 @@ vector<Stmt> LowererImplImperative::codeToInitializeTemporary(Accelerate acceler
     Expr values;
     if (util::contains(needCompute, temporary) &&
         needComputeValues(accelerate, temporary)) {
-          cout << "5" << endl; 
       values = ir::Var::make(temporary.getName(),
                              temporary.getType().getDataType(), true, false);
 
       Expr size = getTemporarySize(accelerate);
-
-      cout << values << endl;
 
       // no decl needed for shared memory
       Stmt decl = Stmt();
@@ -2714,7 +2694,6 @@ vector<Stmt> LowererImplImperative::codeToInitializeTemporary(Accelerate acceler
     /// temporary value arrays from.
     TemporaryArrays arrays;
     arrays.values = values;
-    cout << "temp " << temporary << " vals " << values << endl; 
     this->temporaryArrays.insert({temporary, arrays});
   }
   return {initializeTemporary, freeTemporary};
@@ -2738,7 +2717,6 @@ ir::Expr LowererImplImperative::lowerArgument(Argument argument, TensorVar resul
           }
 
           for (auto var: tensorVars){
-            cout << var.first.getName() << endl;
             if (exprVar->name == var.first.getName()){
               return getValuesArray(var.first);
             }
@@ -2920,8 +2898,6 @@ Stmt LowererImplImperative::lowerAccelerate(Accelerate accelerate) {
   // bool sortAccelerator = false;
 
   vector<Stmt> temporaryValuesInitFree = {Stmt(), Stmt()};
-
-  // cout << "temporary " << temporary << endl;
   // bool temporaryHoisted = false;
 
     Expr values;
@@ -3032,12 +3008,8 @@ Stmt LowererImplImperative::lowerAccelerate(Accelerate accelerate) {
   
   whereConsumers.pop_back();
   whereTemps.pop_back();
-
-  // cout << accelerate.getConsumer() << endl;
-  // cout << consumer << endl;
   whereTempsToResult.erase(accelerate.getTemporary());
 
-  cout << Block::make(initializeTemporary, producer, consumer, freeTemporary) << endl;
   return Block::make(initializeTemporary, copyTemp, producer, consumer, freeTemporary);
 
 }

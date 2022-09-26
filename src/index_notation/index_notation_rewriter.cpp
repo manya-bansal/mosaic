@@ -483,9 +483,9 @@ IndexExpr replace(IndexExpr expr,
 
 IndexStmt replace(IndexStmt stmt,
                   const std::map<IndexExpr,IndexExpr>& substitutions) {
-  cout << stmt << "|";
-  cout << util::join(substitutions) << endl;
-  cout <<  ReplaceRewriter(substitutions,{}).rewrite(stmt) << endl;
+  // cout << stmt << "|";
+  // cout << util::join(substitutions) << endl;
+  // cout <<  ReplaceRewriter(substitutions,{}).rewrite(stmt) << endl;
   return ReplaceRewriter(substitutions,{}).rewrite(stmt);
 }
 

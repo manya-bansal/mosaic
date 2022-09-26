@@ -771,10 +771,10 @@ void TensorBase::compileAccelerated(taco::IndexStmt stmt, std::vector<FunctionIn
 
   IndexStmt concretizedAssign = stmt;
 
-  cout << "calling concretizeAccelerated" << endl;
+  // cout << "calling concretizeAccelerated" << endl;
   IndexStmt stmtToCompile = stmt.concretizeAccelerated(functionInterface);
   
-  cout << stmtToCompile << endl;
+  // cout << stmtToCompile << endl;
 
   stmtToCompile = scalarPromote(stmtToCompile);
 
@@ -791,8 +791,8 @@ void TensorBase::compileAccelerated(taco::IndexStmt stmt, std::vector<FunctionIn
   content->assembleFunc = lower(stmtToCompile, "assemble", true, false);
   // taco_uerror << content->assembleFunc << endl;
   content->computeFunc = lower(stmtToCompile, "compute",  assembleWhileCompute, true);
-  cout << content->assembleFunc << endl;
-  cout << content->computeFunc << endl;
+  // cout << content->assembleFunc << endl;
+  // cout << content->computeFunc << endl;
   // taco_uerror << "stop" << endl;
   // If we have to recompile the kernel, we need to create a new Module. Since
   // the module we are holding on to could have been retrieved from the cache,
