@@ -91,7 +91,10 @@
         "__functional_03": "cpp",
         "filesystem": "cpp",
         "__functional_base_03": "cpp",
-        "cassert": "cpp"
+        "cassert": "cpp",
+        "any": "cpp",
+        "regex": "cpp",
+        "shared_mutex": "cpp"
     },
     "C_Cpp.dimInactiveRegions": false
 }

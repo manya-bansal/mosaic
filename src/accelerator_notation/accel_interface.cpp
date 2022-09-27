@@ -68,6 +68,11 @@ std::ostream& irExprArg::print(std::ostream& os) const{
   return os;
 }
 
+std::ostream& DimList::print(std::ostream& os) const{
+  os << t << ".Dim[]";
+  return os;
+}
+
 std::ostream& DimArg::print(std::ostream& os) const{
   os << "Dim(" << indexVar << ")";
   return os;

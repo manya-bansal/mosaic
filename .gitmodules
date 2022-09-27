@@ -4,3 +4,7 @@
 [submodule "test/bats"]
 	path = test/bats
 	url = https://github.com/bats-core/bats-core
+[submodule "bench/benchmark"]
+	path = bench/benchmark
+	url = https://github.com/google/benchmark.git
+

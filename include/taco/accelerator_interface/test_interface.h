@@ -154,7 +154,7 @@ class TestInterfaceDeclVarIncorrect : public AbstractFunctionInterface{
 
         std::vector<Argument>  callAfter() const override {
                         taco::TransferLoad call("callAfter", "void");
-                        return { var = call(x, y, var2) };
+                        return { var = call(x, y, var2, DimList(x)) };
                     }
 
     private: 

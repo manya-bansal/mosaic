@@ -19,7 +19,7 @@ template <typename CType>
 class Tensor;
 
 
-enum ArgType {DIM, TENSORVAR, TENSOR_OBJECT, TENSOR, EXPR, LITERAL, USER_DEFINED, DECLVAR, UNKNOWN};
+enum ArgType {DIM, TENSORVAR, TENSOR_OBJECT, TENSOR, EXPR, LITERAL, USER_DEFINED, DECLVAR, UNKNOWN, DIMLIST};
 
 struct TransferTypeArgs : public util::Manageable<TransferTypeArgs>{
 
@@ -82,6 +82,14 @@ struct irExprArg : public TransferTypeArgs{
     std::ostream& print(std::ostream& os) const override;
 
     ir::Expr irExpr; 
+};
+
+struct DimList : public TransferTypeArgs{
+    explicit DimList(const TensorObject& t) : TransferTypeArgs(DIMLIST), t(t) {}
+
+    std::ostream& print(std::ostream& os) const override;
+
+    TensorObject t; 
 };
 
 class Dim{
@@ -191,6 +199,7 @@ inline void addArg(std::vector<Argument>& argument, TransferWithArgs arg) { argu
 inline void addArg(std::vector<Argument>& argument, const Dim& dim) { argument.push_back(new DimArg(dim)); }
 inline void addArg(std::vector<Argument>& argument, const int32_t& integer) { argument.push_back(new LiteralArg(Datatype(UInt32), integer)); }
 inline void addArg(std::vector<Argument>& argument, const DeclVar& var) { argument.push_back(new DeclVarArg(var)); }
+inline void addArg(std::vector<Argument>& argument, const DimList& var) { argument.push_back(new DimList(var)); }
 
 template <typename CType>
 inline void addArg(std::vector<Argument>& argument, const Tensor<CType>& t) { argument.push_back(new TensorArg(t)); }
