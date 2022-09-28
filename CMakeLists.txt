@@ -126,8 +126,6 @@ set(TACO_LIBRARY_DIR ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 
 install(DIRECTORY ${TACO_INCLUDE_DIR}/ DESTINATION include)
 
-
-
 add_subdirectory(src)
 add_subdirectory(test)
 add_subdirectory(tools)
@@ -136,7 +134,6 @@ add_subdirectory(bench)
 string(REPLACE " -Wmissing-declarations" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
 find_package(Git QUIET)
-find_package(benchmark REQUIRED)
 
 if(GIT_FOUND AND EXISTS "${TACO_PROJECT_DIR}/.git")
   # Update submodules as needed
@@ -170,10 +167,6 @@ if(NOT EXISTS "${TACO_PROJECT_DIR}/python_bindings/pybind11/CMakeLists.txt")
   message(FATAL_ERROR "The submodules were not downloaded! GIT_SUBMODULE was turned off or failed. Please update submodules and try again.")
 endif()
 
-find_package( BLAS REQUIRED )
-include_directories(${BLAS_INCLUDE_DIRS})
-target_link_libraries(taco PRIVATE ${BLAS_LIBRARIES})
-# target_link_libraries(taco benchmark::benchmark)
 
 if(PYTHON)
   add_subdirectory(python_bindings)

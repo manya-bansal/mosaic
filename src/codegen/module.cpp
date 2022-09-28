@@ -153,7 +153,7 @@ string Module::compile() {
 
 
   if (ACCELERATE){
-    cmd += " -lblas";
+    cmd += " -I/afs/.ir/users/m/a/manya227/include/tblis -I/afs/.ir/users/m/a/manya227/include/  -I/afs/.ir/users/m/a/manya227/ -L/afs/.ir/users/m/a/manya227/lib/ -ltblis -L/usr/lib/x86_64-linux-gnu -l:libblas.so.3";
   }
     
   // open the output file & write out the source

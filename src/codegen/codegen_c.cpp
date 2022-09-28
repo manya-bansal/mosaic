@@ -34,8 +34,8 @@ const string cHeaders =
   "#include <math.h>\n"
   "#include <complex.h>\n"
   "#include <string.h>\n"
-  "#include <Accelerate/Accelerate.h>\n"
-  "#include <arm_acle.h>\n" // for arm neon intrinsics
+  "#include \"cblas.h\"\n"
+  "#include \"tblis.h\"\n"
   "#if _OPENMP\n"
   "#include <omp.h>\n"
   "#endif\n"

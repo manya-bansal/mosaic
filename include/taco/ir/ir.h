@@ -71,7 +71,8 @@ enum class IRNodeType {
   Break,
   VoidCall,
   DeclObject,
-  CustomObject
+  CustomObject,
+  RawString
 };
 
 enum class TensorProperty {
@@ -283,6 +284,14 @@ struct CustomObject : public ExprNode<Var> {
 
   static const IRNodeType _type_info = IRNodeType::CustomObject;
 };
+
+struct RawString : public ExprNode<Var> {
+  std::string s;
+  static Expr make(std::string s);
+
+  static const IRNodeType _type_info = IRNodeType::RawString;
+};
+
 
 
 /** Negation */
