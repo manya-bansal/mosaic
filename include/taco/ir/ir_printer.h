@@ -26,6 +26,8 @@ protected:
   virtual void visit(const Literal*);
   virtual void visit(const Var*);
   virtual void visit(const CustomObject*);
+  virtual void visit(const CustomCast*);
+  virtual void visit(const RawString*);
   virtual void visit(const Neg*);
   virtual void visit(const Sqrt*);
   virtual void visit(const Add*);

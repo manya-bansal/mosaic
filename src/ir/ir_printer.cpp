@@ -138,6 +138,15 @@ void IRPrinter::visit(const CustomObject* op) {
   stream << op->name;
 }
 
+void IRPrinter::visit(const CustomCast* op) {
+  stream << "(" << op->cast << ") ";
+  op->a.accept(this);
+}
+
+void IRPrinter::visit(const RawString* op) {
+  stream << op->s;
+}
+
 void IRPrinter::visit(const Neg* op) {
   if(op->type.isBool()) {
     stream << "!";

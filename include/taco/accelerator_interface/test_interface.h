@@ -1,5 +1,5 @@
-#ifndef TBLIS_INTERFACE_H
-#define TBLIS_INTERFACE_H
+#ifndef TEST_INTERFACE_H
+#define TEST_INTERFACE_H
 
 using namespace taco;
 
@@ -103,12 +103,12 @@ class TestInterfaceDeclVar : public AbstractFunctionInterface{
                                 taco::TransferLoad call("callBefore", "void");
                                 taco::TransferLoad call2("setVal", "custom_type");
                                 return { call(x, y, var, var2),
-                                         TensorObjectArg(x) = call2(x, y, var2, var) };
+                                         TensorObjectArg(x) = call2(x, y, var2, DimList(x)) };
                             }
 
         std::vector<Argument>  callAfter() const override {
                         taco::TransferLoad call("callAfter", "custom_type");
-                        return { var2 = call(x, y, var2, var) };
+                        return { var2 = call(x, y, var2, var, StringLiteral("\"ijk\""), DataArray(y), AddrDeclVarArg(var)) };
                     }
 
     private: 
@@ -154,7 +154,7 @@ class TestInterfaceDeclVarIncorrect : public AbstractFunctionInterface{
 
         std::vector<Argument>  callAfter() const override {
                         taco::TransferLoad call("callAfter", "void");
-                        return { var = call(x, y, var2, DimList(x)) };
+                        return { var = call(x, y, var2, DimList(x), StringLiteral("ijk"), DataArray(y)) };
                     }
 
     private: 

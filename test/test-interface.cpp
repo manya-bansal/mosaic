@@ -18,6 +18,7 @@
 
 #include "taco/accelerator_interface/cblas_saxpy.h"
 #include "taco/accelerator_interface/cblas_sdot.h"
+#include "taco/accelerator_interface/tblis_interface.h"
 #include "taco/accelerator_interface/test_interface.h"
 #include "taco/accelerator_interface/tile_interface.h"
 
@@ -436,7 +437,7 @@ TEST(interface, endToEndDeclVarIncorrect) {
 }
 
 
-TEST(DISABLED_interface, endToEndDeclVar) {
+TEST(DISABLED_interface, endToEndDeclVarCorrect) {
 
    // actual computation
    Tensor<float> A("A", {16, 16}, Format{Dense, Dense});
@@ -456,5 +457,36 @@ TEST(DISABLED_interface, endToEndDeclVar) {
    A.compile(stmt);
    A.assemble();
    A.compute();
+
+}
+
+TEST(interface, tblisMultiply) {
+
+   // actual computation
+   Tensor<float> A("A", {16, 16}, Format{Dense, Dense});
+   Tensor<float> B("B", {16, 16}, Format{Dense, Dense});
+   Tensor<float> C("C", {16, 16}, Format{Dense, Dense});
+    Tensor<float> expected("expected", {16, 16}, Format{Dense, Dense});
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar k("k");
+
+   IndexExpr accelerateExpr = B(i, j) * C(j, k);
+   A(i, k) = accelerateExpr;
+
+
+   IndexStmt stmt = A.getAssignment().concretize();
+   stmt = stmt.accelerate(new TblisMultiply(), accelerateExpr);
+   
+   A.compile(stmt);
+   A.assemble();
+   A.compute();
+
+   expected(i, k) = accelerateExpr;
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+   ASSERT_TENSOR_EQ(expected, A);
 
 }

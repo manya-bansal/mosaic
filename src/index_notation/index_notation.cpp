@@ -3832,10 +3832,8 @@ static std::vector<Argument> getConcreteArgs(const std::vector<Argument>& abstra
     switch (arg.getArgType())
     {
     case DIM:
-      {
         newArgs.push_back(new DimArg(argumentMap.indexVars.at(arg.getNode<DimArg>()->indexVar)));
         break;
-      }
     case TENSOR:
       taco_uerror << "Arguments can only use TensorObjects, tried using a TensorVar." << endl;
       break; 
@@ -3863,6 +3861,25 @@ static std::vector<Argument> getConcreteArgs(const std::vector<Argument>& abstra
     case DECLVAR:
       newArgs.push_back(arg);
       break;
+    case DIMLIST:
+      newArgs.push_back(new DimList(argumentMap.tensors.at(arg.getNode<DimList>()->t)));
+      break;
+    case DATA_ARRAY:
+      newArgs.push_back(new DataArray(argumentMap.tensors.at(arg.getNode<DataArray>()->t)));
+      break;
+    case STRING:
+      newArgs.push_back(arg);
+      break;
+    case DECLVAR_ADDR:
+      newArgs.push_back(arg);
+      break;
+    case CAST:
+    {
+      std::vector<Argument> userDefinedArgs = getConcreteArgs({arg.getNode<CastArg>()->argument}, argumentMap);
+      newArgs.push_back(new CastArg(userDefinedArgs[0], arg.getNode<CastArg>()->cast));
+      break;
+    }
+      
     default:
       cout << arg.getArgType() << endl;
       taco_uerror << "Unimplemented" << endl;
@@ -3875,12 +3892,20 @@ static std::vector<Argument> getConcreteArgs(const std::vector<Argument>& abstra
 
 static ConcreteAccelerateCodeGenerator getConcreteCodeGenerator(IndexExpr expr, IndexExpr& workspace, ArgumentMap argumentMap, FunctionInterface functionInterface){
   assert(argumentMap.possible);
+  assert(isa<Access>(workspace));
+  
 
   AcceleratorStmt referenceStmt = functionInterface.getNode()->getStmt();
   if (!isa<AcceleratorAssignment>(referenceStmt)){
     taco_uerror << "Reference statement in function interface must be an assignemnt" << endl;
   }
+  bool reference = setByReference(referenceStmt);
   AcceleratorAssignment assign = to<AcceleratorAssignment>(referenceStmt);
+
+  if (!reference){
+    argumentMap.tensors[assign.getLhs().getTensorObject()] = to<Access>(workspace).getTensorVar();
+  }
+  
 
   std::vector<Argument> newArgs = getConcreteArgs(functionInterface.getNode()->getArguments(), argumentMap);
   std::vector<Argument> callBefore = getConcreteArgs(functionInterface.getNode()->callBefore(), argumentMap);
@@ -3899,7 +3924,7 @@ static ConcreteAccelerateCodeGenerator getConcreteCodeGenerator(IndexExpr expr, 
 
   auto accessOriginal = to<AcceleratorAccessNode>(assign.getLhs().ptr);
   IndexExpr e;
-  if (setByReference(referenceStmt)){
+  if (reference){
     e = static_cast<IndexExpr>(Access(argumentMap.tensors[accessOriginal->tensorObject], indexingVec));
   }else{
     e = workspace;

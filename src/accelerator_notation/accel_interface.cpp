@@ -73,6 +73,18 @@ std::ostream& DimList::print(std::ostream& os) const{
   return os;
 }
 
+
+std::ostream& DataArray::print(std::ostream& os) const{
+  os << t << ".Data[]";
+  return os;
+}
+
+std::ostream& StringLiteral::print(std::ostream& os) const{
+  os << s;
+  return os;
+}
+
+
 std::ostream& DimArg::print(std::ostream& os) const{
   os << "Dim(" << indexVar << ")";
   return os;

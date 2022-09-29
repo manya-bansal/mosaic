@@ -2772,6 +2772,39 @@ ir::Expr LowererImplImperative::lowerArgument(Argument argument, TensorVar resul
         return CustomObject::make(t->var.getName());
 
       }
+      case DIMLIST:
+      {
+        auto t = argument.getNode<DimList>();
+        return RawString::make(t->tvar.getName() + "->dimensions");
+        
+      }
+      case DATA_ARRAY:
+      {
+        auto t = argument.getNode<DataArray>();
+        return getValuesArray(t->tvar);
+      }
+      case STRING:
+      {
+        auto t = argument.getNode<StringLiteral>();
+        return RawString::make(t->s);
+      }
+      case DECLVAR_ADDR:
+      {
+        auto t = argument.getNode<AddrDeclVarArg>();
+
+        if (!declaredVars.count(t->var.getName())){
+          declaredVars.insert(t->var.getName());
+          varsToDeclare.push_back(DeclVarArg(t->var));
+        }
+
+        return RawString::make("&" + t->var.getName());
+      }
+      case CAST:
+      {
+        auto t = argument.getNode<CastArg>();
+
+        return CustomCast::make(lowerArgument(t->argument, resultVar, temporary, varsToDeclare, true), t->cast);
+      }
       default:
         taco_uerror << "Should not reach" << endl;
     }

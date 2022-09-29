@@ -74,6 +74,14 @@ void IRRewriter::visit(const CustomObject* op) {
   expr = op;
 }
 
+void IRRewriter::visit(const CustomCast* op) {
+  expr = op;
+}
+
+void IRRewriter::visit(const RawString* op) {
+  expr = op;
+}
+
 void IRRewriter::visit(const Neg* op) {
   expr = visitUnaryOp(op, this);
 }

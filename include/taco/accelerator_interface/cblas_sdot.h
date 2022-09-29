@@ -1,5 +1,5 @@
-#ifndef TEST_INTERFACE_H
-#define TEST_INTERFACE_H
+#ifndef SDOT_INTERFACE_H
+#define SDOT_INTERFACE_H
 
 #include "taco/index_notation/index_notation.h"
 #include "taco/type.h"

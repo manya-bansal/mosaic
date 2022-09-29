@@ -6,6 +6,8 @@ namespace ir {
 struct Literal;
 struct Var;
 struct CustomObject;
+struct CustomCast;
+struct RawString;
 struct Neg;
 struct Sqrt;
 struct Add;
@@ -62,6 +64,8 @@ public:
   virtual void visit(const Literal*) = 0;
   virtual void visit(const Var*) = 0;
   virtual void visit(const CustomObject*) = 0;
+  virtual void visit(const CustomCast*) = 0;
+  virtual void visit(const RawString*) = 0;
   virtual void visit(const Neg*) = 0;
   virtual void visit(const Sqrt*) = 0;
   virtual void visit(const Add*) = 0;
@@ -121,6 +125,8 @@ public:
   virtual void visit(const Literal* op);
   virtual void visit(const Var* op);
   virtual void visit(const CustomObject*);
+  virtual void visit(const CustomCast*);
+  virtual void visit(const RawString*);
   virtual void visit(const Neg* op);
   virtual void visit(const Sqrt* op);
   virtual void visit(const Add* op);

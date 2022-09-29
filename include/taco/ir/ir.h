@@ -44,6 +44,7 @@ enum class IRNodeType {
   Or,
   BinOp,
   Cast,
+  CustomCast,
   Call,
   IfThenElse,
   Case,
@@ -513,6 +514,15 @@ struct Cast : public ExprNode<Cast> {
   static Expr make(Expr a, Datatype newType);
 
   static const IRNodeType _type_info = IRNodeType::Cast;
+};
+
+struct CustomCast : public ExprNode<CustomCast> {
+  Expr a;
+  std::string cast;
+
+  static Expr make(Expr a, std::string cast);
+
+  static const IRNodeType _type_info = IRNodeType::CustomCast;
 };
 
 /** A call of a function. */

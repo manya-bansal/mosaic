@@ -153,7 +153,8 @@ string Module::compile() {
 
 
   if (ACCELERATE){
-    cmd += " -I/afs/.ir/users/m/a/manya227/include/tblis -I/afs/.ir/users/m/a/manya227/include/  -I/afs/.ir/users/m/a/manya227/ -L/afs/.ir/users/m/a/manya227/lib/ -ltblis -L/usr/lib/x86_64-linux-gnu -l:libblas.so.3";
+    // cmd += " -I/afs/.ir/users/m/a/manya227/include/tblis -I/afs/.ir/users/m/a/manya227/include/  -I/afs/.ir/users/m/a/manya227/ -L//afs/.ir/users/m/a/manya227/lib -l:libtblis.so.0 -L/usr/lib/x86_64-linux-gnu -l:libblas.so.3";
+    cmd += " -I/afs/.ir/users/m/a/manya227/include/tblis -I/afs/.ir/users/m/a/manya227/include/  -L/afs/.ir/users/m/a/manya227/lib/ -L/usr/lib/x86_64-linux-gnu -l:libblas.so.3 -Wl,-R/afs/.ir/users/m/a/manya227/lib/ -l:libtblis.so.0.0.0";
   }
     
   // open the output file & write out the source

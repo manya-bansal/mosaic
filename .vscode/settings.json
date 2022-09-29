@@ -95,7 +95,9 @@
         "any": "cpp",
         "regex": "cpp",
         "shared_mutex": "cpp",
-        "arm_acle.h": "c"
+        "arm_acle.h": "c",
+        "ranges": "cpp",
+        "*.ipp": "cpp"
     },
     "C_Cpp.dimInactiveRegions": false
 }
