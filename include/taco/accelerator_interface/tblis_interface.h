@@ -36,11 +36,6 @@ class TblisMultiply : public AbstractFunctionInterface{
                                          tblis_init_tensor_s(AddrDeclVarArg(result), 2, CastArg(new DimList(x), "len_type *"), DataArray(z), StringLiteral("(stride_type[]) {1, 1}"))};
                             }
 
-        // std::vector<Argument>  callAfter() const override {
-        //                 taco::TransferLoad call("callAfter", "custom_type");
-        //                 return { var2 = call(x, y, var2, var, StringLiteral("\"ijk\""), DataArray(y), AddrDeclVarArg(var)) };
-        //             }
-
     private: 
         TensorObject x;
         TensorObject y;

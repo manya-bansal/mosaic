@@ -4,7 +4,7 @@
 #include "taco/tensor.h"
 #include "taco/format.h"
 #include "taco/index_notation/index_notation.h"
-#include "taco/accelerator_interface/cblas_saxpy.h"
+#include "taco/accelerator_interface/cblas_interface.h"
 
 using namespace taco;
 
@@ -31,14 +31,14 @@ static void bench_cblas_saxpy(benchmark::State& state) {
     IndexVar i("i");
     IndexVar j("j");
     A(i) = accelerateExpr;
-    IndexStmt stmt = A.getAssignment().concretize();
-    stmt = stmt.accelerate(new Saxpy(), accelerateExpr);
-    A.compile(stmt);
+    // IndexStmt stmt = A.getAssignment().concretize();
+    // stmt = stmt.accelerate(new Saxpy(), accelerateExpr);
+    A.compile();
     A.assemble();
     state.ResumeTiming();
     A.compute();
   }
 }
 
-TACO_BENCH(bench_cblas_saxpy)->DenseRange(20, 100, 20);
+TACO_BENCH(bench_cblas_saxpy)->DenseRange(20, 1000, 20);
 

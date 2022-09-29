@@ -16,8 +16,7 @@
 #include "taco/ir_tags.h"
 #include "taco/error/error_messages.h"
 
-#include "taco/accelerator_interface/cblas_saxpy.h"
-#include "taco/accelerator_interface/cblas_sdot.h"
+#include "taco/accelerator_interface/cblas_interface.h"
 #include "taco/accelerator_interface/tblis_interface.h"
 #include "taco/accelerator_interface/test_interface.h"
 #include "taco/accelerator_interface/tile_interface.h"
@@ -488,5 +487,40 @@ TEST(interface, tblisMultiply) {
    expected.compute();
 
    ASSERT_TENSOR_EQ(expected, A);
+
+}
+
+TEST(interface, cblasSgmev) {
+
+   // actual computation
+   Tensor<float> A("A", {16, 16}, Format{Dense, Dense});
+   Tensor<float> b("b", {16}, Format{Dense});
+   Tensor<float> c("c", {16}, Format{Dense});
+   Tensor<float> d("d", {16}, Format{Dense});
+
+   Tensor<float> expected("expected", {16}, Format{Dense});
+
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar k("k");
+
+   IndexExpr accelerateExpr = A(i, j) * b(j) + c(i);
+   d(i) = accelerateExpr;
+
+   // register the description
+   d.registerAccelerator(new Sgemv());
+   // enable targeting
+   d.accelerateOn();
+   
+   d.compile();
+   d.assemble();
+   d.compute();
+
+   expected(i) = accelerateExpr;
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+   ASSERT_TENSOR_EQ(expected, d);
 
 }

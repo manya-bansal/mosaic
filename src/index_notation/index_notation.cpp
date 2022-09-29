@@ -4014,6 +4014,9 @@ IndexStmt IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<FunctionInterfac
     stmtRewrite = rewriteStmt(stmtRewrite, std::get<0>(tensorCodeGen), std::get<1>(tensorCodeGen), std::get<2>(tensorCodeGen), std::get<3>(tensorCodeGen));
     varCodeGen.pop();
   }
+
+  // taco_uerror << stmtRewrite << endl;
+
   return stmtRewrite;
 }
 
