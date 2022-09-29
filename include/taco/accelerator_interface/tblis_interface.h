@@ -140,5 +140,45 @@ class TblisDot : public AbstractFunctionInterface{
 
 };
 
+
+class TblisSaxpy : public AbstractFunctionInterface{
+    public: 
+        TblisSaxpy() :x(TensorObject(Type(taco::Float32, {Dimension()}), dense)),
+                    y(TensorObject(Type(taco::Float32, {Dimension()}), dense)),
+                    s(TensorObject(Type(taco::Float32))),
+                    i(IndexVar()),
+                    var(DeclVar("tblis_vector", "var1")),
+                    var2(DeclVar("tblis_vector", "var2")),
+                    result(DeclVar("tblis_scalar", "result")) {};
+
+        AcceleratorStmt getStmt() const override {return y(i) = x(i) + y(i);}
+        std::vector<Argument> getArguments() const override {
+                                                return 
+                                                {   new StringLiteral("NULL"),
+                                                    new StringLiteral("NULL"),
+                                                    new AddrDeclVarArg(var),
+                                                    new AddrDeclVarArg(var2)
+                                                }; }
+
+        std::string getReturnType() const override {return "void";}
+        std::string getFunctionName() const override {return "tblis_vector_add";}
+        std::vector<Argument>  callBefore() const override {
+                                taco::TransferLoad tblis_init_vector_s("tblis_init_vector_s", "void");
+                                taco::TransferLoad tblis_init_scalar_s("tblis_init_scalar_s", "void");
+                                return { tblis_init_vector_s(AddrDeclVarArg(var), CastArg(new DimArg(i), "len_type"), DataArray(x), CastArg(new LiteralArg(Datatype(taco::UInt32), 1), "stride_type")),
+                                         tblis_init_vector_s(AddrDeclVarArg(var2), CastArg(new DimArg(i), "len_type"), DataArray(y), CastArg(new LiteralArg(Datatype(taco::UInt32), 1), "stride_type"))};
+                            }
+
+    private: 
+        TensorObject x;
+        TensorObject y;
+        TensorObject s;
+        IndexVar i;
+        DeclVar var;
+        DeclVar var2;
+        DeclVar result;
+
+};
+
 #endif 
     

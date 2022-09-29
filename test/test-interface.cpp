@@ -659,3 +659,61 @@ TEST(interface, tblisSgemm) {
    ASSERT_TENSOR_EQ(expected, A);
 
 }
+
+TEST(interface, tblisSaxpy) {
+
+
+   Tensor<float> A("A", {16}, Format{Dense}, 0);
+   Tensor<float> B("B", {16}, Format{Dense});
+   Tensor<float> C("C", {16}, Format{Dense});
+   Tensor<float> expected("expected", {16}, Format{Dense});
+   TensorVar accelWorkspace("accelWorkspace", Type(taco::Float32, {16}), taco::dense);
+   IndexVar i("i");
+   IndexVar iw("iw");
+
+   IndexExpr accelerateExpr = B(i) + C(i);
+   A(i) = accelerateExpr;
+
+   IndexStmt stmt = A.getAssignment().concretize();
+   stmt = stmt.accelerate(new TblisSaxpy(), accelerateExpr);
+
+   A.compile(stmt);
+   A.assemble();
+   A.compute();
+
+   expected(i) = accelerateExpr;
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+   ASSERT_TENSOR_EQ(expected, A);
+}
+
+TEST(interface, tblisSaxpyUnfused) {
+
+
+   Tensor<float> A("A", {16}, Format{Dense}, 0);
+   Tensor<float> B("B", {16}, Format{Dense});
+   Tensor<float> C("C", {16}, Format{Dense});
+   Tensor<float> expected("expected", {16}, Format{Dense});
+   TensorVar accelWorkspace("accelWorkspace", Type(taco::Float32, {16}), taco::dense);
+   IndexVar i("i");
+   IndexVar iw("iw");
+
+   IndexExpr accelerateExpr = B(i) + C(i) + B(i);
+   A(i) = accelerateExpr;
+
+   A.registerAccelerator(new TblisSaxpy());
+   A.accelerateOn();
+   
+   A.compile();
+   A.assemble();
+   A.compute();
+
+   expected(i) = accelerateExpr;
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+   ASSERT_TENSOR_EQ(expected, A);
+}
