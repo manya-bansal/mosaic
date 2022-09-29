@@ -70,9 +70,6 @@ class Sgemv : public AbstractFunctionInterface{
                   s(TensorObject(Type(taco::Float32, {Dimension()}), dense)),
                   i(IndexVar()),
                   j(IndexVar()) {};
-
-        // IndexExpr getRHS() const override {return x(i);}
-        // IndexExpr getLHS() const override {return x(i);}
         AcceleratorStmt getStmt() const override {return y(i) = x(i, j)*s(j) + y(i);}
         std::vector<Argument> getArguments() const override {return 
                                                 {
@@ -98,6 +95,48 @@ class Sgemv : public AbstractFunctionInterface{
         TensorObject s;
         IndexVar i;
         IndexVar j;
+};
+
+class Sgemm : public AbstractFunctionInterface{
+    public: 
+        Sgemm() : 
+                    x(TensorObject(Type(taco::Float32, {Dimension(), Dimension()}),  Format{Dense, Dense})),
+                    y(TensorObject(Type(taco::Float32, {Dimension(), Dimension()}),  Format{Dense, Dense})),
+                    z(TensorObject(Type(taco::Float32, {Dimension(), Dimension()}),  Format{Dense, Dense})),
+                    i(IndexVar()),
+                    j(IndexVar()),
+                    k(IndexVar()) {}; 
+
+        AcceleratorStmt getStmt() const override {return z(i, k) = x(i, j) * y(j, k) + z(i,k);} 
+        std::vector<Argument> getArguments() const override {
+                                                return 
+                                                {   new StringLiteral("CblasRowMajor"),
+                                                    new StringLiteral("CblasNoTrans"),
+                                                    new StringLiteral("CblasNoTrans"),
+                                                    new DimArg(i), 
+                                                    new DimArg(k), 
+                                                    new DimArg(j), 
+                                                    new LiteralArg(Datatype(taco::UInt32), 1),
+                                                    new TensorObjectArg(x), 
+                                                    new DimArg(i), 
+                                                    new TensorObjectArg(y), 
+                                                    new DimArg(j), 
+                                                    new LiteralArg(Datatype(taco::UInt32), 1),
+                                                    new TensorObjectArg(z), 
+                                                    new DimArg(i), 
+                                                }; }
+
+        std::string getReturnType() const override {return "void";}
+        std::string getFunctionName() const override {return "cblas_sgemm";}
+
+    private: 
+        TensorObject x;
+        TensorObject y;
+        TensorObject z;
+        IndexVar i;
+        IndexVar j;
+        IndexVar k;
+
 };
 
 

@@ -49,5 +49,55 @@ class TblisMultiply : public AbstractFunctionInterface{
 
 };
 
+class TblisTTM : public AbstractFunctionInterface{
+    public: 
+        TblisTTM() : 
+                    x(TensorObject(Type(taco::Float32, {Dimension(), Dimension(), Dimension()}),  Format{Dense, Dense, Dense})),
+                    y(TensorObject(Type(taco::Float32, {Dimension(), Dimension(), Dimension()}),  Format{Dense, Dense, Dense})),
+                    z(TensorObject(Type(taco::Float32, {Dimension(), Dimension()}),  Format{Dense, Dense})),
+                    i(IndexVar()),
+                    j(IndexVar()),
+                    k(IndexVar()),
+                    l(IndexVar()),
+                    var(DeclVar("tblis_tensor", "var1")),
+                    var2(DeclVar("tblis_tensor", "var2")),
+                    result(DeclVar("tblis_tensor", "result")) {};
+
+        AcceleratorStmt getStmt() const override {return x(i, j, k) = y(i, j, l) * z(k, l);}
+        std::vector<Argument> getArguments() const override {
+                                                return 
+                                                {   new StringLiteral("NULL"),
+                                                    new StringLiteral("NULL"),
+                                                    new AddrDeclVarArg(var),
+                                                    new StringLiteral("\"ijl\""),
+                                                    new AddrDeclVarArg(var2),
+                                                    new StringLiteral("\"kl\""),
+                                                    new AddrDeclVarArg(result),
+                                                    new StringLiteral("\"ijk\"")
+                                                }; }
+
+        std::string getReturnType() const override {return "void";}
+        std::string getFunctionName() const override {return "tblis_tensor_mult";}
+        std::vector<Argument>  callBefore() const override {
+                                taco::TransferLoad tblis_init_tensor_s("tblis_init_tensor_s", "void");
+                                return { tblis_init_tensor_s(AddrDeclVarArg(var), 3, CastArg(new DimList(y), "len_type *"), DataArray(y), StringLiteral(" (stride_type[]) {1, 1, 1}")),
+                                         tblis_init_tensor_s(AddrDeclVarArg(var2), 2, CastArg(new DimList(z), "len_type *"), DataArray(z), StringLiteral("(stride_type[]) {1, 1}")), 
+                                         tblis_init_tensor_s(AddrDeclVarArg(result), 3, CastArg(new DimList(y), "len_type *"), DataArray(x), StringLiteral("(stride_type[]) {1, 1, 1}"))};
+                            }
+
+    private: 
+        TensorObject x;
+        TensorObject y;
+        TensorObject z;
+        IndexVar i;
+        IndexVar j;
+        IndexVar k;
+        IndexVar l;
+        DeclVar var;
+        DeclVar var2;
+        DeclVar result;
+
+};
+
 #endif 
     

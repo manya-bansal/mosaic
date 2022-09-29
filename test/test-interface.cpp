@@ -524,3 +524,71 @@ TEST(interface, cblasSgmev) {
    ASSERT_TENSOR_EQ(expected, d);
 
 }
+
+TEST(interface, cblasSgemm) {
+
+   // actual computation
+   Tensor<float> A("A", {16, 16}, Format{Dense, Dense});
+   Tensor<float> B("B", {16, 16}, Format{Dense, Dense});
+   Tensor<float> C("C", {16, 16}, Format{Dense, Dense});
+   Tensor<float> D("C", {16, 16}, Format{Dense, Dense});
+
+   Tensor<float> expected("expected", {16, 16}, Format{Dense, Dense});
+
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar k("k");
+
+   IndexExpr accelerateExpr = B(i, j) * C(j, k) + C(i,k);
+   A(i, k) = accelerateExpr;
+
+   // register the description
+   A.registerAccelerator(new Sgemm());
+   // enable targeting
+   A.accelerateOn();
+   
+   A.compile();
+   A.assemble();
+   A.compute();
+
+   expected(i, k) = accelerateExpr;
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+   ASSERT_TENSOR_EQ(expected, A);
+
+}
+
+TEST(interface, tblisTTM) {
+
+   // actual computation
+   Tensor<float> A("A", {16, 16, 16}, Format{Dense, Dense, Dense});
+   Tensor<float> B("B", {16, 16, 16}, Format{Dense, Dense, Dense});
+   Tensor<float> C("C", {16, 16}, Format{Dense, Dense});
+   Tensor<float> expected("expected", {16, 16, 16}, Format{Dense, Dense, Dense});
+
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar k("k");
+   IndexVar l("l");
+
+   IndexExpr accelerateExpr = B(i, j, l) * C(k, l);
+   A(i, j, k) = accelerateExpr;
+
+
+   IndexStmt stmt = A.getAssignment().concretize();
+   stmt = stmt.accelerate(new TblisTTM(), accelerateExpr);
+   
+   A.compile(stmt);
+   A.assemble();
+   A.compute();
+
+   expected(i, j, k) = accelerateExpr;
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+   ASSERT_TENSOR_EQ(expected, A);
+
+}
