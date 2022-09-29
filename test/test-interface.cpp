@@ -592,3 +592,41 @@ TEST(interface, tblisTTM) {
    ASSERT_TENSOR_EQ(expected, A);
 
 }
+
+TEST(interface, tblisDot) {
+
+
+   Tensor<float> A("A", {16}, Format{Dense}, 0);
+   Tensor<float> B("B", {16}, Format{Dense});
+   Tensor<float> C("C", {16}, Format{Dense});
+   Tensor<float> expected("expected", {16}, Format{Dense}, 0);
+   TensorVar accelWorkspace("accelWorkspace", Type(taco::Float32, {16}), taco::dense);
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar iw("iw");
+
+   IndexExpr accelerateExpr = B(j) * C(j);
+   A(i) = sum(j, accelerateExpr);
+
+   IndexStmt stmt = A.getAssignment().concretize();
+   stmt = stmt.accelerate(new TblisDot(), accelerateExpr);
+    
+   A.compile(stmt);
+   A.assemble();
+   A.compute();
+
+   expected(i) = sum(j, accelerateExpr);
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+   ASSERT_TENSOR_EQ(expected, A);
+}
+
+
+
+// float tblis_vector_dot_transfer(const tblis_comm* comm, const tblis_config* cfg,
+//                       const tblis_vector* A, const tblis_vector* B,
+//                       tblis_scalar* result){
+//    tblis_vector_dot(comm, cfg, A, B, result);
+//    return result->type; }
