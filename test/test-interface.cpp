@@ -623,10 +623,39 @@ TEST(interface, tblisDot) {
    ASSERT_TENSOR_EQ(expected, A);
 }
 
+TEST(interface, tblisSgemm) {
+
+   // actual computation
+   Tensor<float> A("A", {16, 16}, Format{Dense, Dense});
+   Tensor<float> B("B", {16, 16}, Format{Dense, Dense});
+   Tensor<float> C("C", {16, 16}, Format{Dense, Dense});
+   Tensor<float> D("D", {16, 16}, Format{Dense, Dense});
+
+   Tensor<float> expected("expected", {16, 16}, Format{Dense, Dense});
+
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar k("k");
+
+   IndexExpr accelerateExpr = B(i, j) * C(j, k) + C(i,k);
+   A(i, k) = accelerateExpr;
 
 
-// float tblis_vector_dot_transfer(const tblis_comm* comm, const tblis_config* cfg,
-//                       const tblis_vector* A, const tblis_vector* B,
-//                       tblis_scalar* result){
-//    tblis_vector_dot(comm, cfg, A, B, result);
-//    return result->type; }
+   // IndexStmt stmt = A.getAssignment().concretize();
+   // stmt = stmt.accelerate(new TblisMultiply(), accelerateExpr);
+   A.registerAccelerator(new TblisMultiply());
+   // enable targeting
+   A.accelerateOn();
+   
+   A.compile();
+   A.assemble();
+   A.compute();
+
+   expected(i, k) = accelerateExpr;
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+   ASSERT_TENSOR_EQ(expected, A);
+
+}
