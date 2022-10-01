@@ -95,6 +95,17 @@ std::ostream& TensorArg::print(std::ostream& os) const{
   return os;
 }
 
+std::ostream& AddrDeclVarArg::print(std::ostream& os) const{
+  os << "&" << var.getName();
+  return os;
+}
+
+std::ostream& DeclVarArg::print(std::ostream& os) const{
+  os << var.getName();
+  return os;
+}
+
+
 std::ostream& LiteralArg::print(std::ostream& os) const{
   
 

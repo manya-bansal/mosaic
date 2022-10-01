@@ -137,6 +137,7 @@ struct  DeclVar {
 struct AddrDeclVarArg : public TransferTypeArgs {
 
   explicit AddrDeclVarArg(const DeclVar& var): TransferTypeArgs(DECLVAR_ADDR), var(var) {}
+  std::ostream& print(std::ostream& os) const override;
   DeclVar var; 
 
 };
@@ -144,6 +145,7 @@ struct AddrDeclVarArg : public TransferTypeArgs {
 struct DeclVarArg : public TransferTypeArgs {
 
   explicit DeclVarArg(const DeclVar& var): TransferTypeArgs(DECLVAR), var(var) {}
+  std::ostream& print(std::ostream& os) const override;
   DeclVar var; 
 
 };
