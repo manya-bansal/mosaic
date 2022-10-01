@@ -9,7 +9,7 @@
 
 using namespace taco;
 
-static void bench_cblas_saxpy(benchmark::State& state) {
+static void bench_unfused_saxpy(benchmark::State& state) {
   int dim = state.range(0);
    
    Tensor<float> B("B", {dim}, Format{Dense});
@@ -23,7 +23,7 @@ static void bench_cblas_saxpy(benchmark::State& state) {
       B.insert({i}, (float) i);
    }
 
-  IndexExpr accelerateExpr = B(i) + C(i);
+  IndexExpr accelerateExpr = B(i) + C(i) + C(i);
 
   for (auto _ : state) {
     // Setup.
@@ -31,15 +31,18 @@ static void bench_cblas_saxpy(benchmark::State& state) {
     Tensor<float> A("A", {dim}, Format{Dense});
     IndexVar i("i");
     IndexVar j("j");
+
     A(i) = accelerateExpr;
-    IndexStmt stmt = A.getAssignment().concretize();
-    stmt = stmt.accelerate(new TblisSaxpy(), accelerateExpr);
-    A.compile(stmt);
+    
+    // A.registerAccelerator(new Saxpy());
+    // A.accelerateOn();
+
+    A.compile();
     A.assemble();
     state.ResumeTiming();
     A.compute();
   }
 }
 
-TACO_BENCH(bench_cblas_saxpy)->DenseRange(20, 1000, 20);
+TACO_BENCH(bench_unfused_saxpy)->DenseRange(20, 1000, 20);
 
