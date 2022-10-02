@@ -21,10 +21,12 @@
 #include "taco/accelerator_interface/test_interface.h"
 #include "taco/accelerator_interface/tile_interface.h"
 #include "taco/accelerator_interface/tensorflow_interface.h"
+#include "taco/accelerator_interface/gsl_interface.h"
 
 
 using namespace taco;
 
+extern bool gsl_compile;
 
 bool trivialkernelChecker(IndexStmt expr){
    return true;
@@ -850,4 +852,44 @@ TEST(interface, tensorFlowCompile) {
    A.assemble();
    A.compute();
 
+}
+
+TEST(interface, gslVecAdd) {
+
+   gsl_compile = true;
+
+   Tensor<float> A("A", {16}, Format{Dense}, 0);
+   Tensor<float> B("B", {16}, Format{Dense});
+   Tensor<float> C("C", {16}, Format{Dense});
+   Tensor<float> expected("expected", {16}, Format{Dense});
+   TensorVar accelWorkspace("accelWorkspace", Type(taco::Float32, {16}), taco::dense);
+   IndexVar i("i");
+   IndexVar iw("iw");
+
+   for (int i = 0; i < 16; i++) {
+      C.insert({i}, (float) i);
+      B.insert({i}, (float) i);
+   }
+
+   C.pack();
+   B.pack();
+
+   IndexExpr accelerateExpr = B(i) + C(i);
+   A(i) = accelerateExpr;
+
+   IndexStmt stmt = A.getAssignment().concretize();
+   stmt = stmt.accelerate(new GSLVecAdd(), accelerateExpr);
+
+   A.compile(stmt);
+   A.assemble();
+   A.compute();
+
+   expected(i) = accelerateExpr;
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+   ASSERT_TENSOR_EQ(expected, A);
+
+   gsl_compile = false;
 }

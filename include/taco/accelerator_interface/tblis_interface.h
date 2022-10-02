@@ -1,6 +1,11 @@
 #ifndef TBLIS_INTERFACE_H
 #define TBLIS_INTERFACE_H
 
+#include "taco/index_notation/index_notation.h"
+#include "taco/type.h"
+#include "taco/accelerator_notation/accel_interface.h"
+#include "taco/accelerator_notation/accelerator_notation.h"
+
 class TblisMultiply : public AbstractFunctionInterface{
     public: 
         TblisMultiply() : 
