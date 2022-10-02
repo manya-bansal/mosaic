@@ -850,11 +850,4 @@ TEST(interface, tensorFlowCompile) {
    A.assemble();
    A.compute();
 
-   // expected(i, k) = accelerateExpr;
-   // expected.compile();
-   // expected.assemble();
-   // expected.compute();
-
-   // ASSERT_TENSOR_EQ(expected, A);
-
 }
