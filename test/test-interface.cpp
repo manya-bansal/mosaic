@@ -20,6 +20,7 @@
 #include "taco/accelerator_interface/tblis_interface.h"
 #include "taco/accelerator_interface/test_interface.h"
 #include "taco/accelerator_interface/tile_interface.h"
+#include "taco/accelerator_interface/tensorflow_interface.h"
 
 
 using namespace taco;
@@ -184,6 +185,7 @@ TEST(interface, endToEndPluginInterfaceClass) {
    Tensor<float> B("B", {16}, Format{Dense});
    Tensor<float> C("C", {16}, Format{Dense});
    IndexVar i("i");
+   
 
    for (int i = 0; i < 16; i++) {
       C.insert({i}, (float) i);
@@ -671,6 +673,14 @@ TEST(interface, tblisSaxpy) {
    IndexVar i("i");
    IndexVar iw("iw");
 
+   for (int i = 0; i < 16; i++) {
+      C.insert({i}, (float) i);
+      B.insert({i}, (float) i);
+   }
+
+   C.pack();
+   B.pack();
+
    IndexExpr accelerateExpr = B(i) + C(i);
    A(i) = accelerateExpr;
 
@@ -699,6 +709,14 @@ TEST(interface, tblisSaxpyUnfused) {
    TensorVar accelWorkspace("accelWorkspace", Type(taco::Float32, {16}), taco::dense);
    IndexVar i("i");
    IndexVar iw("iw");
+
+   for (int i = 0; i < 16; i++) {
+      C.insert({i}, (float) i);
+      B.insert({i}, (float) i);
+   }
+
+   C.pack();
+   B.pack();
 
    IndexExpr accelerateExpr = B(i) + C(i) + B(i);
    A(i) = accelerateExpr;
@@ -747,5 +765,37 @@ TEST(interface, cblassMMultiply) {
    expected.compute();
 
    ASSERT_TENSOR_EQ(expected, A);
+
+}
+
+
+TEST(interface, tensorFlowCompile) {
+
+   // actual computation
+   Tensor<float> A("A", {16, 16}, Format{Dense, Dense});
+   Tensor<float> B("B", {16, 16}, Format{Dense, Dense});
+   Tensor<float> C("C", {16, 16}, Format{Dense, Dense});
+    Tensor<float> expected("expected", {16, 16}, Format{Dense, Dense});
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar k("k");
+
+   IndexExpr accelerateExpr = B(i, j) * C(j, k);
+   A(i, k) = accelerateExpr;
+
+
+   IndexStmt stmt = A.getAssignment().concretize();
+   stmt = stmt.accelerate(new TestTF(), accelerateExpr);
+   
+   A.compile(stmt);
+   A.assemble();
+   A.compute();
+
+   // expected(i, k) = accelerateExpr;
+   // expected.compile();
+   // expected.assemble();
+   // expected.compute();
+
+   // ASSERT_TENSOR_EQ(expected, A);
 
 }

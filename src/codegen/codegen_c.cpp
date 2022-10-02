@@ -36,6 +36,7 @@ const string cHeaders =
   "#include <string.h>\n"
   "#include \"cblas.h\"\n"
   "#include \"tblis.h\"\n"
+  "#include <tensorflow/c/c_api.h>\n"
   "#if _OPENMP\n"
   "#include <omp.h>\n"
   "#endif\n"

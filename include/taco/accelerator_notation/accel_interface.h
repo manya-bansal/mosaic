@@ -265,6 +265,11 @@ class TransferLoad{
       return new TransferWithArgs(name, returnType, argument); 
     }
 
+    Argument operator()(){
+      std::vector<Argument> argument;
+      return new TransferWithArgs(name, returnType, argument); 
+    }
+
   private:
     std::string name;
     std::string returnType; 
@@ -289,6 +294,11 @@ class TransferStore{
       std::vector<Argument> argument;
       addArg(argument, first, remaining...);
       return new TransferWithArgs(name, returnType, argument);
+    }
+
+    Argument operator()(){
+      std::vector<Argument> argument;
+      return new TransferWithArgs(name, returnType, argument); 
     }
 
   private:

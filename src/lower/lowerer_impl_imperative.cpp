@@ -2781,7 +2781,13 @@ ir::Expr LowererImplImperative::lowerArgument(Argument argument, TensorVar resul
       case DATA_ARRAY:
       {
         auto t = argument.getNode<DataArray>();
+
+        if (t->tvar.getName() == resultVar.getName() && replace){
+          return getValuesArray(temporary);
+        }
+        
         return getValuesArray(t->tvar);
+
       }
       case STRING:
       {
