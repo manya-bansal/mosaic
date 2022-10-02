@@ -30,10 +30,10 @@ class TblisMultiply : public AbstractFunctionInterface{
         std::string getReturnType() const override {return "void";}
         std::string getFunctionName() const override {return "tblis_tensor_mult";}
         std::vector<Argument>  callBefore() const override {
-                                taco::TransferLoad tblis_init_tensor_s("tblis_init_tensor_s", "void");
-                                return { tblis_init_tensor_s(AddrDeclVarArg(var), 2, CastArg(new DimList(x), "len_type *"), DataArray(x), StringLiteral(" (stride_type[]) {1, 1}")),
-                                         tblis_init_tensor_s(AddrDeclVarArg(var2), 2, CastArg(new DimList(y), "len_type *"), DataArray(y), StringLiteral("(stride_type[]) {1, 1}")), 
-                                         tblis_init_tensor_s(AddrDeclVarArg(result), 2, CastArg(new DimList(x), "len_type *"), DataArray(z), StringLiteral("(stride_type[]) {1, 1}"))};
+                                taco::TransferLoad tblis_init_tensor_s_helper_row_major("tblis_init_tensor_s_helper_row_major", "void");
+                                return { tblis_init_tensor_s_helper_row_major(AddrDeclVarArg(var), DimList(x), 2,  DataArray(x)),
+                                         tblis_init_tensor_s_helper_row_major(AddrDeclVarArg(var2), DimList(x), 2,  DataArray(y)), 
+                                         tblis_init_tensor_s_helper_row_major(AddrDeclVarArg(result), DimList(x), 2, DataArray(z))};
                             }
 
     private: 
@@ -79,10 +79,10 @@ class TblisTTM : public AbstractFunctionInterface{
         std::string getReturnType() const override {return "void";}
         std::string getFunctionName() const override {return "tblis_tensor_mult";}
         std::vector<Argument>  callBefore() const override {
-                                taco::TransferLoad tblis_init_tensor_s("tblis_init_tensor_s", "void");
-                                return { tblis_init_tensor_s(AddrDeclVarArg(var), 3, CastArg(new DimList(y), "len_type *"), DataArray(y), StringLiteral(" (stride_type[]) {1, 1, 1}")),
-                                         tblis_init_tensor_s(AddrDeclVarArg(var2), 2, CastArg(new DimList(z), "len_type *"), DataArray(z), StringLiteral("(stride_type[]) {1, 1}")), 
-                                         tblis_init_tensor_s(AddrDeclVarArg(result), 3, CastArg(new DimList(y), "len_type *"), DataArray(x), StringLiteral("(stride_type[]) {1, 1, 1}"))};
+                                taco::TransferLoad tblis_init_tensor_s_helper_row_major("tblis_init_tensor_s_helper_row_major", "void");
+                                return { tblis_init_tensor_s_helper_row_major(AddrDeclVarArg(var), DimList(y), 3,  DataArray(y)),
+                                         tblis_init_tensor_s_helper_row_major(AddrDeclVarArg(var2), DimList(z), 2,  DataArray(z)), 
+                                         tblis_init_tensor_s_helper_row_major(AddrDeclVarArg(result), DimList(y), 3, DataArray(x))};
                             }
 
     private: 

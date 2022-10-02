@@ -2756,7 +2756,7 @@ ir::Expr LowererImplImperative::lowerArgument(Argument argument, TensorVar resul
         }
         
         for (auto args: t->getArgs()){
-          userDefArgs.push_back(lowerArgument(args, resultVar, temporary, varsToDeclare, true));
+          userDefArgs.push_back(lowerArgument(args, resultVar, temporary, varsToDeclare, replace));
         }
         return ir::Call::make(t->getName(), userDefArgs);
       }
@@ -2775,6 +2775,9 @@ ir::Expr LowererImplImperative::lowerArgument(Argument argument, TensorVar resul
       case DIMLIST:
       {
         auto t = argument.getNode<DimList>();
+        if (t->tvar.getName() == temporary.getName()){
+          taco_uerror << "freak out" <<  tempToIndexList.at(temporary) << endl;
+        }
         return RawString::make(t->tvar.getName() + "->dimensions");
         
       }
@@ -2809,7 +2812,7 @@ ir::Expr LowererImplImperative::lowerArgument(Argument argument, TensorVar resul
       {
         auto t = argument.getNode<CastArg>();
 
-        return CustomCast::make(lowerArgument(t->argument, resultVar, temporary, varsToDeclare, true), t->cast);
+        return CustomCast::make(lowerArgument(t->argument, resultVar, temporary, varsToDeclare, replace), t->cast);
       }
       default:
         taco_uerror << "Should not reach" << endl;
@@ -2852,14 +2855,26 @@ std::vector<Stmt> LowererImplImperative::prepareFunctionCall(ConcreteAccelerateC
 
   std::vector<Stmt> functionCalls; 
 
+  bool setResultByRef = false;
+      match((accelGen.getRHS()),
+          std::function<void(const AccessNode*)>([&](const AccessNode* op) {
+                if (resultVar.getName() == op->tensorVar.getName()){
+                  setResultByRef = true;
+                }
+            })
+  );
+
+  
+
+  // bool replace = accelGen.getReturnType() == "void"
+
   for (auto callBefore: accelGen.getCallBefore()){
-    functionCalls.push_back(prepareCallBefore(callBefore, resultVar, temp, varsToDeclare, true));
+    functionCalls.push_back(prepareCallBefore(callBefore, resultVar, temp, varsToDeclare, setResultByRef));
   }
 
   for (auto argument: arguments){
-      loweredArguments.push_back(lowerArgument(argument, resultVar, temp, varsToDeclare, true));
+      loweredArguments.push_back(lowerArgument(argument, resultVar, temp, varsToDeclare, setResultByRef));
   }
-
 
   Stmt functionCall;
   if (accelGen.getReturnType() == "void"){

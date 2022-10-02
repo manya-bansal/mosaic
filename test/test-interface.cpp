@@ -500,6 +500,22 @@ TEST(interface, cblasSgmev) {
    Tensor<float> c("c", {16}, Format{Dense});
    Tensor<float> d("d", {16}, Format{Dense});
 
+   for (int i = 0; i < 16; i++) {
+      for (int j = 0; j < 16; j++) {
+         A.insert({i, j}, (float) i + j);
+      }
+   }
+
+   A.pack();
+
+   for (int i = 0; i < 16; i++) {
+      c.insert({i}, (float) i);
+      b.insert({i}, (float) i);
+   }
+
+   c.pack();
+   b.pack();
+
    Tensor<float> expected("expected", {16}, Format{Dense});
 
    IndexVar i("i");
@@ -536,6 +552,17 @@ TEST(interface, cblasSgemm) {
    Tensor<float> D("C", {16, 16}, Format{Dense, Dense});
 
    Tensor<float> expected("expected", {16, 16}, Format{Dense, Dense});
+
+   for (int i = 0; i < 16; i++) {
+      for (int j = 0; j < 16; j++) {
+         C.insert({i, j}, (float) i + j);
+         B.insert({i, j}, (float) i + j);
+      }
+   }
+
+   C.pack();
+   B.pack();
+
 
    IndexVar i("i");
    IndexVar j("j");
@@ -575,6 +602,23 @@ TEST(interface, tblisTTM) {
    IndexVar k("k");
    IndexVar l("l");
 
+   for (int i = 0; i < 16; i++) {
+      for (int j = 0; j < 16; j++) {
+         C.insert({i, j}, (float) i + j);
+      }
+   }
+
+   for (int i = 0; i < 16; i++) {
+      for (int j = 0; j < 16; j++) {
+         for (int k = 0; k < 16; k++) {
+            B.insert({i, j, k}, (float) i + j + k);
+         }
+      }
+   }
+
+   C.pack();
+   B.pack();
+
    IndexExpr accelerateExpr = B(i, j, l) * C(k, l);
    A(i, j, k) = accelerateExpr;
 
@@ -607,6 +651,14 @@ TEST(interface, tblisDot) {
    IndexVar j("j");
    IndexVar iw("iw");
 
+   for (int i = 0; i < 16; i++) {
+      C.insert({i}, (float) i);
+      B.insert({i}, (float) i);
+   }
+
+   C.pack();
+   B.pack();
+
    IndexExpr accelerateExpr = B(j) * C(j);
    A(i) = sum(j, accelerateExpr);
 
@@ -634,6 +686,13 @@ TEST(interface, tblisSgemm) {
    Tensor<float> D("D", {16, 16}, Format{Dense, Dense});
 
    Tensor<float> expected("expected", {16, 16}, Format{Dense, Dense});
+
+   for (int i = 0; i < 16; i++) {
+      for (int j = 0; j < 16; j++) {
+         C.insert({i, j}, (float) i + j);
+         B.insert({i, j}, (float) i + j);
+      }
+   }
 
    IndexVar i("i");
    IndexVar j("j");

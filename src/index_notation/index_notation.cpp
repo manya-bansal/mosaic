@@ -3930,7 +3930,7 @@ static ConcreteAccelerateCodeGenerator getConcreteCodeGenerator(IndexExpr expr, 
     e = workspace;
   }
 
-  ConcreteAccelerateCodeGenerator concreteCodeGen = ConcreteAccelerateCodeGenerator( functionInterface.getNode()->getFunctionName(),  functionInterface.getNode()->getReturnType(), e, expr, newArgs, callBefore, callAfter);
+  ConcreteAccelerateCodeGenerator concreteCodeGen = ConcreteAccelerateCodeGenerator(functionInterface.getNode()->getFunctionName(), functionInterface.getNode()->getReturnType(), e, expr, newArgs, callBefore, callAfter);
 
   return concreteCodeGen;
 }
@@ -3939,7 +3939,7 @@ IndexStmt IndexStmt::accelerate(FunctionInterface functionInterface, IndexExpr e
 
   AcceleratorStmt referenceStmt = functionInterface.getNode()->getStmt();
   if (!isa<AcceleratorAssignment>(referenceStmt)){
-    taco_uerror << "Reference statement in function interface must be an assignemnt" << endl;
+    taco_uerror << "Reference statement in function interface must be an assignment" << endl;
   }
   AcceleratorAssignment assign = to<AcceleratorAssignment>(referenceStmt);
   // explictly add the reduction nodes
@@ -3952,7 +3952,7 @@ IndexStmt IndexStmt::accelerate(FunctionInterface functionInterface, IndexExpr e
     // get reduction notation for assignment using exprToAccelerate and then check
     argumentMap = hasPreciseMatch(exprToAccelerate, assign.getRhs());
     if (argumentMap.possible){
-       std::cout << "Warning : Implicit Reduction is being added, given function is caluclating " << assignRedux.getRhs() << "." << std::endl;
+       std::cout << "Warning : Implicit Reduction is being added, given function is calculating " << assignRedux.getRhs() << "." << std::endl;
     }else{
       taco_uerror << "Expressions " << assign.getRhs() << " and " << exprToAccelerate << " do not match." << endl;
     }
@@ -3975,7 +3975,7 @@ IndexStmt IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<FunctionInterfac
   // std::map<ConcreteAccelerateCodeGenerator, FunctionInterface> abstractInterface;
 
   if (!isa<Assignment>(stmt)) {
-    cout << "Cannot autoscheudle this expression since it is not an assignment" << endl;
+    cout << "Cannot autoschedule this expression since it is not an assignment" << endl;
     return stmt;
   }
 
