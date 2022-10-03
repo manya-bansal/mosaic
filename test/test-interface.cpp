@@ -989,3 +989,49 @@ TEST(interface, gslSgmev) {
 
    gsl_compile = false;
 }
+
+
+TEST(interface, gslSgemm) {
+
+   gsl_compile = true;
+
+    // actual computation
+   Tensor<float> A("A", {16, 16}, Format{Dense, Dense});
+   Tensor<float> B("B", {16, 16}, Format{Dense, Dense});
+   Tensor<float> C("C", {16, 16}, Format{Dense, Dense});
+    Tensor<float> expected("expected", {16, 16}, Format{Dense, Dense});
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar k("k");
+
+
+   for (int i = 0; i < 16; i++) {
+      for (int j = 0; j < 16; j++) {
+         B.insert({i, j}, (float) i + j);
+         C.insert({i, j}, (float) i + j);
+      }
+   }
+
+   B.pack();
+   C.pack();
+
+   IndexExpr accelerateExpr = B(i, j) * C(j, k);
+   A(i, k) = accelerateExpr;
+
+
+   IndexStmt stmt = A.getAssignment().concretize();
+   stmt = stmt.accelerate(new GSLMM(), accelerateExpr);
+   
+   A.compile(stmt);
+   A.assemble();
+   A.compute();
+
+   expected(i, k) = accelerateExpr;
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+   ASSERT_TENSOR_EQ(expected, A);
+
+   gsl_compile = false;
+}

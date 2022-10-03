@@ -141,5 +141,59 @@ class GSLSgemv : public AbstractFunctionInterface{
 };
 
 
+class GSLMM : public AbstractFunctionInterface{
+    public: 
+        GSLMM() : x(TensorObject(Type(taco::Float32, {Dimension(), Dimension()}), Format{Dense, Dense})), 
+                  y(TensorObject(Type(taco::Float32, {Dimension(), Dimension()}), Format{Dense, Dense})), 
+                  z(TensorObject(Type(taco::Float32, {Dimension(), Dimension()}), Format{Dense, Dense})), 
+                  i(IndexVar()),
+                  j(IndexVar()),
+                  k(IndexVar()),
+                  a(DeclVar("gsl_matrix_float * ", "var1")),
+                  b(DeclVar("gsl_matrix_float *", "var2")),
+                  mat(DeclVar("gsl_matrix_float *", "mat")) {};
+        AcceleratorStmt getStmt() const override {return z(i, k) = x(i, j) *  y(j, k);}
+        std::vector<Argument> getArguments() const override {return 
+                                                {
+                                                    new StringLiteral("111"), 
+                                                    new StringLiteral("111"), 
+                                                    new LiteralArg(Datatype(taco::UInt32), 1),
+                                                    new DeclVarArg(mat),
+                                                    new DeclVarArg(a),
+                                                    new LiteralArg(Datatype(taco::UInt32), 0),
+                                                    new DeclVarArg(b),
+
+                                                };}
+        std::string getReturnType() const override {return "void";}
+        std::string getFunctionName() const override{return "gsl_blas_sgemm";}
+        bool checkerFunction(IndexStmt stmt) const override{return true;}
+
+        std::vector<Argument>  callBefore() const override {
+            taco::TransferLoad gsl_matrix_float_alloc("gsl_matrix_float_alloc", "gsl_matrix_float *");
+            taco::TransferLoad set_gsl_mat_data_row_major_s("set_gsl_mat_data_row_major_s", "void");
+
+            return {
+                a = gsl_matrix_float_alloc(Dim(i), Dim(j)),
+                b = gsl_matrix_float_alloc(Dim(j), Dim(k)),
+                mat = gsl_matrix_float_alloc(Dim(i), Dim(k)),
+                set_gsl_mat_data_row_major_s(mat, x),
+                set_gsl_mat_data_row_major_s(a, y),
+                set_gsl_mat_data_row_major_s(b, z)
+            };
+        }
+
+    private: 
+        TensorObject x;
+        TensorObject y;
+        TensorObject z;
+        IndexVar i;
+        IndexVar j;
+        IndexVar k;
+        DeclVar a;
+        DeclVar b;
+        DeclVar mat;
+};
+
+
 
 #endif 
