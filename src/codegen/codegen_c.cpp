@@ -192,6 +192,9 @@ const string cHeaders =
   " void set_gsl_mat_data_row_major_s(gsl_matrix_float * mat, float * data){\n  "
   "   mat->data = data;"
   "}\n"
+  " void set_tensor_data_s(tensor_float * t, float * data){\n  "
+  "   t->data = data;"
+  "}\n"
   "#endif\n";
 } // anonymous namespace
 

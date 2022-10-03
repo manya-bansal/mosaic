@@ -22,6 +22,7 @@
 #include "taco/accelerator_interface/tile_interface.h"
 #include "taco/accelerator_interface/tensorflow_interface.h"
 #include "taco/accelerator_interface/gsl_interface.h"
+#include "taco/accelerator_interface/tensor_interface.h"
 
 
 using namespace taco;
@@ -1034,4 +1035,105 @@ TEST(interface, gslSgemm) {
    ASSERT_TENSOR_EQ(expected, A);
 
    gsl_compile = false;
+}
+
+
+TEST(interface, gslTensorPlus) {
+
+   gsl_compile = true;
+
+   int dim = 16;
+
+   // actual computation
+   Tensor<float> A("A", {dim, dim, dim}, Format{Dense, Dense, Dense});
+   Tensor<float> B("B", {dim, dim, dim}, Format{Dense, Dense, Dense});
+   Tensor<float> C("C", {dim, dim, dim}, Format{Dense, Dense, Dense});
+   Tensor<float> expected("expected", {dim, dim, dim}, Format{Dense, Dense, Dense});
+
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar k("k");
+   IndexVar l("l");
+
+   for (int i = 0; i < dim; i++) {
+      for (int j = 0; j < dim; j++) {
+         for (int k = 0; k < dim; k++) {
+            B.insert({i, j, k}, (float) i + j * k);
+            C.insert({i, j, k}, (float) i + j * k);
+         }
+      }
+   }
+
+   C.pack();
+   B.pack();
+
+   IndexExpr accelerateExpr = B(i, j, k) + C(i, j, k);
+   A(i, j, k) = accelerateExpr;
+
+
+   IndexStmt stmt = A.getAssignment().concretize();
+   stmt = stmt.accelerate(new GslTensorPlus(), accelerateExpr);
+   
+   A.compile(stmt);
+   A.assemble();
+   A.compute();
+
+   expected(i, j, k) = accelerateExpr;
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+   ASSERT_TENSOR_EQ(expected, A);
+
+   gsl_compile = false;
+
+}
+
+
+TEST(interface, tblisPlus) {
+
+   int dim = 16;
+
+   // actual computation
+   Tensor<float> A("A", {dim, dim, dim}, Format{Dense, Dense, Dense});
+   Tensor<float> B("B", {dim, dim, dim}, Format{Dense, Dense, Dense});
+   Tensor<float> C("C", {dim, dim, dim}, Format{Dense, Dense, Dense});
+   Tensor<float> expected("expected", {dim, dim, dim}, Format{Dense, Dense, Dense});
+
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar k("k");
+   IndexVar l("l");
+
+   for (int i = 0; i < dim; i++) {
+      for (int j = 0; j < dim; j++) {
+         for (int k = 0; k < dim; k++) {
+            B.insert({i, j, k}, (float) i + j * k);
+            C.insert({i, j, k}, (float) i + j * k);
+         }
+      }
+   }
+
+   C.pack();
+   B.pack();
+
+   IndexExpr accelerateExpr = B(i, j, k) + C(i, j, k);
+   A(i, j, k) = accelerateExpr;
+
+
+   IndexStmt stmt = A.getAssignment().concretize();
+   stmt = stmt.accelerate(new TblisPlus(), accelerateExpr);
+   
+   A.compile(stmt);
+   A.assemble();
+   A.compute();
+
+   expected(i, j, k) = accelerateExpr;
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+   ASSERT_TENSOR_EQ(expected, A);
+
+
 }
