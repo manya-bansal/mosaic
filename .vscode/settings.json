@@ -97,7 +97,8 @@
         "shared_mutex": "cpp",
         "arm_acle.h": "c",
         "ranges": "cpp",
-        "*.ipp": "cpp"
+        "*.ipp": "cpp",
+        "cblas-netlib.h": "c"
     },
     "C_Cpp.dimInactiveRegions": false
 }

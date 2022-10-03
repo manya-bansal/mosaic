@@ -893,3 +893,99 @@ TEST(interface, gslVecAdd) {
 
    gsl_compile = false;
 }
+
+TEST(interface, gslDot) {
+
+   gsl_compile = true;
+
+   Tensor<float> A("A", {16}, Format{Dense}, 0);
+   Tensor<float> B("B", {16}, Format{Dense});
+   Tensor<float> C("C", {16}, Format{Dense});
+   Tensor<float> expected("expected", {16}, Format{Dense}, 0);
+   TensorVar accelWorkspace("accelWorkspace", Type(taco::Float32, {16}), taco::dense);
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar iw("iw");
+
+   for (int i = 0; i < 16; i++) {
+      C.insert({i}, (float) i);
+      B.insert({i}, (float) i);
+   }
+
+   C.pack();
+   B.pack();
+
+   IndexExpr accelerateExpr = B(j) * C(j);
+   A(i) = sum(j, accelerateExpr);
+
+   IndexStmt stmt = A.getAssignment().concretize();
+   stmt = stmt.accelerate(new GSLDot(), accelerateExpr);
+    
+   A.compile(stmt);
+   A.assemble();
+   A.compute();
+
+   expected(i) = sum(j, accelerateExpr);
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+   ASSERT_TENSOR_EQ(expected, A);
+
+   gsl_compile = false;
+}
+
+
+TEST(interface, gslSgmev) {
+
+   gsl_compile = true;
+
+   // actual computation
+   Tensor<float> A("A", {16, 16}, Format{Dense, Dense});
+   Tensor<float> b("b", {16}, Format{Dense});
+   Tensor<float> c("c", {16}, Format{Dense});
+   Tensor<float> d("d", {16}, Format{Dense});
+
+   for (int i = 0; i < 16; i++) {
+      for (int j = 0; j < 16; j++) {
+         A.insert({i, j}, (float) i + j);
+      }
+   }
+
+   A.pack();
+
+   for (int i = 0; i < 16; i++) {
+      c.insert({i}, (float) i);
+      b.insert({i}, (float) i);
+   }
+
+   c.pack();
+   b.pack();
+
+   Tensor<float> expected("expected", {16}, Format{Dense});
+
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar k("k");
+
+   IndexExpr accelerateExpr = A(i, j) * b(j) + c(i);
+   d(i) = accelerateExpr;
+
+   // register the description
+   d.registerAccelerator(new GSLSgemv());
+   // enable targeting
+   d.accelerateOn();
+   
+   d.compile();
+   d.assemble();
+   d.compute();
+
+   expected(i) = accelerateExpr;
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+   ASSERT_TENSOR_EQ(expected, d);
+
+   gsl_compile = false;
+}

@@ -19,7 +19,7 @@ template <typename CType>
 class Tensor;
 
 
-enum ArgType {DIM, TENSORVAR, TENSOR_OBJECT, TENSOR, EXPR, LITERAL, USER_DEFINED, DECLVAR, UNKNOWN, DIMLIST, DATA_ARRAY, STRING, DECLVAR_ADDR, CAST};
+enum ArgType {DIM, TENSORVAR, TENSOR_OBJECT, TENSOR, EXPR, LITERAL, USER_DEFINED, DECLVAR, UNKNOWN, DIMLIST, DATA_ARRAY, STRING, DECLVAR_ADDR, TENSOR_ADDR, CAST};
 
 struct TransferTypeArgs : public util::Manageable<TransferTypeArgs>{
 
@@ -131,6 +131,14 @@ struct  DeclVar {
 
     std::string typeString;
     std::string name;
+
+};
+
+struct  AddrTensorVar : public TransferTypeArgs{
+    explicit AddrTensorVar(const TensorObject& var): TransferTypeArgs(TENSOR_ADDR), var(var) {}
+    explicit AddrTensorVar(const TensorVar& tvar): TransferTypeArgs(TENSOR_ADDR), tvar(tvar) {}
+    TensorObject var;
+    TensorVar tvar;
 
 };
 

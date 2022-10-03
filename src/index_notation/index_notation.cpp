@@ -3873,6 +3873,9 @@ static std::vector<Argument> getConcreteArgs(const std::vector<Argument>& abstra
     case DECLVAR_ADDR:
       newArgs.push_back(arg);
       break;
+    case TENSOR_ADDR:
+      newArgs.push_back(new AddrTensorVar(argumentMap.tensors.at(arg.getNode<AddrTensorVar>()->var)));
+      break;
     case CAST:
     {
       std::vector<Argument> userDefinedArgs = getConcreteArgs({arg.getNode<CastArg>()->argument}, argumentMap);

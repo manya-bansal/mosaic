@@ -38,6 +38,7 @@ const string cHeaders =
   "#include \"tblis.h\"\n"
   "#include <tensorflow/c/c_api.h>\n"
   "#include \"gsl/gsl_vector.h\"\n"
+  "#include \"gsl/gsl_blas.h\"\n"
   "#include \"tensor.h\"\n"
   "#if _OPENMP\n"
   "#include <omp.h>\n"
@@ -187,6 +188,9 @@ const string cHeaders =
   "}\n"
   " void set_gsl_float_data(gsl_vector_float * vec, float * data){\n  "
   "   vec->data = data;"
+  "}\n"
+  " void set_gsl_mat_data_row_major_s(gsl_matrix_float * mat, float * data){\n  "
+  "   mat->data = data;"
   "}\n"
   "#endif\n";
 } // anonymous namespace
