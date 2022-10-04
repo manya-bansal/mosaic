@@ -4,11 +4,12 @@
 #include "taco/tensor.h"
 #include "taco/format.h"
 #include "taco/index_notation/index_notation.h"
-#include "taco/accelerator_interface/cblas_saxpy.h"
+#include "taco/accelerator_interface/cblas_interface.h"
+#include "taco/accelerator_interface/tblis_interface.h"
 
 using namespace taco;
 
-static void bench_cblas_saxpy(benchmark::State& state) {
+static void bench_saxpy_blas(benchmark::State& state) {
   int dim = state.range(0);
    
    Tensor<float> B("B", {dim}, Format{Dense});
@@ -40,5 +41,5 @@ static void bench_cblas_saxpy(benchmark::State& state) {
   }
 }
 
-TACO_BENCH(bench_cblas_saxpy)->DenseRange(20, 100, 20);
+TACO_BENCH(bench_saxpy_blas)->DenseRange(1000, 10000, 200);
 

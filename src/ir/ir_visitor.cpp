@@ -20,7 +20,14 @@ void IRVisitor::visit(const Literal*) {
 void IRVisitor::visit(const Var*) {
 }
 
-void IRVisitor::visit(const CustomObject*) {
+void IRVisitor::visit(const CustomObject* op) {
+}
+
+void IRVisitor::visit(const CustomCast* op) {
+  op->a.accept(this);
+}
+
+void IRVisitor::visit(const RawString*) {
 }
 
 void IRVisitor::visit(const Neg* op) {

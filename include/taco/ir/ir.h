@@ -44,6 +44,7 @@ enum class IRNodeType {
   Or,
   BinOp,
   Cast,
+  CustomCast,
   Call,
   IfThenElse,
   Case,
@@ -71,7 +72,8 @@ enum class IRNodeType {
   Break,
   VoidCall,
   DeclObject,
-  CustomObject
+  CustomObject,
+  RawString
 };
 
 enum class TensorProperty {
@@ -283,6 +285,14 @@ struct CustomObject : public ExprNode<Var> {
 
   static const IRNodeType _type_info = IRNodeType::CustomObject;
 };
+
+struct RawString : public ExprNode<Var> {
+  std::string s;
+  static Expr make(std::string s);
+
+  static const IRNodeType _type_info = IRNodeType::RawString;
+};
+
 
 
 /** Negation */
@@ -504,6 +514,15 @@ struct Cast : public ExprNode<Cast> {
   static Expr make(Expr a, Datatype newType);
 
   static const IRNodeType _type_info = IRNodeType::Cast;
+};
+
+struct CustomCast : public ExprNode<CustomCast> {
+  Expr a;
+  std::string cast;
+
+  static Expr make(Expr a, std::string cast);
+
+  static const IRNodeType _type_info = IRNodeType::CustomCast;
 };
 
 /** A call of a function. */

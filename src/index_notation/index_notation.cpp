@@ -3832,10 +3832,8 @@ static std::vector<Argument> getConcreteArgs(const std::vector<Argument>& abstra
     switch (arg.getArgType())
     {
     case DIM:
-      {
         newArgs.push_back(new DimArg(argumentMap.indexVars.at(arg.getNode<DimArg>()->indexVar)));
         break;
-      }
     case TENSOR:
       taco_uerror << "Arguments can only use TensorObjects, tried using a TensorVar." << endl;
       break; 
@@ -3863,6 +3861,28 @@ static std::vector<Argument> getConcreteArgs(const std::vector<Argument>& abstra
     case DECLVAR:
       newArgs.push_back(arg);
       break;
+    case DIMLIST:
+      newArgs.push_back(new DimList(argumentMap.tensors.at(arg.getNode<DimList>()->t)));
+      break;
+    case DATA_ARRAY:
+      newArgs.push_back(new DataArray(argumentMap.tensors.at(arg.getNode<DataArray>()->t)));
+      break;
+    case STRING:
+      newArgs.push_back(arg);
+      break;
+    case DECLVAR_ADDR:
+      newArgs.push_back(arg);
+      break;
+    case TENSOR_ADDR:
+      newArgs.push_back(new AddrTensorVar(argumentMap.tensors.at(arg.getNode<AddrTensorVar>()->var)));
+      break;
+    case CAST:
+    {
+      std::vector<Argument> userDefinedArgs = getConcreteArgs({arg.getNode<CastArg>()->argument}, argumentMap);
+      newArgs.push_back(new CastArg(userDefinedArgs[0], arg.getNode<CastArg>()->cast));
+      break;
+    }
+      
     default:
       cout << arg.getArgType() << endl;
       taco_uerror << "Unimplemented" << endl;
@@ -3875,12 +3895,20 @@ static std::vector<Argument> getConcreteArgs(const std::vector<Argument>& abstra
 
 static ConcreteAccelerateCodeGenerator getConcreteCodeGenerator(IndexExpr expr, IndexExpr& workspace, ArgumentMap argumentMap, FunctionInterface functionInterface){
   assert(argumentMap.possible);
+  assert(isa<Access>(workspace));
+  
 
   AcceleratorStmt referenceStmt = functionInterface.getNode()->getStmt();
   if (!isa<AcceleratorAssignment>(referenceStmt)){
     taco_uerror << "Reference statement in function interface must be an assignemnt" << endl;
   }
+  bool reference = setByReference(referenceStmt);
   AcceleratorAssignment assign = to<AcceleratorAssignment>(referenceStmt);
+
+  if (!reference){
+    argumentMap.tensors[assign.getLhs().getTensorObject()] = to<Access>(workspace).getTensorVar();
+  }
+  
 
   std::vector<Argument> newArgs = getConcreteArgs(functionInterface.getNode()->getArguments(), argumentMap);
   std::vector<Argument> callBefore = getConcreteArgs(functionInterface.getNode()->callBefore(), argumentMap);
@@ -3899,13 +3927,13 @@ static ConcreteAccelerateCodeGenerator getConcreteCodeGenerator(IndexExpr expr, 
 
   auto accessOriginal = to<AcceleratorAccessNode>(assign.getLhs().ptr);
   IndexExpr e;
-  if (setByReference(referenceStmt)){
+  if (reference){
     e = static_cast<IndexExpr>(Access(argumentMap.tensors[accessOriginal->tensorObject], indexingVec));
   }else{
     e = workspace;
   }
 
-  ConcreteAccelerateCodeGenerator concreteCodeGen = ConcreteAccelerateCodeGenerator( functionInterface.getNode()->getFunctionName(),  functionInterface.getNode()->getReturnType(), e, expr, newArgs, callBefore, callAfter);
+  ConcreteAccelerateCodeGenerator concreteCodeGen = ConcreteAccelerateCodeGenerator(functionInterface.getNode()->getFunctionName(), functionInterface.getNode()->getReturnType(), e, expr, newArgs, callBefore, callAfter);
 
   return concreteCodeGen;
 }
@@ -3914,7 +3942,7 @@ IndexStmt IndexStmt::accelerate(FunctionInterface functionInterface, IndexExpr e
 
   AcceleratorStmt referenceStmt = functionInterface.getNode()->getStmt();
   if (!isa<AcceleratorAssignment>(referenceStmt)){
-    taco_uerror << "Reference statement in function interface must be an assignemnt" << endl;
+    taco_uerror << "Reference statement in function interface must be an assignment" << endl;
   }
   AcceleratorAssignment assign = to<AcceleratorAssignment>(referenceStmt);
   // explictly add the reduction nodes
@@ -3927,7 +3955,7 @@ IndexStmt IndexStmt::accelerate(FunctionInterface functionInterface, IndexExpr e
     // get reduction notation for assignment using exprToAccelerate and then check
     argumentMap = hasPreciseMatch(exprToAccelerate, assign.getRhs());
     if (argumentMap.possible){
-       std::cout << "Warning : Implicit Reduction is being added, given function is caluclating " << assignRedux.getRhs() << "." << std::endl;
+       std::cout << "Warning : Implicit Reduction is being added, given function is calculating " << assignRedux.getRhs() << "." << std::endl;
     }else{
       taco_uerror << "Expressions " << assign.getRhs() << " and " << exprToAccelerate << " do not match." << endl;
     }
@@ -3950,7 +3978,7 @@ IndexStmt IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<FunctionInterfac
   // std::map<ConcreteAccelerateCodeGenerator, FunctionInterface> abstractInterface;
 
   if (!isa<Assignment>(stmt)) {
-    cout << "Cannot autoscheudle this expression since it is not an assignment" << endl;
+    cout << "Cannot autoschedule this expression since it is not an assignment" << endl;
     return stmt;
   }
 
@@ -3989,6 +4017,9 @@ IndexStmt IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<FunctionInterfac
     stmtRewrite = rewriteStmt(stmtRewrite, std::get<0>(tensorCodeGen), std::get<1>(tensorCodeGen), std::get<2>(tensorCodeGen), std::get<3>(tensorCodeGen));
     varCodeGen.pop();
   }
+
+  // taco_uerror << stmtRewrite << endl;
+
   return stmtRewrite;
 }
 

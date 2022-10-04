@@ -2756,7 +2756,7 @@ ir::Expr LowererImplImperative::lowerArgument(Argument argument, TensorVar resul
         }
         
         for (auto args: t->getArgs()){
-          userDefArgs.push_back(lowerArgument(args, resultVar, temporary, varsToDeclare, true));
+          userDefArgs.push_back(lowerArgument(args, resultVar, temporary, varsToDeclare, replace));
         }
         return ir::Call::make(t->getName(), userDefArgs);
       }
@@ -2771,6 +2771,57 @@ ir::Expr LowererImplImperative::lowerArgument(Argument argument, TensorVar resul
 
         return CustomObject::make(t->var.getName());
 
+      }
+      case DIMLIST:
+      {
+        auto t = argument.getNode<DimList>();
+        if (t->tvar.getName() == temporary.getName()){
+          taco_uerror << "freak out" <<  tempToIndexList.at(temporary) << endl;
+        }
+        return RawString::make(t->tvar.getName() + "->dimensions");
+        
+      }
+      case DATA_ARRAY:
+      {
+        auto t = argument.getNode<DataArray>();
+
+        if (t->tvar.getName() == resultVar.getName() && replace){
+          return getValuesArray(temporary);
+        }
+        
+        return getValuesArray(t->tvar);
+
+      }
+      case STRING:
+      {
+        auto t = argument.getNode<StringLiteral>();
+        return RawString::make(t->s);
+      }
+      case TENSOR_ADDR:
+      { 
+        auto t = argument.getNode<AddrTensorVar>();
+        if (t->tvar.getShape().getOrder() == 0){
+          return RawString::make("&" + t->tvar.getName() + "_val");
+        }else{
+          return getValuesArray(t->tvar);
+        }
+      }
+      case DECLVAR_ADDR:
+      {
+        auto t = argument.getNode<AddrDeclVarArg>();
+
+        if (!declaredVars.count(t->var.getName())){
+          declaredVars.insert(t->var.getName());
+          varsToDeclare.push_back(DeclVarArg(t->var));
+        }
+
+        return RawString::make("&" + t->var.getName());
+      }
+      case CAST:
+      {
+        auto t = argument.getNode<CastArg>();
+
+        return CustomCast::make(lowerArgument(t->argument, resultVar, temporary, varsToDeclare, replace), t->cast);
       }
       default:
         taco_uerror << "Should not reach" << endl;
@@ -2813,14 +2864,26 @@ std::vector<Stmt> LowererImplImperative::prepareFunctionCall(ConcreteAccelerateC
 
   std::vector<Stmt> functionCalls; 
 
+  bool setResultByRef = false;
+      match((accelGen.getRHS()),
+          std::function<void(const AccessNode*)>([&](const AccessNode* op) {
+                if (resultVar.getName() == op->tensorVar.getName()){
+                  setResultByRef = true;
+                }
+            })
+  );
+
+  
+
+  // bool replace = accelGen.getReturnType() == "void"
+
   for (auto callBefore: accelGen.getCallBefore()){
-    functionCalls.push_back(prepareCallBefore(callBefore, resultVar, temp, varsToDeclare, true));
+    functionCalls.push_back(prepareCallBefore(callBefore, resultVar, temp, varsToDeclare, setResultByRef));
   }
 
   for (auto argument: arguments){
-      loweredArguments.push_back(lowerArgument(argument, resultVar, temp, varsToDeclare, true));
+      loweredArguments.push_back(lowerArgument(argument, resultVar, temp, varsToDeclare, setResultByRef));
   }
-
 
   Stmt functionCall;
   if (accelGen.getReturnType() == "void"){

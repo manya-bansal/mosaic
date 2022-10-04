@@ -19,7 +19,7 @@ template <typename CType>
 class Tensor;
 
 
-enum ArgType {DIM, TENSORVAR, TENSOR_OBJECT, TENSOR, EXPR, LITERAL, USER_DEFINED, DECLVAR, UNKNOWN, DIMLIST};
+enum ArgType {DIM, TENSORVAR, TENSOR_OBJECT, TENSOR, EXPR, LITERAL, USER_DEFINED, DECLVAR, UNKNOWN, DIMLIST, DATA_ARRAY, STRING, DECLVAR_ADDR, TENSOR_ADDR, CAST};
 
 struct TransferTypeArgs : public util::Manageable<TransferTypeArgs>{
 
@@ -52,7 +52,6 @@ class Argument : public util::IntrusivePtr<const TransferTypeArgs> {
     }
 
     ArgType getArgType() const;
-    
 
 };
 
@@ -70,10 +69,11 @@ struct TensorVarArg : public TransferTypeArgs{
 
 struct TensorObjectArg : public TransferTypeArgs{
     explicit TensorObjectArg(const TensorObject& t) : TransferTypeArgs(TENSOR_OBJECT), t(t) {}
-
+    
     std::ostream& print(std::ostream& os) const override;
     Argument operator=(Argument) const;
     TensorObject t; 
+    TensorVar tvar;
 };
 
 struct irExprArg : public TransferTypeArgs{
@@ -86,10 +86,24 @@ struct irExprArg : public TransferTypeArgs{
 
 struct DimList : public TransferTypeArgs{
     explicit DimList(const TensorObject& t) : TransferTypeArgs(DIMLIST), t(t) {}
-
+    explicit DimList(const TensorVar& tvar) : TransferTypeArgs(DIMLIST), tvar(tvar) {}
     std::ostream& print(std::ostream& os) const override;
-
     TensorObject t; 
+    TensorVar tvar;
+};
+
+struct DataArray : public TransferTypeArgs{
+    explicit DataArray(const TensorObject& t) : TransferTypeArgs(DATA_ARRAY), t(t) {}
+    explicit DataArray(const TensorVar& tvar) : TransferTypeArgs(DATA_ARRAY), tvar(tvar) {}
+    std::ostream& print(std::ostream& os) const override;
+    TensorObject t; 
+    TensorVar tvar;
+};
+
+struct StringLiteral : public TransferTypeArgs{
+    explicit StringLiteral(const std::string& s) : TransferTypeArgs(STRING), s(s) {}
+    std::ostream& print(std::ostream& os) const override;
+    std::string s; 
 };
 
 class Dim{
@@ -120,9 +134,26 @@ struct  DeclVar {
 
 };
 
+struct  AddrTensorVar : public TransferTypeArgs{
+    explicit AddrTensorVar(const TensorObject& var): TransferTypeArgs(TENSOR_ADDR), var(var) {}
+    explicit AddrTensorVar(const TensorVar& tvar): TransferTypeArgs(TENSOR_ADDR), tvar(tvar) {}
+    TensorObject var;
+    TensorVar tvar;
+
+};
+
+struct AddrDeclVarArg : public TransferTypeArgs {
+
+  explicit AddrDeclVarArg(const DeclVar& var): TransferTypeArgs(DECLVAR_ADDR), var(var) {}
+  std::ostream& print(std::ostream& os) const override;
+  DeclVar var; 
+
+};
+
 struct DeclVarArg : public TransferTypeArgs {
 
   explicit DeclVarArg(const DeclVar& var): TransferTypeArgs(DECLVAR), var(var) {}
+  std::ostream& print(std::ostream& os) const override;
   DeclVar var; 
 
 };
@@ -158,6 +189,13 @@ struct LiteralArg : public TransferTypeArgs{
 
     void * val; 
     Datatype datatype;
+};
+
+struct CastArg : public TransferTypeArgs{
+  CastArg(const Argument& argument, const std::string& cast) : TransferTypeArgs(CAST), argument(argument), cast(cast) {}
+ 
+  Argument argument;
+  std::string cast;
 };
 
 struct TransferWithArgs : public TransferTypeArgs{
@@ -200,6 +238,10 @@ inline void addArg(std::vector<Argument>& argument, const Dim& dim) { argument.p
 inline void addArg(std::vector<Argument>& argument, const int32_t& integer) { argument.push_back(new LiteralArg(Datatype(UInt32), integer)); }
 inline void addArg(std::vector<Argument>& argument, const DeclVar& var) { argument.push_back(new DeclVarArg(var)); }
 inline void addArg(std::vector<Argument>& argument, const DimList& var) { argument.push_back(new DimList(var)); }
+inline void addArg(std::vector<Argument>& argument, const DataArray& var) { argument.push_back(new DataArray(var)); }
+inline void addArg(std::vector<Argument>& argument, const StringLiteral& s) { argument.push_back(new StringLiteral(s)); }
+inline void addArg(std::vector<Argument>& argument, const AddrDeclVarArg& var) { argument.push_back(new AddrDeclVarArg(var)); }
+inline void addArg(std::vector<Argument>& argument, const CastArg& var) { argument.push_back(new CastArg(var)); }
 
 template <typename CType>
 inline void addArg(std::vector<Argument>& argument, const Tensor<CType>& t) { argument.push_back(new TensorArg(t)); }
@@ -231,6 +273,11 @@ class TransferLoad{
       return new TransferWithArgs(name, returnType, argument); 
     }
 
+    Argument operator()(){
+      std::vector<Argument> argument;
+      return new TransferWithArgs(name, returnType, argument); 
+    }
+
   private:
     std::string name;
     std::string returnType; 
@@ -255,6 +302,11 @@ class TransferStore{
       std::vector<Argument> argument;
       addArg(argument, first, remaining...);
       return new TransferWithArgs(name, returnType, argument);
+    }
+
+    Argument operator()(){
+      std::vector<Argument> argument;
+      return new TransferWithArgs(name, returnType, argument); 
     }
 
   private:

@@ -19,8 +19,7 @@
 #include "taco/ir_tags.h"
 #include "taco/error/error_messages.h"
 
-#include "taco/accelerator_interface/cblas_saxpy.h"
-#include "taco/accelerator_interface/cblas_sdot.h"
+#include "taco/accelerator_interface/cblas_interface.h"
 #include "taco/accelerator_interface/test_interface.h"
 #include "taco/accelerator_interface/tile_interface.h"
 
@@ -84,4 +83,4 @@ TEST(iSchedular, testDummp){
       piles.pop();
     }
 
-};
+}

@@ -10,7 +10,8 @@
             "compilerPath": "/opt/homebrew/bin/gcc-11",
             "cStandard": "gnu17",
             "cppStandard": "gnu++17",
-            "intelliSenseMode": "macos-gcc-arm64"
+            "intelliSenseMode": "macos-gcc-arm64",
+            "compileCommands": "/afs/.ir.stanford.edu/users/m/a/manya227/taco-interoperable/build/compile_commands.json"
         }
     ],
     "version": 4

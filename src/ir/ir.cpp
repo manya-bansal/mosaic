@@ -263,6 +263,12 @@ Expr CustomObject::make(std::string name){
   return customObject;
 }
 
+Expr RawString::make(std::string s){
+  RawString *rawString = new RawString;
+  rawString->s = s;
+  return rawString;
+}
+
 
 Expr Neg::make(Expr a) {
   Neg *neg = new Neg;
@@ -508,6 +514,13 @@ Expr Cast::make(Expr a, Datatype newType) {
   cast->type = newType;
   cast->a = a;
   return cast;
+}
+
+Expr CustomCast::make(Expr a, std::string cast) {
+  CustomCast *customCast = new CustomCast;
+  customCast->cast = cast;
+  customCast->a = a;
+  return customCast;
 }
 
 Expr Call::make(const std::string& func, const std::vector<Expr>& args, 
@@ -935,6 +948,10 @@ template<> void ExprNode<Var>::accept(IRVisitorStrict *v)
     const { v->visit((const Var*)this); }
 template<> void ExprNode<CustomObject>::accept(IRVisitorStrict *v) 
     const { v->visit((const CustomObject*)this); }
+template<> void ExprNode<CustomCast>::accept(IRVisitorStrict *v) 
+    const { v->visit((const CustomCast*)this); }
+template<> void ExprNode<RawString>::accept(IRVisitorStrict *v) 
+    const { v->visit((const RawString*)this); }
 template<> void ExprNode<Neg>::accept(IRVisitorStrict *v)
     const { v->visit((const Neg*)this); }
 template<> void ExprNode<Sqrt>::accept(IRVisitorStrict *v)
