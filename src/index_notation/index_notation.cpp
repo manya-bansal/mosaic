@@ -4230,6 +4230,12 @@ IndexStmt IndexStmt::holdConstant(FunctionInterface functionInterface, IndexExpr
 
   IndexStmt rewritten = replace(*this, substitution);
 
+  auto tensorAccess = getTensorAccess(rewritten, workspace.getTensorVar());
+  Forall forall = getForAllTensor(rewritten, workspace.getTensorVar());
+  IndexStmt consumer = makeConcreteNotation(tensorAccess);
+  
+  rewritten = replace(rewritten, {{forall, consumer}});
+
   std::vector<TensorVar> temps;
   temps.push_back(workspace.getTensorVar());
 
@@ -4858,7 +4864,7 @@ pair<vector<Access>,set<Access>> getResultAccesses(IndexStmt stmt)
     function<void(const DimReductionNode*,Matcher*)>([&](const DimReductionNode* op,
                                                   Matcher* ctx) {
       ctx->match(op->consumer);
-      ctx->match(op->producer);
+      // ctx->match(op->producer);
     }),
     function<void(const SequenceNode*,Matcher*)>([&](const SequenceNode* op,
                                                      Matcher* ctx) {
