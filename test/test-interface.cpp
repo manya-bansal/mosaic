@@ -1146,7 +1146,7 @@ TEST(interface, DimReduceDot) {
    Tensor<float> C("C", {16, 16}, Format{Dense, Dense});
    Tensor<float> expected("expected", {16}, Format{Dense});
 
-   TensorVar precomputed("precomputed", Type(taco::Float32, {16, 16}), Format{Dense});
+   TensorVar precomputed("precomputed", Type(taco::Float32, {16, 16}), Format{Dense, Dense});
 
    IndexVar i("i");
    IndexVar j("j");

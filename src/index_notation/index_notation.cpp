@@ -4772,6 +4772,19 @@ std::vector<TensorVar> getTemporaries(IndexStmt stmt) {
       if (op->queries.defined()) {
         ctx->match(op->queries);
       }
+    }),
+    function<void(const DimReductionNode*,Matcher*)>([&](const DimReductionNode* op,
+                                                  Matcher* ctx) {
+      ctx->match(op->consumer);
+      ctx->match(op->producer);
+    }),
+    function<void(const ForallManyNode*,Matcher*)>([&](const ForallManyNode* op,
+                                                  Matcher* ctx) {
+
+      for (const auto &stmt : op->stmts){
+        ctx->match(stmt);
+      }
+
     })
   );
   return temporaries;
@@ -4841,6 +4854,11 @@ pair<vector<Access>,set<Access>> getResultAccesses(IndexStmt stmt)
     function<void(const AccelerateNode*,Matcher*)>([&](const AccelerateNode* op,
                                                   Matcher* ctx) {
       ctx->match(op->consumer);
+    }),
+    function<void(const DimReductionNode*,Matcher*)>([&](const DimReductionNode* op,
+                                                  Matcher* ctx) {
+      ctx->match(op->consumer);
+      ctx->match(op->producer);
     }),
     function<void(const SequenceNode*,Matcher*)>([&](const SequenceNode* op,
                                                      Matcher* ctx) {

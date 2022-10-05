@@ -305,7 +305,6 @@ LowererImplImperative::lower(IndexStmt stmt, string name,
 
   // Create iterators
   iterators = Iterators(stmt, tensorVars);
-
   provGraph = ProvenanceGraph(stmt);
 
   for (const IndexVar& indexVar : provGraph.getAllIndexVars()) {
