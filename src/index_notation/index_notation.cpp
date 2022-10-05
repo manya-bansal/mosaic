@@ -590,6 +590,20 @@ struct Isomorphic : public IndexNotationVisitorStrict {
     eq = true;
   }
 
+  void visit(const DimReductionNode* anode) {
+    if (!isa<DimReductionNode>(bStmt.ptr)) {
+      eq = false;
+      return;
+    }
+    auto bnode = to<DimReductionNode>(bStmt.ptr);
+    if (!check(anode->consumer, bnode->consumer) ||
+        !check(anode->producer, bnode->producer)) {
+      eq = false;
+      return;
+    }
+    eq = true;
+  }
+
     void visit(const AccelerateNode* anode) {
       if (!isa<AccelerateNode>(bStmt.ptr)) {
         eq = false;
@@ -1366,6 +1380,20 @@ struct Equals : public IndexNotationVisitorStrict {
       return;
     }
     auto bnode = to<WhereNode>(bStmt.ptr);
+    if (!equals(anode->consumer, bnode->consumer) ||
+        !equals(anode->producer, bnode->producer)) {
+      eq = false;
+      return;
+    }
+    eq = true;
+  }
+
+  void visit(const DimReductionNode* anode) {
+    if (!isa<DimReductionNode>(bStmt.ptr)) {
+      eq = false;
+      return;
+    }
+    auto bnode = to<DimReductionNode>(bStmt.ptr);
     if (!equals(anode->consumer, bnode->consumer) ||
         !equals(anode->producer, bnode->producer)) {
       eq = false;
@@ -2819,6 +2847,34 @@ template <> Accelerate to<Accelerate>(IndexStmt s) {
   return Accelerate(to<AccelerateNode>(s.ptr));
 }
 
+DimReduction::DimReduction(const DimReductionNode* n) : IndexStmt(n){
+}
+
+DimReduction::DimReduction(IndexStmt consumer, IndexStmt producer, std::vector<TensorVar> temps)
+    : DimReduction(new DimReductionNode(consumer, producer, temps)){
+}
+
+IndexStmt DimReduction::getConsumer(){
+  return getNode(*this)->consumer;
+}
+
+IndexStmt DimReduction::getProducer(){
+  return getNode(*this)->producer;
+}
+
+std::vector<TensorVar> DimReduction::getTemporaries(){
+  return getNode(*this)->temps;
+}
+
+template <> bool isa<DimReduction>(IndexStmt s) {
+  return isa<DimReductionNode>(s.ptr);
+}
+
+template <> DimReduction to<DimReduction>(IndexStmt s) {
+  taco_iassert(isa<DimReduction>(s));
+  return DimReduction(to<DimReductionNode>(s.ptr));
+}
+
 //class InterfaceCall
 InterfaceCall::InterfaceCall(const InterfaceCallNode* n) : IndexStmt(n) {
 }
@@ -4169,15 +4225,19 @@ IndexStmt IndexStmt::holdConstant(FunctionInterface functionInterface, IndexExpr
 
   }
 
-  cout << result << endl;
-  cout << s << endl << endl;
-  cout << reducedCode << endl;
+  std::map<IndexExpr, IndexExpr> substitution;
+  substitution[exprToAccelerate] = workspace;
 
-  
+  IndexStmt rewritten = replace(*this, substitution);
 
-  taco_uerror << "unimplemented" << endl;
+  std::vector<TensorVar> temps;
+  temps.push_back(workspace.getTensorVar());
 
-  return reducedCode;
+  for (auto &entry: tensorVarToIndexVar){
+     temps.push_back(to<Access>(entry.second).getTensorVar());
+  }
+
+  return DimReduction(rewritten, reducedCode, temps);
 }
 
 
@@ -4212,7 +4272,7 @@ IndexStmt IndexStmt::accelerate(FunctionInterface functionInterface, IndexExpr e
 
   stmt = rewriteStmt(stmt, access, getConcreteCodeGenerator(exprToAccelerate, access, argumentMap, functionInterface), functionInterface, argumentMap);
 
-  return stmt;
+  return stmt; 
 }
 
 IndexStmt IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<FunctionInterface> functionInterfaces) const{
@@ -5205,6 +5265,7 @@ private:
     }
   }
 
+
   void visit(const AssignmentNode* op) {
     IndexExpr rhs = rewrite(op->rhs);
     if (!rhs.defined()) {
@@ -5275,6 +5336,23 @@ private:
     }
     else {
       stmt = new WhereNode(consumer, producer);
+    }
+  }
+
+  void visit(const DimReductionNode* op) {
+    IndexStmt producer = rewrite(op->producer);
+    IndexStmt consumer = rewrite(op->consumer);
+    if (!consumer.defined()) {
+      stmt = IndexStmt();
+    }
+    else if (!producer.defined()) {
+      stmt = consumer;
+    }
+    else if (producer == op->producer && consumer == op->consumer) {
+      stmt = op;
+    }
+    else {
+      stmt = new DimReductionNode(consumer, producer, op->temps);
     }
   }
 

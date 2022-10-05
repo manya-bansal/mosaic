@@ -51,6 +51,7 @@ private:
   void visit(const YieldNode* node)         { stmt = impl->lowerYield(node); }
   void visit(const ForallNode* node)        { stmt = impl->lowerForall(node); }
   void visit(const ForallManyNode* node)    { taco_uerror << "unimpl"; }
+  void visit(const DimReductionNode* node)    { taco_uerror << "unimpl"; }
   void visit(const WhereNode* node)         { stmt = impl->lowerWhere(node); }
   void visit(const AccelerateNode* node)    { stmt = impl->lowerAccelerate(node); }
   void visit(const InterfaceCallNode* node)    { stmt = impl->lowerInterface(node); }

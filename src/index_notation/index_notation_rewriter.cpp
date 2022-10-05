@@ -218,6 +218,17 @@ void IndexNotationRewriter::visit(const WhereNode* op) {
   }
 }
 
+void IndexNotationRewriter::visit(const DimReductionNode* op) {
+  IndexStmt producer = rewrite(op->producer);
+  IndexStmt consumer = rewrite(op->consumer);
+  if (producer == op->producer && consumer == op->consumer) {
+    stmt = op;
+  }
+  else {
+    stmt = new DimReductionNode(consumer, producer, op->temps);
+  }
+}
+
 void IndexNotationRewriter::visit(const AccelerateNode* op) {
   IndexStmt producer = rewrite(op->producer);
   IndexStmt consumer = rewrite(op->consumer);

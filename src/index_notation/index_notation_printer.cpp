@@ -266,6 +266,15 @@ void IndexNotationPrinter::visit(const WhereNode* op) {
   os << ")";
 }
 
+
+void IndexNotationPrinter::visit(const DimReductionNode* op) {
+  os << "where(";
+  op->consumer.accept(this);
+  os << ", ";
+  op->producer.accept(this);
+  os << ")";
+}
+
 void IndexNotationPrinter::visit(const AccelerateNode* op) {
   os << "acceleratenode(";
   op->consumer.accept(this);

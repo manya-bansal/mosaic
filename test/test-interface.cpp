@@ -1157,10 +1157,12 @@ TEST(interface, DimReduceDot) {
 
    IndexStmt stmt = A.getAssignment().concretize();
    stmt = stmt.holdConstant(new TblisDot(), accelerateExpr, {i, k}, precomputed(i, k));
+
+   cout << stmt << endl;
    
-   // A.compile(stmt);
-   // A.assemble();
-   // A.compute();
+   A.compile(stmt);
+   A.assemble();
+   A.compute();
 
 }
 
@@ -1187,9 +1189,11 @@ TEST(interface, DimReduceMM) {
 
    IndexStmt stmt = A.getAssignment().concretize();
    stmt = stmt.holdConstant(new MatrixMultiply(), accelerateExpr, {i}, precomputed(i, j, k));
+
+   cout << stmt << endl;
    
-   // A.compile(stmt);
-   // A.assemble();
-   // A.compute();
+   A.compile(stmt);
+   A.assemble();
+   A.compute();
 
 }

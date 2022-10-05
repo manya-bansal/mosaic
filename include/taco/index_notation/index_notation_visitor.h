@@ -38,6 +38,7 @@ struct MultiNode;
 struct SequenceNode;
 struct AssembleNode;
 struct SuchThatNode;
+struct DimReductionNode;
 
 /// Visit the nodes in an expression.  This visitor provides some type safety
 /// by requing all visit methods to be overridden.
@@ -79,6 +80,7 @@ public:
   virtual void visit(const AssembleNode*) = 0;
   virtual void visit(const MultiNode*) = 0;
   virtual void visit(const SuchThatNode*) = 0;
+  virtual void visit(const DimReductionNode*) = 0;
 };
 
 /// Visit nodes in index notation
@@ -127,6 +129,7 @@ public:
   virtual void visit(const AssembleNode* node);
   virtual void visit(const MultiNode* node);
   virtual void visit(const SuchThatNode* node);
+  virtual void visit(const DimReductionNode*);
 };
 
 
@@ -185,6 +188,7 @@ private:
   RULE(CallNode)
   RULE(CallIntrinsicNode)
   RULE(ReductionNode)
+  RULE(ForallManyNode)
 
   RULE(BinaryExprNode)
   RULE(UnaryExprNode)
@@ -200,6 +204,7 @@ private:
   RULE(SequenceNode)
   RULE(AssembleNode)
   RULE(SuchThatNode)
+  RULE(DimReductionNode)
 };
 
 /**

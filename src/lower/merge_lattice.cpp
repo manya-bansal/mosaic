@@ -429,6 +429,19 @@ private:
     lattice = build(node->consumer);
   }
 
+  void visit(const DimReductionNode* node) {
+    // Each where produces a temporary that is consumed on the left-hand side.
+    // Since where nodes can be nested, it is possible to for multiple
+    // temporaries to be consumed by a consumer expression.  The expression that
+    // compute temporaries have an iteration space.  The merge lattice of these
+    // iteration spaces must be merged with the iteration space of the
+    // expression the temporary is combined with.  The merge lattice
+    // construction strategy for where nodes is to keep a map of temporaries and
+    // their corresponding merge lattices.
+    build(node->producer);
+    lattice = build(node->consumer);
+  }
+
   void visit(const AccelerateNode* node) {
     // Each where produces a temporary that is consumed on the left-hand side.
     // Since where nodes can be nested, it is possible to for multiple

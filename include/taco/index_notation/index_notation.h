@@ -75,6 +75,7 @@ struct SequenceNode;
 struct AssembleNode;
 struct MultiNode;
 struct SuchThatNode;
+struct DimReductionNode;
 
 
 class IndexExprVisitorStrict;
@@ -940,7 +941,6 @@ public:
 /// Create a where index statement.
 Where where(IndexStmt consumer, IndexStmt producer);
 
-
 class Accelerate : public IndexStmt {
 public:
   Accelerate() = default;
@@ -961,6 +961,22 @@ public:
   TensorVar getTemporary();
 
   typedef AccelerateNode Node;
+};
+
+class DimReduction : public IndexStmt {
+public:
+  DimReduction() = default;
+  DimReduction(const DimReductionNode*);
+  DimReduction(IndexStmt consumer, IndexStmt producer, std::vector<TensorVar> temps);
+
+  IndexStmt getConsumer();
+  IndexStmt getProducer();
+  /**
+   * Retrieve the temporary variable of this where statement.
+   */
+  std::vector<TensorVar> getTemporaries();
+
+  typedef DimReductionNode Node;
 };
 
 class InterfaceCall : public IndexStmt {

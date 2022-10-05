@@ -148,4 +148,9 @@ void IndexNotationVisitor::visit(const SuchThatNode* op) {
   op->stmt.accept(this);
 }
 
+void IndexNotationVisitor::visit(const DimReductionNode* op){
+  op->producer.accept(this);
+  op->consumer.accept(this);
+}
+
 }

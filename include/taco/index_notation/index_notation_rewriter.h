@@ -64,6 +64,7 @@ protected:
   virtual void visit(const AssembleNode* op) = 0;
   virtual void visit(const MultiNode* op) = 0;
   virtual void visit(const SuchThatNode* op) = 0;
+  virtual void visit(const DimReductionNode* op) = 0;
 };
 
 
@@ -115,6 +116,7 @@ protected:
   virtual void visit(const AssembleNode* op);
   virtual void visit(const MultiNode* op);
   virtual void visit(const SuchThatNode* op);
+  virtual void visit(const DimReductionNode* op);
 };
 
 

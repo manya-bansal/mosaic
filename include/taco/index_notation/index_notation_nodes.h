@@ -451,6 +451,19 @@ struct AccelerateNode : public IndexStmtNode {
   ConcreteAccelerateCodeGenerator accelGen;
 };
 
+struct DimReductionNode : public IndexStmtNode {
+  DimReductionNode(IndexStmt consumer, IndexStmt producer,  std::vector<TensorVar> temps)
+      : consumer(consumer), producer(producer), temps(temps) {}
+
+  void accept(IndexStmtVisitorStrict* v) const {
+    v->visit(this);
+  }
+
+  IndexStmt consumer;
+  IndexStmt producer;
+  std::vector<TensorVar> temps;
+};
+
 struct InterfaceCallNode : public IndexStmtNode {
   InterfaceCallNode(Assignment producer, ConcreteAccelerateCodeGenerator codeGen, TensorVar temp) 
     : producer(producer), codeGen(codeGen), temp(temp) {} 
