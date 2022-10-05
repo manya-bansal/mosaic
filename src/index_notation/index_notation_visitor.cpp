@@ -106,6 +106,13 @@ void IndexNotationVisitor::visit(const ForallNode* op) {
   op->stmt.accept(this);
 }
 
+void IndexNotationVisitor::visit(const ForallManyNode* op) {
+
+  for (const auto &stmt: op->stmts){
+    stmt.accept(this);
+  }
+}
+
 void IndexNotationVisitor::visit(const WhereNode* op) {
   op->producer.accept(this);
   op->consumer.accept(this);

@@ -548,6 +548,34 @@ struct Isomorphic : public IndexNotationVisitorStrict {
     eq = true;
   }
 
+
+  void visit(const ForallManyNode* anode) {
+    if (!isa<ForallManyNode>(bStmt.ptr)) {
+      eq = false;
+      return;
+    }
+    auto bnode = to<ForallManyNode>(bStmt.ptr);
+
+    if (!check(anode->indexVar, bnode->indexVar)){
+      eq = false;
+      return;
+    }
+
+    if (anode->stmts.size() != bnode->stmts.size()){
+      eq = false;
+      return;
+    }
+
+    for (size_t i = 0; i < anode->stmts.size(); i++){
+      if (!check(anode->stmts[i], bnode->stmts[i])){
+         eq = false;
+        return;
+      }
+    }
+
+    eq = true;
+  }
+
   void visit(const WhereNode* anode) {
     if (!isa<WhereNode>(bStmt.ptr)) {
       eq = false;
@@ -1302,6 +1330,33 @@ struct Equals : public IndexNotationVisitorStrict {
       eq = false;
       return;
     }
+    eq = true;
+  }
+
+  void visit(const ForallManyNode* anode) {
+    if (!isa<ForallManyNode>(bStmt.ptr)) {
+      eq = false;
+      return;
+    }
+    auto bnode = to<ForallManyNode>(bStmt.ptr);
+
+    if (!equals(anode->indexVar, bnode->indexVar)){
+      eq = false;
+      return;
+    }
+
+    if (anode->stmts.size() != bnode->stmts.size()){
+      eq = false;
+      return;
+    }
+
+    for (size_t i = 0; i < anode->stmts.size(); i++){
+      if (!equals(anode->stmts[i], bnode->stmts[i])){
+         eq = false;
+        return;
+      }
+    }
+
     eq = true;
   }
 
@@ -2659,6 +2714,30 @@ template <> Forall to<Forall>(IndexStmt s) {
   return Forall(to<ForallNode>(s.ptr));
 }
 
+//class ForallMany
+ForallMany::ForallMany(const ForallManyNode* n) : IndexStmt(n){
+}
+
+ForallMany::ForallMany(IndexVar indexVar, std::vector<IndexStmt> stmts)
+  : ForallMany(new ForallManyNode(indexVar, stmts)) {
+}
+
+IndexVar ForallMany::getIndexVar() const{
+  return getNode(*this)->indexVar;
+
+}
+std::vector<IndexStmt> ForallMany::getStmts() const{
+  return getNode(*this)->stmts;
+}
+
+template <> bool isa<ForallMany>(IndexStmt s) {
+  return isa<ForallMany>(s.ptr);
+}
+
+template <> ForallMany to<ForallMany>(IndexStmt s) {
+  taco_iassert(isa<ForallMany>(s));
+  return ForallMany(to<ForallManyNode>(s.ptr));
+}
 
 // class Where
 Where::Where(const WhereNode* n) : IndexStmt(n) {
@@ -3938,6 +4017,170 @@ static ConcreteAccelerateCodeGenerator getConcreteCodeGenerator(IndexExpr expr, 
   return concreteCodeGen;
 }
 
+static std::map<IndexExpr, IndexExpr> toMatchVars(IndexExpr exprToAccelerate, std::vector<IndexVar> indexVarsToHoldConstant){
+
+  std::map<IndexExpr, IndexExpr> tensorVarToIndexVar;
+  std::map<IndexVar, Dimension> indexVarDomains = exprToAccelerate.getIndexVarDomains();
+
+  match(exprToAccelerate,
+    function<void(const AccessNode*, Matcher*)>([&](const AccessNode* op, Matcher* ctx) {
+      std::vector<IndexVar> iVars;
+      std::vector<Dimension> dims;
+      for (auto &i : op->indexVars) {
+          if (!util::contains(indexVarsToHoldConstant, i)){
+            iVars.push_back(i);
+            dims.push_back(indexVarDomains.at(i));
+          }
+      }
+      TensorVar tVar(Type(op->tensorVar.getType().getDataType(), dims));
+      tensorVarToIndexVar.insert({Access(op), Access(tVar, iVars)});
+    })
+  );
+  return tensorVarToIndexVar; 
+
+}
+
+static IndexStmt constructInnerForalls(IndexExpr e, std::vector<IndexVar> indexVarsToHoldConstant, std::map<IndexExpr, IndexExpr> constructMap){
+
+  IndexStmt s; 
+  std::set<IndexVar> iVars;
+  match(e,
+    function<void(const AccessNode*, Matcher*)>([&](const AccessNode* op, Matcher* ctx) {
+      for (auto &i : op->indexVars) {
+          if (!util::contains(indexVarsToHoldConstant, i)){
+            iVars.insert(i);
+          }
+      }
+    })
+  );
+
+  std::vector<IndexStmt> stmts;
+
+  for (auto &entry: constructMap){
+    Access a = to<Access>(entry.first);
+    Access b = to<Access>(entry.second);
+
+    stmts.push_back(Assignment(b, a));
+  }
+
+ 
+  int i = 0;
+  for (auto iVar: iVars){
+    if (i==0){
+      s = ForallMany(iVar, stmts);
+    }else{
+      s = forall(iVar, s);
+    }
+    i++;
+  }
+
+  return s;
+
+}
+
+static Access constructResultAccess(ArgumentMap argumentMap, IndexExpr exprToAccelerate, FunctionInterface functionInterface){
+
+  AcceleratorAssignment assign = to<AcceleratorAssignment>(functionInterface.getNode()->getStmt());
+  std::vector<IndexVar> iVars= assign.getLhs().getIndexVars();
+
+  std::map<IndexVar, Dimension> indexVarDomains = exprToAccelerate.getIndexVarDomains();
+  std::vector<Dimension> dims; 
+  std::vector<IndexVar> indexingVars; 
+
+  IndexVar concreteVar;
+  for (auto &iVar: iVars){
+    assert(argumentMap.indexVars.count(iVar));
+    concreteVar = argumentMap.indexVars.at(iVar);
+    indexingVars.push_back(concreteVar);
+    assert(indexVarDomains.count(concreteVar));
+    dims.push_back(indexVarDomains.at(concreteVar));
+    
+  }
+
+  TensorVar tVar(Type(assign.getLhs().getTensorObject().getType().getDataType(), dims));
+  return Access(tVar, indexingVars);
+
+}
+
+static IndexStmt constructProducer(Access workspace, Access result, std::vector<IndexVar> indexVarsToHoldConstant){
+
+  std::vector<IndexVar> varsToGenerate;
+  for (const auto &var: workspace.getIndexVars()){
+    if (!util::contains(indexVarsToHoldConstant, var) && !util::contains(varsToGenerate, var)){ 
+      varsToGenerate.push_back(var);
+    }
+  }
+
+  for (const auto &var: result.getIndexVars()){
+    if (!util::contains(indexVarsToHoldConstant, var) && !util::contains(varsToGenerate, var)){ 
+      varsToGenerate.push_back(var);
+    }
+  }
+
+  IndexStmt s = Assignment(workspace, result);
+  for (const auto &iVar: varsToGenerate){
+    s = forall(iVar, s);
+  }
+
+  return s;
+
+}
+
+IndexStmt IndexStmt::holdConstant(FunctionInterface functionInterface, IndexExpr exprToAccelerate, std::vector<IndexVar> indexVarsToHoldConstant, Access workspace) const{
+
+  if (indexVarsToHoldConstant.size() == 0){
+    taco_uerror << "Please use the accelerate command!";
+  }
+  
+  AcceleratorStmt referenceStmt = functionInterface.getNode()->getStmt();
+  if (!isa<AcceleratorAssignment>(referenceStmt)){
+    taco_uerror << "Reference statement in function interface must be an assignment" << endl;
+  }
+  AcceleratorAssignment assign = to<AcceleratorAssignment>(referenceStmt);
+
+  std::map<IndexExpr, IndexExpr> tensorVarToIndexVar = toMatchVars(exprToAccelerate, indexVarsToHoldConstant);
+  IndexExpr e = replace(exprToAccelerate, tensorVarToIndexVar);
+
+  ArgumentMap argumentMap = hasPreciseMatch(e, assign.getRhs());
+
+  if (!argumentMap.possible){
+    taco_uerror << "Expressions " << assign.getRhs() << " and " << exprToAccelerate << " do not match when " 
+      << util::join(indexVarsToHoldConstant) << " are held constant do not match." << endl;
+  }
+
+  Access result = constructResultAccess(argumentMap, exprToAccelerate, functionInterface);
+  cout << getConcreteCodeGenerator(e, result, argumentMap, functionInterface) << endl;
+
+  IndexStmt s = constructInnerForalls(e, indexVarsToHoldConstant, tensorVarToIndexVar);
+  IndexStmt producer = constructProducer(workspace, result, indexVarsToHoldConstant);
+
+  InterfaceCall call(Assignment(result, e), getConcreteCodeGenerator(e, result, argumentMap, functionInterface), result.getTensorVar());
+
+  IndexStmt reducedCode;
+
+  int i = 0;
+  for (const auto &constantVar : indexVarsToHoldConstant){
+    if (i == 0){
+      reducedCode = ForallMany(constantVar, {s, call, producer});
+    }else{
+      reducedCode = forall(constantVar, reducedCode);
+    }
+    i++;
+
+  }
+
+  cout << result << endl;
+  cout << s << endl << endl;
+  cout << reducedCode << endl;
+
+  
+
+  taco_uerror << "unimplemented" << endl;
+
+  return reducedCode;
+}
+
+
 IndexStmt IndexStmt::accelerate(FunctionInterface functionInterface, IndexExpr exprToAccelerate) const{
 
   AcceleratorStmt referenceStmt = functionInterface.getNode()->getStmt();
@@ -4996,6 +5239,25 @@ private:
     }
     else {
       stmt = new ForallNode(op->indexVar, body, op->merge_strategy, op->parallel_unit, op->output_race_strategy, op->unrollFactor);
+    }
+  }
+
+  void visit(const ForallManyNode* op) {
+    bool rewritten = false;
+    std::vector<IndexStmt> newStmts;
+    for (const auto &stmt: op->stmts){
+      IndexStmt s = rewrite(stmt);
+      if (s != stmt) {
+        rewritten = true;
+      }
+      newStmts.push_back(s);
+    }
+
+    if (rewritten){
+      stmt = op;
+    }
+    else {
+        stmt = new ForallManyNode(op->indexVar, newStmts);
     }
   }
 

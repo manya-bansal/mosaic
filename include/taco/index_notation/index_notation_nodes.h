@@ -414,6 +414,18 @@ struct ForallNode : public IndexStmtNode {
   size_t unrollFactor = 0;
 };
 
+struct ForallManyNode : public IndexStmtNode {
+  ForallManyNode(IndexVar indexVar, std::vector<IndexStmt> stmts) 
+      : indexVar(indexVar), stmts(stmts) {}
+
+  void accept(IndexStmtVisitorStrict* v) const {
+    v->visit(this);
+  }
+
+  IndexVar indexVar;
+  std::vector<IndexStmt> stmts;
+};
+
 struct WhereNode : public IndexStmtNode {
   WhereNode(IndexStmt consumer, IndexStmt producer)
       : consumer(consumer), producer(producer) {}

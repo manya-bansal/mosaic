@@ -30,6 +30,7 @@ struct IndexVarNode;
 struct AssignmentNode;
 struct YieldNode;
 struct ForallNode;
+struct ForallManyNode;
 struct WhereNode;
 struct AccelerateNode;
 struct InterfaceCallNode;
@@ -70,6 +71,7 @@ public:
   virtual void visit(const AssignmentNode*) = 0;
   virtual void visit(const YieldNode*) = 0;
   virtual void visit(const ForallNode*) = 0;
+  virtual void visit(const ForallManyNode*) = 0;
   virtual void visit(const WhereNode*) = 0;
   virtual void visit(const AccelerateNode*) = 0;
   virtual void visit(const InterfaceCallNode*) = 0;
@@ -117,6 +119,7 @@ public:
   virtual void visit(const AssignmentNode* node);
   virtual void visit(const YieldNode* node);
   virtual void visit(const ForallNode* node);
+  virtual void visit(const ForallManyNode* node);
   virtual void visit(const WhereNode* node);
   virtual void visit(const AccelerateNode*);
   virtual void visit(const InterfaceCallNode*);

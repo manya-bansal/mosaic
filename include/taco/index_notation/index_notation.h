@@ -67,6 +67,7 @@ struct IndexVarNode;
 struct AssignmentNode;
 struct YieldNode;
 struct ForallNode;
+struct ForallManyNode;
 struct WhereNode;
 struct AccelerateNode;
 struct InterfaceCallNode;
@@ -74,6 +75,7 @@ struct SequenceNode;
 struct AssembleNode;
 struct MultiNode;
 struct SuchThatNode;
+
 
 class IndexExprVisitorStrict;
 class IndexStmtVisitorStrict;
@@ -775,6 +777,8 @@ public:
 
   IndexStmt accelerate(FunctionInterface functionInterface, IndexExpr exprToAccelerate) const;
 
+  IndexStmt holdConstant(FunctionInterface functionInterface, IndexExpr exprToAccelerate, std::vector<IndexVar> indexVarsToHoldConstant, Access workspace) const;
+
   /// bound specifies a compile-time constraint on an index variable's
   /// iteration space that allows knowledge of the
   /// size or structured sparsity pattern of the inputs to be
@@ -893,6 +897,20 @@ public:
 /// Create a forall index statement.
 Forall forall(IndexVar i, IndexStmt stmt);
 Forall forall(IndexVar i, IndexStmt stmt, MergeStrategy merge_strategy, ParallelUnit parallel_unit, OutputRaceStrategy output_race_strategy, size_t unrollFactor = 0);
+
+
+class ForallMany : public IndexStmt {
+public:
+  ForallMany() = default;
+  ForallMany(const ForallManyNode*);
+
+  ForallMany(IndexVar indexVar, std::vector<IndexStmt> stmts);
+
+  IndexVar getIndexVar() const;
+  std::vector<IndexStmt> getStmts() const;
+
+  typedef ForallManyNode Node;
+};
 
 
 /// A where statment has a producer statement that binds a tensor variable in

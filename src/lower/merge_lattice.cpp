@@ -410,6 +410,12 @@ private:
     lattice = build(node->stmt);
   }
 
+  void visit(const ForallManyNode* node) {
+   for (const auto &stmt: node->stmts){
+      lattice = build(stmt);
+   }
+  }
+
   void visit(const WhereNode* node) {
     // Each where produces a temporary that is consumed on the left-hand side.
     // Since where nodes can be nested, it is possible to for multiple

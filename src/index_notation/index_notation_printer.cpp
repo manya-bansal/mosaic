@@ -249,6 +249,15 @@ void IndexNotationPrinter::visit(const ForallNode* op) {
   os << ")";
 }
 
+void IndexNotationPrinter::visit(const ForallManyNode* op) {
+  os << "forallmany(" << op->indexVar << ", ";
+  for (const auto &stmt: op->stmts){
+    stmt.accept(this);
+    os << ", ";
+  }
+  os << ")";
+}
+
 void IndexNotationPrinter::visit(const WhereNode* op) {
   os << "where(";
   op->consumer.accept(this);
@@ -266,9 +275,9 @@ void IndexNotationPrinter::visit(const AccelerateNode* op) {
 }
 
 void IndexNotationPrinter::visit(const InterfaceCallNode* op){
-    op->producer.accept(this);
-    os << "using ";
-    os << op->codeGen;
+    // op->producer.accept(this);
+    // os << "using ";
+    os << op->codeGen << " ";
   }
 
 void IndexNotationPrinter::visit(const MultiNode* op) {
