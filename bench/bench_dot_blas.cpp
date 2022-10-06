@@ -9,31 +9,33 @@
 
 using namespace taco;
 
-static void bench_ttm(benchmark::State& state) {
-    int dim = state.range(0);
+static void bench_dot_blas(benchmark::State& state) {
+  int dim = state.range(0);
    
-  
-  
-   Tensor<float> B("B", {dim, dim, dim}, Format{Dense, Dense, Dense});
-   Tensor<float> C("C", {dim, dim}, Format{Dense, Dense});
-
+   Tensor<float> B("B", {dim}, Format{Dense});
+   Tensor<float> C("C", {dim}, Format{Dense});
    IndexVar i("i");
    IndexVar j("j");
    IndexVar k("k");
-   IndexVar l("l");
 
-    IndexExpr accelerateExpr = B(i, j, l) * C(k, l);
-   
+   for (int i = 0; i < dim; i++) {
+      C.insert({i}, (float) i);
+      B.insert({i}, (float) i);
+   }
+
+   IndexExpr accelerateExpr = B(j) * C(j);
   
-  
+
    for (auto _ : state) {
     // Setup.
     state.PauseTiming();
-    Tensor<float> A("A", {dim, dim, dim}, Format{Dense, Dense, Dense});
-    A(i, j, k) = accelerateExpr;
+    Tensor<float> A("A", {dim}, Format{Dense});
+    IndexVar i("i");
+    IndexVar j("j");
 
+    A(i) = sum(j, accelerateExpr);
     IndexStmt stmt = A.getAssignment().concretize();
-    stmt = stmt.accelerate(new TblisTTM(), accelerateExpr);
+    stmt = stmt.accelerate(new Sdot(), accelerateExpr);
 
     A.compile(stmt);
     A.assemble();
@@ -42,5 +44,5 @@ static void bench_ttm(benchmark::State& state) {
   }
 }
 
-TACO_BENCH(bench_ttm)->DenseRange(20, 300, 20);
+TACO_BENCH(bench_dot_blas)->DenseRange(1000, 10000, 200);
 

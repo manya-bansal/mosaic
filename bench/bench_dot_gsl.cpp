@@ -6,12 +6,17 @@
 #include "taco/index_notation/index_notation.h"
 #include "taco/accelerator_interface/cblas_interface.h"
 #include "taco/accelerator_interface/tblis_interface.h"
+#include "taco/accelerator_interface/gsl_interface.h"
 
 using namespace taco;
 
-static void bench_dot(benchmark::State& state) {
+extern bool gsl_compile;
+
+static void bench_dot_gsl(benchmark::State& state) {
   int dim = state.range(0);
-   
+  
+   gsl_compile = true;
+  
    Tensor<float> B("B", {dim}, Format{Dense});
    Tensor<float> C("C", {dim}, Format{Dense});
    IndexVar i("i");
@@ -27,6 +32,8 @@ static void bench_dot(benchmark::State& state) {
   
 
    for (auto _ : state) {
+
+    
     // Setup.
     state.PauseTiming();
     Tensor<float> A("A", {dim}, Format{Dense});
@@ -34,17 +41,18 @@ static void bench_dot(benchmark::State& state) {
     IndexVar j("j");
 
     A(i) = sum(j, accelerateExpr);
+    IndexStmt stmt = A.getAssignment().concretize();
+    stmt = stmt.accelerate(new GSLDot(), accelerateExpr);
 
-    A.registerAccelerator(new TblisDot());
-   // enable targeting
-    A.accelerateOn();
-
-    A.compile();
+    A.compile(stmt);
     A.assemble();
     state.ResumeTiming();
     A.compute();
   }
+
+  gsl_compile = false; 
+
 }
 
-TACO_BENCH(bench_dot)->DenseRange(20, 1000, 20);
+TACO_BENCH(bench_dot_gsl)->DenseRange(1000, 10000, 200);
 

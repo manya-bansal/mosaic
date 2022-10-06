@@ -9,7 +9,7 @@
 
 using namespace taco;
 
-static void bench_mm(benchmark::State& state) {
+static void bench_sgemm_tblis(benchmark::State& state) {
     int dim = state.range(0);
    
   
@@ -21,25 +21,28 @@ static void bench_mm(benchmark::State& state) {
    IndexVar j("j");
    IndexVar k("k");
 
-   IndexExpr accelerateExpr = B(i, j) * C(j, k);
+   IndexExpr accelerateExpr = B(i, j) * C(j, k) ;
   
   
    for (auto _ : state) {
     // Setup.
     state.PauseTiming();
     Tensor<float> A("A", {dim, dim}, Format{Dense, Dense});
-    A(i, k) = accelerateExpr;
+    A(i, k) = accelerateExpr + C(i,k);
 
-    A.registerAccelerator(new MatrixMultiply());
-   // enable targeting
+    // IndexStmt stmt = A.getAssignment().concretize();
+    // stmt = stmt.accelerate(new TblisMultiply(), accelerateExpr);
+    
+
+    A.registerAccelerator(new TblisMultiply());
     A.accelerateOn();
-
     A.compile();
+
     A.assemble();
     state.ResumeTiming();
     A.compute();
   }
 }
 
-TACO_BENCH(bench_mm)->DenseRange(20, 1000, 20);
+TACO_BENCH(bench_sgemm_tblis)->DenseRange(100, 2000, 100);
 

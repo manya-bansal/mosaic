@@ -6,17 +6,12 @@
 #include "taco/index_notation/index_notation.h"
 #include "taco/accelerator_interface/cblas_interface.h"
 #include "taco/accelerator_interface/tblis_interface.h"
-#include "taco/accelerator_interface/gsl_interface.h"
 
 using namespace taco;
 
-extern bool gsl_compile;
-
-static void bench_saxpy_gsl(benchmark::State& state) {
+static void bench_dot_taco(benchmark::State& state) {
   int dim = state.range(0);
    
-    gsl_compile = true;
-
    Tensor<float> B("B", {dim}, Format{Dense});
    Tensor<float> C("C", {dim}, Format{Dense});
    IndexVar i("i");
@@ -28,25 +23,24 @@ static void bench_saxpy_gsl(benchmark::State& state) {
       B.insert({i}, (float) i);
    }
 
-  IndexExpr accelerateExpr = B(i) + C(i);
+   IndexExpr accelerateExpr = B(j) * C(j);
+  
 
-  for (auto _ : state) {
+   for (auto _ : state) {
     // Setup.
     state.PauseTiming();
     Tensor<float> A("A", {dim}, Format{Dense});
     IndexVar i("i");
     IndexVar j("j");
-    A(i) = accelerateExpr;
-    IndexStmt stmt = A.getAssignment().concretize();
-    stmt = stmt.accelerate(new GSLVecAdd(), accelerateExpr);
-    A.compile(stmt);
+
+    A(i) = sum(j, accelerateExpr);
+
+    A.compile();
     A.assemble();
     state.ResumeTiming();
     A.compute();
   }
-
-   gsl_compile = false;
 }
 
-TACO_BENCH(bench_saxpy_gsl)->DenseRange(1000, 10000, 200);
+TACO_BENCH(bench_dot_taco)->DenseRange(1000, 10000, 200);
 
