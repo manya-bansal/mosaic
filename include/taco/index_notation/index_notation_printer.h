@@ -37,10 +37,12 @@ public:
   void visit(const WhereNode*);
   void visit(const AccelerateNode*);
   void visit(const InterfaceCallNode*);
+  void visit(const ForallManyNode*);
   void visit(const MultiNode*);
   void visit(const SequenceNode*);
   void visit(const AssembleNode*);
   void visit(const SuchThatNode*);
+  void visit(const DimReductionNode*);
 
 private:
   std::ostream& os;

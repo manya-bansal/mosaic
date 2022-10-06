@@ -572,6 +572,7 @@ Iterators::Iterators(IndexStmt stmt, const map<TensorVar, Expr>& tensorVars)
 void Iterators::createAccessIterators(Access access, Format format, Expr tensorIR,
                                       ProvenanceGraph provGraph,
                                       const map<TensorVar, Expr> &tensorVars) {
+
   TensorVar tensorConcrete = access.getTensorVar();
   taco_iassert(tensorConcrete.getOrder() == format.getOrder())
       << tensorConcrete << ", Format" << format;
@@ -621,6 +622,7 @@ void Iterators::createAccessIterators(Access access, Format format, Expr tensorI
       // If the access that corresponds to this iterator has an index set,
       // then we need to construct an iterator for the index set.
       if (access.isModeIndexSet(modeNumber)) {
+        
         auto tv = access.getModeIndexSetTensor(modeNumber);
         auto tvVar = tensorVars.at(tv);
         auto tvFormat = tv.getFormat();
@@ -634,7 +636,6 @@ void Iterators::createAccessIterators(Access access, Format format, Expr tensorI
         // Also add the iterator to the modeAccesses map.
         content->modeAccesses.insert({iter, {access, modeNumber + 1}});
       }
-
       content->levelIterators.insert({{access,modeNumber+1}, iterator});
       if (iteratorIndexVar != indexVar) {
         // add to allowing lowering to find correct iterator for this pos variable
@@ -647,12 +648,13 @@ void Iterators::createAccessIterators(Access access, Format format, Expr tensorI
       level++;
     }
   }
+
 }
 
 Iterator Iterators::levelIterator(ModeAccess modeAccess) const
-{
+{ 
   taco_iassert(content != nullptr);
-  taco_iassert(util::contains(content->levelIterators, modeAccess))
+  taco_uassert(util::contains(content->levelIterators, modeAccess))
       << "Cannot find " << modeAccess << " in "
       << util::join(content->levelIterators) << "\n" << modeAccess.getAccess();
   content->levelIterators.at(modeAccess);

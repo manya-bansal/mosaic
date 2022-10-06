@@ -145,7 +145,7 @@ std::ostream& operator<<(std::ostream& os, const ForeignFunctionDescription& for
 
 std::ostream& operator<<(std::ostream& os,  const ConcreteAccelerateCodeGenerator& accelGen){
   os << accelGen.getReturnType() << " " << accelGen.getFunctionName() << "(" << util::join(accelGen.getArguments()) 
-    << ") targets " << accelGen.getLHS() << " = " << accelGen.getRHS() << endl;
+    << ")";
   return os;
 }
 

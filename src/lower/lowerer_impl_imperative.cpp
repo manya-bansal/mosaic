@@ -50,9 +50,11 @@ private:
   void visit(const AssignmentNode* node)    { stmt = impl->lowerAssignment(node); }
   void visit(const YieldNode* node)         { stmt = impl->lowerYield(node); }
   void visit(const ForallNode* node)        { stmt = impl->lowerForall(node); }
+  void visit(const ForallManyNode* node)    { stmt =  impl->lowerForallMany(node); }
+  void visit(const DimReductionNode* node)  { stmt =  impl->lowerDimReduce(node); }
   void visit(const WhereNode* node)         { stmt = impl->lowerWhere(node); }
   void visit(const AccelerateNode* node)    { stmt = impl->lowerAccelerate(node); }
-  void visit(const InterfaceCallNode* node)    { stmt = impl->lowerInterface(node); }
+  void visit(const InterfaceCallNode* node) { stmt = impl->lowerInterface(node); }
   void visit(const MultiNode* node)         { stmt = impl->lowerMulti(node); }
   void visit(const SuchThatNode* node)      { stmt = impl->lowerSuchThat(node); }
   void visit(const SequenceNode* node)      { stmt = impl->lowerSequence(node); }
@@ -303,7 +305,6 @@ LowererImplImperative::lower(IndexStmt stmt, string name,
 
   // Create iterators
   iterators = Iterators(stmt, tensorVars);
-
   provGraph = ProvenanceGraph(stmt);
 
   for (const IndexVar& indexVar : provGraph.getAllIndexVars()) {
@@ -775,6 +776,9 @@ Stmt LowererImplImperative::lowerForall(Forall forall)
   }
 
   MergeLattice caseLattice = MergeLattice::make(forall, iterators, provGraph, definedIndexVars, whereTempsToResult);
+
+  cout << "MERGE LATTICE ITERATORS " << caseLattice << endl;
+
   vector<Access> resultAccesses;
   set<Access> reducedAccesses;
   std::tie(resultAccesses, reducedAccesses) = getResultAccesses(forall);
@@ -803,9 +807,20 @@ Stmt LowererImplImperative::lowerForall(Forall forall)
     MergeLattice loopLattice = caseLattice.getLoopLattice();
 
     MergePoint point = loopLattice.points()[0];
+
+    cout << "POINTS !!!" << util::join(loopLattice.points()) << endl;
+
     Iterator iterator = loopLattice.iterators()[0];
 
-    vector<Iterator> locators = point.locators();
+    vector<Iterator> locators;
+
+    for (const auto &elem : loopLattice.points()){
+      cout << "elem "  << elem << endl;
+      locators.insert(locators.end(), elem.locators().begin(), elem.locators().end());
+    }
+
+    cout << "locators !!!" << util::join(locators) << endl;
+
     vector<Iterator> appenders;
     vector<Iterator> inserters;
     tie(appenders, inserters) = splitAppenderAndInserters(point.results());
@@ -2068,6 +2083,8 @@ Stmt LowererImplImperative::lowerForallBody(Expr coordinate, IndexStmt stmt,
   // Locate positions
   Stmt declLocatorPosVars = declLocatePosVars(locators);
 
+   cout << "LOWER(STMT) 2072, declLocatevars " << declLocatorPosVars << endl << endl; 
+
   if (captureNextLocatePos) {
     capturedLocatePos = Block::make(declInserterPosVars, declLocatorPosVars);
     captureNextLocatePos = false;
@@ -2104,9 +2121,11 @@ Stmt LowererImplImperative::lowerForallBody(Expr coordinate, IndexStmt stmt,
   Stmt initVals = resizeAndInitValues(appenders, reducedAccesses);
 
   // Code of loop body statement
+
+  cout << "LOWER(STMT) 2109 " << stmt << endl << endl; 
   Stmt body = lower(stmt);
 
-  // Code to append coordinates
+  // Code to append coordinate
   Stmt appendCoords = appendCoordinate(appenders, coordinate);
 
   std::vector<Stmt> stmts;
@@ -2661,7 +2680,7 @@ vector<Stmt> LowererImplImperative::codeToInitializeTemporary(Accelerate acceler
   } else {
     // TODO: Need to support keeping track of initialized elements for
     //       temporaries that don't have sparse accelerator
-    taco_iassert(!util::contains(guardedTemps, temporary) || accelerateDense);
+    // taco_iassert(!util::contains(guardedTemps, temporary));
 
     // When emitting code to accelerate dense workspaces with sparse iteration, we need the following arrays
     // to construct the result indices
@@ -2697,6 +2716,123 @@ vector<Stmt> LowererImplImperative::codeToInitializeTemporary(Accelerate acceler
     this->temporaryArrays.insert({temporary, arrays});
   }
   return {initializeTemporary, freeTemporary};
+}
+
+Expr LowererImplImperative::getTemporarySize(TensorVar var){
+
+  vector<Expr> sizeVector;
+  Expr finalSize;
+  for (int i = 0; i < var.getOrder(); i++) {
+    Dimension temporarySize = var.getType().getShape().getDimension(i);
+    Expr size;
+    if (temporarySize.isFixed()) {
+      size = ir::Literal::make(temporarySize.getSize());
+
+    } else {
+      // IndexVar var = temporarySize.getIndexVarSize();
+      // vector<Expr> bounds = provGraph.deriveIterBounds(var, definedIndexVarsOrdered, underivedBounds,
+      //                                                  indexVarToExprMap, iterators);
+      // size = ir::Sub::make(bounds[1], bounds[0]);
+
+      taco_uerror << "unimpl" << endl;
+    }
+    sizeVector.push_back(size);
+    if (i == 0)
+      finalSize = size;
+    else
+      finalSize = ir::Mul::make(finalSize, size);
+  }
+  temporarySizeMap[var] = sizeVector;
+  return finalSize;
+
+}
+
+vector<vector<Stmt>> LowererImplImperative::codeToInitializeTemporary(DimReduction dimReduction){
+
+  std::vector<Stmt> initializeTemps;
+  std::vector<Stmt> freeTemps;
+
+  for (const auto &temporary : dimReduction.getTemporaries()){
+    Stmt freeTemporary = Stmt();
+    Stmt initializeTemporary = Stmt();
+    if (isScalar(temporary.getType())) {
+      initializeTemporary = defineScalarVariable(temporary, true);
+      Expr tempSet = ir::Var::make(temporary.getName() + "_set", Datatype::Bool);
+      Stmt initTempSet = VarDecl::make(tempSet, false);
+      initializeTemporary = Block::make(initializeTemporary, initTempSet);
+      tempToBitGuard[temporary] = tempSet;
+    } else {
+      // TODO: Need to support keeping track of initialized elements for
+      //       temporaries that don't have sparse accelerator
+      // taco_iassert(!util::contains(guardedTemps, temporary) || accelerateDense);
+
+      // When emitting code to accelerate dense workspaces with sparse iteration, we need the following arrays
+      // to construct the result indices
+      // if(accelerateDense) {
+      //   vector<Stmt> initAndFree = codeToInitializeDenseAcceleratorArrays(accelerate);
+      //   initializeTemporary = initAndFree[0];
+      //   freeTemporary = initAndFree[1];
+      // }
+
+      Expr values;
+      values = ir::Var::make(temporary.getName(),
+                            temporary.getType().getDataType(), true, false);
+
+      Expr size = getTemporarySize(temporary);
+
+      // no decl needed for shared memory
+      Stmt decl = Stmt();
+      if ((isa<Forall>(dimReduction.getProducer()) && inParallelLoopDepth == 0) || !should_use_CUDA_codegen()) {
+        decl = VarDecl::make(values, ir::Literal::make(0));
+      }
+      Stmt allocate = Allocate::make(values, size);
+
+      freeTemporary = Block::make(freeTemporary, Free::make(values));
+      initializeTemporary = Block::make(decl, initializeTemporary, allocate);
+      
+
+      /// Make a struct object that lowerAssignment and lowerAccess can read
+      /// temporary value arrays from.
+      TemporaryArrays arrays;
+      arrays.values = values;
+      this->temporaryArrays.insert({temporary, arrays});
+    }
+
+    initializeTemps.push_back(initializeTemporary);
+    freeTemps.push_back(freeTemporary);
+  }
+
+  return {initializeTemps, freeTemps};
+
+}
+
+Stmt LowererImplImperative::lowerForallMany(ForallMany forallMany){
+  vector<Stmt> blockToMake;
+
+  for (const auto &stmt : forallMany.getStmts()){
+    cout << "stmt is " << stmt << " where ir is " << lower(stmt) << endl << endl;
+    blockToMake.push_back(lower(stmt));
+  }
+
+  return Block::make(blockToMake);
+}
+
+Stmt LowererImplImperative::lowerDimReduce(DimReduction dimReduction){
+
+  // taco_uerror << "here" << endl;
+  vector<Stmt> blockToMake;
+  vector<vector<Stmt>> temporaryValuesInitFree = codeToInitializeTemporary(dimReduction);
+
+  if (this->compute){
+    blockToMake.push_back(Block::make(temporaryValuesInitFree[0]));
+    //generate the consumer code
+    blockToMake.push_back(lower(dimReduction.getProducer()));
+    blockToMake.push_back(lower(dimReduction.getConsumer()));
+    blockToMake.push_back(Block::make(temporaryValuesInitFree[1]));
+  }
+
+  return Block::make(blockToMake);
+
 }
 
 ir::Expr LowererImplImperative::lowerArgument(Argument argument, TensorVar resultVar, TensorVar temporary, std::vector<DeclVarArg>& varsToDeclare, bool replace){

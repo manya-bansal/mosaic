@@ -410,7 +410,63 @@ private:
     lattice = build(node->stmt);
   }
 
+  void visit(const ForallManyNode* node) {
+
+    set<set<Iterator>> TensorPointsToKeep;
+    vector<MergePoint> points;
+
+    std::vector<Iterator> iterators;
+    std::vector<Iterator> locators;
+    std::vector<Iterator> results;
+    
+    
+    for (const auto &stmt: node->stmts){  
+      lattice = build(stmt);
+        for (auto &point : lattice.points()) {
+          for (const auto &iterator : point.iterators()){
+            if (!util::contains(iterators, iterator)){
+              iterators.push_back(iterator);
+            }
+            
+          }
+          for (const auto &locator : point.locators()){
+            if (!util::contains(locators, locator)){
+              locators.push_back(locator);
+            }
+            
+          }
+          for (const auto &result : point.results()){
+            if (!util::contains(results, result)){
+              results.push_back(result);
+            }
+          }
+        
+        }
+
+        for (const auto &elem: lattice.getTensorRegionsToKeep()){
+          TensorPointsToKeep.insert(elem);
+        }
+      }
+
+   MergePoint mergePoint(iterators, locators, results);
+
+   lattice = MergeLattice({mergePoint}, TensorPointsToKeep); 
+  }
+
   void visit(const WhereNode* node) {
+    // Each where produces a temporary that is consumed on the left-hand side.
+    // Since where nodes can be nested, it is possible to for multiple
+    // temporaries to be consumed by a consumer expression.  The expression that
+    // compute temporaries have an iteration space.  The merge lattice of these
+    // iteration spaces must be merged with the iteration space of the
+    // expression the temporary is combined with.  The merge lattice
+    // construction strategy for where nodes is to keep a map of temporaries and
+    // their corresponding merge lattices.
+    build(node->producer);
+    lattice = build(node->consumer);
+  }
+
+  void visit(const DimReductionNode* node) {
     // Each where produces a temporary that is consumed on the left-hand side.
     // Since where nodes can be nested, it is possible to for multiple
     // temporaries to be consumed by a consumer expression.  The expression that
@@ -1031,11 +1087,14 @@ MergeLattice MergeLattice::make(Forall forall, Iterators iterators, ProvenanceGr
   vector<IndexVar> underivedAncestors = provGraph.getUnderivedAncestors(indexVar);
   for (auto ancestor : underivedAncestors) {
     if(!provGraph.isRecoverable(ancestor, definedIndexVars)) {
+      cout << "exit early " << endl;
       return MergeLattice({MergePoint({iterators.modeIterator(indexVar)}, {}, {})});
     }
   }
 
   MergeLattice lattice = builder.build(forall.getStmt());
+
+  cout << "IN MERGE LATTICE MAKE: " << lattice.getLoopLattice() << endl;
 
   // Can't remove points if lattice contains omitters since we lose merge cases during lowering.
   if(lattice.anyModeIteratorIsLeaf() && lattice.needExplicitZeroChecks()) {
@@ -1074,6 +1133,7 @@ MergeLattice::removePointsWithIdenticalIterators(const std::vector<MergePoint>& 
   vector<MergePoint> result;
   set<set<Iterator>> producerIteratorSets;
   for (auto& point : points) {
+    
     set<Iterator> iteratorSet(point.iterators().begin(),
                               point.iterators().end());
     if (util::contains(producerIteratorSets, iteratorSet)) {
@@ -1223,6 +1283,7 @@ set<set<Iterator>> MergeLattice::getTensorRegionsToKeep() const {
 
 MergeLattice MergeLattice::getLoopLattice() const {
   std::vector<MergePoint> p = removePointsThatLackFullIterators(points());
+  cout << "REMOVE POINTS " << p;
   return removePointsWithIdenticalIterators(p);
 }
 

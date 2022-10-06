@@ -202,6 +202,10 @@ protected:
   /// Lower a where statement.
   virtual ir::Stmt lowerWhere(Where where);
 
+  virtual ir::Stmt lowerDimReduce(DimReduction dimReduction);
+
+  virtual ir::Stmt lowerForallMany(ForallMany forallMany);
+
   virtual ir::Stmt lowerInterface(InterfaceCall interface);
 
   virtual ir::Stmt lowerAccelerate(Accelerate accelerate);
@@ -268,6 +272,8 @@ protected:
 
   /// Retrieve a tensor IR variable.
   ir::Expr getTensorVar(TensorVar) const;
+
+  ir::Expr getTemporarySize(TensorVar var);
 
   /// Retrieves a result values array capacity variable.
   ir::Expr getCapacityVar(ir::Expr) const;
@@ -385,6 +391,7 @@ protected:
   ir::Stmt codeToInitializeIteratorVars(std::vector<Iterator> iterators, std::vector<Iterator> rangers, std::vector<Iterator> mergers, ir::Expr coord, IndexVar coordinateVar);
   ir::Stmt codeToInitializeIteratorVar(Iterator iterator, std::vector<Iterator> iterators, std::vector<Iterator> rangers, std::vector<Iterator> mergers, ir::Expr coordinate, IndexVar coordinateVar);
 
+
   /// Returns true iff the temporary used in the where statement is dense and sparse iteration over that
   /// temporary can be automaticallty supported by the compiler.
   std::pair<bool,bool> canAccelerateDenseTemp(Where where);
@@ -392,7 +399,8 @@ protected:
 
   /// Initializes a temporary workspace
   std::vector<ir::Stmt> codeToInitializeTemporary(Where where);
-   std::vector<ir::Stmt> codeToInitializeTemporary(Accelerate where);
+  std::vector<ir::Stmt> codeToInitializeTemporary(Accelerate where);
+  std::vector<std::vector<ir::Stmt>> codeToInitializeTemporary(DimReduction dimReduction);
 
   std::vector<ir::Stmt> codeToInitializeTemporaryParallel(Where where, ParallelUnit parallelUnit);
     // std::vector<ir::Stmt> codeToInitializeTemporaryParallel(Accelerate where, ParallelUnit parallelUnit);

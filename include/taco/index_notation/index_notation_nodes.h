@@ -414,6 +414,18 @@ struct ForallNode : public IndexStmtNode {
   size_t unrollFactor = 0;
 };
 
+struct ForallManyNode : public IndexStmtNode {
+  ForallManyNode(IndexVar indexVar, std::vector<IndexStmt> stmts) 
+      : indexVar(indexVar), stmts(stmts) {}
+
+  void accept(IndexStmtVisitorStrict* v) const {
+    v->visit(this);
+  }
+
+  IndexVar indexVar;
+  std::vector<IndexStmt> stmts;
+};
+
 struct WhereNode : public IndexStmtNode {
   WhereNode(IndexStmt consumer, IndexStmt producer)
       : consumer(consumer), producer(producer) {}
@@ -437,6 +449,19 @@ struct AccelerateNode : public IndexStmtNode {
   IndexStmt consumer;
   IndexStmt producer;
   ConcreteAccelerateCodeGenerator accelGen;
+};
+
+struct DimReductionNode : public IndexStmtNode {
+  DimReductionNode(IndexStmt consumer, IndexStmt producer,  std::vector<TensorVar> temps)
+      : consumer(consumer), producer(producer), temps(temps) {}
+
+  void accept(IndexStmtVisitorStrict* v) const {
+    v->visit(this);
+  }
+
+  IndexStmt consumer;
+  IndexStmt producer;
+  std::vector<TensorVar> temps;
 };
 
 struct InterfaceCallNode : public IndexStmtNode {

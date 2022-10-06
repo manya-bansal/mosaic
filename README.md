@@ -32,6 +32,7 @@ TL;DR build taco using CMake. Run `make test`.
 Build taco using CMake 3.4.0 or greater:
 
     cd <taco-directory>
+    git submodule update --init
     mkdir build
     cd build
     cmake -DCMAKE_BUILD_TYPE=Release ..

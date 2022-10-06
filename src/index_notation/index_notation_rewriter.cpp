@@ -188,6 +188,25 @@ void IndexNotationRewriter::visit(const ForallNode* op) {
   }
 }
 
+void IndexNotationRewriter::visit(const ForallManyNode* op) {
+  bool rewritten = false;
+  std::vector<IndexStmt> newStmts;
+  for (const auto &stmt: op->stmts){
+    IndexStmt s = rewrite(stmt);
+    if (s != stmt) {
+      rewritten = true;
+    }
+    newStmts.push_back(s);
+  }
+
+  if (rewritten){
+    stmt = op;
+  }
+  else {
+      stmt = new ForallManyNode(op->indexVar, newStmts);
+  }
+}
+
 void IndexNotationRewriter::visit(const WhereNode* op) {
   IndexStmt producer = rewrite(op->producer);
   IndexStmt consumer = rewrite(op->consumer);
@@ -196,6 +215,17 @@ void IndexNotationRewriter::visit(const WhereNode* op) {
   }
   else {
     stmt = new WhereNode(consumer, producer);
+  }
+}
+
+void IndexNotationRewriter::visit(const DimReductionNode* op) {
+  IndexStmt producer = rewrite(op->producer);
+  IndexStmt consumer = rewrite(op->consumer);
+  if (producer == op->producer && consumer == op->consumer) {
+    stmt = op;
+  }
+  else {
+    stmt = new DimReductionNode(consumer, producer, op->temps);
   }
 }
 

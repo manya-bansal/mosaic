@@ -67,6 +67,7 @@ struct IndexVarNode;
 struct AssignmentNode;
 struct YieldNode;
 struct ForallNode;
+struct ForallManyNode;
 struct WhereNode;
 struct AccelerateNode;
 struct InterfaceCallNode;
@@ -74,6 +75,8 @@ struct SequenceNode;
 struct AssembleNode;
 struct MultiNode;
 struct SuchThatNode;
+struct DimReductionNode;
+
 
 class IndexExprVisitorStrict;
 class IndexStmtVisitorStrict;
@@ -775,6 +778,8 @@ public:
 
   IndexStmt accelerate(FunctionInterface functionInterface, IndexExpr exprToAccelerate) const;
 
+  IndexStmt holdConstant(FunctionInterface functionInterface, IndexExpr exprToAccelerate, std::vector<IndexVar> indexVarsToHoldConstant, Access workspace) const;
+
   /// bound specifies a compile-time constraint on an index variable's
   /// iteration space that allows knowledge of the
   /// size or structured sparsity pattern of the inputs to be
@@ -895,6 +900,20 @@ Forall forall(IndexVar i, IndexStmt stmt);
 Forall forall(IndexVar i, IndexStmt stmt, MergeStrategy merge_strategy, ParallelUnit parallel_unit, OutputRaceStrategy output_race_strategy, size_t unrollFactor = 0);
 
 
+class ForallMany : public IndexStmt {
+public:
+  ForallMany() = default;
+  ForallMany(const ForallManyNode*);
+
+  ForallMany(IndexVar indexVar, std::vector<IndexStmt> stmts);
+
+  IndexVar getIndexVar() const;
+  std::vector<IndexStmt> getStmts() const;
+
+  typedef ForallManyNode Node;
+};
+
+
 /// A where statment has a producer statement that binds a tensor variable in
 /// the environment of a consumer statement.
 class Where : public IndexStmt {
@@ -922,7 +941,6 @@ public:
 /// Create a where index statement.
 Where where(IndexStmt consumer, IndexStmt producer);
 
-
 class Accelerate : public IndexStmt {
 public:
   Accelerate() = default;
@@ -943,6 +961,22 @@ public:
   TensorVar getTemporary();
 
   typedef AccelerateNode Node;
+};
+
+class DimReduction : public IndexStmt {
+public:
+  DimReduction() = default;
+  DimReduction(const DimReductionNode*);
+  DimReduction(IndexStmt consumer, IndexStmt producer, std::vector<TensorVar> temps);
+
+  IndexStmt getConsumer();
+  IndexStmt getProducer();
+  /**
+   * Retrieve the temporary variable of this where statement.
+   */
+  std::vector<TensorVar> getTemporaries();
+
+  typedef DimReductionNode Node;
 };
 
 class InterfaceCall : public IndexStmt {

@@ -30,6 +30,7 @@ struct IndexVarNode;
 struct AssignmentNode;
 struct YieldNode;
 struct ForallNode;
+struct ForallManyNode;
 struct WhereNode;
 struct AccelerateNode;
 struct InterfaceCallNode;
@@ -37,6 +38,7 @@ struct MultiNode;
 struct SequenceNode;
 struct AssembleNode;
 struct SuchThatNode;
+struct DimReductionNode;
 
 /// Visit the nodes in an expression.  This visitor provides some type safety
 /// by requing all visit methods to be overridden.
@@ -70,6 +72,7 @@ public:
   virtual void visit(const AssignmentNode*) = 0;
   virtual void visit(const YieldNode*) = 0;
   virtual void visit(const ForallNode*) = 0;
+  virtual void visit(const ForallManyNode*) = 0;
   virtual void visit(const WhereNode*) = 0;
   virtual void visit(const AccelerateNode*) = 0;
   virtual void visit(const InterfaceCallNode*) = 0;
@@ -77,6 +80,7 @@ public:
   virtual void visit(const AssembleNode*) = 0;
   virtual void visit(const MultiNode*) = 0;
   virtual void visit(const SuchThatNode*) = 0;
+  virtual void visit(const DimReductionNode*) = 0;
 };
 
 /// Visit nodes in index notation
@@ -117,6 +121,7 @@ public:
   virtual void visit(const AssignmentNode* node);
   virtual void visit(const YieldNode* node);
   virtual void visit(const ForallNode* node);
+  virtual void visit(const ForallManyNode* node);
   virtual void visit(const WhereNode* node);
   virtual void visit(const AccelerateNode*);
   virtual void visit(const InterfaceCallNode*);
@@ -124,6 +129,7 @@ public:
   virtual void visit(const AssembleNode* node);
   virtual void visit(const MultiNode* node);
   virtual void visit(const SuchThatNode* node);
+  virtual void visit(const DimReductionNode*);
 };
 
 
@@ -182,6 +188,7 @@ private:
   RULE(CallNode)
   RULE(CallIntrinsicNode)
   RULE(ReductionNode)
+  RULE(ForallManyNode)
 
   RULE(BinaryExprNode)
   RULE(UnaryExprNode)
@@ -197,6 +204,7 @@ private:
   RULE(SequenceNode)
   RULE(AssembleNode)
   RULE(SuchThatNode)
+  RULE(DimReductionNode)
 };
 
 /**
