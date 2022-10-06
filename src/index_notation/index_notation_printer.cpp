@@ -250,7 +250,7 @@ void IndexNotationPrinter::visit(const ForallNode* op) {
 }
 
 void IndexNotationPrinter::visit(const ForallManyNode* op) {
-  os << "forallmany(" << op->indexVar << ", ";
+  os << "forallmany(";
   for (const auto &stmt: op->stmts){
     stmt.accept(this);
     os << ", ";

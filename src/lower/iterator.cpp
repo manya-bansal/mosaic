@@ -543,28 +543,6 @@ Iterators::Iterators(IndexStmt stmt, const map<TensorVar, Expr>& tensorVars)
 
       m->match(n->stmt);
     }),
-    function<void(const ForallManyNode*, Matcher*)>([&](auto n, auto m) {
-      content->modeIterators.insert({n->indexVar, Iterator(n->indexVar, !provGraph.hasCoordBounds(n->indexVar)
-                                                                              && provGraph.isCoordVariable(n->indexVar))});
-      for (const IndexVar& underived : provGraph.getUnderivedAncestors(n->indexVar)) {
-        if (!underivedAdded.count(underived)) {
-          content->modeIterators.insert({underived, underived});
-          underivedAdded.insert(underived);
-        }
-      }
-
-      // Insert all children of current index variable into iterators as well
-      for (const IndexVar& child : provGraph.getChildren(n->indexVar)) {
-        if (!underivedAdded.count(child)) {
-          content->modeIterators.insert({child, child});
-          underivedAdded.insert(child);
-        }
-      }
-      for (const auto &stmt: n->stmts){
-         m->match(stmt);
-      }
-     
-    }),
     function<void(const IndexVarNode*)>([&](const IndexVarNode* var) {
 
     })

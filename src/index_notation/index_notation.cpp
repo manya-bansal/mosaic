@@ -556,11 +556,6 @@ struct Isomorphic : public IndexNotationVisitorStrict {
     }
     auto bnode = to<ForallManyNode>(bStmt.ptr);
 
-    if (!check(anode->indexVar, bnode->indexVar)){
-      eq = false;
-      return;
-    }
-
     if (anode->stmts.size() != bnode->stmts.size()){
       eq = false;
       return;
@@ -1353,11 +1348,6 @@ struct Equals : public IndexNotationVisitorStrict {
       return;
     }
     auto bnode = to<ForallManyNode>(bStmt.ptr);
-
-    if (!equals(anode->indexVar, bnode->indexVar)){
-      eq = false;
-      return;
-    }
 
     if (anode->stmts.size() != bnode->stmts.size()){
       eq = false;
@@ -4123,7 +4113,7 @@ static IndexStmt constructInnerForalls(IndexExpr e, std::vector<IndexVar> indexV
   int i = 0;
   for (auto iVar: iVars){
     if (i==0){
-      s = ForallMany(iVar, stmts);
+      s = forall(iVar, ForallMany(iVar, stmts));
     }else{
       s = forall(iVar, s);
     }
@@ -4217,7 +4207,7 @@ IndexStmt IndexStmt::holdConstant(FunctionInterface functionInterface, IndexExpr
   int i = 0;
   for (const auto &constantVar : indexVarsToHoldConstant){
     if (i == 0){
-      reducedCode = ForallMany(constantVar, {s, call, producer});
+      reducedCode = forall(constantVar, ForallMany(constantVar, {s, call, producer}));
     }else{
       reducedCode = forall(constantVar, reducedCode);
     }
@@ -4238,6 +4228,7 @@ IndexStmt IndexStmt::holdConstant(FunctionInterface functionInterface, IndexExpr
 
   std::vector<TensorVar> temps;
   temps.push_back(workspace.getTensorVar());
+  temps.push_back(result.getTensorVar());
 
   for (auto &entry: tensorVarToIndexVar){
      temps.push_back(to<Access>(entry.second).getTensorVar());
@@ -4781,6 +4772,13 @@ std::vector<TensorVar> getTemporaries(IndexStmt stmt) {
     }),
     function<void(const DimReductionNode*,Matcher*)>([&](const DimReductionNode* op,
                                                   Matcher* ctx) {
+
+      for (const auto &temp: op->temps){
+        if (!util::contains(temporaries, temp)){
+          temporaries.push_back(temp);
+        }
+      }
+      
       ctx->match(op->consumer);
       ctx->match(op->producer);
     }),
@@ -4873,6 +4871,14 @@ pair<vector<Access>,set<Access>> getResultAccesses(IndexStmt stmt)
     function<void(const AssembleNode*,Matcher*)>([&](const AssembleNode* op,
                                                      Matcher* ctx) {
       ctx->match(op->compute);
+    }),
+    function<void(const ForallManyNode*,Matcher*)>([&](const ForallManyNode* op,
+                                                     Matcher* ctx) {
+
+      for (const auto& stmt: op->stmts){
+        ctx->match(stmt);
+      }
+      
     })
   );
   return {result, reduced};

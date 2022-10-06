@@ -411,9 +411,46 @@ private:
   }
 
   void visit(const ForallManyNode* node) {
-   for (const auto &stmt: node->stmts){
+
+    set<set<Iterator>> TensorPointsToKeep;
+    vector<MergePoint> points;
+
+    std::vector<Iterator> iterators;
+    std::vector<Iterator> locators;
+    std::vector<Iterator> results;
+    
+    
+    for (const auto &stmt: node->stmts){  
       lattice = build(stmt);
-   }
+        for (auto &point : lattice.points()) {
+          for (const auto &iterator : point.iterators()){
+            if (!util::contains(iterators, iterator)){
+              iterators.push_back(iterator);
+            }
+            
+          }
+          for (const auto &locator : point.locators()){
+            if (!util::contains(locators, locator)){
+              locators.push_back(locator);
+            }
+            
+          }
+          for (const auto &result : point.results()){
+            if (!util::contains(results, result)){
+              results.push_back(result);
+            }
+          }
+        
+        }
+
+        for (const auto &elem: lattice.getTensorRegionsToKeep()){
+          TensorPointsToKeep.insert(elem);
+        }
+      }
+
+   MergePoint mergePoint(iterators, locators, results);
+
+   lattice = MergeLattice({mergePoint}, TensorPointsToKeep); 
   }
 
   void visit(const WhereNode* node) {
@@ -1050,11 +1087,14 @@ MergeLattice MergeLattice::make(Forall forall, Iterators iterators, ProvenanceGr
   vector<IndexVar> underivedAncestors = provGraph.getUnderivedAncestors(indexVar);
   for (auto ancestor : underivedAncestors) {
     if(!provGraph.isRecoverable(ancestor, definedIndexVars)) {
+      cout << "exit early " << endl;
       return MergeLattice({MergePoint({iterators.modeIterator(indexVar)}, {}, {})});
     }
   }
 
   MergeLattice lattice = builder.build(forall.getStmt());
+
+  cout << "IN MERGE LATTICE MAKE: " << lattice.getLoopLattice() << endl;
 
   // Can't remove points if lattice contains omitters since we lose merge cases during lowering.
   if(lattice.anyModeIteratorIsLeaf() && lattice.needExplicitZeroChecks()) {
@@ -1093,6 +1133,7 @@ MergeLattice::removePointsWithIdenticalIterators(const std::vector<MergePoint>& 
   vector<MergePoint> result;
   set<set<Iterator>> producerIteratorSets;
   for (auto& point : points) {
+    
     set<Iterator> iteratorSet(point.iterators().begin(),
                               point.iterators().end());
     if (util::contains(producerIteratorSets, iteratorSet)) {
@@ -1242,6 +1283,7 @@ set<set<Iterator>> MergeLattice::getTensorRegionsToKeep() const {
 
 MergeLattice MergeLattice::getLoopLattice() const {
   std::vector<MergePoint> p = removePointsThatLackFullIterators(points());
+  cout << "REMOVE POINTS " << p;
   return removePointsWithIdenticalIterators(p);
 }
 

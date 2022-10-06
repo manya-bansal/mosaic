@@ -1197,3 +1197,34 @@ TEST(interface, DimReduceMM) {
    A.compute();
 
 }
+
+
+TEST(interface, blockedSparse) {
+
+   int dim = 16;
+
+   Tensor<float> A("A", {dim, dim, dim}, Format{Sparse, Dense, Dense});
+   Tensor<float> B("B", {dim, dim, dim}, Format{Sparse, Dense, Dense});
+   Tensor<float> C("C", {dim, dim, dim}, Format{Sparse, Dense, Dense});
+   Tensor<float> expected("expected", {dim, dim, dim}, Format{Sparse, Dense, Dense});
+
+   TensorVar precomputed("precomputed", Type(taco::Float32, {dim, dim, dim}), Format{Dense, Dense, Dense});
+
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar k("k");
+   IndexVar l("l");
+
+   IndexExpr accelerateExpr = B(i, j, l) * C(l, k, i);
+   A(i, j, k) = accelerateExpr;
+
+   IndexStmt stmt = A.getAssignment().concretize();
+   stmt = stmt.holdConstant(new MatrixMultiply(), accelerateExpr, {i}, precomputed(i, j, k));
+
+   cout << stmt << endl;
+   
+   A.compile(stmt);
+   A.assemble();
+   A.compute();
+
+}
