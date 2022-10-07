@@ -157,37 +157,37 @@ string Module::compile() {
   // we need to include the correct one depending on what 
   // we are compiling 
 
-  // if (gsl_compile){
-  //   cmd += " -I/home/manya227/tensor-algebra-systems/tblis/include"
-  //          " -I/home/manya227/tensor-algebra-systems/tblis/include/tblis"
-  //          " -I/home/manya227/tensor-algebra-systems/tensorflow/include/" 
-  //          " -I/home/manya227/tensor-algebra-systems/gsl/include" 
-  //          " -I/home/manya227/tensor-algebra-systems/tensor-gsl/include/tensor"
-  //          " -L/home/manya227/tensor-algebra-systems/tblis/lib"
-  //          " -L/home/manya227/tensor-algebra-systems/tensorflow/lib" 
-  //          " -L/home/manya227/tensor-algebra-systems/gsl/lib"
-  //          " -L/home/manya227/tensor-algebra-systems/tensor-gsl/lib"
-  //          " -Wl,-R/home/manya227/tensor-algebra-systems/tblis/lib -l:libtblis.so.0.0.0 "
-  //          " -Wl,-R/home/manya227/tensor-algebra-systems/tensorflow/lib -l:libtensorflow.so.2.9.1"
-  //          " -Wl,-R/home/manya227/tensor-algebra-systems/gsl/lib -l:libgsl.so.25.1.0"
-  //          " -Wl,-R/home/manya227/tensor-algebra-systems/tensor-gsl/lib -l:libtensor.so.0.0.0 -l:libgslcblas.so.0.0.0";
-  // }
-  // else {
-  //   cmd += " -I/home/manya227/tensor-algebra-systems/tblis/include"
-  //          " -I/home/manya227/tensor-algebra-systems/tblis/include/tblis"
-  //          " -I/home/manya227/tensor-algebra-systems/tensorflow/include/"
-  //          " -I/home/manya227/tensor-algebra-systems/tensor-gsl/include/tensor"
-  //          " -I/home/manya227/tensor-algebra-systems/gsl/include" 
-  //          " -L/usr/lib/x86_64-linux-gnu/blas/"
-  //          " -L/home/manya227/tensor-algebra-systems/tblis/lib"
-  //          " -L/home/manya227/tensor-algebra-systems/tensorflow/lib" 
-  //          " -L/home/manya227/tensor-algebra-systems/gsl/lib"
-  //          " -L/home/manya227/tensor-algebra-systems/tensor-gsl/lib"
-  //          " -lblas "
-  //          " -Wl,-R/home/manya227/tensor-algebra-systems/tblis/lib -l:libtblis.so.0.0.0 "
-  //          " -Wl,-R/home/manya227/tensor-algebra-systems/tensorflow/lib -l:libtensorflow.so.2.9.1"
-  //          " -Wl,-R/home/manya227/tensor-algebra-systems/gsl/lib -l:libgsl.so.25.1.0";
-  // }
+  if (gsl_compile){
+    cmd += " -I/home/manya227/tensor-algebra-systems/tblis/include"
+           " -I/home/manya227/tensor-algebra-systems/tblis/include/tblis"
+           " -I/home/manya227/tensor-algebra-systems/tensorflow/include/" 
+           " -I/home/manya227/tensor-algebra-systems/gsl/include" 
+           " -I/home/manya227/tensor-algebra-systems/tensor-gsl/include/tensor"
+           " -L/home/manya227/tensor-algebra-systems/tblis/lib"
+           " -L/home/manya227/tensor-algebra-systems/tensorflow/lib" 
+           " -L/home/manya227/tensor-algebra-systems/gsl/lib"
+           " -L/home/manya227/tensor-algebra-systems/tensor-gsl/lib"
+           " -Wl,-R/home/manya227/tensor-algebra-systems/tblis/lib -l:libtblis.so.0.0.0 "
+           " -Wl,-R/home/manya227/tensor-algebra-systems/tensorflow/lib -l:libtensorflow.so.2.9.1"
+           " -Wl,-R/home/manya227/tensor-algebra-systems/gsl/lib -l:libgsl.so.25.1.0"
+           " -Wl,-R/home/manya227/tensor-algebra-systems/tensor-gsl/lib -l:libtensor.so.0.0.0 -l:libgslcblas.so.0.0.0";
+  }
+  else {
+    cmd += " -I/home/manya227/tensor-algebra-systems/tblis/include"
+           " -I/home/manya227/tensor-algebra-systems/tblis/include/tblis"
+           " -I/home/manya227/tensor-algebra-systems/tensorflow/include/"
+           " -I/home/manya227/tensor-algebra-systems/tensor-gsl/include/tensor"
+           " -I/home/manya227/tensor-algebra-systems/gsl/include" 
+           " -L/usr/lib/x86_64-linux-gnu/blas/"
+           " -L/home/manya227/tensor-algebra-systems/tblis/lib"
+           " -L/home/manya227/tensor-algebra-systems/tensorflow/lib" 
+           " -L/home/manya227/tensor-algebra-systems/gsl/lib"
+           " -L/home/manya227/tensor-algebra-systems/tensor-gsl/lib"
+           " -lblas "
+           " -Wl,-R/home/manya227/tensor-algebra-systems/tblis/lib -l:libtblis.so.0.0.0 "
+           " -Wl,-R/home/manya227/tensor-algebra-systems/tensorflow/lib -l:libtensorflow.so.2.9.1"
+           " -Wl,-R/home/manya227/tensor-algebra-systems/gsl/lib -l:libgsl.so.25.1.0";
+  }
     
   // open the output file & write out the source
 
@@ -251,8 +251,9 @@ int Module::callFuncPackedRaw(std::string name, void** args) {
   }
   omp_set_num_threads(taco_get_num_threads());
 #endif
-
+  
   int ret = func_ptr(args);
+  
 
 #if USE_OPENMP
   omp_set_schedule(existingSched, existingChunkSize);

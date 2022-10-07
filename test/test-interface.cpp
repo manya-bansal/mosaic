@@ -1144,9 +1144,19 @@ TEST(interface, DimReduceDot) {
    Tensor<float> A("A", {16, 16}, Format{Dense, Dense}, 0);
    Tensor<float> B("B", {16, 16}, Format{Dense, Dense});
    Tensor<float> C("C", {16, 16}, Format{Dense, Dense});
-   Tensor<float> expected("expected", {16}, Format{Dense});
+   Tensor<float> expected("expected", {16, 16}, Format{Dense, Dense});
 
    TensorVar precomputed("precomputed", Type(taco::Float32, {16, 16}), Format{Dense, Dense});
+
+   for (int i = 0; i < 16; i++) {
+      for (int j = 0; j < 16; j++) {
+         B.insert({i, j}, (float) i + j);
+         C.insert({i, j}, (float) i + j);
+      }
+   }
+
+   B.pack();
+   C.pack();
 
    IndexVar i("i");
    IndexVar j("j");
@@ -1158,11 +1168,16 @@ TEST(interface, DimReduceDot) {
    IndexStmt stmt = A.getAssignment().concretize();
    stmt = stmt.holdConstant(new TblisDot(), accelerateExpr, {i, k}, precomputed(i, k));
 
-   cout << stmt << endl;
-   
    A.compile(stmt);
    A.assemble();
    A.compute();
+
+   expected(i, k) = accelerateExpr;
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+   ASSERT_TENSOR_EQ(expected, A);
 
 }
 
@@ -1177,7 +1192,19 @@ TEST(interface, DimReduceMM) {
    Tensor<float> C("C", {dim, dim, dim}, Format{Dense, Dense, Dense});
    Tensor<float> expected("expected", {dim, dim, dim}, Format{Dense, Dense, Dense});
 
-   TensorVar precomputed("precomputed", Type(taco::Float32, {dim, dim, dim}), Format{Dense, Dense, Dense});
+   TensorVar precomputed("precomputed", Type(taco::Float32, {16, 16, 16}), Format{Dense, Dense, Dense});
+
+   for (int i = 0; i < dim; i++) {
+      for (int j = 0; j < dim; j++) {
+         for (int k = 0; k < dim; k++) {
+            B.insert({i, j, k}, (float) i + j * k);
+            C.insert({i, j, k}, (float) i + j * k);
+         }
+      }
+   }
+
+   C.pack();
+   B.pack();
 
    IndexVar i("i");
    IndexVar j("j");
@@ -1208,7 +1235,7 @@ TEST(interface, blockedSparse) {
    Tensor<float> C("C", {dim, dim, dim}, Format{Sparse, Dense, Dense});
    Tensor<float> expected("expected", {dim, dim, dim}, Format{Sparse, Dense, Dense});
 
-   TensorVar precomputed("precomputed", Type(taco::Float32, {dim, dim, dim}), Format{Dense, Dense, Dense});
+   TensorVar precomputed("precomputed", Type(taco::Float32, {16, 16, 16}), Format{Dense, Dense, Dense});
 
    IndexVar i("i");
    IndexVar j("j");
@@ -1224,7 +1251,9 @@ TEST(interface, blockedSparse) {
    cout << stmt << endl;
    
    A.compile(stmt);
+   
    A.assemble();
+   cout << "out" << endl;
    A.compute();
 
 }

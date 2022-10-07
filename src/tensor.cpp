@@ -971,6 +971,7 @@ void TensorBase::compute() {
   }
 
   auto arguments = packArguments(*this);
+  
   this->content->module->callFuncPacked("compute", arguments.data());
 
   if (content->assembleWhileCompute) {

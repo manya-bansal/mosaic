@@ -777,8 +777,6 @@ Stmt LowererImplImperative::lowerForall(Forall forall)
 
   MergeLattice caseLattice = MergeLattice::make(forall, iterators, provGraph, definedIndexVars, whereTempsToResult);
 
-  cout << "MERGE LATTICE ITERATORS " << caseLattice << endl;
-
   vector<Access> resultAccesses;
   set<Access> reducedAccesses;
   std::tie(resultAccesses, reducedAccesses) = getResultAccesses(forall);
@@ -808,18 +806,13 @@ Stmt LowererImplImperative::lowerForall(Forall forall)
 
     MergePoint point = loopLattice.points()[0];
 
-    cout << "POINTS !!!" << util::join(loopLattice.points()) << endl;
-
     Iterator iterator = loopLattice.iterators()[0];
 
     vector<Iterator> locators;
 
     for (const auto &elem : loopLattice.points()){
-      cout << "elem "  << elem << endl;
       locators.insert(locators.end(), elem.locators().begin(), elem.locators().end());
     }
-
-    cout << "locators !!!" << util::join(locators) << endl;
 
     vector<Iterator> appenders;
     vector<Iterator> inserters;
@@ -2083,8 +2076,6 @@ Stmt LowererImplImperative::lowerForallBody(Expr coordinate, IndexStmt stmt,
   // Locate positions
   Stmt declLocatorPosVars = declLocatePosVars(locators);
 
-   cout << "LOWER(STMT) 2072, declLocatevars " << declLocatorPosVars << endl << endl; 
-
   if (captureNextLocatePos) {
     capturedLocatePos = Block::make(declInserterPosVars, declLocatorPosVars);
     captureNextLocatePos = false;
@@ -2121,8 +2112,6 @@ Stmt LowererImplImperative::lowerForallBody(Expr coordinate, IndexStmt stmt,
   Stmt initVals = resizeAndInitValues(appenders, reducedAccesses);
 
   // Code of loop body statement
-
-  cout << "LOWER(STMT) 2109 " << stmt << endl << endl; 
   Stmt body = lower(stmt);
 
   // Code to append coordinate
@@ -2810,7 +2799,6 @@ Stmt LowererImplImperative::lowerForallMany(ForallMany forallMany){
   vector<Stmt> blockToMake;
 
   for (const auto &stmt : forallMany.getStmts()){
-    cout << "stmt is " << stmt << " where ir is " << lower(stmt) << endl << endl;
     blockToMake.push_back(lower(stmt));
   }
 

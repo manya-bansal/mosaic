@@ -56,6 +56,7 @@ public:
   /// Call a function using the taco_tensor_t interface and return the result
   int callFuncPacked(std::string name, void** args) {
     return callFuncPackedRaw("_shim_"+name, args);
+    taco_uerror << "exit";
   }
   
   /// Call a function using the taco_tensor_t interface and return the result
