@@ -1226,33 +1226,44 @@ TEST(interface, DimReduceMM) {
 }
 
 
-TEST(DISABLED_interface, blockedSparse) {
+TEST(interface, blockedSparse) {
 
    gsl_compile = true;
 
    int dim = 2;
 
-   Tensor<float> A("A", {dim, dim, dim, dim}, Format{Dense, Dense, Dense, Dense});
-   Tensor<float> B("B", {dim, dim, dim, dim}, Format{Sparse, Dense, Dense, Dense}); 
-   Tensor<float> C("C", {dim, dim, dim}, Format{Dense, Dense, Dense});
+   Tensor<float> A("A", {dim, dim, dim}, Format{Dense, Dense, Dense});
+   Tensor<float> B("B", {dim, dim, dim}, Format{Sparse, Dense, Dense}); 
+   Tensor<float> C("C", {dim, dim}, Format{Dense, Dense});
 
-   
+   float SPARSITY = .3;
 
    for (int i = 0; i < dim; i++) {
-      for (int j = 0; j < dim; j++) {
-         for (int k = 0; k < dim; k++) {
-            for (int m = 0; m < dim; m++) {
-            B.insert({i, m, j, k}, (float) i + j * k + m);
-            }
-         }
-      }
+    for (int j = 0; j < dim; j++) {
+      float rand_float = (float)rand()/(float)(RAND_MAX);
+      C.insert({i, j}, (float) ((int) (rand_float*3/SPARSITY)));
+    }
    }
 
+
+  for (int i = 0; i < dim; i++) {
+   for (int j = 0; j < dim; j++) {
+    for (int k = 0; k < dim; k++) {
+      float rand_float = (float)rand()/(float)(RAND_MAX);
+      if (rand_float < SPARSITY) {
+        B.insert({i, j, k}, (float) ((int) (rand_float*3/SPARSITY)));
+      }
+    }
+   }
+  }
+
+
    B.pack();
+   C.pack();
 
-   Tensor<float> expected("expected", {dim, dim, dim, dim}, Format{Dense, Dense, Dense, Dense});
+   Tensor<float> expected("expected", {dim, dim, dim}, Format{Dense, Dense, Dense});
 
-   TensorVar precomputed("precomputed", Type(taco::Float32, {2, 2, 2}), Format{Dense, Dense, Dense, Dense});
+   TensorVar precomputed("precomputed", Type(taco::Float32, {2, 2, 2}), Format{Dense, Dense, Dense});
 
    IndexVar i("i");
    IndexVar j("j");
@@ -1260,20 +1271,28 @@ TEST(DISABLED_interface, blockedSparse) {
    IndexVar l("l");
    IndexVar m("m");
 
-   IndexExpr accelerateExpr = B(i, m, j, l) * C(l, k, i);
-   A(i, m, j, k) = accelerateExpr;
+   IndexExpr accelerateExpr = B(i, j, l) * C(l, k);
+   A(i, j, k) = accelerateExpr;
 
    IndexStmt stmt = A.getAssignment().concretize();
-   stmt = stmt.holdConstant(new GSLMM(), accelerateExpr, {i, m}, precomputed(i, j, k));
+   stmt = stmt.holdConstant(new GSLMM(), accelerateExpr, {i}, precomputed(i, j, k));
    
    A.compile(stmt);
-   
    A.assemble();
-
-   taco_uerror << "exit" << endl;
+   cout << "out" << endl;
    A.compute();
 
    gsl_compile = false;
+
+   expected(i, j, k) = accelerateExpr;
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+   ASSERT_TENSOR_EQ(expected, A);
+
+   gsl_compile = false;
+
 
 }
 

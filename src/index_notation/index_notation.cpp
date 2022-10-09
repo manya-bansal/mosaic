@@ -4086,7 +4086,7 @@ static std::map<IndexExpr, IndexExpr> toMatchVars(IndexExpr exprToAccelerate, st
 
 }
 
-static IndexStmt constructInnerForalls(IndexExpr e, std::vector<IndexVar> indexVarsToHoldConstant, std::map<IndexExpr, IndexExpr> constructMap){
+static IndexStmt constructInnerForalls(IndexExpr e, std::vector<IndexVar> indexVarsToHoldConstant, std::map<IndexExpr, IndexExpr> constructMap, IndexExpr toAccelerate){
 
   IndexStmt s; 
   std::set<IndexVar> iVars;
@@ -4100,15 +4100,36 @@ static IndexStmt constructInnerForalls(IndexExpr e, std::vector<IndexVar> indexV
     })
   );
 
+  // std::vector<IndexStmt> stmts;
+
+  // for (auto &entry: constructMap){
+  //   Access a = to<Access>(entry.first);
+  //   Access b = to<Access>(entry.second);
+
+  //   stmts.push_back(Assignment(b, a));
+  // }
+
+
+  std::vector<TensorVar> tensorVars;
+  match(toAccelerate,
+    function<void(const AccessNode*, Matcher*)>([&](const AccessNode* op, Matcher* ctx) {
+          if (!util::contains(tensorVars, op->tensorVar)){
+            tensorVars.push_back(op->tensorVar);
+      }
+    })
+  );
+
   std::vector<IndexStmt> stmts;
 
-  for (auto &entry: constructMap){
-    Access a = to<Access>(entry.first);
-    Access b = to<Access>(entry.second);
-
-    stmts.push_back(Assignment(b, a));
+  for (auto &tvAccess: tensorVars){
+    for (const auto &entry : constructMap){
+      Access a = to<Access>(entry.first);
+      if (a.getTensorVar().getName() == tvAccess.getName()){
+        Access b = to<Access>(entry.second);
+        stmts.push_back(Assignment(b, a));
+      }
+    }
   }
-
  
   int i = 0;
   for (auto iVar: iVars){
@@ -4197,7 +4218,7 @@ IndexStmt IndexStmt::holdConstant(FunctionInterface functionInterface, IndexExpr
   Access result = constructResultAccess(argumentMap, exprToAccelerate, functionInterface);
   cout << getConcreteCodeGenerator(e, result, argumentMap, functionInterface) << endl;
 
-  IndexStmt s = constructInnerForalls(e, indexVarsToHoldConstant, tensorVarToIndexVar);
+  IndexStmt s = constructInnerForalls(e, indexVarsToHoldConstant, tensorVarToIndexVar, exprToAccelerate);
   IndexStmt producer = constructProducer(workspace, result, indexVarsToHoldConstant);
 
   InterfaceCall call(Assignment(result, e), getConcreteCodeGenerator(e, result, argumentMap, functionInterface), result.getTensorVar());
