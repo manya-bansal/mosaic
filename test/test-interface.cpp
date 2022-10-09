@@ -55,9 +55,7 @@ TEST(interface, pluginInterface) {
                kernel2(load_test(a, load_test(b)), load_test(b))
             });
 
-   cout << load_test(a, load_test(a), load_test(a, load_test(a)), b, Dim(i)) << endl;
-
-   Tensor<double> A("A", {16}, Format{Dense});
+   Tensor<float> A("A", {16}, Format{Dense});
 
 }
 
@@ -552,26 +550,28 @@ TEST(interface, cblasSgemm) {
    Tensor<float> A("A", {16, 16}, Format{Dense, Dense});
    Tensor<float> B("B", {16, 16}, Format{Dense, Dense});
    Tensor<float> C("C", {16, 16}, Format{Dense, Dense});
-   Tensor<float> D("C", {16, 16}, Format{Dense, Dense});
+   Tensor<float> D("D", {16, 16}, Format{Dense, Dense});
 
    Tensor<float> expected("expected", {16, 16}, Format{Dense, Dense});
 
-   for (int i = 0; i < 16; i++) {
-      for (int j = 0; j < 16; j++) {
-         C.insert({i, j}, (float) i + j);
-         B.insert({i, j}, (float) i + j);
+   for (int i = 0; i < 2; i++) {
+      for (int j = 0; j < 2; j++) {
+         C.insert({i, j}, (float) i + j*i);
+         B.insert({i, j}, (float) i + j*i*4);
+         D.insert({i, j}, (float) i + j*i*6);
       }
    }
 
    C.pack();
    B.pack();
+   D.pack();
 
 
    IndexVar i("i");
    IndexVar j("j");
    IndexVar k("k");
 
-   IndexExpr accelerateExpr = B(i, j) * C(j, k) + C(i,k);
+   IndexExpr accelerateExpr = B(i, j) * C(j, k) + D(i,k);
    A(i, k) = accelerateExpr;
 
    // register the description
@@ -831,7 +831,7 @@ TEST(interface, cblassMMultiply) {
 }
 
 
-TEST(interface, tensorFlowCompile) {
+TEST(DISABLED_interface, tensorFlowCompile) {
 
    // actual computation
    Tensor<float> A("A", {16, 16}, Format{Dense, Dense});
@@ -1226,34 +1226,119 @@ TEST(interface, DimReduceMM) {
 }
 
 
-TEST(interface, blockedSparse) {
+TEST(DISABLED_interface, blockedSparse) {
 
-   int dim = 16;
+   gsl_compile = true;
 
-   Tensor<float> A("A", {dim, dim, dim}, Format{Sparse, Dense, Dense});
-   Tensor<float> B("B", {dim, dim, dim}, Format{Sparse, Dense, Dense});
-   Tensor<float> C("C", {dim, dim, dim}, Format{Sparse, Dense, Dense});
-   Tensor<float> expected("expected", {dim, dim, dim}, Format{Sparse, Dense, Dense});
+   int dim = 2;
 
-   TensorVar precomputed("precomputed", Type(taco::Float32, {16, 16, 16}), Format{Dense, Dense, Dense});
+   Tensor<float> A("A", {dim, dim, dim, dim}, Format{Dense, Dense, Dense, Dense});
+   Tensor<float> B("B", {dim, dim, dim, dim}, Format{Sparse, Dense, Dense, Dense}); 
+   Tensor<float> C("C", {dim, dim, dim}, Format{Dense, Dense, Dense});
+
+   
+
+   for (int i = 0; i < dim; i++) {
+      for (int j = 0; j < dim; j++) {
+         for (int k = 0; k < dim; k++) {
+            for (int m = 0; m < dim; m++) {
+            B.insert({i, m, j, k}, (float) i + j * k + m);
+            }
+         }
+      }
+   }
+
+   B.pack();
+
+   Tensor<float> expected("expected", {dim, dim, dim, dim}, Format{Dense, Dense, Dense, Dense});
+
+   TensorVar precomputed("precomputed", Type(taco::Float32, {2, 2, 2}), Format{Dense, Dense, Dense, Dense});
 
    IndexVar i("i");
    IndexVar j("j");
    IndexVar k("k");
    IndexVar l("l");
+   IndexVar m("m");
 
-   IndexExpr accelerateExpr = B(i, j, l) * C(l, k, i);
-   A(i, j, k) = accelerateExpr;
+   IndexExpr accelerateExpr = B(i, m, j, l) * C(l, k, i);
+   A(i, m, j, k) = accelerateExpr;
 
    IndexStmt stmt = A.getAssignment().concretize();
-   stmt = stmt.holdConstant(new MatrixMultiply(), accelerateExpr, {i}, precomputed(i, j, k));
-
-   cout << stmt << endl;
+   stmt = stmt.holdConstant(new GSLMM(), accelerateExpr, {i, m}, precomputed(i, j, k));
    
    A.compile(stmt);
    
    A.assemble();
-   cout << "out" << endl;
+
+   taco_uerror << "exit" << endl;
    A.compute();
+
+   gsl_compile = false;
+
+}
+
+
+TEST(interface, sdmmBlas){
+  int dim = 16;
+  int NUM_I = dim;
+  int NUM_K = dim;
+  int NUM_J = dim;
+
+  float SPARSITY = .3;
+  
+  Tensor<float> B("B", {NUM_I, NUM_K}, CSR);
+  Tensor<float> C("C", {NUM_I, NUM_J}, {Dense, Dense});
+  Tensor<float> D("D", {NUM_J, NUM_K}, {Dense, Dense});
+  Tensor<float> A("A", {NUM_I, NUM_K}, {Dense, Dense}, 0);
+  Tensor<float> expected("expected", {NUM_I, NUM_K}, {Dense, Dense});
+
+  for (int i = 0; i < NUM_I; i++) {
+    for (int j = 0; j < NUM_J; j++) {
+      float rand_float = (float)rand()/(float)(RAND_MAX);
+      C.insert({i, j}, (float) ((int) (rand_float*3/SPARSITY)));
+    }
+  }
+
+  for (int i = 0; i < NUM_I; i++) {
+    for (int k = 0; k < NUM_K; k++) {
+      float rand_float = (float)rand()/(float)(RAND_MAX);
+      if (rand_float < SPARSITY) {
+        B.insert({i, k}, (float) ((int) (rand_float*3/SPARSITY)));
+      }
+    }
+  }
+
+  for (int j = 0; j < NUM_J; j++) {
+    for (int k = 0; k < NUM_K; k++) {
+      float rand_float = (float)rand()/(float)(RAND_MAX);
+      D.insert({j, k}, (float) ((int) (rand_float*3/SPARSITY)));
+    }
+  }
+
+  B.pack();
+  C.pack();
+  D.pack();
+
+  IndexVar i("i"), j("j"), k("k");
+
+  IndexExpr accelerateExpr = C(i,j) * D(j,k);
+
+  A(i,k) =  B(i,k) * accelerateExpr;
+
+  IndexStmt stmt = A.getAssignment().concretize();
+  stmt = stmt.accelerate(new MatrixMultiply(), accelerateExpr);
+
+   A.compile(stmt);
+   A.assemble();
+   A.compute();
+
+
+   expected(i,k) =  B(i,k) * (accelerateExpr);
+
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+  ASSERT_TENSOR_EQ(expected, A);
 
 }

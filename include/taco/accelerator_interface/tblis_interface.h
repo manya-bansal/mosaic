@@ -36,10 +36,22 @@ class TblisMultiply : public AbstractFunctionInterface{
         std::string getFunctionName() const override {return "tblis_tensor_mult";}
         std::vector<Argument>  callBefore() const override {
                                 taco::TransferLoad tblis_init_tensor_s_helper_row_major("tblis_init_tensor_s_helper_row_major", "void");
-                                return { tblis_init_tensor_s_helper_row_major(AddrDeclVarArg(var), DimList(x), 2,  DataArray(x)),
-                                         tblis_init_tensor_s_helper_row_major(AddrDeclVarArg(var2), DimList(x), 2,  DataArray(y)), 
-                                         tblis_init_tensor_s_helper_row_major(AddrDeclVarArg(result), DimList(x), 2, DataArray(z))};
+                                taco::TransferLoad print("printf", "void");
+                                return { tblis_init_tensor_s_helper_row_major(AddrDeclVarArg(var), DimList(y), 2,  DataArray(x)),
+                                         tblis_init_tensor_s_helper_row_major(AddrDeclVarArg(var2), DimList(y), 2,  DataArray(y)), 
+                                         tblis_init_tensor_s_helper_row_major(AddrDeclVarArg(result), DimList(y), 2, DataArray(z)),
+                                         print(StringLiteral("\"done setting up!\""))
+                                         };
+
                             }
+
+        std::vector<Argument>  callAfter() const override {
+            taco::TransferLoad print("printf", "void");
+                                return { 
+                                         print(StringLiteral("\"returning!\""))
+                                        };
+
+        }
 
     private: 
         TensorObject x;

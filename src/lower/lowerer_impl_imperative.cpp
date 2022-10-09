@@ -2798,8 +2798,12 @@ vector<vector<Stmt>> LowererImplImperative::codeToInitializeTemporary(DimReducti
 Stmt LowererImplImperative::lowerForallMany(ForallMany forallMany){
   vector<Stmt> blockToMake;
 
+  int i = 0; 
   for (const auto &stmt : forallMany.getStmts()){
+    // blockToMake.push_back(Print::make(std::to_string(i) + " reached!!"));
+    // i++;
     blockToMake.push_back(lower(stmt));
+    // i++;
   }
 
   return Block::make(blockToMake);
@@ -2810,6 +2814,24 @@ Stmt LowererImplImperative::lowerDimReduce(DimReduction dimReduction){
   // taco_uerror << "here" << endl;
   vector<Stmt> blockToMake;
   vector<vector<Stmt>> temporaryValuesInitFree = codeToInitializeTemporary(dimReduction);
+
+  // if (this->compute){
+  //   vector<TensorVar> vars; 
+
+  //   match((dimReduction),
+  //       std::function<void(const AccessNode*)>([&](const AccessNode* op) {
+  //             vars.push_back(op->tensorVar);
+  //         })
+  //   );
+
+  //   for (const auto &temp: vars){
+  //     for (int i = 0; i<temp.getOrder(); i++){
+  //       string s = "Dimesnion of " + temp.getName();
+  //       s += "[" + std::to_string(i) + "]";
+  //       blockToMake.push_back(Print::make( s + "=%d\\n", {GetProperty::make(tensorVars.at(temp), TensorProperty::Dimension, i)} ));
+  //     }
+  //   }
+  // }
 
   if (this->compute){
     blockToMake.push_back(Block::make(temporaryValuesInitFree[0]));

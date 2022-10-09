@@ -2,6 +2,7 @@
 #include "taco/cuda.h"
 #include <cstdio>
 #include <cstdlib>
+#include <iostream>
 
 void * alloc_mem(size_t size);
 void free_mem(void *ptr);
@@ -50,7 +51,7 @@ taco_tensor_t* init_taco_tensor_t(int32_t order, int32_t csize,
     }
   }
 
-  for (int32_t i = 0; i < order; i++) {
+  for (int32_t i = 0; i < order; i++) { 
     t->dimensions[i]    = dimensions[i];
     t->mode_ordering[i] = modeOrdering[i];
     t->mode_types[i]    = mode_types[i];

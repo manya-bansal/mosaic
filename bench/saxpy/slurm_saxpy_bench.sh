@@ -8,8 +8,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --time=02:00:00
-#SBATCH --array=0-3
 
-systems=("blas" "gsl" "taco" "tblis")
+systems=("blas")
 
-srun /home/manya227/taco-interoperable/build/bin/./taco-bench --benchmark_filter=bench_saxpy_${systems[$SLURM_ARRAY_TASK_ID]}  --benchmark_format=json --benchmark_out=/home/manya227/taco-interoperable/bench/saxpy/result/${systems[$SLURM_ARRAY_TASK_ID]
+srun /home/manya227/taco-interoperable/build/bin/./taco-bench --benchmark_filter=bench_saxpy_${systems[0]}  --benchmark_format=json --benchmark_out=/home/manya227/taco-interoperable/bench/saxpy/result/${systems[0]}

@@ -39,7 +39,7 @@ struct TensorStorage::Content {
     taco_uassert(order == format.getOrder()) <<
         "The number of format mode types (" << format.getOrder() << ") " <<
         "must match the tensor order (" << dimensions.size() << ").";
-    vector<int32_t> dimensionsInt32(order);
+    vector<int32_t> dimensionsInt32(order); 
     vector<int32_t> modeOrdering(order);
     vector<taco_mode_t> modeTypes(order);
     for (int i=0; i < order; ++i) {
@@ -56,7 +56,6 @@ struct TensorStorage::Content {
         taco_not_supported_yet;
       }
     }
-
     fillValue = fill;
     tensorData = init_taco_tensor_t(order, componentType.getNumBits(),
                                     dimensionsInt32.data(), modeOrdering.data(),
@@ -172,6 +171,7 @@ TensorStorage::operator struct taco_tensor_t*() const {
 
   tensorData->vals  = (uint8_t*)getValues().getData();
   tensorData->fill_value = (uint8_t*) content->fillValue.getValPtr();
+  // tensorData->dimensions = (int*) &(content->dimensions.front());
 
   return content->tensorData;
 }

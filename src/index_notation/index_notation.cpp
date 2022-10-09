@@ -4234,6 +4234,8 @@ IndexStmt IndexStmt::holdConstant(FunctionInterface functionInterface, IndexExpr
      temps.push_back(to<Access>(entry.second).getTensorVar());
   }
 
+  // return DimReduction(rewritten, reducedCode, temps);
+
   return DimReduction(rewritten, reducedCode, temps);
 }
 

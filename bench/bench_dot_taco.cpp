@@ -42,5 +42,5 @@ static void bench_dot_taco(benchmark::State& state) {
   }
 }
 
-TACO_BENCH(bench_dot_taco)->DenseRange(1000, 10000, 200);
+TACO_BENCH(bench_dot_taco)->DenseRange(100, 1000000, 200);
 

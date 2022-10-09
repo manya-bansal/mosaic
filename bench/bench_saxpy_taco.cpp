@@ -39,5 +39,5 @@ static void bench_saxpy_taco(benchmark::State& state) {
   }
 }
 
-TACO_BENCH(bench_saxpy_taco)->DenseRange(1000, 10000, 200);
+TACO_BENCH(bench_saxpy_taco)->DenseRange(100, 100000, 200);
 
