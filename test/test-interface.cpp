@@ -1263,7 +1263,7 @@ TEST(interface, blockedSparse) {
 
    Tensor<float> expected("expected", {dim, dim, dim}, Format{Dense, Dense, Dense});
 
-   TensorVar precomputed("precomputed", Type(taco::Float32, {16, 16, 16}), Format{Dense, Dense, Dense});
+   TensorVar precomputed("precomputed", Type(taco::Float32, {Dimension(dim), Dimension(dim), Dimension(dim)}), Format{Dense, Dense, Dense});
 
    IndexVar i("i");
    IndexVar j("j");
