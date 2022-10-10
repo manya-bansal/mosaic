@@ -1230,7 +1230,7 @@ TEST(interface, blockedSparse) {
 
    gsl_compile = true;
 
-   int dim = 2;
+   int dim = 16;
 
    Tensor<float> A("A", {dim, dim, dim}, Format{Dense, Dense, Dense});
    Tensor<float> B("B", {dim, dim, dim}, Format{Sparse, Dense, Dense}); 
@@ -1263,7 +1263,7 @@ TEST(interface, blockedSparse) {
 
    Tensor<float> expected("expected", {dim, dim, dim}, Format{Dense, Dense, Dense});
 
-   TensorVar precomputed("precomputed", Type(taco::Float32, {2, 2, 2}), Format{Dense, Dense, Dense});
+   TensorVar precomputed("precomputed", Type(taco::Float32, {16, 16, 16}), Format{Dense, Dense, Dense});
 
    IndexVar i("i");
    IndexVar j("j");
@@ -1279,7 +1279,6 @@ TEST(interface, blockedSparse) {
    
    A.compile(stmt);
    A.assemble();
-   cout << "out" << endl;
    A.compute();
 
    gsl_compile = false;
