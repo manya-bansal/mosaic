@@ -453,7 +453,7 @@ LowererImplImperative::lower(IndexStmt stmt, string name,
 
 
 Stmt LowererImplImperative::lowerAssignment(Assignment assignment)
-{
+{ 
   taco_iassert(generateAssembleCode() || generateComputeCode());
 
   Stmt computeStmt;
@@ -2774,7 +2774,7 @@ vector<vector<Stmt>> LowererImplImperative::codeToInitializeTemporary(DimReducti
       if ((isa<Forall>(dimReduction.getProducer()) && inParallelLoopDepth == 0) || !should_use_CUDA_codegen()) {
         decl = VarDecl::make(values, ir::Literal::make(0));
       }
-      Stmt allocate = Allocate::make(values, size);
+      Stmt allocate = Allocate::make(values, size, false, Expr(), true);
 
       freeTemporary = Block::make(freeTemporary, Free::make(values));
       initializeTemporary = Block::make(decl, initializeTemporary, allocate);
@@ -2795,15 +2795,40 @@ vector<vector<Stmt>> LowererImplImperative::codeToInitializeTemporary(DimReducti
 
 }
 
+Stmt LowererImplImperative::lowerAssignSpecial(Assignment assignment){
+
+  if (!isa<Access>(assignment.getRhs())){
+    return lower(assignment);
+  }
+  
+  auto lhs =  assignment.getLhs();
+  const auto lhsVals = getValuesArray(lhs.getTensorVar());
+  if (!lhsVals.defined()) {
+    taco_uerror << "should not happen" << endl;
+  }
+
+  auto rhs =  to<Access>(assignment.getRhs());
+
+  if (rhs.getTensorVar().getType().getOrder() == 0){
+    return lower(assignment);
+  }
+
+  const auto rhsVals = getValuesArray(rhs.getTensorVar());
+  if (!rhsVals.defined()) {
+    taco_uerror << "should not happen" << endl;
+  }
+  return Assign::make(Load::make(lhsVals, generateValueLocExpr(lhs)), Load::make(rhsVals, generateValueLocExpr(rhs)));
+}
+
 Stmt LowererImplImperative::lowerForallMany(ForallMany forallMany){
   vector<Stmt> blockToMake;
 
-  int i = 0; 
   for (const auto &stmt : forallMany.getStmts()){
-    // blockToMake.push_back(Print::make(std::to_string(i) + " reached!!"));
-    // i++;
-    blockToMake.push_back(lower(stmt));
-    // i++;
+    if (isa<Assignment>(stmt)){
+      blockToMake.push_back(lowerAssignSpecial(to<Assignment>(stmt)));
+    }else{
+      blockToMake.push_back(lower(stmt));
+    }
   }
 
   return Block::make(blockToMake);
@@ -2814,24 +2839,6 @@ Stmt LowererImplImperative::lowerDimReduce(DimReduction dimReduction){
   // taco_uerror << "here" << endl;
   vector<Stmt> blockToMake;
   vector<vector<Stmt>> temporaryValuesInitFree = codeToInitializeTemporary(dimReduction);
-
-  // if (this->compute){
-  //   vector<TensorVar> vars; 
-
-  //   match((dimReduction),
-  //       std::function<void(const AccessNode*)>([&](const AccessNode* op) {
-  //             vars.push_back(op->tensorVar);
-  //         })
-  //   );
-
-  //   for (const auto &temp: vars){
-  //     for (int i = 0; i<temp.getOrder(); i++){
-  //       string s = "Dimesnion of " + temp.getName();
-  //       s += "[" + std::to_string(i) + "]";
-  //       blockToMake.push_back(Print::make( s + "=%d\\n", {GetProperty::make(tensorVars.at(temp), TensorProperty::Dimension, i)} ));
-  //     }
-  //   }
-  // }
 
   if (this->compute){
     blockToMake.push_back(Block::make(temporaryValuesInitFree[0]));

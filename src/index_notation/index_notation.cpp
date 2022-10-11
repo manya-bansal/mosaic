@@ -2346,12 +2346,11 @@ IndexStmt IndexStmt::split(IndexVar i, IndexVar i1, IndexVar i2, size_t splitFac
   return transformed;
 }
 
-IndexStmt IndexStmt::splitWithoutSuchThat(IndexVar i, IndexVar i1, IndexVar i2, size_t splitFactor) const {
+IndexStmt IndexStmt::splitWithoutRewrite(IndexVar i, IndexVar i1, IndexVar i2, size_t splitFactor) const {
   IndexVarRel rel = IndexVarRel(new SplitRelNode(i, i1, i2, splitFactor));
   string reason;
   // Replace all occurrences of i with nested i1, i2
   IndexStmt transformed = Transformation(AddSuchThatPredicates({rel})).apply(*this, &reason);
-  transformed = Transformation(ForAllReplace({i}, {i1, i2})).apply(*this, &reason);
   if (!transformed.defined()) {
     taco_uerror << reason;
   }
@@ -2738,6 +2737,9 @@ ForallMany::ForallMany(const ForallManyNode* n) : IndexStmt(n){
 
 ForallMany::ForallMany(IndexVar indexVar, std::vector<IndexStmt> stmts)
   : ForallMany(new ForallManyNode(indexVar, stmts)) {
+}
+
+ForallMany::ForallMany(std::vector<IndexStmt> stmts) : ForallMany(IndexVar(), stmts){  
 }
 
 IndexVar ForallMany::getIndexVar() const{
@@ -4193,6 +4195,172 @@ static IndexStmt constructProducer(Access workspace, Access result, std::vector<
 
 }
 
+static std::map<IndexExpr, IndexExpr> constructTiledVars(IndexExpr exprToAccelerate, std::map<IndexVar, int> varTilings, std::map<IndexVar, IndexVar> innerVarMapping){
+
+  std::map<IndexExpr, IndexExpr> tensorVarToIndexVar;
+  std::map<IndexVar, Dimension> indexVarDomains = exprToAccelerate.getIndexVarDomains();
+
+  match(exprToAccelerate,
+    function<void(const AccessNode*, Matcher*)>([&](const AccessNode* op, Matcher* ctx) {
+      std::vector<IndexVar> iVars;
+      std::vector<Dimension> dims;
+      for (auto &i : op->indexVars) {
+          if (varTilings.count(i)){
+            taco_uassert(innerVarMapping.count(i));
+            iVars.push_back(innerVarMapping[i]);
+            dims.push_back(Dimension(varTilings[i]));
+          }else{
+            iVars.push_back(i);
+            dims.push_back(indexVarDomains[i]);
+          }
+      }
+      TensorVar tVar(Type(op->tensorVar.getType().getDataType(), dims));
+      tensorVarToIndexVar.insert({Access(op), Access(tVar, iVars)});
+    })
+  );
+  return tensorVarToIndexVar; 
+
+}
+
+
+static std::vector<IndexStmt> makeInnerAssigns(IndexExpr toAccelerate, std::map<IndexExpr, IndexExpr> constructMap){
+  std::vector<TensorVar> tensorVars;
+  match(toAccelerate,
+    function<void(const AccessNode*, Matcher*)>([&](const AccessNode* op, Matcher* ctx) {
+          if (!util::contains(tensorVars, op->tensorVar)){
+            tensorVars.push_back(op->tensorVar);
+      }
+    })
+  );
+
+  std::vector<IndexStmt> stmts;
+  for (auto &tvAccess: tensorVars){
+    for (const auto &entry : constructMap){
+      Access a = to<Access>(entry.first);
+      if (a.getTensorVar().getName() == tvAccess.getName()){
+        Access b = to<Access>(entry.second);
+        stmts.push_back(Assignment(b, a));
+      }
+    }
+  }
+  return stmts;
+}
+
+IndexStmt IndexStmt::tile(FunctionInterface functionInterface, IndexExpr exprToAccelerate, std::map<IndexVar, int> varTilings) const{
+
+  AcceleratorStmt referenceStmt = functionInterface.getNode()->getStmt();
+  if (!isa<AcceleratorAssignment>(referenceStmt)){
+    taco_uerror << "Reference statement in function interface must be an assignment" << endl;
+  }
+
+  AcceleratorAssignment assign = to<AcceleratorAssignment>(referenceStmt);
+  ArgumentMap argumentMap = hasPreciseMatch(exprToAccelerate, assign.getRhs());
+
+  if (!argumentMap.possible){
+    taco_uerror << "Operator Patterns for " << assign.getRhs() << " and " << exprToAccelerate << " do not match.";
+  }
+
+  std::vector<TensorVar> temps;
+  // First, we separate our computation by adding a precompute
+  Access result = constructResultAccess(argumentMap, exprToAccelerate, functionInterface);
+  IndexStmt consumer = replace(*this, {{exprToAccelerate, result}});
+  temps.push_back(result.getTensorVar());
+  
+  // we change our IndexVars for another var, so that our split does not split these vars
+  map<IndexVar, IndexVar> replaceIndexVars;
+  match(consumer,
+    std::function<void(const AccessNode*)>([&](const AccessNode* op) {
+      for (auto& var : op->indexVars) {
+        if (!util::contains(replaceIndexVars, var)) {
+          replaceIndexVars[var]  = IndexVar();
+        }
+      }
+    })
+  );
+
+  consumer = replace(consumer, replaceIndexVars);
+
+  Access interfaceResult = constructResultAccess(argumentMap, exprToAccelerate, functionInterface);
+  auto tensorAccess = getTensorAccess(consumer, result.getTensorVar());
+  Forall forall = getForAllTensor(consumer, result.getTensorVar());
+  consumer = makeConcreteNotation(makeReductionNotation(tensorAccess));
+
+  IndexStmt rewritten = Assignment(result, exprToAccelerate, Add());
+  std::vector<IndexVar> reductionVars = getReductionVars(rewritten);
+
+  IndexStmt tiledCode =  rewritten;
+  std::vector<IndexVar> innerVars;
+  std::vector<IndexVar> outerVars;
+  std::vector<IndexVar> originalVars;
+
+  std::map<IndexVar, IndexVar> innerVarMapping;
+
+  IndexVar innerVar;
+  IndexVar outerVar;
+  for (auto reductionVar : reductionVars){
+    if (util::contains(varTilings, reductionVar)){
+      innerVar = IndexVar();
+      outerVar = IndexVar();
+      innerVarMapping[reductionVar] = innerVar;
+      innerVars.push_back(innerVar);
+      outerVars.push_back(outerVar);
+      originalVars.push_back(reductionVar);
+      tiledCode = Forall(innerVar, tiledCode);
+    }else{
+      tiledCode = Forall(reductionVar, tiledCode);
+    }
+  }
+
+  for (auto var : rewritten.getIndexVars()){
+    if (util::contains(reductionVars, var)){
+      continue;
+    }
+    if (util::contains(varTilings, var)){
+      innerVar = IndexVar();
+      outerVar = IndexVar();
+      innerVarMapping[var] = innerVar;
+      innerVars.push_back(innerVar);
+      outerVars.push_back(outerVar);
+      originalVars.push_back(var);
+      tiledCode = Forall(innerVar, tiledCode);
+
+    }else{
+      tiledCode = Forall(var, tiledCode);
+    }
+  }
+
+  auto tensorAssigns  = constructTiledVars(exprToAccelerate, varTilings, innerVarMapping);
+  // Assignment(replace(exprToAccelerate, tensorAssigns));
+  IndexStmt constructTemps = ForallMany(makeInnerAssigns(exprToAccelerate, tensorAssigns));
+  tiledCode = replace(tiledCode, {{rewritten, constructTemps}});
+  
+  Assignment replacedWithTiled =  to<Assignment>(replace(Assignment(interfaceResult, replace(exprToAccelerate, tensorAssigns)), innerVarMapping));  
+  IndexExpr resExpr = replacedWithTiled.getLhs();
+  InterfaceCall call(replacedWithTiled, getConcreteCodeGenerator(replacedWithTiled.getRhs(), resExpr, hasPreciseMatch(replacedWithTiled.getRhs(), assign.getRhs()), functionInterface), interfaceResult.getTensorVar());
+
+  taco_uerror << call << endl;
+  tiledCode = ForallMany({tiledCode, call});
+ 
+  for (auto var : outerVars){
+    tiledCode = Forall(var, tiledCode);
+  }
+
+  for (auto &entry: tensorAssigns){
+     temps.push_back(to<Access>(entry.second).getTensorVar());
+  }
+
+  tiledCode = DimReduction(consumer, tiledCode, temps);
+
+  //now add the split rel node for the appropriate indexVars
+  for (size_t i = 0; i < innerVars.size(); i++){
+    tiledCode = tiledCode.splitWithoutRewrite(originalVars[i], outerVars[i], innerVars[i], varTilings[originalVars[i]]);
+  }
+
+  cout << tiledCode << endl;
+
+  return tiledCode;
+}
+
 IndexStmt IndexStmt::holdConstant(FunctionInterface functionInterface, IndexExpr exprToAccelerate, std::vector<IndexVar> indexVarsToHoldConstant, Access workspace) const{
 
   if (indexVarsToHoldConstant.size() == 0){
@@ -4212,7 +4380,7 @@ IndexStmt IndexStmt::holdConstant(FunctionInterface functionInterface, IndexExpr
 
   if (!argumentMap.possible){
     taco_uerror << "Expressions " << assign.getRhs() << " and " << exprToAccelerate << " do not match when " 
-      << util::join(indexVarsToHoldConstant) << " are held constant do not match." << endl;
+      << util::join(indexVarsToHoldConstant) << " are held constant." << endl;
   }
 
   Access result = constructResultAccess(argumentMap, exprToAccelerate, functionInterface);

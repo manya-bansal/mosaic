@@ -327,16 +327,14 @@ TEST(interface, endToEndUserDefinedErrorDummy) {
 
 }
 
-TEST(DISABLED_interface, tiledSaxpyInterface) {
+TEST(interface, tiledSaxpyInterface) {
 
 
-   Tensor<float> A("A", {16}, Format{Dense}, 0);
+   Tensor<float> A("A", {16}, Format{Dense});
+   Tensor<float> expected("expected", {16}, Format{Dense});
    Tensor<float> B("B", {16}, Format{Dense});
    Tensor<float> C("C", {16}, Format{Dense});
-   Tensor<float> expected("expected", {16}, Format{Dense});
-   TensorVar accelWorkspace("accelWorkspace", Type(taco::Float32, {16}), taco::dense);
    IndexVar i("i");
-   IndexVar iw("iw");
 
    for (int i = 0; i < 16; i++) {
       C.insert({i}, (float) i);
@@ -348,9 +346,8 @@ TEST(DISABLED_interface, tiledSaxpyInterface) {
 
    IndexExpr accelerateExpr = B(i) + C(i);
    A(i) = accelerateExpr;
-
    IndexStmt stmt = A.getAssignment().concretize();
-   stmt = stmt.accelerate(new TileSaxpy(), accelerateExpr);
+   stmt = stmt.tile(new TileSaxpy(), accelerateExpr, {{i,  4}});
 
    A.compile(stmt);
    A.assemble();
@@ -364,6 +361,36 @@ TEST(DISABLED_interface, tiledSaxpyInterface) {
    ASSERT_TENSOR_EQ(expected, A);
 }
 
+
+TEST(interface, tiledMMInterface) {
+
+     // actual computation
+   Tensor<float> A("A", {16, 16}, Format{Dense, Dense});
+   Tensor<float> B("B", {16, 16}, Format{Dense, Dense});
+   Tensor<float> C("C", {16, 16}, Format{Dense, Dense});
+   Tensor<float> expected("expected", {16, 16}, Format{Dense, Dense});
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar k("k");
+
+   IndexExpr accelerateExpr = B(i, j) * C(j, k);
+   A(i, k) = accelerateExpr;
+
+
+   IndexStmt stmt = A.getAssignment().concretize();
+   stmt = stmt.tile(new MatrixMultiply(), accelerateExpr, {{i, 4}, {j, 4}, {k, 4}});
+   
+   A.compile(stmt);
+   A.assemble();
+   A.compute();
+
+   expected(i, k) = accelerateExpr;
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+   ASSERT_TENSOR_EQ(expected, A);
+}
 
 TEST(interface, sampleSplitExample) {
 

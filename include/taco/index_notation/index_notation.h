@@ -631,7 +631,7 @@ public:
   /// Preconditions: splitFactor is a positive nonzero integer
   IndexStmt split(IndexVar i, IndexVar i1, IndexVar i2, size_t splitFactor) const; // TODO: TailStrategy
 
-  IndexStmt splitWithoutSuchThat(IndexVar i, IndexVar i1, IndexVar i2, size_t splitFactor) const;
+  IndexStmt splitWithoutRewrite(IndexVar i, IndexVar i1, IndexVar i2, size_t splitFactor) const;
 
   /// The divide transformation splits one index variable into
   /// two nested index variables, where the size of the outer
@@ -780,6 +780,7 @@ public:
 
   IndexStmt holdConstant(FunctionInterface functionInterface, IndexExpr exprToAccelerate, std::vector<IndexVar> indexVarsToHoldConstant, Access workspace) const;
 
+  IndexStmt tile(FunctionInterface functionInterface, IndexExpr exprToAccelerate, std::map<IndexVar, int> varTilings) const;
   /// bound specifies a compile-time constraint on an index variable's
   /// iteration space that allows knowledge of the
   /// size or structured sparsity pattern of the inputs to be
@@ -906,6 +907,7 @@ public:
   ForallMany(const ForallManyNode*);
 
   ForallMany(IndexVar indexVar, std::vector<IndexStmt> stmts);
+  ForallMany(std::vector<IndexStmt> stmts);
 
   IndexVar getIndexVar() const;
   std::vector<IndexStmt> getStmts() const;
