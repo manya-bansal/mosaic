@@ -10,9 +10,13 @@
 
 using namespace taco;
 
+extern bool gsl_compile;
+
 static void bench_saxpy_gsl(benchmark::State& state) {
   int dim = state.range(0);
    
+    gsl_compile = true;
+
    Tensor<float> B("B", {dim}, Format{Dense});
    Tensor<float> C("C", {dim}, Format{Dense});
    IndexVar i("i");
@@ -40,6 +44,8 @@ static void bench_saxpy_gsl(benchmark::State& state) {
     state.ResumeTiming();
     A.compute();
   }
+
+   gsl_compile = false;
 }
 
 TACO_BENCH(bench_saxpy_gsl)->DenseRange(1000, 10000, 200);

@@ -204,6 +204,8 @@ protected:
 
   virtual ir::Stmt lowerDimReduce(DimReduction dimReduction);
 
+  ir::Stmt lowerAssignSpecial(Assignment assignment);
+
   virtual ir::Stmt lowerForallMany(ForallMany forallMany);
 
   virtual ir::Stmt lowerInterface(InterfaceCall interface);

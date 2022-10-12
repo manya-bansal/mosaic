@@ -453,7 +453,7 @@ LowererImplImperative::lower(IndexStmt stmt, string name,
 
 
 Stmt LowererImplImperative::lowerAssignment(Assignment assignment)
-{
+{ 
   taco_iassert(generateAssembleCode() || generateComputeCode());
 
   Stmt computeStmt;
@@ -777,8 +777,6 @@ Stmt LowererImplImperative::lowerForall(Forall forall)
 
   MergeLattice caseLattice = MergeLattice::make(forall, iterators, provGraph, definedIndexVars, whereTempsToResult);
 
-  cout << "MERGE LATTICE ITERATORS " << caseLattice << endl;
-
   vector<Access> resultAccesses;
   set<Access> reducedAccesses;
   std::tie(resultAccesses, reducedAccesses) = getResultAccesses(forall);
@@ -808,18 +806,13 @@ Stmt LowererImplImperative::lowerForall(Forall forall)
 
     MergePoint point = loopLattice.points()[0];
 
-    cout << "POINTS !!!" << util::join(loopLattice.points()) << endl;
-
     Iterator iterator = loopLattice.iterators()[0];
 
     vector<Iterator> locators;
 
     for (const auto &elem : loopLattice.points()){
-      cout << "elem "  << elem << endl;
       locators.insert(locators.end(), elem.locators().begin(), elem.locators().end());
     }
-
-    cout << "locators !!!" << util::join(locators) << endl;
 
     vector<Iterator> appenders;
     vector<Iterator> inserters;
@@ -2083,8 +2076,6 @@ Stmt LowererImplImperative::lowerForallBody(Expr coordinate, IndexStmt stmt,
   // Locate positions
   Stmt declLocatorPosVars = declLocatePosVars(locators);
 
-   cout << "LOWER(STMT) 2072, declLocatevars " << declLocatorPosVars << endl << endl; 
-
   if (captureNextLocatePos) {
     capturedLocatePos = Block::make(declInserterPosVars, declLocatorPosVars);
     captureNextLocatePos = false;
@@ -2121,8 +2112,6 @@ Stmt LowererImplImperative::lowerForallBody(Expr coordinate, IndexStmt stmt,
   Stmt initVals = resizeAndInitValues(appenders, reducedAccesses);
 
   // Code of loop body statement
-
-  cout << "LOWER(STMT) 2109 " << stmt << endl << endl; 
   Stmt body = lower(stmt);
 
   // Code to append coordinate
@@ -2785,7 +2774,7 @@ vector<vector<Stmt>> LowererImplImperative::codeToInitializeTemporary(DimReducti
       if ((isa<Forall>(dimReduction.getProducer()) && inParallelLoopDepth == 0) || !should_use_CUDA_codegen()) {
         decl = VarDecl::make(values, ir::Literal::make(0));
       }
-      Stmt allocate = Allocate::make(values, size);
+      Stmt allocate = Allocate::make(values, size, false, Expr(), true);
 
       freeTemporary = Block::make(freeTemporary, Free::make(values));
       initializeTemporary = Block::make(decl, initializeTemporary, allocate);
@@ -2806,12 +2795,40 @@ vector<vector<Stmt>> LowererImplImperative::codeToInitializeTemporary(DimReducti
 
 }
 
+Stmt LowererImplImperative::lowerAssignSpecial(Assignment assignment){
+
+  if (!isa<Access>(assignment.getRhs())){
+    return lower(assignment);
+  }
+  
+  auto lhs =  assignment.getLhs();
+  const auto lhsVals = getValuesArray(lhs.getTensorVar());
+  if (!lhsVals.defined()) {
+    taco_uerror << "should not happen" << endl;
+  }
+
+  auto rhs =  to<Access>(assignment.getRhs());
+
+  if (rhs.getTensorVar().getType().getOrder() == 0){
+    return lower(assignment);
+  }
+
+  const auto rhsVals = getValuesArray(rhs.getTensorVar());
+  if (!rhsVals.defined()) {
+    taco_uerror << "should not happen" << endl;
+  }
+  return Assign::make(Load::make(lhsVals, generateValueLocExpr(lhs)), Load::make(rhsVals, generateValueLocExpr(rhs)));
+}
+
 Stmt LowererImplImperative::lowerForallMany(ForallMany forallMany){
   vector<Stmt> blockToMake;
 
   for (const auto &stmt : forallMany.getStmts()){
-    cout << "stmt is " << stmt << " where ir is " << lower(stmt) << endl << endl;
-    blockToMake.push_back(lower(stmt));
+    if (isa<Assignment>(stmt)){
+      blockToMake.push_back(lowerAssignSpecial(to<Assignment>(stmt)));
+    }else{
+      blockToMake.push_back(lower(stmt));
+    }
   }
 
   return Block::make(blockToMake);

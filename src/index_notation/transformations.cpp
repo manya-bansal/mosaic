@@ -1000,10 +1000,10 @@ IndexStmt AddSuchThatPredicates::apply(IndexStmt stmt, string* reason) const {
   INIT_REASON(reason);
 
   string r;
-  if (!isConcreteNotation(stmt, &r)) {
-    *reason = "The index statement is not valid concrete index notation: " + r;
-    return IndexStmt();
-  }
+  // if (!isConcreteNotation(stmt, &r)) {
+  //   *reason = "The index statement is not valid concrete index notation: " + r;
+  //   return IndexStmt();
+  // }
 
   if (isa<SuchThat>(stmt)) {
     SuchThat suchThat = to<SuchThat>(stmt);

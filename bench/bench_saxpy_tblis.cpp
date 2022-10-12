@@ -32,9 +32,13 @@ static void bench_saxpy_tblis(benchmark::State& state) {
     IndexVar i("i");
     IndexVar j("j");
     A(i) = accelerateExpr;
-    IndexStmt stmt = A.getAssignment().concretize();
-    stmt = stmt.accelerate(new TblisSaxpy(), accelerateExpr);
-    A.compile(stmt);
+    // IndexStmt stmt = A.getAssignment().concretize();
+    // stmt = stmt.accelerate(new TblisSaxpy(), accelerateExpr);
+
+    A.registerAccelerator(new TblisSaxpy());
+    A.accelerateOn();
+
+    A.compile();
     A.assemble();
     state.ResumeTiming();
     A.compute();

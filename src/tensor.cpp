@@ -913,6 +913,7 @@ vector<void*> packArguments(const TensorBase& tensor) {
 
   // Pack the result tensor
   arguments.push_back(tensor.getStorage());
+  // std::cout << "MY TENSOR " <<  tensor.getStorage() << std::endl;
 
   // Pack any index sets on the result tensor at the front of the arguments list.
   auto lhs = getNode(tensor.getAssignment().getLhs());
@@ -922,6 +923,7 @@ vector<void*> packArguments(const TensorBase& tensor) {
     auto indexSetModes = to<AccessNode>(lhs)->indexSetModes;
     for (auto& it : indexSetModes) {
       arguments.push_back(it.second.tensor.getStorage());
+      //  std::cout << "MY TENSOR.SECOND.TESNROR " <<  it.second.tensor.getStorage() << std::endl;
     }
   }
 
@@ -929,9 +931,11 @@ vector<void*> packArguments(const TensorBase& tensor) {
   auto operands = getArguments(makeConcreteNotation(tensor.getAssignment()));
 
   auto tensors = getTensors(tensor.getAssignment().getRhs());
+
   for (auto& operand : operands) {
     taco_iassert(util::contains(tensors, operand));
     arguments.push_back(tensors.at(operand).getStorage());
+    //  std::cout << "MY OPERANDS "  << operand.getName() << " " <<  tensors.at(operand).getStorage() << std::endl;
   }
 
   return arguments;
@@ -969,8 +973,8 @@ void TensorBase::compute() {
     operand.second.syncValues();
     operand.second.removeDependentTensor(*this);
   }
-
   auto arguments = packArguments(*this);
+  
   this->content->module->callFuncPacked("compute", arguments.data());
 
   if (content->assembleWhileCompute) {

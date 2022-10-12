@@ -119,8 +119,9 @@ void IndexNotationVisitor::visit(const WhereNode* op) {
 }
 
 void IndexNotationVisitor::visit(const AccelerateNode* op) {
-  op->producer.accept(this);
   op->consumer.accept(this); 
+  op->producer.accept(this);
+ 
 }
 
 void IndexNotationVisitor::visit(const InterfaceCallNode* op){

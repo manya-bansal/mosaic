@@ -495,7 +495,6 @@ private:
   void visit(const InterfaceCallNode* node) {
     // taco_uerror << lattice << endl;
     lattice = build(node->producer);
-    cout << lattice << endl;
   }
 
   void visit(const MultiNode* node) {
@@ -1087,14 +1086,11 @@ MergeLattice MergeLattice::make(Forall forall, Iterators iterators, ProvenanceGr
   vector<IndexVar> underivedAncestors = provGraph.getUnderivedAncestors(indexVar);
   for (auto ancestor : underivedAncestors) {
     if(!provGraph.isRecoverable(ancestor, definedIndexVars)) {
-      cout << "exit early " << endl;
       return MergeLattice({MergePoint({iterators.modeIterator(indexVar)}, {}, {})});
     }
   }
 
   MergeLattice lattice = builder.build(forall.getStmt());
-
-  cout << "IN MERGE LATTICE MAKE: " << lattice.getLoopLattice() << endl;
 
   // Can't remove points if lattice contains omitters since we lose merge cases during lowering.
   if(lattice.anyModeIteratorIsLeaf() && lattice.needExplicitZeroChecks()) {
@@ -1283,7 +1279,6 @@ set<set<Iterator>> MergeLattice::getTensorRegionsToKeep() const {
 
 MergeLattice MergeLattice::getLoopLattice() const {
   std::vector<MergePoint> p = removePointsThatLackFullIterators(points());
-  cout << "REMOVE POINTS " << p;
   return removePointsWithIdenticalIterators(p);
 }
 

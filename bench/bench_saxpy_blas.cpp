@@ -9,7 +9,10 @@
 
 using namespace taco;
 
+extern bool gsl_compile;
+
 static void bench_saxpy_blas(benchmark::State& state) {
+  gsl_compile = false;
   int dim = state.range(0);
    
    Tensor<float> B("B", {dim}, Format{Dense});
@@ -41,5 +44,5 @@ static void bench_saxpy_blas(benchmark::State& state) {
   }
 }
 
-TACO_BENCH(bench_saxpy_blas)->DenseRange(1000, 10000, 200);
+TACO_BENCH(bench_saxpy_blas)->DenseRange(100, 1000000, 200);
 
