@@ -171,16 +171,16 @@ string Module::compile() {
            " -Wl,-R/home/manya227/tensor-algebra-systems/tensor-gsl/lib -l:libtensor.so.0.0.0 -l:libgslcblas.so.0.0.0";
   }
   else {
-    // cmd += " -I/home/manya227/tensor-algebra-systems/tblis/include"
-    //        " -I/home/manya227/tensor-algebra-systems/tblis/include/tblis"
-    //       " -I/home/manya227/tensor-algebra-systems/gsl/include" 
-    //        " -I/home/manya227/tensor-algebra-systems/tensor-gsl/include/tensor"
-    //        " -I/home/manya227/tensor-algebra-systems/" 
-    //        " -L/home/manya227/tensor-algebra-systems/cblas"
-    //        " -L/home/manya227/tensor-algebra-systems/tblis/lib"
-    //        " -Wl,-R/home/manya227/tensor-algebra-systems/cblas -l:libblas.so.3.7.1" 
-    //        " -Wl,-R/home/manya227/tensor-algebra-systems/tblis/lib -l:libtblis.so.0.0.0 ";
-    cmd += " -lblas";
+    cmd += " -I/home/manya227/tensor-algebra-systems/tblis/include"
+           " -I/home/manya227/tensor-algebra-systems/tblis/include/tblis"
+          " -I/home/manya227/tensor-algebra-systems/gsl/include" 
+           " -I/home/manya227/tensor-algebra-systems/tensor-gsl/include/tensor"
+           " -I/home/manya227/tensor-algebra-systems/" 
+           " -L/home/manya227/tensor-algebra-systems/cblas"
+           " -L/home/manya227/tensor-algebra-systems/tblis/lib"
+           " -Wl,-R/home/manya227/tensor-algebra-systems/cblas -l:libblas.so.3.7.1" 
+           " -Wl,-R/home/manya227/tensor-algebra-systems/tblis/lib -l:libtblis.so.0.0.0 ";
+    // cmd += " -lblas";
   }
     
   // open the output file & write out the source
