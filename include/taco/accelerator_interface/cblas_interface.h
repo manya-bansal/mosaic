@@ -171,6 +171,15 @@ class MatrixMultiply : public AbstractFunctionInterface{
 
         std::string getReturnType() const override {return "void";}
         std::string getFunctionName() const override {return "cblas_sgemm";}
+        std::vector<Argument>  callAfter() const override {
+            taco::TransferLoad print_array("print_array", "void");
+                                return { 
+                                         print_array(x, 4),
+                                         print_array(y, 4),
+                                         print_array(z, 4)
+                                        };
+        }
+        
 
     private: 
         TensorObject x;

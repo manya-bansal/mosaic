@@ -284,8 +284,8 @@ protected:
   ir::Expr getValuesArray(TensorVar) const;
 
   /// lowerArgs for ffi
-  ir::Expr lowerArgument(Argument argument, TensorVar resulltVar, TensorVar temporary, std::vector<DeclVarArg>& varsToDeclare, bool replace);
-  ir::Stmt prepareCallBefore(Argument argument, TensorVar resultVar, TensorVar temp, std::vector<DeclVarArg>& varsToDeclare, bool replace);
+  ir::Expr lowerArgument(Argument argument, TensorVar resulltVar, TensorVar temporary, std::vector<DeclVarArg>& varsToDeclare, bool replace,  IndexExpr rhs);
+  ir::Stmt prepareCallBefore(Argument argument, TensorVar resultVar, TensorVar temp, std::vector<DeclVarArg>& varsToDeclare, bool replace,  IndexExpr rhs);
   std::vector<ir::Stmt>  prepareFunctionCall(ConcreteAccelerateCodeGenerator accelGen, TensorVar resultVar, TensorVar temp, std::vector<DeclVarArg>& varsToDeclare);
 
   /// Retrieve the dimension of an index variable (the values it iterates over),

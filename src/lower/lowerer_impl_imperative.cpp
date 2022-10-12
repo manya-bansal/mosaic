@@ -7,6 +7,7 @@
 #include "taco/index_notation/index_notation_nodes.h"
 #include "taco/index_notation/index_notation_visitor.h"
 #include "taco/index_notation/index_notation_rewriter.h"
+#include "taco/index_notation/index_notation.h"
 #include "taco/index_notation/provenance_graph.h"
 #include "taco/accelerator_notation/accel_interface.h"
 #include "taco/ir/ir.h"
@@ -2824,13 +2825,17 @@ Stmt LowererImplImperative::lowerForallMany(ForallMany forallMany){
   vector<Stmt> blockToMake;
 
   for (const auto &stmt : forallMany.getStmts()){
+    if (isa<InterfaceCall>(stmt)){
+      blockToMake.push_back(Print::make("running!"));
+    }
     if (isa<Assignment>(stmt)){
+      blockToMake.push_back(Print::make("assigning!\\n"));
       blockToMake.push_back(lowerAssignSpecial(to<Assignment>(stmt)));
     }else{
       blockToMake.push_back(lower(stmt));
     }
   }
-
+  blockToMake.push_back(Print::make("---------\\n"));
   return Block::make(blockToMake);
 }
 
@@ -2852,12 +2857,24 @@ Stmt LowererImplImperative::lowerDimReduce(DimReduction dimReduction){
 
 }
 
-ir::Expr LowererImplImperative::lowerArgument(Argument argument, TensorVar resultVar, TensorVar temporary, std::vector<DeclVarArg>& varsToDeclare, bool replace){
+ir::Expr LowererImplImperative::lowerArgument(Argument argument, TensorVar resultVar, TensorVar temporary, std::vector<DeclVarArg>& varsToDeclare, bool replace, IndexExpr rhs){
 
     switch(argument.getArgType()){
       case DIM:
-        return dimensions.at(argument.getNode<DimArg>()->indexVar);
+        if (util::contains(dimensions, argument.getNode<DimArg>()->indexVar)){
+          return dimensions.at(argument.getNode<DimArg>()->indexVar);
+        }else{
+          auto dimMap = rhs.getIndexVarDomains();
+          if (!util::contains(dimMap, argument.getNode<DimArg>()->indexVar)){
+            taco_uerror << "Could not find dimesion of index var " << argument.getNode<DimArg>()->indexVar << endl;
+          }
+          Dimension d = dimMap[argument.getNode<DimArg>()->indexVar];
+          if (!d.isFixed()){
+            taco_uerror << "Index var " << argument.getNode<DimArg>()->indexVar << "indexes into temp, but does not have fixed dim" << endl;
+          }
 
+          return ir::Literal::make(d.getSize());
+        }
       case TENSOR:
         { 
           ir::Expr expr = argument.getNode<TensorArg>()->irExpr;
@@ -2909,7 +2926,7 @@ ir::Expr LowererImplImperative::lowerArgument(Argument argument, TensorVar resul
         }
         
         for (auto args: t->getArgs()){
-          userDefArgs.push_back(lowerArgument(args, resultVar, temporary, varsToDeclare, replace));
+          userDefArgs.push_back(lowerArgument(args, resultVar, temporary, varsToDeclare, replace, rhs));
         }
         return ir::Call::make(t->getName(), userDefArgs);
       }
@@ -2974,7 +2991,7 @@ ir::Expr LowererImplImperative::lowerArgument(Argument argument, TensorVar resul
       {
         auto t = argument.getNode<CastArg>();
 
-        return CustomCast::make(lowerArgument(t->argument, resultVar, temporary, varsToDeclare, replace), t->cast);
+        return CustomCast::make(lowerArgument(t->argument, resultVar, temporary, varsToDeclare, replace, rhs), t->cast);
       }
       default:
         taco_uerror << "Should not reach" << endl;
@@ -2983,17 +3000,17 @@ ir::Expr LowererImplImperative::lowerArgument(Argument argument, TensorVar resul
 }
 
 
-Stmt LowererImplImperative::prepareCallBefore(Argument argument, TensorVar resultVar, TensorVar temp, std::vector<DeclVarArg>& varsToDeclare, bool replace){
+Stmt LowererImplImperative::prepareCallBefore(Argument argument, TensorVar resultVar, TensorVar temp, std::vector<DeclVarArg>& varsToDeclare, bool replace, IndexExpr rhs){
 
   taco_uassert(argument.getArgType() == USER_DEFINED);
   auto t = argument.getNode<TransferWithArgs>();
 
-   std::vector<Argument> arguments = t->getArgs();
+  std::vector<Argument> arguments = t->getArgs();
 
   std::vector<Expr> loweredArguments;
 
   for (auto argument: arguments){
-      loweredArguments.push_back(lowerArgument(argument, resultVar, temp, varsToDeclare, replace));
+      loweredArguments.push_back(lowerArgument(argument, resultVar, temp, varsToDeclare, replace, rhs));
   }
 
   Stmt functionCall; 
@@ -3002,7 +3019,8 @@ Stmt LowererImplImperative::prepareCallBefore(Argument argument, TensorVar resul
     functionCall = VoidCall::make(t->getName(), loweredArguments);
   }else{
       taco_uassert(t->getReturnStore().getArgType() != UNKNOWN);
-      Expr returnStore = lowerArgument(t->getReturnStore(), resultVar, temp, varsToDeclare, replace);
+      cout << t->getReturnStore() << endl;
+      Expr returnStore = lowerArgument(t->getReturnStore(), resultVar, temp, varsToDeclare, replace, rhs);
       functionCall = Assign::make(returnStore, ir::Call::make(t->getName(), loweredArguments));
   }
 
@@ -3031,11 +3049,11 @@ std::vector<Stmt> LowererImplImperative::prepareFunctionCall(ConcreteAccelerateC
   // bool replace = accelGen.getReturnType() == "void"
 
   for (auto callBefore: accelGen.getCallBefore()){
-    functionCalls.push_back(prepareCallBefore(callBefore, resultVar, temp, varsToDeclare, setResultByRef));
+    functionCalls.push_back(prepareCallBefore(callBefore, resultVar, temp, varsToDeclare, setResultByRef, accelGen.getRHS()));
   }
 
   for (auto argument: arguments){
-      loweredArguments.push_back(lowerArgument(argument, resultVar, temp, varsToDeclare, setResultByRef));
+      loweredArguments.push_back(lowerArgument(argument, resultVar, temp, varsToDeclare, setResultByRef, accelGen.getRHS()));
   }
 
   Stmt functionCall;
@@ -3051,7 +3069,7 @@ std::vector<Stmt> LowererImplImperative::prepareFunctionCall(ConcreteAccelerateC
   functionCalls.push_back(functionCall);
 
   for (auto callAfter: accelGen.getCallAfter()){
-    functionCalls.push_back(prepareCallBefore(callAfter, resultVar, temp, varsToDeclare, true));
+    functionCalls.push_back(prepareCallBefore(callAfter, resultVar, temp, varsToDeclare, setResultByRef, accelGen.getRHS()));
   }
 
   return functionCalls;

@@ -365,10 +365,21 @@ TEST(interface, tiledSaxpyInterface) {
 TEST(interface, tiledMMInterface) {
 
      // actual computation
-   Tensor<float> A("A", {16, 16}, Format{Dense, Dense});
-   Tensor<float> B("B", {16, 16}, Format{Dense, Dense});
-   Tensor<float> C("C", {16, 16}, Format{Dense, Dense});
-   Tensor<float> expected("expected", {16, 16}, Format{Dense, Dense});
+   Tensor<float> A("A", {4, 4}, Format{Dense, Dense});
+   Tensor<float> B("B", {4, 4}, Format{Dense, Dense});
+   Tensor<float> C("C", {4, 4}, Format{Dense, Dense});
+   Tensor<float> expected("expected", {4, 4}, Format{Dense, Dense});
+
+   for (int i = 0; i < 4; i++) {
+      for (int j = 0; j < 4; j++) {
+         C.insert({i, j}, (float) i+j);
+         B.insert({i, j}, (float) i+j);
+      }
+   }
+
+   B.pack();
+   C.pack();
+
    IndexVar i("i");
    IndexVar j("j");
    IndexVar k("k");
@@ -378,7 +389,7 @@ TEST(interface, tiledMMInterface) {
 
 
    IndexStmt stmt = A.getAssignment().concretize();
-   stmt = stmt.tile(new MatrixMultiply(), accelerateExpr, {{i, 4}, {j, 4}, {k, 4}});
+   stmt = stmt.tile(new MatrixMultiply(), accelerateExpr, {{i, 2}, {j, 2}, {k, 2}});
    
    A.compile(stmt);
    A.assemble();

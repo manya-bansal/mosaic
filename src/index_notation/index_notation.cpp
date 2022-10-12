@@ -4246,6 +4246,30 @@ static std::vector<IndexStmt> makeInnerAssigns(IndexExpr toAccelerate, std::map<
   return stmts;
 }
 
+static Access constructTiledResult(FunctionInterface functionInterface, std::map<IndexVar, IndexVar> innerVarMapping, IndexExpr exprToAccelerate, std::map<IndexVar, int> varTilings, ArgumentMap argMap){
+
+  std::vector<IndexVar> iVars;
+  std::vector<Dimension> dims;
+  std::map<IndexVar, Dimension> indexVarDomains = exprToAccelerate.getIndexVarDomains();
+
+  AcceleratorStmt referenceStmt = functionInterface.getNode()->getStmt();
+  AcceleratorAssignment assign = to<AcceleratorAssignment>(referenceStmt);
+      
+  for (auto &var : assign.getLhs().getIndexVars()) {
+    taco_uassert(argMap.indexVars.count(var));
+    auto i = argMap.indexVars.at(var);
+    if (!innerVarMapping.count(i)){
+      iVars.push_back(i);
+      dims.push_back(indexVarDomains[i]);
+    }else{
+      iVars.push_back(innerVarMapping[i]);
+      dims.push_back(Dimension(varTilings[i]));
+    }
+  }
+  TensorVar tVar(Type(assign.getLhs().getTensorObject().getType().getDataType(), dims));
+  return Access(tVar, iVars);
+}
+
 IndexStmt IndexStmt::tile(FunctionInterface functionInterface, IndexExpr exprToAccelerate, std::map<IndexVar, int> varTilings) const{
 
   AcceleratorStmt referenceStmt = functionInterface.getNode()->getStmt();
@@ -4279,8 +4303,6 @@ IndexStmt IndexStmt::tile(FunctionInterface functionInterface, IndexExpr exprToA
   );
 
   consumer = replace(consumer, replaceIndexVars);
-
-  Access interfaceResult = constructResultAccess(argumentMap, exprToAccelerate, functionInterface);
   auto tensorAccess = getTensorAccess(consumer, result.getTensorVar());
   Forall forall = getForAllTensor(consumer, result.getTensorVar());
   consumer = makeConcreteNotation(makeReductionNotation(tensorAccess));
@@ -4333,13 +4355,20 @@ IndexStmt IndexStmt::tile(FunctionInterface functionInterface, IndexExpr exprToA
   // Assignment(replace(exprToAccelerate, tensorAssigns));
   IndexStmt constructTemps = ForallMany(makeInnerAssigns(exprToAccelerate, tensorAssigns));
   tiledCode = replace(tiledCode, {{rewritten, constructTemps}});
-  
+
+  Access interfaceResult = constructTiledResult(functionInterface, innerVarMapping, exprToAccelerate, varTilings, argumentMap);
+  temps.push_back(interfaceResult.getTensorVar());
   Assignment replacedWithTiled =  to<Assignment>(replace(Assignment(interfaceResult, replace(exprToAccelerate, tensorAssigns)), innerVarMapping));  
   IndexExpr resExpr = replacedWithTiled.getLhs();
   InterfaceCall call(replacedWithTiled, getConcreteCodeGenerator(replacedWithTiled.getRhs(), resExpr, hasPreciseMatch(replacedWithTiled.getRhs(), assign.getRhs()), functionInterface), interfaceResult.getTensorVar());
 
-  taco_uerror << call << endl;
-  tiledCode = ForallMany({tiledCode, call});
+  IndexStmt setWorkspace = Assignment(result, resExpr, Add());
+
+  for (auto var: resExpr.getIndexVars()){
+    setWorkspace = Forall(var, setWorkspace);
+  }
+
+  tiledCode = ForallMany({tiledCode, call, setWorkspace});
  
   for (auto var : outerVars){
     tiledCode = Forall(var, tiledCode);
