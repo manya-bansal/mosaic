@@ -4368,7 +4368,18 @@ IndexStmt IndexStmt::tile(FunctionInterface functionInterface, IndexExpr exprToA
     setWorkspace = Forall(var, setWorkspace);
   }
 
-  tiledCode = ForallMany({tiledCode, call, setWorkspace});
+  IndexStmt copyTemp;
+  if (setByReference(assign)){
+    copyTemp = makeConcreteNotation(makeReductionNotation(Assignment(interfaceResult, call.getAccelGen().getLHS())));
+  }
+
+  if (copyTemp.defined()){
+    copyTemp = ForallMany({tiledCode, copyTemp, call, setWorkspace});
+  }else{
+    copyTemp = ForallMany({tiledCode, call, setWorkspace});
+  }
+  
+  tiledCode = copyTemp;
  
   for (auto var : outerVars){
     tiledCode = Forall(var, tiledCode);
@@ -4384,8 +4395,6 @@ IndexStmt IndexStmt::tile(FunctionInterface functionInterface, IndexExpr exprToA
   for (size_t i = 0; i < innerVars.size(); i++){
     tiledCode = tiledCode.splitWithoutRewrite(originalVars[i], outerVars[i], innerVars[i], varTilings[originalVars[i]]);
   }
-
-  cout << tiledCode << endl;
 
   return tiledCode;
 }

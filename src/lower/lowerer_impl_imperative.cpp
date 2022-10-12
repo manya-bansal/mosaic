@@ -2825,17 +2825,17 @@ Stmt LowererImplImperative::lowerForallMany(ForallMany forallMany){
   vector<Stmt> blockToMake;
 
   for (const auto &stmt : forallMany.getStmts()){
+    if (!stmt.defined()){
+      continue;
+    }
     if (isa<InterfaceCall>(stmt)){
-      blockToMake.push_back(Print::make("running!"));
     }
     if (isa<Assignment>(stmt)){
-      blockToMake.push_back(Print::make("assigning!\\n"));
       blockToMake.push_back(lowerAssignSpecial(to<Assignment>(stmt)));
     }else{
       blockToMake.push_back(lower(stmt));
     }
   }
-  blockToMake.push_back(Print::make("---------\\n"));
   return Block::make(blockToMake);
 }
 
