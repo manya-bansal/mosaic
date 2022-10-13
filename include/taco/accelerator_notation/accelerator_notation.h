@@ -414,6 +414,10 @@ public:
 
   std::set<std::string> getProperties() const;
 
+  void addProperty(std::string property) const;
+
+  bool hasProperty(std::string property) const;
+
   const AcceleratorAccess operator()(const std::vector<IndexVar>& indices) const;
  
   template <typename... IndexVars>
@@ -450,6 +454,19 @@ private:
 };
 
 std::ostream& operator<<(std::ostream&, const TensorObject&);
+ 
+class DynamicOrder {
+  public: 
+    DynamicOrder();
+
+    void setMin(int min);
+    void setMax(int max);
+ 
+  private:
+    struct Content;
+    std::shared_ptr<Content> content;
+
+}; 
 
 
 }

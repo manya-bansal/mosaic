@@ -787,6 +787,14 @@ std::set<std::string> TensorObject::getProperties() const{
   return content->properties;
 }
 
+void TensorObject::addProperty(std::string property) const{
+  content->properties.insert(property);
+}
+
+bool TensorObject::hasProperty(std::string property) const{
+ return content->properties.count(property);
+}
+
 const AcceleratorAccess TensorObject::operator()(const std::vector<IndexVar>& indices) const {
   taco_uassert((int)indices.size() == getOrder()) <<
       "A tensor of order " << getOrder() << " must be indexed with " <<
@@ -846,6 +854,24 @@ bool operator<(const TensorObject& a, const TensorObject& b) {
 std::ostream& operator<<(std::ostream& os, const TensorObject& var){
   return os << var.getName() << " : " << var.getType();
 }
+
+struct DynamicOrder::Content {
+  int min;
+  int max;
+  std::vector<IndexVar> vars;
+};
+
+DynamicOrder::DynamicOrder() : content(new Content) {
+}
+
+void DynamicOrder::setMin(int min){
+  content->min = min;
+}
+
+void DynamicOrder::setMax(int max){
+  content->max = max;
+}
+
 
 
 }

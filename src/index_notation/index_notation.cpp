@@ -4421,8 +4421,7 @@ IndexStmt IndexStmt::holdConstant(FunctionInterface functionInterface, IndexExpr
       << util::join(indexVarsToHoldConstant) << " are held constant." << endl;
   }
 
-  Access result = constructResultAccess(argumentMap, exprToAccelerate, functionInterface);
-  cout << getConcreteCodeGenerator(e, result, argumentMap, functionInterface) << endl;
+  Access result = constructResultAccess(argumentMap, e, functionInterface);
 
   IndexStmt s = constructInnerForalls(e, indexVarsToHoldConstant, tensorVarToIndexVar, exprToAccelerate);
   IndexStmt producer = constructProducer(workspace, result, indexVarsToHoldConstant);
@@ -4431,10 +4430,20 @@ IndexStmt IndexStmt::holdConstant(FunctionInterface functionInterface, IndexExpr
 
   IndexStmt reducedCode;
 
+  IndexStmt copyTemp;
+  if (setByReference(assign)){
+    copyTemp = makeConcreteNotation(makeReductionNotation(Assignment(result, call.getAccelGen().getLHS())));
+  }
+
+
   int i = 0;
   for (const auto &constantVar : indexVarsToHoldConstant){
     if (i == 0){
-      reducedCode = forall(constantVar, ForallMany(constantVar, {s, call, producer}));
+      if (copyTemp.defined()){
+        reducedCode = forall(constantVar, ForallMany(constantVar, {s, copyTemp, call, producer}));
+      }else{
+        reducedCode = forall(constantVar, ForallMany(constantVar, {s, call, producer}));
+      } 
     }else{
       reducedCode = forall(constantVar, reducedCode);
     }
