@@ -162,6 +162,7 @@ string Module::compile() {
     cmd += " -I/home/manya227/tensor-algebra-systems/tblis/include"
            " -I/home/manya227/tensor-algebra-systems/tblis/include/tblis"
            " -I/home/manya227/tensor-algebra-systems/gsl/include" 
+           " -I/home/manya227/tensor-algebra-systems/cblas"
            " -I/home/manya227/tensor-algebra-systems/tensor-gsl/include/tensor"
            " -L/home/manya227/tensor-algebra-systems/tblis/lib"
            " -L/home/manya227/tensor-algebra-systems/gsl/lib"

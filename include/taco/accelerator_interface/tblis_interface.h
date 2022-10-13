@@ -46,9 +46,11 @@ class TblisMultiply : public AbstractFunctionInterface{
                             }
 
         std::vector<Argument>  callAfter() const override {
-            taco::TransferLoad print("printf", "void");
+            taco::TransferLoad free_tblis_tensor("free_tblis_tensor", "void");
                                 return { 
-                                         print(StringLiteral("\"returning!\""))
+                                        free_tblis_tensor(AddrDeclVarArg(var)),
+                                        free_tblis_tensor(AddrDeclVarArg(var2)),
+                                        free_tblis_tensor(AddrDeclVarArg(result))
                                         };
 
         }

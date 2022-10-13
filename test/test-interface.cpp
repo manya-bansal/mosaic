@@ -1261,7 +1261,7 @@ TEST(interface, DimReduceMM) {
 }
 
 
-TEST(interface, blockedSparse) {
+TEST(interface, blockedSparseGSL) {
 
    gsl_compile = true;
 
@@ -1326,6 +1326,132 @@ TEST(interface, blockedSparse) {
    ASSERT_TENSOR_EQ(expected, A);
 
    gsl_compile = false;
+
+
+}
+
+TEST(interface, blockedSparseCblas) {
+
+   int dim = 16;
+
+   Tensor<float> A("A", {dim, dim, dim}, Format{Dense, Dense, Dense});
+   Tensor<float> B("B", {dim, dim, dim}, Format{Sparse, Dense, Dense}); 
+   Tensor<float> C("C", {dim, dim}, Format{Dense, Dense});
+
+   float SPARSITY = .3;
+
+   for (int i = 0; i < dim; i++) {
+    for (int j = 0; j < dim; j++) {
+      float rand_float = (float)rand()/(float)(RAND_MAX);
+      C.insert({i, j}, (float) ((int) (rand_float*3/SPARSITY)));
+    }
+   }
+
+
+  for (int i = 0; i < dim; i++) {
+   for (int j = 0; j < dim; j++) {
+    for (int k = 0; k < dim; k++) {
+      float rand_float = (float)rand()/(float)(RAND_MAX);
+      if (rand_float < SPARSITY) {
+        B.insert({i, j, k}, (float) ((int) (rand_float*3/SPARSITY)));
+      }
+    }
+   }
+  }
+
+
+   B.pack();
+   C.pack();
+
+   Tensor<float> expected("expected", {dim, dim, dim}, Format{Dense, Dense, Dense});
+
+   TensorVar precomputed("precomputed", Type(taco::Float32, {Dimension(dim), Dimension(dim), Dimension(dim)}), Format{Dense, Dense, Dense});
+
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar k("k");
+   IndexVar l("l");
+   IndexVar m("m");
+
+   IndexExpr accelerateExpr = B(i, j, l) * C(l, k);
+   A(i, j, k) = accelerateExpr;
+
+   IndexStmt stmt = A.getAssignment().concretize();
+   stmt = stmt.holdConstant(new MatrixMultiply(), accelerateExpr, {i}, precomputed(i, j, k));
+   
+   A.compile(stmt);
+   A.assemble();
+   A.compute();
+
+   gsl_compile = false;
+
+   expected(i, j, k) = accelerateExpr;
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+   ASSERT_TENSOR_EQ(expected, A);
+}
+
+TEST(interface, blockedSparseTblis) {
+
+   int dim = 16;
+
+   Tensor<float> A("A", {dim, dim, dim}, Format{Dense, Dense, Dense});
+   Tensor<float> B("B", {dim, dim, dim}, Format{Sparse, Dense, Dense}); 
+   Tensor<float> C("C", {dim, dim}, Format{Dense, Dense});
+
+   float SPARSITY = .3;
+
+   for (int i = 0; i < dim; i++) {
+    for (int j = 0; j < dim; j++) {
+      float rand_float = (float)rand()/(float)(RAND_MAX);
+      C.insert({i, j}, (float) ((int) (rand_float*3/SPARSITY)));
+    }
+   }
+
+
+  for (int i = 0; i < dim; i++) {
+   for (int j = 0; j < dim; j++) {
+    for (int k = 0; k < dim; k++) {
+      float rand_float = (float)rand()/(float)(RAND_MAX);
+      if (rand_float < SPARSITY) {
+        B.insert({i, j, k}, (float) ((int) (rand_float*3/SPARSITY)));
+      }
+    }
+   }
+  }
+
+
+   B.pack();
+   C.pack();
+
+   Tensor<float> expected("expected", {dim, dim, dim}, Format{Dense, Dense, Dense});
+
+   TensorVar precomputed("precomputed", Type(taco::Float32, {Dimension(dim), Dimension(dim), Dimension(dim)}), Format{Dense, Dense, Dense});
+
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar k("k");
+   IndexVar l("l");
+   IndexVar m("m");
+
+   IndexExpr accelerateExpr = B(i, j, l) * C(l, k);
+   A(i, j, k) = accelerateExpr;
+
+   IndexStmt stmt = A.getAssignment().concretize();
+   stmt = stmt.holdConstant(new TblisMultiply(), accelerateExpr, {i}, precomputed(i, j, k));
+   
+   A.compile(stmt);
+   A.assemble();
+   A.compute();
+
+   expected(i, j, k) = accelerateExpr;
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+   ASSERT_TENSOR_EQ(expected, A);
 
 
 }

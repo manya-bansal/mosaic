@@ -2948,8 +2948,23 @@ ir::Expr LowererImplImperative::lowerArgument(Argument argument, TensorVar resul
         if (t->tvar.getName() == temporary.getName()){
           taco_uerror << "freak out" <<  tempToIndexList.at(temporary) << endl;
         }
+
+        if (util::contains(temporaries, t->tvar)){
+          std::string s = "(int []){";
+          for (int i = 0; i < t->tvar.getOrder(); i++) {
+            Dimension temporarySize = t->tvar.getType().getShape().getDimension(i);
+            Expr size;
+            if (temporarySize.isFixed()) {
+              s += std::to_string(temporarySize.getSize()) + ",";
+            }else{
+              taco_uerror << "Temporary " << t->tvar << "has a dynamic dimension." << endl;
+            }
+          }
+          s += "}";
+          return RawString::make(s);
+        }
+
         return RawString::make(t->tvar.getName() + "->dimensions");
-        
       }
       case DATA_ARRAY:
       {

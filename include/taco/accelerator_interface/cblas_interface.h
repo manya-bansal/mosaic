@@ -183,6 +183,49 @@ class MatrixMultiply : public AbstractFunctionInterface{
 
 };
 
+// Multiply two matrices where the right one is symmetric
+class BlasSymmLeft : public AbstractFunctionInterface{
+    public: 
+        BlasSymmLeft() : 
+                    x(TensorObject(Type(taco::Float32, {Dimension(), Dimension()}),  Format{Dense, Dense})),
+                    y(TensorObject(Type(taco::Float32, {Dimension(), Dimension()}),  Format{Dense, Dense})),
+                    z(TensorObject(Type(taco::Float32, {Dimension(), Dimension()}),  Format{Dense, Dense})),
+                    i(IndexVar()),
+                    j(IndexVar()),
+                    k(IndexVar()) {}; 
+
+        AcceleratorStmt getStmt() const override {return z(i, k) = x(i, j) * y(j, k);} 
+        std::vector<Argument> getArguments() const override {
+                                                return 
+                                                {   new StringLiteral("CblasLeft"),
+                                                    new StringLiteral("CblasUpper"),
+                                                    new DimArg(i), 
+                                                    new DimArg(k), 
+                                                    new LiteralArg(Datatype(taco::UInt32), 1),
+                                                    new TensorObjectArg(x), 
+                                                    new DimArg(i), 
+                                                    new TensorObjectArg(y), 
+                                                    new DimArg(j), 
+                                                    new LiteralArg(Datatype(taco::UInt32), 0),
+                                                    new TensorObjectArg(z), 
+                                                    new DimArg(i), 
+                                                }; }
+
+        std::string getReturnType() const override {return "void";}
+        std::string getFunctionName() const override {return "cblas_ssymm";}
+        
+        
+    private: 
+        TensorObject x;
+        TensorObject y;
+        TensorObject z;
+        IndexVar i;
+        IndexVar j;
+        IndexVar k;
+
+};
+
+
 
 
 #endif 
