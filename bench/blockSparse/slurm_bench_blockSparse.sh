@@ -10,7 +10,7 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH --time=02:00:00
 
-systems=("tblis")
+systems=("taco" "blas" "gsl") 
 
 for i in "${systems[@]}"
 do 

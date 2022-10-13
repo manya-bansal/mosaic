@@ -22,7 +22,7 @@ static void bench_blockSparse_gsl(benchmark::State& state) {
    Tensor<float> B("B", {dim, dim, dim}, Format{Sparse, Dense, Dense}); 
    Tensor<float> C("C", {dim, dim}, Format{Dense, Dense});
 
-   float SPARSITY = .3;
+   float SPARSITY = .5;
 
   for (int i = 0; i < dim; i++) {
     for (int j = 0; j < dim; j++) {

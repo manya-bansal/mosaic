@@ -34,6 +34,7 @@ const string cHeaders =
   "#include <math.h>\n"
   "#include <complex.h>\n"
   "#include <string.h>\n"
+  "#include <immintrin.h>\n"
   "#include \"cblas.h\"\n"
   "#include \"tblis.h\"\n"
   "#include \"gsl/gsl_vector.h\"\n"

@@ -774,7 +774,6 @@ void TensorBase::compileAccelerated(taco::IndexStmt stmt, std::vector<FunctionIn
   // cout << "calling concretizeAccelerated" << endl;
   IndexStmt stmtToCompile = stmt.concretizeAccelerated(functionInterface);
   
-  // cout << stmtToCompile << endl;
 
   stmtToCompile = scalarPromote(stmtToCompile);
 

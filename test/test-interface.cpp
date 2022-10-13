@@ -23,6 +23,7 @@
 #include "taco/accelerator_interface/tensorflow_interface.h"
 #include "taco/accelerator_interface/gsl_interface.h"
 #include "taco/accelerator_interface/tensor_interface.h"
+#include "taco/accelerator_interface/avx2_interface.h"
 
 
 using namespace taco;
@@ -1695,4 +1696,41 @@ TEST(interface, sdmmTblis){
   ASSERT_TENSOR_EQ(expected, A);
 
 
+}
+
+TEST(interface, tiledSaxpyAVX) {
+
+   gsl_compile = false;
+
+   Tensor<float> A("A", {16}, Format{Dense});
+   Tensor<float> expected("expected", {16}, Format{Dense});
+   Tensor<float> B("B", {16}, Format{Dense});
+   Tensor<float> C("C", {16}, Format{Dense});
+   IndexVar i("i");
+
+   for (int i = 0; i < 16; i++) {
+      C.insert({i}, (float) i);
+      B.insert({i}, (float) i);
+   }
+
+   C.pack();
+   B.pack();
+
+   IndexExpr accelerateExpr = B(i) + C(i);
+   A(i) = accelerateExpr;
+   IndexStmt stmt = A.getAssignment().concretize();
+   stmt = stmt.tile(new AVXSaxpy(), accelerateExpr, {{i,  8}});
+
+   cout << stmt << endl;
+
+   A.compile(stmt);
+   A.assemble();
+   A.compute();
+
+   expected(i) = accelerateExpr;
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+   ASSERT_TENSOR_EQ(expected, A);
 }
