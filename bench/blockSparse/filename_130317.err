@@ -1,0 +1,11 @@
+The number of inputs is very large. bench_dot_blas will be repeated at least 5000 times.
+The number of inputs is very large. bench_dot_taco will be repeated at least 5000 times.
+The number of inputs is very large. bench_saxpy_blas will be repeated at least 5000 times.
+The number of inputs is very large. bench_saxpy_taco will be repeated at least 500 times.
+/var/spool/slurm/d/job130317/slurm_script: line 15: 40510 Killed                  /home/manya227/taco-interoperable/build/bin/./taco-bench --benchmark_filter=bench_blockSparse_$i --benchmark_format=json --benchmark_out=/home/manya227/taco-interoperable/bench/blockSparse/result/$i
+The number of inputs is very large. bench_dot_blas will be repeated at least 5000 times.
+The number of inputs is very large. bench_dot_taco will be repeated at least 5000 times.
+The number of inputs is very large. bench_saxpy_blas will be repeated at least 5000 times.
+The number of inputs is very large. bench_saxpy_taco will be repeated at least 500 times.
+slurmstepd: error: *** JOB 130317 ON edo-slurm1 CANCELLED AT 2022-10-13T23:16:20 DUE TO TIME LIMIT ***
+slurmstepd: error: Detected 1 oom-kill event(s) in step 130317.batch cgroup. Some of your processes may have been killed by the cgroup out-of-memory handler.

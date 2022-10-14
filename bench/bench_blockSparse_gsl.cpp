@@ -77,5 +77,6 @@ static void bench_blockSparse_gsl(benchmark::State& state) {
   gsl_compile = false;
 }
 
-TACO_BENCH(bench_blockSparse_gsl)->DenseRange(20, 1000, 20);
+TACO_BENCH(bench_blockSparse_gsl)->DenseRange(1000, 1020, 20);
+
 

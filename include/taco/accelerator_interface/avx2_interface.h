@@ -32,7 +32,7 @@ class AVXSaxpy : public AbstractFunctionInterface{
                                          var = _mm256_load_ps(x),
                                          var2 = _mm256_load_ps(y),
                                          result = _mm256_add_ps(var, var2)};
-                            }
+                                }
 
     private: 
         TensorObject x;

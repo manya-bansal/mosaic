@@ -70,5 +70,10 @@ static void bench_blockSparse_taco(benchmark::State& state) {
 
 }
 
-TACO_BENCH(bench_blockSparse_taco)->DenseRange(20, 1000, 20);
+
+int main(int argc, char **argv) {
+
+}
+
+TACO_BENCH(bench_blockSparse_taco)->DenseRange(1000, 1200, 20);
 

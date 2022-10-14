@@ -33,7 +33,6 @@ static void bench_dot_gsl(benchmark::State& state) {
 
    for (auto _ : state) {
 
-    
     // Setup.
     state.PauseTiming();
     Tensor<float> A("A", {dim}, Format{Dense});
