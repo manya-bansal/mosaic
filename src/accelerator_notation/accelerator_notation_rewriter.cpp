@@ -100,6 +100,10 @@ void AcceleratorNotationRewriter::visit(const AcceleratorReductionNode* op){
   }
 }
 
+void AcceleratorNotationRewriter::visit(const AcceleratorDynamicIndex* op){
+}
+
+
 void AcceleratorNotationRewriter::visit(const AcceleratorForallNode* op){
   AcceleratorStmt s = rewrite(op->stmt);
   if (s == op->stmt) {

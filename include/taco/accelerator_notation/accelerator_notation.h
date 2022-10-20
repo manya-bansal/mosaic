@@ -24,7 +24,6 @@
 #include "taco/ir_tags.h"
 #include "taco/index_notation/provenance_graph.h"
 #include "taco/index_notation/properties.h"
-#include "taco/index_notation/index_notation.h"
 #include "taco/util/collections.h"
 #include "taco/util/strings.h"
 
@@ -47,6 +46,8 @@ struct AcceleratorReductionNode;
 
 struct AcceleratorForallNode;
 struct AcceleratorAssignmentNode;
+
+class IndexVar;
 
 
 class AcceleratorExpr : public util::IntrusivePtr<const AcceleratorExprNode> {
@@ -454,19 +455,6 @@ private:
 };
 
 std::ostream& operator<<(std::ostream&, const TensorObject&);
- 
-class DynamicOrder {
-  public: 
-    DynamicOrder();
-
-    void setMin(int min);
-    void setMax(int max);
- 
-  private:
-    struct Content;
-    std::shared_ptr<Content> content;
-
-}; 
 
 
 }

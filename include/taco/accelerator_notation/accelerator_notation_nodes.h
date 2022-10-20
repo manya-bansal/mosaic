@@ -128,6 +128,15 @@ struct AcceleratorSubNode : public AcceleratorBinaryExprNode {
   }
 };
 
+struct AcceleratorDynamicIndex : public AcceleratorExprNode {
+  AcceleratorDynamicIndex(const std::vector<IndexObject> &indexObject) : indexObject(indexObject) {}
+  std::vector<IndexObject> indexObject;
+
+  void accept(AcceleratorExprVisitorStrict* v) const override{
+    v->visit(this);
+  }
+};
+
 
 struct AcceleratorMulNode : public AcceleratorBinaryExprNode {
   AcceleratorMulNode() : AcceleratorBinaryExprNode() {}

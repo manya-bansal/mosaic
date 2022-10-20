@@ -1140,9 +1140,42 @@ private:
   std::shared_ptr<Content> content;
 };
 
+struct IndexObjectNode : public util::Manageable<IndexObjectNode>{
+
+    IndexObjectNode() {}
+    virtual ~IndexObjectNode() = default;
+
+};
+
+class IndexObject : public util::IntrusivePtr<const IndexObjectNode> {
+  public: 
+    IndexObject(IndexObjectNode * arg) : IntrusivePtr(arg) {}
+    IndexObject() : IndexObject(new IndexObjectNode())  {}
+
+    template<typename T>
+    const T* getNode() const {
+      return static_cast<const T*>(ptr);
+    }
+
+    const IndexObjectNode* getNode() const {
+      return ptr;
+    }
+};
+ 
+class DynamicOrder : public IndexObjectNode{
+  public: 
+    DynamicOrder();
+    void setMin(int min);
+    void setMax(int max);
+ 
+  private:
+    struct Content;
+    std::shared_ptr<Content> content;
+}; 
+
 /// Index variables are used to index into tensors in index expressions, and
 /// they represent iteration over the tensor modes they index into.
-class IndexVar : public IndexExpr, public IndexVarInterface {
+class IndexVar : public IndexExpr, public IndexVarInterface, public IndexObjectNode {
 
 public:
   IndexVar();

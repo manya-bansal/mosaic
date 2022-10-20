@@ -60,6 +60,9 @@ void AcceleratorNotationVisitor::visit(const AcceleratorReductionNode* op) {
   op->a.accept(this);
 }
 
+void AcceleratorNotationVisitor::visit(const AcceleratorDynamicIndex*){
+}
+
 void AcceleratorNotationVisitor::visit(const AcceleratorForallNode* op) {
   op->stmt.accept(this);
 }
