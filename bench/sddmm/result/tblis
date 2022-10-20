@@ -1,9 +1,9 @@
 {
   "context": {
-    "date": "2022-10-13T22:04:20-07:00",
-    "host_name": "lagos",
+    "date": "2022-10-15T21:50:39+00:00",
+    "host_name": "edo-slurm1",
     "executable": "/home/manya227/taco-interoperable/build/bin/./taco-bench",
-    "num_cpus": 144,
+    "num_cpus": 40,
     "mhz_per_cpu": 2494,
     "cpu_scaling_enabled": false,
     "caches": [
@@ -11,28 +11,28 @@
         "type": "Data",
         "level": 1,
         "size": 32768,
-        "num_sharing": 144
+        "num_sharing": 1
       },
       {
         "type": "Instruction",
         "level": 1,
         "size": 32768,
-        "num_sharing": 144
+        "num_sharing": 1
       },
       {
         "type": "Unified",
         "level": 2,
-        "size": 262144,
-        "num_sharing": 144
+        "size": 4194304,
+        "num_sharing": 1
       },
       {
         "type": "Unified",
         "level": 3,
-        "size": 47185920,
-        "num_sharing": 144
+        "size": 16777216,
+        "num_sharing": 40
       }
     ],
-    "load_avg": [1.74,0.97,0.87],
+    "load_avg": [1,1,0.93],
     "library_build_type": "release"
   },
   "benchmarks": [

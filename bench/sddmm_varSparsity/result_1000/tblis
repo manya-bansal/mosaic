@@ -1,0 +1,194 @@
+{
+  "context": {
+    "date": "2022-10-15T13:40:09-07:00",
+    "host_name": "lagos",
+    "executable": "/home/manya227/taco-interoperable/build/bin/./taco-bench",
+    "num_cpus": 144,
+    "mhz_per_cpu": 2494,
+    "cpu_scaling_enabled": false,
+    "caches": [
+      {
+        "type": "Data",
+        "level": 1,
+        "size": 32768,
+        "num_sharing": 144
+      },
+      {
+        "type": "Instruction",
+        "level": 1,
+        "size": 32768,
+        "num_sharing": 144
+      },
+      {
+        "type": "Unified",
+        "level": 2,
+        "size": 262144,
+        "num_sharing": 144
+      },
+      {
+        "type": "Unified",
+        "level": 3,
+        "size": 47185920,
+        "num_sharing": 144
+      }
+    ],
+    "load_avg": [0.85,1.55,1.13],
+    "library_build_type": "release"
+  },
+  "benchmarks": [
+    {
+      "name": "bench_sddmm_varySparisty_tblis/0.00625/iterations:1/real_time",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_tblis/0.00625/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 1.1935454094782472e+05,
+      "cpu_time": 1.0980554700000001e+05,
+      "time_unit": "us"
+    },
+    {
+      "name": "bench_sddmm_varySparisty_tblis/0.0125/iterations:1/real_time",
+      "family_index": 1,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_tblis/0.0125/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 5.3398059913888574e+04,
+      "cpu_time": 5.3393539000000215e+04,
+      "time_unit": "us"
+    },
+    {
+      "name": "bench_sddmm_varySparisty_tblis/0.025/iterations:1/real_time",
+      "family_index": 2,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_tblis/0.025/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 5.1255736034363508e+04,
+      "cpu_time": 5.1250199000000051e+04,
+      "time_unit": "us"
+    },
+    {
+      "name": "bench_sddmm_varySparisty_tblis/0.05/iterations:1/real_time",
+      "family_index": 3,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_tblis/0.05/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 4.9118295079097152e+04,
+      "cpu_time": 4.9112731000000131e+04,
+      "time_unit": "us"
+    },
+    {
+      "name": "bench_sddmm_varySparisty_tblis/0.05/iterations:1/real_time",
+      "family_index": 4,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_tblis/0.05/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 4.6888001030310988e+04,
+      "cpu_time": 4.6883713999999796e+04,
+      "time_unit": "us"
+    },
+    {
+      "name": "bench_sddmm_varySparisty_tblis/0.1/iterations:1/real_time",
+      "family_index": 5,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_tblis/0.1/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 4.8873839899897575e+04,
+      "cpu_time": 4.8864116999999482e+04,
+      "time_unit": "us"
+    },
+    {
+      "name": "bench_sddmm_varySparisty_tblis/0.2/iterations:1/real_time",
+      "family_index": 6,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_tblis/0.2/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 4.7972775995731354e+04,
+      "cpu_time": 4.7966978999999024e+04,
+      "time_unit": "us"
+    },
+    {
+      "name": "bench_sddmm_varySparisty_tblis/0.4/iterations:1/real_time",
+      "family_index": 7,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_tblis/0.4/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 4.5817134669050574e+04,
+      "cpu_time": 4.5810837000000327e+04,
+      "time_unit": "us"
+    },
+    {
+      "name": "bench_sddmm_varySparisty_tblis/0.6/iterations:1/real_time",
+      "family_index": 8,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_tblis/0.6/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 5.0545381847769022e+04,
+      "cpu_time": 5.0539499000000098e+04,
+      "time_unit": "us"
+    },
+    {
+      "name": "bench_sddmm_varySparisty_tblis/0.8/iterations:1/real_time",
+      "family_index": 9,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_tblis/0.8/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 4.8643801826983690e+04,
+      "cpu_time": 4.8638472000000380e+04,
+      "time_unit": "us"
+    },
+    {
+      "name": "bench_sddmm_varySparisty_tblis/1/iterations:1/real_time",
+      "family_index": 10,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_tblis/1/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 5.6794146075844765e+04,
+      "cpu_time": 5.6788515999999232e+04,
+      "time_unit": "us"
+    }
+  ]
+}

@@ -58,7 +58,7 @@ public:
 
   /// Lower an index statement to an IR function.
   virtual ir::Stmt lower(IndexStmt stmt, std::string name, 
-                 bool assemble, bool compute, bool pack, bool unpack) = 0;
+                 bool assemble, bool compute, bool pack, bool unpack, Assignment assignment) = 0;
 
 protected:
 

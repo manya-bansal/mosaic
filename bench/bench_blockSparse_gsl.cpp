@@ -80,3 +80,4 @@ static void bench_blockSparse_gsl(benchmark::State& state) {
 TACO_BENCH(bench_blockSparse_gsl)->DenseRange(1000, 1020, 20);
 
 
+

@@ -10,13 +10,13 @@
 
 using namespace taco;
 
-static void bench_sddmm_gsl(benchmark::State& state) {
+static void bench_sddmm_tblis(benchmark::State& state) {
   int dim = state.range(0);
   int NUM_I = dim;
   int NUM_K = dim;
   int NUM_J = dim;
 
-  float SPARSITY = .5;
+  float SPARSITY = .3;
   
   Tensor<float> B("B", {NUM_I, NUM_K}, CSR);
   Tensor<float> C("C", {NUM_I, NUM_J}, {Dense, Dense});
@@ -61,7 +61,7 @@ static void bench_sddmm_gsl(benchmark::State& state) {
     A(i,k) =  B(i,k) * accelerateExpr;
 
     IndexStmt stmt = A.getAssignment().concretize();
-    stmt = stmt.accelerate(new GSLMM(), accelerateExpr);
+    stmt = stmt.accelerate(new TblisMultiply(), accelerateExpr);
 
     A.compile(stmt);
     A.assemble();
@@ -70,5 +70,5 @@ static void bench_sddmm_gsl(benchmark::State& state) {
   }
 }
 
-TACO_BENCH(bench_sddmm_gsl)->DenseRange(100, 2000, 100);
+TACO_BENCH(bench_sddmm_tblis)->DenseRange(100, 3000, 100);
 

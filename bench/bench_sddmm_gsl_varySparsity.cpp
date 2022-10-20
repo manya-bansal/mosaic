@@ -8,15 +8,18 @@
 #include "taco/accelerator_interface/tblis_interface.h"
 #include "taco/accelerator_interface/gsl_interface.h"
 
+#define DIM_SIZE 5000
+
 using namespace taco;
 
-static void bench_sddmm_taco(benchmark::State& state) {
-  int dim = state.range(0);
+extern bool gsl_compile;
+
+static void bench_sddmm_varySparisty_gsl(benchmark::State& state, float SPARSITY, int dim) {
+  gsl_compile = true;
+
   int NUM_I = dim;
   int NUM_K = dim;
   int NUM_J = dim;
-
-  float SPARSITY = .3;
   
   Tensor<float> B("B", {NUM_I, NUM_K}, CSR);
   Tensor<float> C("C", {NUM_I, NUM_J}, {Dense, Dense});
@@ -55,15 +58,32 @@ static void bench_sddmm_taco(benchmark::State& state) {
 
    for (auto _ : state) {
     // Setup.
-    state.PauseTiming();
+     state.PauseTiming();
     Tensor<float> A("A", {NUM_I, NUM_K}, {Dense, Dense}, 0);
     A(i,k) =  B(i,k) * accelerateExpr;
-    A.compile();
+
+    IndexStmt stmt = A.getAssignment().concretize();
+    stmt = stmt.accelerate(new TblisMultiply(), accelerateExpr);
+
+    A.compile(stmt);
     A.assemble();
     state.ResumeTiming();
     A.compute();
   }
+
+  gsl_compile = false;
 }
 
-TACO_BENCH(bench_sddmm_taco)->DenseRange(100, 3000, 100);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_gsl, 0.00625, 0.00625, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_gsl, 0.0125,  0.0125, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_gsl, 0.025,   0.025, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_gsl, 0.05,    0.05, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_gsl, 0.05,    0.05, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_gsl, 0.1,     0.1, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_gsl, 0.2,     0.2, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_gsl, 0.4,     0.4, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_gsl, 0.6,     0.6, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_gsl, 0.8,     0.8, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_gsl, 1,       1, DIM_SIZE);
+
 

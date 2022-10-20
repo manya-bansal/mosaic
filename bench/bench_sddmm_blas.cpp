@@ -16,7 +16,7 @@ static void bench_sddmm_blas(benchmark::State& state) {
   int NUM_K = dim;
   int NUM_J = dim;
 
-  float SPARSITY = .5;
+  float SPARSITY = .3;
   
   Tensor<float> B("B", {NUM_I, NUM_K}, CSR);
   Tensor<float> C("C", {NUM_I, NUM_J}, {Dense, Dense});
@@ -69,5 +69,5 @@ static void bench_sddmm_blas(benchmark::State& state) {
   }
 }
 
-TACO_BENCH(bench_sddmm_blas)->DenseRange(100, 2000, 100);
+TACO_BENCH(bench_sddmm_blas)->DenseRange(100, 3000, 100);
 

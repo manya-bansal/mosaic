@@ -5,6 +5,8 @@
 #include <set>
 #include <memory>
 
+#include "taco/index_notation/index_notation.h"
+
 namespace taco {
 
 class IndexStmt;
@@ -46,7 +48,7 @@ private:
 /// parts of a concrete index notation statement.
 ir::Stmt lower(IndexStmt stmt, std::string functionName,
                bool assemble=true, bool compute=true, bool pack=false, bool unpack=false,
-               Lowerer lowerer=Lowerer());
+               Lowerer lowerer=Lowerer(), Assignment assignment=Assignment());
 
 /// Check whether the an index statement can be lowered to C code.  If the
 /// statement cannot be lowered and a `reason` string is provided then it is

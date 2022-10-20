@@ -1,0 +1,4 @@
+The number of inputs is very large. bench_dot_blas will be repeated at least 5000 times.
+The number of inputs is very large. bench_dot_taco will be repeated at least 5000 times.
+The number of inputs is very large. bench_saxpy_blas will be repeated at least 5000 times.
+The number of inputs is very large. bench_saxpy_taco will be repeated at least 500 times.

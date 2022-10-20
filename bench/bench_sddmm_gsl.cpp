@@ -10,7 +10,12 @@
 
 using namespace taco;
 
-static void bench_sddmm_taco(benchmark::State& state) {
+extern bool gsl_compile;
+
+static void bench_sddmm_gsl(benchmark::State& state) {
+
+  gsl_compile = true;
+
   int dim = state.range(0);
   int NUM_I = dim;
   int NUM_K = dim;
@@ -58,12 +63,18 @@ static void bench_sddmm_taco(benchmark::State& state) {
     state.PauseTiming();
     Tensor<float> A("A", {NUM_I, NUM_K}, {Dense, Dense}, 0);
     A(i,k) =  B(i,k) * accelerateExpr;
-    A.compile();
+
+    IndexStmt stmt = A.getAssignment().concretize();
+    stmt = stmt.accelerate(new GSLMM(), accelerateExpr);
+
+    A.compile(stmt);
     A.assemble();
     state.ResumeTiming();
     A.compute();
   }
+
+  gsl_compile = false;
 }
 
-TACO_BENCH(bench_sddmm_taco)->DenseRange(100, 3000, 100);
+TACO_BENCH(bench_sddmm_gsl)->DenseRange(100, 3000, 100);
 

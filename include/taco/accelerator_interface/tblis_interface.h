@@ -141,9 +141,13 @@ class TblisDot : public AbstractFunctionInterface{
         std::vector<Argument>  callBefore() const override {
                                 taco::TransferLoad tblis_init_vector_s("tblis_init_vector_s", "void");
                                 taco::TransferLoad tblis_init_scalar_s("tblis_init_scalar_s", "void");
+                                taco::TransferLoad print_done("printf", "void");
                                 return { tblis_init_vector_s(AddrDeclVarArg(var), CastArg(new DimArg(i), "len_type"), DataArray(x), CastArg(new LiteralArg(Datatype(taco::UInt32), 1), "stride_type")),
                                          tblis_init_vector_s(AddrDeclVarArg(var2), CastArg(new DimArg(i), "len_type"), DataArray(y), CastArg(new LiteralArg(Datatype(taco::UInt32), 1), "stride_type")),
-                                         tblis_init_scalar_s(AddrDeclVarArg(result), 0)};
+                                         tblis_init_scalar_s(AddrDeclVarArg(result), 0)
+                                        //  print_done("done")
+                                        
+                                        };
                             }
 
     private: 

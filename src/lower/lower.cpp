@@ -46,12 +46,12 @@ std::shared_ptr<LowererImpl> Lowerer::getLowererImpl() {
 
 ir::Stmt lower(IndexStmt stmt, std::string name, 
                bool assemble, bool compute, bool pack, bool unpack,
-               Lowerer lowerer) {
+               Lowerer lowerer, Assignment assignment) {
   string reason;
   taco_iassert(isLowerable(stmt, &reason))
       << "Not lowerable, because " << reason << ": " << stmt;
   
-  ir::Stmt lowered = lowerer.getLowererImpl()->lower(stmt, name, assemble, compute, pack, unpack);
+  ir::Stmt lowered = lowerer.getLowererImpl()->lower(stmt, name, assemble, compute, pack, unpack, assignment);
 
   // TODO: re-enable this
   // std::string messages;

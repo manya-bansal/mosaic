@@ -18,4 +18,3 @@ do
 done
 
 
-/home/manya227/taco-interoperable/build/bin/./taco-bench --benchmark_filter=bench_blockSparse_taco  --benchmark_format=json --benchmark_out=/home/manya227/taco-interoperable/bench/blockSparse/result/taco &

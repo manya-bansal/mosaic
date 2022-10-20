@@ -239,7 +239,7 @@ static std::set<Expr> hasSparseInserts(IndexStmt stmt, Iterators iterators,
 
 Stmt
 LowererImplImperative::lower(IndexStmt stmt, string name,
-                   bool assemble, bool compute, bool pack, bool unpack)
+                   bool assemble, bool compute, bool pack, bool unpack, Assignment assignment)
 { 
   this->assemble = assemble;
   this->compute = compute;
@@ -249,7 +249,12 @@ LowererImplImperative::lower(IndexStmt stmt, string name,
 
   // Create result and parameter variables
   vector<TensorVar> results = getResults(stmt);
-  vector<TensorVar> arguments = getArguments(stmt);
+  vector<TensorVar> arguments;
+  if (assignment.defined()){
+    arguments = getArguments(assignment);
+  }else{
+    arguments = getArguments(stmt);
+  }
   vector<TensorVar> temporaries = getTemporaries(stmt);
 
   needCompute = {};

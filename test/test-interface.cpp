@@ -1734,3 +1734,72 @@ TEST(interface, tiledSaxpyAVX) {
 
    ASSERT_TENSOR_EQ(expected, A);
 }
+
+
+TEST(interface, sdmmDot){
+
+  int dim = 16;
+  int NUM_I = dim;
+  int NUM_K = dim;
+  int NUM_J = dim;
+
+  float SPARSITY = .3;
+  
+  Tensor<float> B("B", {NUM_I, NUM_K}, CSR);
+  Tensor<float> C("C", {NUM_I, NUM_J}, {Dense, Dense});
+  Tensor<float> D("D", {NUM_J, NUM_K}, {Dense, Dense});
+  Tensor<float> A("A", {NUM_I, NUM_K}, {Dense, Dense}, 0);
+  Tensor<float> expected("expected", {NUM_I, NUM_K}, {Dense, Dense});
+  TensorVar precomputed("precomputed", Type(taco::Float32, {16, 16}), Format{Dense, Dense});
+
+  for (int i = 0; i < NUM_I; i++) {
+    for (int j = 0; j < NUM_J; j++) {
+      float rand_float = (float)rand()/(float)(RAND_MAX);
+      C.insert({i, j}, (float) ((int) (rand_float*3/SPARSITY)));
+    }
+  }
+
+  for (int i = 0; i < NUM_I; i++) {
+    for (int k = 0; k < NUM_K; k++) {
+      float rand_float = (float)rand()/(float)(RAND_MAX);
+      if (rand_float < SPARSITY) {
+        B.insert({i, k}, (float) ((int) (rand_float*3/SPARSITY)));
+      }
+    }
+  }
+
+  for (int j = 0; j < NUM_J; j++) {
+    for (int k = 0; k < NUM_K; k++) {
+      float rand_float = (float)rand()/(float)(RAND_MAX);
+      D.insert({j, k}, (float) ((int) (rand_float*3/SPARSITY)));
+    }
+  }
+
+  B.pack();
+  C.pack();
+  D.pack();
+
+  IndexVar i("i"), j("j"), k("k");
+
+  IndexExpr accelerateExpr = C(i,j) * D(j,k);
+
+   A(i,k) =  B(i,k) * accelerateExpr;
+
+   IndexStmt stmt = A.getAssignment().concretize();
+   stmt = stmt.holdConstant(new TblisDot(), accelerateExpr, {i, k}, precomputed(i, k));
+
+   A.compile(stmt);
+   A.assemble();
+   A.compute();
+
+
+   expected(i,k) =  B(i,k) * (accelerateExpr);
+
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+  ASSERT_TENSOR_EQ(expected, A);
+
+
+}
