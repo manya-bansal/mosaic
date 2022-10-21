@@ -166,10 +166,12 @@ void AcceleratorNotationPrinter::visit(const AcceleratorReductionNode* op) {
   os << ")";
 }
 
-void AcceleratorNotationPrinter::visit(const AcceleratorDynamicIndex* op){
-  // for (auto index : op->indexObject){
-  //   os << index;
-  // }
+void AcceleratorNotationPrinter::visit(const AcceleratorDynamicIndexNode* op){
+  os << op->t.getName() << "(";
+  for (auto index : op->indexObject){
+    os << index << " ";
+  }
+  os << ")";
 }
 
 

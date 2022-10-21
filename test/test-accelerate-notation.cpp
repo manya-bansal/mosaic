@@ -21,7 +21,7 @@ static TensorObject A("A", matrixType), B("B", matrixType), C("C", matrixType);
 static const IndexVar i("i"), j("j"), k("k");
 
 
-TEST(accelerateNotation, AcceleratorExprNode) {
+TEST(accelerateNotation, AcceleratorExprTest) {
     // AcceleratorExpr((TensorVar()));
     // AcceleratorExpr expr = TensorVar();
     std::cout << AcceleratorExpr((TensorObject())) << std::endl;
@@ -42,6 +42,8 @@ TEST(accelerateNotation, AcceleratorExprNode) {
     std::cout << forall(i, stmt) << std::endl;
 
     std::cout << sum(i, x(i)*t(i)) + 5 << endl;
+    std::vector<IndexObject> incides = {new DynamicOrder(), new IndexVar(i)};
+    std::cout << x(incides) + x(incides) +x(i) << endl;
 
 }
 

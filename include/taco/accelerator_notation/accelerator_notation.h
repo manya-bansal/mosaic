@@ -20,6 +20,7 @@
 #include "taco/ir/ir.h"
 #include "taco/codegen/module.h"
 #include "taco/index_notation/intrinsic.h"
+#include "taco/index_notation/index_notation.h"
 #include "taco/accelerator_notation/accelerator_notation_nodes_abstract.h"
 #include "taco/ir_tags.h"
 #include "taco/index_notation/provenance_graph.h"
@@ -43,6 +44,7 @@ struct AcceleratorMulNode;
 struct AcceleratorDivNode;
 struct AcceleratorSqrtNode;
 struct AcceleratorReductionNode;
+struct AcceleratorDynamicIndexNode;
 
 struct AcceleratorForallNode;
 struct AcceleratorAssignmentNode;
@@ -181,6 +183,42 @@ public:
     AcceleratorAssignment operator+=(const AcceleratorExpr& expr);
 
     typedef AcceleratorAccessNode Node;
+};
+
+class AcceleratorDynamicIndex : public AcceleratorExpr {
+public:
+    AcceleratorDynamicIndex() = default;
+    AcceleratorDynamicIndex(const AcceleratorDynamicIndex&) = default;
+    AcceleratorDynamicIndex(const AcceleratorDynamicIndexNode*);
+    AcceleratorDynamicIndex(const TensorObject& tensorObject, const std::vector<IndexObject>& indices={});
+
+    const TensorObject& getTensorObject() const;
+    const std::vector<IndexObject>& getIndexObjects() const;
+
+    /// Assign the result of an expression to a left-hand-side tensor access.
+    /// ```
+    /// a(i) = b(i) * c(i);
+    /// ```
+    AcceleratorAssignment operator=(const AcceleratorExpr&);
+
+    AcceleratorAssignment operator=(const AcceleratorExpr&) const;
+
+    /// Must override the default Access operator=, otherwise it is a copy.
+    AcceleratorAssignment operator=(const AcceleratorAccess&);
+
+    AcceleratorAssignment operator=(const AcceleratorAccess&) const;
+
+    AcceleratorAssignment operator=(const AcceleratorDynamicIndex&);
+
+    AcceleratorAssignment operator=(const AcceleratorDynamicIndex&) const;
+
+    /// Must disambiguate TensorVar as it can be implicitly converted to IndexExpr
+    /// and AccesExpr.
+    AcceleratorAssignment operator=(const TensorObject&);
+
+    AcceleratorAssignment operator+=(const AcceleratorExpr& expr);
+
+    typedef AcceleratorDynamicIndexNode Node;
 };
 
 /// A literal index expression is a scalar literal that is embedded in the code.
@@ -362,6 +400,8 @@ public:
   /// assignment into a compound assignment, e.g. `+=`.
   AcceleratorAssignment(AcceleratorAccess lhs, AcceleratorExpr rhs, AcceleratorExpr op = AcceleratorExpr());
 
+  AcceleratorAssignment(AcceleratorDynamicIndex lhs, AcceleratorExpr rhs, AcceleratorExpr op = AcceleratorExpr());
+
   /// Create an assignment. Can specify an optional operator `op` that turns the
   /// assignment into a compound assignment, e.g. `+=`. Additionally, specify
   /// any modifers on reduction index variables (windows, index sets, etc.).
@@ -433,11 +473,19 @@ public:
   AcceleratorAccess operator()(const IndexVars&... indices) {
     return this->operator()({indices...});
   }
+
+  AcceleratorDynamicIndex operator()(const std::vector<IndexObject>& indices);
   
   /// Assign a scalar expression to a scalar tensor.
   AcceleratorAssignment operator=(AcceleratorExpr);
 
   AcceleratorAssignment operator=(AcceleratorExpr) const;
+
+  // AcceleratorAssignment operator=(const AcceleratorAccess& access);
+  // AcceleratorAssignment operator=(const AcceleratorAccess& access) const;
+
+  // AcceleratorAssignment operator=(const AcceleratorDynamicIndex& access);
+  // AcceleratorAssignment operator=(const AcceleratorDynamicIndex& access) const;
 
   // /// Add a scalar expression to a scalar tensor.
   AcceleratorAssignment operator+=(AcceleratorExpr);

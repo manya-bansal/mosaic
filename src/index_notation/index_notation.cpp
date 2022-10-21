@@ -3020,6 +3020,66 @@ template <> SuchThat to<SuchThat>(IndexStmt s) {
   return SuchThat(to<SuchThatNode>(s.ptr));
 }
 
+std::ostream& operator<<(std::ostream& os, const IndexObject& op){
+
+  return op.getNode()->print(os);
+
+}
+
+//class dynamic order
+struct DynamicOrder::Content {
+  int min;
+  int max;
+};
+
+DynamicOrder::DynamicOrder() : content(new Content) {
+  content->min = -1;
+  content->max = -1;
+}
+
+void DynamicOrder::setMin(int min){
+  taco_uassert(min > 0);
+  content->min = min;
+}
+
+void DynamicOrder::setMax(int max){
+  taco_uassert(max > 0);
+  content->max = max;
+}
+
+bool DynamicOrder::hasMin() const{
+  return (content->min != -1);
+}
+
+bool DynamicOrder::hasMax() const{
+  return (content->max != -1);
+}
+
+int DynamicOrder::getMin() const{
+  return content->min;
+}
+
+int DynamicOrder::getMax() const{
+  return content->max;
+}
+
+std::ostream& operator<<(std::ostream& os, const DynamicOrder& op){
+
+  if (op.hasMin()){
+    os << "min(" << op.getMin() << ") ";
+  }
+  os << "...";
+  if (op.hasMax()){
+    os << " max(" << op.getMax() << ")";
+  }
+  return os;
+}
+
+std::ostream& DynamicOrder::print(std::ostream& os) const {
+  return os << *this;
+}
+
+
 // class IndexVar
 IndexVar::IndexVar() : IndexVar(util::uniqueName('i')) {}
 
@@ -3040,6 +3100,10 @@ template <> IndexVar to<IndexVar>(IndexExpr e) {
 
 std::string IndexVar::getName() const {
   return getNode(*this)->getName();
+}
+
+std::ostream& IndexVar::print(std::ostream& os) const {
+  return os << *this;
 }
 
 WindowedIndexVar IndexVar::operator()(int lo, int hi, int stride) {

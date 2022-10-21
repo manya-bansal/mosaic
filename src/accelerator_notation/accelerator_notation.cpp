@@ -262,6 +262,59 @@ AcceleratorAssignment AcceleratorAccess::operator+=(const AcceleratorExpr& expr)
   return assignment;
 }
 
+AcceleratorDynamicIndex::AcceleratorDynamicIndex(const AcceleratorDynamicIndexNode* n) : AcceleratorExpr(n){
+}
+AcceleratorDynamicIndex::AcceleratorDynamicIndex(const TensorObject& tensorObject, const std::vector<IndexObject>& indices)
+: AcceleratorDynamicIndex(new AcceleratorDynamicIndexNode(tensorObject, indices)){
+}
+
+AcceleratorAssignment AcceleratorDynamicIndex::operator=(const AcceleratorExpr& expr){
+  AcceleratorAssignment assignment = AcceleratorAssignment(*this, expr);
+  return assignment;
+}
+
+AcceleratorAssignment AcceleratorDynamicIndex::operator=(const AcceleratorExpr& expr) const{
+  AcceleratorAssignment assignment = AcceleratorAssignment(*this, expr);
+  return assignment;
+}
+
+AcceleratorAssignment AcceleratorDynamicIndex::operator=(const AcceleratorAccess& expr){
+  AcceleratorAssignment assignment = AcceleratorAssignment(*this, expr);
+  return assignment;
+}
+
+AcceleratorAssignment AcceleratorDynamicIndex::operator=(const AcceleratorAccess& expr) const{
+  return operator=(static_cast<AcceleratorExpr>(expr));
+}
+
+AcceleratorAssignment AcceleratorDynamicIndex::operator=(const AcceleratorDynamicIndex& expr){
+  AcceleratorAssignment assignment = AcceleratorAssignment(*this, expr);
+  return assignment;
+}
+
+
+AcceleratorAssignment AcceleratorDynamicIndex::operator=(const AcceleratorDynamicIndex& expr) const{
+  AcceleratorAssignment assignment = AcceleratorAssignment(*this, expr);
+  return assignment;
+}
+
+AcceleratorAssignment AcceleratorDynamicIndex::operator=(const TensorObject& t){
+  return operator=(static_cast<AcceleratorExpr>(AcceleratorAccess(t)));
+}
+
+AcceleratorAssignment AcceleratorDynamicIndex::operator+=(const AcceleratorExpr& expr){
+  AcceleratorAssignment assignment = AcceleratorAssignment(*this, expr, AcceleratorAdd());
+  return assignment;
+}
+
+
+const TensorObject& AcceleratorDynamicIndex::getTensorObject() const{
+  return getNode(*this)->t;
+}
+const std::vector<IndexObject>& AcceleratorDynamicIndex::getIndexObjects() const{
+   return getNode(*this)->indexObject;
+}
+
 template <> bool isa<AcceleratorAccess>(AcceleratorExpr e) {
   return isa<AcceleratorAccessNode>(e.ptr);
 }
@@ -575,6 +628,10 @@ AcceleratorAssignment::AcceleratorAssignment(AcceleratorAccess lhs, AcceleratorE
     : AcceleratorAssignment(new AcceleratorAssignmentNode(lhs, rhs, op)) {
 }
 
+AcceleratorAssignment::AcceleratorAssignment(AcceleratorDynamicIndex lhs, AcceleratorExpr rhs, AcceleratorExpr op)
+    : AcceleratorAssignment(new AcceleratorAssignmentNode(lhs, rhs, op)) {
+}
+
 AcceleratorAssignment::AcceleratorAssignment(TensorObject tensor, std::vector<IndexVar> indices, AcceleratorExpr rhs,
              AcceleratorExpr op)
       :  AcceleratorAssignment(AcceleratorAccess(tensor, indices), rhs, op) { 
@@ -809,6 +866,10 @@ AcceleratorAccess TensorObject::operator()(const std::vector<IndexVar>& indices)
   return AcceleratorAccess(new AcceleratorAccessNode(*this, indices, false));
 }
 
+AcceleratorDynamicIndex TensorObject::operator()(const std::vector<IndexObject>& indices){
+   return AcceleratorDynamicIndex(new AcceleratorDynamicIndexNode(*this, indices));
+}
+
 AcceleratorAssignment TensorObject::operator=(AcceleratorExpr expr) {
   taco_uassert(getOrder() == 0)
       << "Must use index variable on the left-hand-side when assigning an "
@@ -854,24 +915,5 @@ bool operator<(const TensorObject& a, const TensorObject& b) {
 std::ostream& operator<<(std::ostream& os, const TensorObject& var){
   return os << var.getName() << " : " << var.getType();
 }
-
-struct DynamicOrder::Content {
-  int min;
-  int max;
-  std::vector<IndexVar> vars;
-};
-
-DynamicOrder::DynamicOrder() : content(new Content) {
-}
-
-void DynamicOrder::setMin(int min){
-  content->min = min;
-}
-
-void DynamicOrder::setMax(int max){
-  content->max = max;
-}
-
-
 
 }

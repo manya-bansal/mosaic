@@ -19,7 +19,7 @@ struct AcceleratorSubNode;
 struct AcceleratorMulNode;
 struct AcceleratorDivNode;
 struct AcceleratorReductionNode;
-struct AcceleratorDynamicIndex;
+struct AcceleratorDynamicIndexNode;
 
 struct AcceleratorBinaryExprNode;
 struct AcceleratorUnaryExprNode;
@@ -42,7 +42,7 @@ class AcceleratorExprVisitorStrict {
         virtual void visit(const AcceleratorDivNode*) = 0;
         virtual void visit(const AcceleratorMulNode*) = 0;
         virtual void visit(const AcceleratorReductionNode*) = 0;
-        virtual void visit(const AcceleratorDynamicIndex*) = 0;
+        virtual void visit(const AcceleratorDynamicIndexNode*) = 0;
 
 };
 
@@ -81,7 +81,7 @@ public:
   virtual void visit(const AcceleratorMulNode*);
   virtual void visit(const AcceleratorDivNode*);
   virtual void visit(const AcceleratorReductionNode*);
-  virtual void visit(const AcceleratorDynamicIndex*);
+  virtual void visit(const AcceleratorDynamicIndexNode*);
 
   virtual void visit(const AcceleratorForallNode*);
   virtual void visit(const AcceleratorAssignmentNode*); 
@@ -143,7 +143,7 @@ private:
   ACCEL_RULE(AcceleratorDivNode)
   ACCEL_RULE(AcceleratorMulNode)
   ACCEL_RULE(AcceleratorReductionNode)
-  ACCEL_RULE(AcceleratorDynamicIndex)
+  ACCEL_RULE(AcceleratorDynamicIndexNode)
 
 
   ACCEL_RULE(AcceleratorForallNode)

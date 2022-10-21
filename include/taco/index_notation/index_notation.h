@@ -1145,6 +1145,11 @@ struct IndexObjectNode : public util::Manageable<IndexObjectNode>{
     IndexObjectNode() {}
     virtual ~IndexObjectNode() = default;
 
+    virtual std::ostream& print(std::ostream& os) const {
+        os << "Printing a Index Object" << std::endl;
+        return os;
+    };
+
 };
 
 class IndexObject : public util::IntrusivePtr<const IndexObjectNode> {
@@ -1160,18 +1165,28 @@ class IndexObject : public util::IntrusivePtr<const IndexObjectNode> {
     const IndexObjectNode* getNode() const {
       return ptr;
     }
+ 
 };
+
+std::ostream& operator<<(std::ostream&, const IndexObject&);
  
 class DynamicOrder : public IndexObjectNode{
   public: 
     DynamicOrder();
     void setMin(int min);
     void setMax(int max);
+    bool hasMin() const;
+    bool hasMax() const;
+    int getMin() const;
+    int getMax() const;
+    std::ostream& print(std::ostream& os) const override;
  
   private:
     struct Content;
     std::shared_ptr<Content> content;
 }; 
+
+std::ostream& operator<<(std::ostream&, const DynamicOrder&);
 
 /// Index variables are used to index into tensors in index expressions, and
 /// they represent iteration over the tensor modes they index into.
@@ -1203,6 +1218,8 @@ public:
   /// Indexing into an IndexVar with a vector returns an index set into it.
   IndexSetVar operator()(std::vector<int>&& indexSet);
   IndexSetVar operator()(std::vector<int>& indexSet);
+
+  std::ostream& print(std::ostream& os) const override;
 
 private:
   struct Content;

@@ -100,7 +100,7 @@ void AcceleratorNotationRewriter::visit(const AcceleratorReductionNode* op){
   }
 }
 
-void AcceleratorNotationRewriter::visit(const AcceleratorDynamicIndex* op){
+void AcceleratorNotationRewriter::visit(const AcceleratorDynamicIndexNode* op){
 }
 
 
