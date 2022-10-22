@@ -10,6 +10,8 @@ namespace taco {
 class AcceleratorExpr;
 class AcceleratorStmt;
 
+class DynamicExpr;
+
 struct AcceleratorAccessNode;
 struct AcceleratorLiteralNode;
 struct AcceleratorNegNode;
@@ -26,6 +28,17 @@ struct AcceleratorUnaryExprNode;
 
 struct AcceleratorAssignmentNode;
 struct AcceleratorForallNode;
+
+struct DynamicIndexIteratorNode;
+struct DynamicIndexAccessNode;
+struct DynamicLiteralNode;
+struct DynamicIndexLenNode;
+struct DynamicIndexMulInternalNode;
+struct DynamicAddNode;
+struct DynamicSubNode;
+struct DynamicMulNode;
+struct DynamicDivNode;
+struct DynamicModNode;
 
 class AcceleratorExprVisitorStrict {
     public:
@@ -89,6 +102,33 @@ public:
   virtual void visit(const AcceleratorBinaryExprNode*);
   virtual void visit(const AcceleratorUnaryExprNode*);
 
+};
+
+class DynamicExprVisitorStrict {
+    public:
+        virtual ~DynamicExprVisitorStrict() = default;
+
+        void visit(const DynamicExpr&);
+
+        virtual void visit(const DynamicIndexIteratorNode*) = 0;
+        virtual void visit(const DynamicIndexAccessNode*) = 0;
+        virtual void visit(const DynamicLiteralNode*) = 0;
+        virtual void visit(const DynamicIndexLenNode*) = 0;
+        virtual void visit(const DynamicIndexMulInternalNode*) = 0;
+        virtual void visit(const DynamicAddNode*) = 0;
+        virtual void visit(const DynamicSubNode*) = 0;
+        virtual void visit(const DynamicMulNode*) = 0;
+        virtual void visit(const DynamicDivNode*) = 0;
+        virtual void visit(const DynamicModNode*) = 0;
+
+};
+
+class DynamicNotationVisitorStrict : public DynamicExprVisitorStrict{
+    public:
+        virtual ~DynamicNotationVisitorStrict() = default;
+
+        using DynamicExprVisitorStrict::visit;
+        // using AcceleratorStmtVisitorStrict::visit;
 };
 
 #define ACCEL_RULE(Rule)                                                       \

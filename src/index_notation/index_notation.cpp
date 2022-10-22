@@ -3030,11 +3030,16 @@ std::ostream& operator<<(std::ostream& os, const IndexObject& op){
 struct DynamicOrder::Content {
   int min;
   int max;
+  std::string name;
 };
 
-DynamicOrder::DynamicOrder() : content(new Content) {
+DynamicOrder::DynamicOrder() : DynamicOrder(util::uniqueName('I')){
+}
+
+DynamicOrder::DynamicOrder(std::string name) : content(new Content) {
   content->min = -1;
   content->max = -1;
+  content->name = name;
 }
 
 void DynamicOrder::setMin(int min){
@@ -3055,12 +3060,28 @@ bool DynamicOrder::hasMax() const{
   return (content->max != -1);
 }
 
+bool DynamicOrder::hasFixedSize() const{
+  if (!hasMin() || !hasMax()){
+    return false;
+  }
+  return getMin() == getMax();
+}
+
 int DynamicOrder::getMin() const{
   return content->min;
 }
 
 int DynamicOrder::getMax() const{
   return content->max;
+}
+
+void DynamicOrder::setSize(int size){
+   content->max = size;
+   content->min = size;
+}
+
+std::string DynamicOrder::getName() const{
+  return content->name;
 }
 
 std::ostream& operator<<(std::ostream& os, const DynamicOrder& op){

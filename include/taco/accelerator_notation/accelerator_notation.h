@@ -49,6 +49,8 @@ struct AcceleratorDynamicIndexNode;
 struct AcceleratorForallNode;
 struct AcceleratorAssignmentNode;
 
+struct DynamicAddNode;
+
 class IndexVar;
 
 
@@ -503,6 +505,48 @@ private:
 };
 
 std::ostream& operator<<(std::ostream&, const TensorObject&);
+
+
+class DynamicExpr : public util::IntrusivePtr<const DynamicExprNode> {
+public:
+  DynamicExpr() : util::IntrusivePtr<const DynamicExprNode>(nullptr) {}
+  DynamicExpr(const DynamicExprNode* n) : util::IntrusivePtr<const DynamicExprNode>(n) {}
+
+  // /// Construct a scalar tensor access.
+  DynamicExpr(int num);
+
+  void accept(DynamicExprVisitorStrict *) const;
+  friend std::ostream& operator<<(std::ostream&, const DynamicExpr&);
+
+};
+
+DynamicExpr operator+(const DynamicExpr&, const DynamicExpr&);
+DynamicExpr operator-(const DynamicExpr&, const DynamicExpr&);
+DynamicExpr operator*(const DynamicExpr&, const DynamicExpr&);
+DynamicExpr operator/(const DynamicExpr&, const DynamicExpr&);
+
+
+/// Return true if the index statement is of the given subtype.  The subtypes
+/// are Assignment, Forall, Where, Sequence, and Multi.
+template <typename SubType> bool isa(DynamicExpr);
+
+/// Casts the index statement to the given subtype. Assumes S is a subtype and
+/// the subtypes are Assignment, Forall, Where, Sequence, and Multi.
+template <typename SubType> SubType to(DynamicExpr);
+
+
+class DynamicAdd : public DynamicExpr {
+public:
+  DynamicAdd();
+  DynamicAdd(const DynamicAddNode*);
+  DynamicAdd(DynamicExpr a, DynamicExpr b);
+
+  DynamicExpr getA() const;
+  DynamicExpr getB() const;
+
+  typedef DynamicAddNode Node;
+};
+
 
 
 }

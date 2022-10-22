@@ -202,6 +202,61 @@ void AcceleratorNotationPrinter::visit(const AcceleratorAssignmentNode* op) {
   op->rhs.accept(this);
 }
 
+DynamicNotationPrinter::DynamicNotationPrinter(std::ostream& os) : os(os){
+}
+
+void DynamicNotationPrinter::print(const DynamicExpr& expr) {
+  expr.accept(this);
+}
+
+void DynamicNotationPrinter::visit(const DynamicIndexIteratorNode*){
+}
+
+void DynamicNotationPrinter::visit(const DynamicIndexAccessNode*){
+}
+
+void DynamicNotationPrinter::visit(const DynamicLiteralNode* op){
+  os << op->num << endl;
+}
+
+void DynamicNotationPrinter::visit(const DynamicIndexLenNode* op){
+  os << "|" << op->dynamicOrder.getName() << "|";
+}
+
+void DynamicNotationPrinter::visit(const DynamicIndexMulInternalNode* op){
+  os << "(*" << op->dynamicOrder.getName() << ")";
+}
+
+void DynamicNotationPrinter::visit(const DynamicAddNode* op){
+  op->a.accept(this);
+  os << "+";
+  op->b.accept(this);
+}
+
+void DynamicNotationPrinter::visit(const DynamicSubNode* op){
+  op->a.accept(this);
+  os << "-";
+  op->b.accept(this);
+}
+
+void DynamicNotationPrinter::visit(const DynamicMulNode* op){
+  op->a.accept(this);
+  os << "*";
+  op->b.accept(this);
+}
+
+void DynamicNotationPrinter::visit(const DynamicDivNode* op){
+  op->a.accept(this);
+  os << "/";
+  op->b.accept(this);
+}
+
+void DynamicNotationPrinter::visit(const DynamicModNode* op){
+  op->a.accept(this);
+  os << "%";
+  op->b.accept(this);
+}
+
 
 
 }

@@ -262,6 +262,16 @@ AcceleratorAssignment AcceleratorAccess::operator+=(const AcceleratorExpr& expr)
   return assignment;
 }
 
+template <> bool isa<AcceleratorAccess>(AcceleratorExpr e) {
+  return isa<AcceleratorAccessNode>(e.ptr);
+}
+
+template <> AcceleratorAccess to<AcceleratorAccess>(AcceleratorExpr e) {
+  taco_iassert(isa<AcceleratorAccess>(e));
+  return AcceleratorAccess(to<AcceleratorAccessNode>(e.ptr));
+}
+
+
 AcceleratorDynamicIndex::AcceleratorDynamicIndex(const AcceleratorDynamicIndexNode* n) : AcceleratorExpr(n){
 }
 AcceleratorDynamicIndex::AcceleratorDynamicIndex(const TensorObject& tensorObject, const std::vector<IndexObject>& indices)
@@ -315,14 +325,15 @@ const std::vector<IndexObject>& AcceleratorDynamicIndex::getIndexObjects() const
    return getNode(*this)->indexObject;
 }
 
-template <> bool isa<AcceleratorAccess>(AcceleratorExpr e) {
-  return isa<AcceleratorAccessNode>(e.ptr);
+template <> bool isa<AcceleratorDynamicIndex>(AcceleratorExpr e) {
+  return isa<AcceleratorDynamicIndexNode>(e.ptr);
 }
 
-template <> AcceleratorAccess to<AcceleratorAccess>(AcceleratorExpr e) {
-  taco_iassert(isa<AcceleratorAccess>(e));
-  return AcceleratorAccess(to<AcceleratorAccessNode>(e.ptr));
+template <> AcceleratorDynamicIndex to<AcceleratorDynamicIndex>(AcceleratorExpr e) {
+  taco_iassert(isa<AcceleratorDynamicIndex>(e));
+  return AcceleratorDynamicIndex(to<AcceleratorDynamicIndexNode>(e.ptr));
 }
+
 
 AcceleratorLiteral::AcceleratorLiteral(const AcceleratorLiteralNode* n) : AcceleratorExpr(n) {
 }
@@ -915,5 +926,57 @@ bool operator<(const TensorObject& a, const TensorObject& b) {
 std::ostream& operator<<(std::ostream& os, const TensorObject& var){
   return os << var.getName() << " : " << var.getType();
 }
+
+
+std::ostream& operator<<(std::ostream& os, const DynamicExpr& expr) {
+  if (!expr.defined()) return os << "DynamicExpr()";
+  DynamicNotationPrinter printer(os);
+  printer.print(expr);
+  return os;
+}
+
+DynamicExpr::DynamicExpr(int val) : DynamicExpr(new DynamicLiteralNode(val)) {
+}
+
+void  DynamicExpr::accept(DynamicExprVisitorStrict *v) const {
+  ptr->accept(v);
+}
+
+DynamicExpr operator+(const DynamicExpr& lhs, const DynamicExpr& rhs) {
+  return new DynamicAddNode(lhs, rhs);
+}
+
+DynamicExpr operator-(const DynamicExpr& lhs, const DynamicExpr& rhs) {
+  return new DynamicSubNode(lhs, rhs);
+}
+
+DynamicExpr operator*(const DynamicExpr& lhs, const DynamicExpr& rhs) {
+  return new DynamicMulNode(lhs, rhs);
+}
+
+DynamicExpr operator/(const DynamicExpr& lhs, const DynamicExpr& rhs) {
+  return new DynamicDivNode(lhs, rhs);
+}
+
+DynamicAdd::DynamicAdd() : DynamicAdd(new DynamicAddNode) {}
+DynamicAdd::DynamicAdd(const DynamicAddNode* n) : DynamicExpr(n){}
+DynamicAdd::DynamicAdd(DynamicExpr a, DynamicExpr b) : DynamicExpr(new DynamicAddNode(a, b)) {}
+
+DynamicExpr DynamicAdd::getA() const{
+  return getNode(*this)->a;
+}
+DynamicExpr DynamicAdd::getB() const{
+  return getNode(*this)->a;
+}
+
+template <> bool isa<DynamicAdd>(DynamicExpr e) {
+  return isa<DynamicAddNode>(e.ptr);
+}
+
+template <> DynamicAdd to<DynamicAdd>(DynamicExpr e) {
+  taco_iassert(isa<DynamicAdd>(e));
+  return DynamicAdd(to<DynamicAddNode>(e.ptr));
+}
+
 
 }

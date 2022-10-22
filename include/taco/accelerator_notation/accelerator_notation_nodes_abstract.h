@@ -16,6 +16,8 @@ class Precompute;
 class AcceleratorExprVisitorStrict;
 class AcceleratorStmtVisitorStrict;
 
+class DynamicExprVisitorStrict;
+
 /// A node of a scalar index expression tree.
 struct AcceleratorExprNode : public util::Manageable<AcceleratorExprNode>,
                        private util::Uncopyable {
@@ -48,6 +50,34 @@ public:
   virtual void accept(AcceleratorStmtVisitorStrict*) const = 0;
 
   Type getType() const;
+
+private:
+  Type type;
+};
+
+struct DynamicExprNode : public util::Manageable<DynamicExprNode>,
+                       private util::Uncopyable {
+public:
+  DynamicExprNode() = default;
+  // DynamicExprNode(Type type);
+  virtual ~DynamicExprNode() = default;
+
+  //TODO: NEED TO DEFINE VISITORS
+  virtual void accept(DynamicExprVisitorStrict*) const = 0;
+
+private:
+  Type type;
+};
+
+struct DynamicStmtNode : public util::Manageable<DynamicStmtNode>,
+                       private util::Uncopyable {
+public:
+  DynamicStmtNode() = default;
+  // DynamicStmtNode(Type type);
+  virtual ~DynamicStmtNode() = default;
+
+  //TODO: NEED TO DEFINE VISITORS
+  // virtual void accept(AcceleratorStmtVisitorStrict*) const = 0
 
 private:
   Type type;

@@ -220,6 +220,127 @@ struct AcceleratorAssignmentNode : public AcceleratorStmtNode {
   AcceleratorExpr op;
 };
 
+struct DynamicIndexIteratorNode : public DynamicExprNode {
+  public:
+    DynamicIndexIteratorNode(const DynamicOrder& dynamicOrder) : dynamicOrder(dynamicOrder) {}
+    void accept(DynamicExprVisitorStrict* v) const override{
+      v->visit(this);
+    }
+    DynamicOrder dynamicOrder;
+};
+
+struct DynamicIndexAccessNode : public DynamicExprNode {
+  public:
+    DynamicIndexAccessNode(const DynamicOrder& dynamicOrder) : dynamicOrder(dynamicOrder) {}
+    void accept(DynamicExprVisitorStrict* v) const override{
+      v->visit(this);
+    }
+    DynamicOrder dynamicOrder;
+};
+
+struct DynamicLiteralNode : public DynamicExprNode {
+  public:
+    DynamicLiteralNode(const int& num) : num(num) {}
+    void accept(DynamicExprVisitorStrict* v) const override{
+      v->visit(this);
+    }
+    int num;
+};
+
+struct DynamicIndexLenNode : public DynamicExprNode {
+  public:
+    DynamicIndexLenNode(const DynamicOrder& dynamicOrder) : dynamicOrder(dynamicOrder) {}
+    void accept(DynamicExprVisitorStrict* v) const override{
+      v->visit(this);
+    }
+    DynamicOrder dynamicOrder;
+};
+
+struct DynamicIndexMulInternalNode : public DynamicExprNode {
+  public:
+    DynamicIndexMulInternalNode(const DynamicOrder& dynamicOrder) : dynamicOrder(dynamicOrder) {}
+    void accept(DynamicExprVisitorStrict* v) const override{
+      v->visit(this);
+    }
+    DynamicOrder dynamicOrder;
+};
+
+struct DynamicBinaryExprNode : public DynamicExprNode {
+  virtual std::string getOperatorString() const = 0;
+
+  DynamicExpr a;
+  DynamicExpr b;
+
+protected:
+  DynamicBinaryExprNode() : DynamicExprNode() {}
+  DynamicBinaryExprNode(DynamicExpr a, DynamicExpr b)
+      : DynamicExprNode(), a(a), b(b) {}
+};
+
+struct DynamicAddNode : public DynamicBinaryExprNode {
+  DynamicAddNode() : DynamicBinaryExprNode() {}
+  DynamicAddNode(DynamicExpr a, DynamicExpr b) : DynamicBinaryExprNode(a, b) {}
+
+  std::string getOperatorString() const override{
+    return "+";
+  }
+
+  void accept(DynamicExprVisitorStrict* v) const override{
+    v->visit(this);
+  }
+};
+
+struct DynamicSubNode : public DynamicBinaryExprNode {
+  DynamicSubNode() : DynamicBinaryExprNode() {}
+  DynamicSubNode(DynamicExpr a, DynamicExpr b) : DynamicBinaryExprNode(a, b) {}
+
+  std::string getOperatorString() const override{
+    return "-";
+  }
+
+  void accept(DynamicExprVisitorStrict* v) const override{
+    v->visit(this);
+  }
+};
+
+struct DynamicMulNode : public DynamicBinaryExprNode {
+  DynamicMulNode() : DynamicBinaryExprNode() {}
+  DynamicMulNode(DynamicExpr a, DynamicExpr b) : DynamicBinaryExprNode(a, b) {}
+
+  std::string getOperatorString() const override{
+    return "*";
+  }
+
+  void accept(DynamicExprVisitorStrict* v) const override{
+    v->visit(this);
+  }
+};
+
+struct DynamicDivNode : public DynamicBinaryExprNode {
+  DynamicDivNode() : DynamicBinaryExprNode() {}
+  DynamicDivNode(DynamicExpr a, DynamicExpr b) : DynamicBinaryExprNode(a, b) {}
+
+  std::string getOperatorString() const override{
+    return "/";
+  }
+
+  void accept(DynamicExprVisitorStrict* v) const override{
+    v->visit(this);
+  }
+};
+
+struct DynamicModNode : public DynamicBinaryExprNode {
+  DynamicModNode() : DynamicBinaryExprNode() {}
+  DynamicModNode(DynamicExpr a, DynamicExpr b) : DynamicBinaryExprNode(a, b) {}
+
+  std::string getOperatorString() const override{
+    return "%";
+  }
+
+  void accept(DynamicExprVisitorStrict* v) const override{
+    v->visit(this);
+  }
+};
 
 /// Returns true if expression e is of type E.
 template <typename E>
@@ -244,6 +365,32 @@ inline bool isa(const AcceleratorStmtNode* s) {
 /// Casts the index statement node s to subtype S.
 template <typename SubType>
 inline const SubType* to(const AcceleratorStmtNode* s) {
+  taco_iassert(isa<SubType>(s)) <<
+      "Cannot convert " << typeid(s).name() << " to " << typeid(SubType).name();
+  return static_cast<const SubType*>(s);
+}
+
+template <typename E>
+inline bool isa(const DynamicExprNode* e) {
+  return e != nullptr && dynamic_cast<const E*>(e) != nullptr;
+}
+
+template <typename E>
+inline const E* to(const DynamicExprNode* e) {
+  taco_iassert(isa<E>(e)) <<
+      "Cannot convert " << typeid(e).name() << " to " << typeid(E).name();
+  return static_cast<const E*>(e);
+}
+
+/// Returns true if statement e is of type S.
+template <typename S>
+inline bool isa(const DynamicStmtNode* s) {
+  return s != nullptr && dynamic_cast<const S*>(s) != nullptr;
+}
+
+/// Casts the index statement node s to subtype S.
+template <typename SubType>
+inline const SubType* to(const DynamicStmtNode* s) {
   taco_iassert(isa<SubType>(s)) <<
       "Cannot convert " << typeid(s).name() << " to " << typeid(SubType).name();
   return static_cast<const SubType*>(s);

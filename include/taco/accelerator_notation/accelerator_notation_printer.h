@@ -52,5 +52,29 @@ private:
   template <typename Node> void visitImmediate(Node op);
 };
 
+class DynamicNotationPrinter : public DynamicNotationVisitorStrict {
+public:
+  DynamicNotationPrinter(std::ostream& os);
+
+  void print(const DynamicExpr& expr);
+  // void print(const AcceleratorStmt& expr);
+
+  using DynamicNotationVisitorStrict::visit;
+
+  void visit(const DynamicIndexIteratorNode*);
+  void visit(const DynamicIndexAccessNode*);
+  void visit(const DynamicLiteralNode*);
+  void visit(const DynamicIndexLenNode*);
+  void visit(const DynamicIndexMulInternalNode*);
+  void visit(const DynamicAddNode*);
+  void visit(const DynamicSubNode*);
+  void visit(const DynamicMulNode*);
+  void visit(const DynamicDivNode*);
+  void visit(const DynamicModNode*);
+
+private:
+  std::ostream& os;
+};
+
 }
 #endif

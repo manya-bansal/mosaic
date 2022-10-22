@@ -1173,12 +1173,16 @@ std::ostream& operator<<(std::ostream&, const IndexObject&);
 class DynamicOrder : public IndexObjectNode{
   public: 
     DynamicOrder();
+    explicit DynamicOrder(std::string name);
     void setMin(int min);
     void setMax(int max);
+    void setSize(int size);
     bool hasMin() const;
     bool hasMax() const;
+    bool hasFixedSize() const;
     int getMin() const;
     int getMax() const;
+    std::string getName() const;
     std::ostream& print(std::ostream& os) const override;
  
   private:
