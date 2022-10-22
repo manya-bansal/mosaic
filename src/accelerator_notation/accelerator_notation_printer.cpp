@@ -209,7 +209,8 @@ void DynamicNotationPrinter::print(const DynamicExpr& expr) {
   expr.accept(this);
 }
 
-void DynamicNotationPrinter::visit(const DynamicIndexIteratorNode*){
+void DynamicNotationPrinter::visit(const DynamicIndexIteratorNode* op){
+   os << "iterate(" << op->dynamicOrder.getName() << ")";
 }
 
 void DynamicNotationPrinter::visit(const DynamicIndexAccessNode*){

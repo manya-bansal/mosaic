@@ -49,7 +49,13 @@ struct AcceleratorDynamicIndexNode;
 struct AcceleratorForallNode;
 struct AcceleratorAssignmentNode;
 
+struct DynamicLiteralNode;
+struct DynamicIndexIteratorNode;
 struct DynamicAddNode;
+struct DynamicMulNode;
+struct DynamicDivNode;
+struct DynamicSubNode;
+struct DynamicModNode;
 
 class IndexVar;
 
@@ -512,8 +518,8 @@ public:
   DynamicExpr() : util::IntrusivePtr<const DynamicExprNode>(nullptr) {}
   DynamicExpr(const DynamicExprNode* n) : util::IntrusivePtr<const DynamicExprNode>(n) {}
 
-  // /// Construct a scalar tensor access.
   DynamicExpr(int num);
+  // DynamicExpr(int num);
 
   void accept(DynamicExprVisitorStrict *) const;
   friend std::ostream& operator<<(std::ostream&, const DynamicExpr&);
@@ -535,6 +541,26 @@ template <typename SubType> bool isa(DynamicExpr);
 template <typename SubType> SubType to(DynamicExpr);
 
 
+class DynamicIndexIterator : public DynamicExpr {
+public:
+  DynamicIndexIterator();
+  DynamicIndexIterator(const DynamicIndexIteratorNode*);
+  DynamicIndexIterator(DynamicOrder dynamicOrder);
+
+  DynamicOrder getDynamicOrder() const;
+  typedef DynamicIndexIteratorNode Node;
+};
+
+class DynamicLiteral : public DynamicExpr {
+public:
+  DynamicLiteral();
+  DynamicLiteral(const DynamicLiteralNode*);
+  DynamicLiteral(int num);
+
+  int getVal() const;
+  typedef DynamicLiteralNode Node;
+};
+
 class DynamicAdd : public DynamicExpr {
 public:
   DynamicAdd();
@@ -545,6 +571,54 @@ public:
   DynamicExpr getB() const;
 
   typedef DynamicAddNode Node;
+};
+
+class DynamicMul : public DynamicExpr {
+public:
+  DynamicMul();
+  DynamicMul(const DynamicMulNode*);
+  DynamicMul(DynamicExpr a, DynamicExpr b);
+
+  DynamicExpr getA() const;
+  DynamicExpr getB() const;
+
+  typedef DynamicMulNode Node;
+};
+
+class DynamicDiv : public DynamicExpr {
+public:
+  DynamicDiv();
+  DynamicDiv(const DynamicDivNode*);
+  DynamicDiv(DynamicExpr a, DynamicExpr b);
+
+  DynamicExpr getA() const;
+  DynamicExpr getB() const;
+
+  typedef DynamicDivNode Node;
+};
+
+class DynamicMod : public DynamicExpr {
+public:
+  DynamicMod();
+  DynamicMod(const DynamicModNode*);
+  DynamicMod(DynamicExpr a, DynamicExpr b);
+
+  DynamicExpr getA() const;
+  DynamicExpr getB() const;
+
+  typedef DynamicModNode Node;
+};
+
+class DynamicSub : public DynamicExpr {
+public:
+  DynamicSub();
+  DynamicSub(const DynamicSubNode*);
+  DynamicSub(DynamicExpr a, DynamicExpr b);
+
+  DynamicExpr getA() const;
+  DynamicExpr getB() const;
+
+  typedef DynamicSubNode Node;
 };
 
 

@@ -958,6 +958,31 @@ DynamicExpr operator/(const DynamicExpr& lhs, const DynamicExpr& rhs) {
   return new DynamicDivNode(lhs, rhs);
 }
 
+DynamicIndexIterator::DynamicIndexIterator() :  DynamicIndexIterator(new DynamicIndexIteratorNode) {}
+DynamicIndexIterator::DynamicIndexIterator(const DynamicIndexIteratorNode* n) : DynamicExpr(n){}
+DynamicIndexIterator::DynamicIndexIterator(DynamicOrder dynamicOrder) : DynamicExpr(new DynamicIndexIteratorNode(dynamicOrder)) {}
+
+DynamicOrder DynamicIndexIterator::getDynamicOrder() const{
+   return  getNode(*this)->dynamicOrder;
+}
+
+DynamicLiteral::DynamicLiteral() : DynamicLiteral(new DynamicLiteralNode) {}
+DynamicLiteral::DynamicLiteral(const DynamicLiteralNode* n) : DynamicExpr(n){}
+DynamicLiteral::DynamicLiteral(int num) : DynamicExpr(new DynamicLiteralNode(num)) {}
+
+int DynamicLiteral::getVal() const{
+  return  getNode(*this)->num;
+}
+
+template <> bool isa<DynamicLiteral>(DynamicExpr e) {
+  return isa<DynamicLiteralNode>(e.ptr);
+}
+
+template <> DynamicLiteral to<DynamicLiteral>(DynamicExpr e) {
+  taco_iassert(isa<DynamicLiteral>(e));
+  return DynamicLiteral(to<DynamicLiteralNode>(e.ptr));
+}
+
 DynamicAdd::DynamicAdd() : DynamicAdd(new DynamicAddNode) {}
 DynamicAdd::DynamicAdd(const DynamicAddNode* n) : DynamicExpr(n){}
 DynamicAdd::DynamicAdd(DynamicExpr a, DynamicExpr b) : DynamicExpr(new DynamicAddNode(a, b)) {}
@@ -976,6 +1001,87 @@ template <> bool isa<DynamicAdd>(DynamicExpr e) {
 template <> DynamicAdd to<DynamicAdd>(DynamicExpr e) {
   taco_iassert(isa<DynamicAdd>(e));
   return DynamicAdd(to<DynamicAddNode>(e.ptr));
+}
+
+
+DynamicMul::DynamicMul() : DynamicMul(new DynamicMulNode) {}
+DynamicMul::DynamicMul(const DynamicMulNode* n) : DynamicExpr(n){}
+DynamicMul::DynamicMul(DynamicExpr a, DynamicExpr b) : DynamicExpr(new DynamicMulNode(a, b)) {}
+
+DynamicExpr DynamicMul::getA() const{
+  return getNode(*this)->a;
+}
+DynamicExpr DynamicMul::getB() const{
+  return getNode(*this)->a;
+}
+
+template <> bool isa<DynamicMul>(DynamicExpr e) {
+  return isa<DynamicMulNode>(e.ptr);
+}
+
+template <> DynamicMul to<DynamicMul>(DynamicExpr e) {
+  taco_iassert(isa<DynamicMul>(e));
+  return DynamicMul(to<DynamicMulNode>(e.ptr));
+}
+
+DynamicDiv::DynamicDiv() : DynamicDiv(new DynamicDivNode) {}
+DynamicDiv::DynamicDiv(const DynamicDivNode* n) : DynamicExpr(n){}
+DynamicDiv::DynamicDiv(DynamicExpr a, DynamicExpr b) : DynamicExpr(new DynamicDivNode(a, b)) {}
+
+DynamicExpr DynamicDiv::getA() const{
+  return getNode(*this)->a;
+}
+DynamicExpr DynamicDiv::getB() const{
+  return getNode(*this)->a;
+}
+
+template <> bool isa<DynamicDiv>(DynamicExpr e) {
+  return isa<DynamicDivNode>(e.ptr);
+}
+
+template <> DynamicDiv to<DynamicDiv>(DynamicExpr e) {
+  taco_iassert(isa<DynamicDiv>(e));
+  return DynamicDiv(to<DynamicDivNode>(e.ptr));
+}
+
+DynamicMod::DynamicMod() : DynamicMod(new DynamicModNode) {}
+DynamicMod::DynamicMod(const DynamicModNode* n) : DynamicExpr(n){}
+DynamicMod::DynamicMod(DynamicExpr a, DynamicExpr b) : DynamicExpr(new DynamicModNode(a, b)) {}
+
+DynamicExpr DynamicMod::getA() const{
+  return getNode(*this)->a;
+}
+DynamicExpr DynamicMod::getB() const{
+  return getNode(*this)->a;
+}
+
+template <> bool isa<DynamicMod>(DynamicExpr e) {
+  return isa<DynamicModNode>(e.ptr);
+}
+
+template <> DynamicMod to<DynamicMod>(DynamicExpr e) {
+  taco_iassert(isa<DynamicMod>(e));
+  return DynamicMod(to<DynamicModNode>(e.ptr));
+}
+
+DynamicSub::DynamicSub() : DynamicSub(new DynamicSubNode) {}
+DynamicSub::DynamicSub(const DynamicSubNode* n) : DynamicExpr(n){}
+DynamicSub::DynamicSub(DynamicExpr a, DynamicExpr b) : DynamicExpr(new DynamicSubNode(a, b)) {}
+
+DynamicExpr DynamicSub::getA() const{
+  return getNode(*this)->a;
+}
+DynamicExpr DynamicSub::getB() const{
+  return getNode(*this)->a;
+}
+
+template <> bool isa<DynamicSub>(DynamicExpr e) {
+  return isa<DynamicSubNode>(e.ptr);
+}
+
+template <> DynamicSub to<DynamicSub>(DynamicExpr e) {
+  taco_iassert(isa<DynamicSub>(e));
+  return DynamicSub(to<DynamicSubNode>(e.ptr));
 }
 
 

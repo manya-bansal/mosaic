@@ -43,7 +43,9 @@ TEST(accelerateNotation, AcceleratorExprTest) {
 
     std::cout << sum(i, x(i)*t(i)) + 5 << endl;
     std::vector<IndexObject> incides = {new DynamicOrder(), new IndexVar(i)};
-    std::cout << x(incides) + x(incides) +x(i) << endl;
+    DynamicIndexIterator interator((DynamicOrder()));
+
+    std::cout << interator + 1 << endl;
 
 }
 

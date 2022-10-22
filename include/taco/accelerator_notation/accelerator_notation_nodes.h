@@ -222,6 +222,7 @@ struct AcceleratorAssignmentNode : public AcceleratorStmtNode {
 
 struct DynamicIndexIteratorNode : public DynamicExprNode {
   public:
+    DynamicIndexIteratorNode() :  DynamicExprNode() {}
     DynamicIndexIteratorNode(const DynamicOrder& dynamicOrder) : dynamicOrder(dynamicOrder) {}
     void accept(DynamicExprVisitorStrict* v) const override{
       v->visit(this);
@@ -240,6 +241,7 @@ struct DynamicIndexAccessNode : public DynamicExprNode {
 
 struct DynamicLiteralNode : public DynamicExprNode {
   public:
+    DynamicLiteralNode() : DynamicExprNode() {}
     DynamicLiteralNode(const int& num) : num(num) {}
     void accept(DynamicExprVisitorStrict* v) const override{
       v->visit(this);
