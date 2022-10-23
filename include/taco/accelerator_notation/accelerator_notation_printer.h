@@ -57,7 +57,7 @@ public:
   DynamicNotationPrinter(std::ostream& os);
 
   void print(const DynamicExpr& expr);
-  // void print(const AcceleratorStmt& expr);
+  void print(const DynamicStmt& expr);
 
   using DynamicNotationVisitorStrict::visit;
 
@@ -71,6 +71,15 @@ public:
   void visit(const DynamicMulNode*);
   void visit(const DynamicDivNode*);
   void visit(const DynamicModNode*);
+
+  void visit(const DynamicEqualNode*);
+  void visit(const DynamicNotEqualNode*);
+  void visit(const DynamicGreaterNode*);
+  void visit(const DynamicLessNode*);
+  void visit(const DynamicLeqNode*);
+  void visit(const DynamicGeqNode*);
+  void visit(const DynamicForallNode*);
+  void visit(const DynamicExistsNode*);
 
 private:
   std::ostream& os;

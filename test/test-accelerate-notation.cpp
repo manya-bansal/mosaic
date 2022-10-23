@@ -43,9 +43,23 @@ TEST(accelerateNotation, AcceleratorExprTest) {
 
     std::cout << sum(i, x(i)*t(i)) + 5 << endl;
     std::vector<IndexObject> incides = {new DynamicOrder(), new IndexVar(i)};
-    DynamicIndexIterator interator((DynamicOrder()));
 
-    std::cout << interator + 1 << endl;
+    DynamicOrder dynamicOrder;
+    DynamicIndexIterator interator(dynamicOrder);
+    DynamicIndexIterator interator2(dynamicOrder);
+    
+
+    std::cout << (interator == (dynamicOrder(interator) + 1)) << endl;
+    std::cout << (dynamicOrder(interator) == dynamicOrder(interator)) << endl;
+    std::cout << (interator != interator) << endl;
+    std::cout << (interator > interator) << endl;
+    std::cout << (interator > (dynamicOrder(interator) + 1)) << endl;
+    std::cout << (interator < (dynamicOrder(interator) + 1)) << endl;
+    std::cout << (interator <= (dynamicOrder(interator) + 1)) << endl;
+    std::cout << (interator >= (dynamicOrder(interator) + 1)) << endl;
+    std::cout << forall(interator, (interator >= (dynamicOrder(interator) + 1))) << endl;
+    std::cout << exists(interator, (interator >= (dynamicOrder(interator) + 1))) << endl;
+    std::cout << forall(interator2, exists(interator, (interator >= (dynamicOrder(interator) + 1)))) << endl;
 
 }
 

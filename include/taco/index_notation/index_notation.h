@@ -82,6 +82,8 @@ class IndexExprVisitorStrict;
 class IndexStmtVisitorStrict;
 
 class AcceleratorDescription;
+class DynamicIndexAccess;
+class DynamicIndexIterator;
 
 /// Return true if the index statement is of the given subtype.  The subtypes
 /// are Assignment, Forall, Where, Sequence, and Multi.
@@ -1184,6 +1186,8 @@ class DynamicOrder : public IndexObjectNode{
     int getMax() const;
     std::string getName() const;
     std::ostream& print(std::ostream& os) const override;
+
+    DynamicIndexAccess operator()(const DynamicIndexIterator &index);
  
   private:
     struct Content;

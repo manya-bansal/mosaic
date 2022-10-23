@@ -11,6 +11,7 @@ class AcceleratorExpr;
 class AcceleratorStmt;
 
 class DynamicExpr;
+class DynamicStmt;
 
 struct AcceleratorAccessNode;
 struct AcceleratorLiteralNode;
@@ -39,6 +40,15 @@ struct DynamicSubNode;
 struct DynamicMulNode;
 struct DynamicDivNode;
 struct DynamicModNode;
+
+struct DynamicEqualNode;
+struct DynamicNotEqualNode;
+struct DynamicGreaterNode;
+struct DynamicLessNode;
+struct DynamicGeqNode;
+struct DynamicLeqNode;
+struct DynamicForallNode;
+struct DynamicExistsNode;
 
 class AcceleratorExprVisitorStrict {
     public:
@@ -123,12 +133,29 @@ class DynamicExprVisitorStrict {
 
 };
 
-class DynamicNotationVisitorStrict : public DynamicExprVisitorStrict{
+class DynamicStmtVisitorStrict {
+    public:
+        virtual ~DynamicStmtVisitorStrict() = default;
+
+        void visit(const DynamicStmt&);
+
+        virtual void visit(const DynamicEqualNode*) = 0;
+        virtual void visit(const DynamicNotEqualNode*) = 0;
+        virtual void visit(const DynamicGreaterNode*) = 0;
+        virtual void visit(const DynamicLessNode*) = 0;
+        virtual void visit(const DynamicGeqNode*) = 0;
+        virtual void visit(const DynamicLeqNode*) = 0;
+        virtual void visit(const DynamicForallNode*) = 0;
+        virtual void visit(const DynamicExistsNode*) = 0;
+};
+
+class DynamicNotationVisitorStrict : public DynamicExprVisitorStrict,
+                                     public DynamicStmtVisitorStrict{
     public:
         virtual ~DynamicNotationVisitorStrict() = default;
 
         using DynamicExprVisitorStrict::visit;
-        // using AcceleratorStmtVisitorStrict::visit;
+        using DynamicStmtVisitorStrict::visit;
 };
 
 #define ACCEL_RULE(Rule)                                                       \

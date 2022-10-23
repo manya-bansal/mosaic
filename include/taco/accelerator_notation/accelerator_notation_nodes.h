@@ -232,6 +232,7 @@ struct DynamicIndexIteratorNode : public DynamicExprNode {
 
 struct DynamicIndexAccessNode : public DynamicExprNode {
   public:
+    DynamicIndexAccessNode() :  DynamicExprNode() {}
     DynamicIndexAccessNode(const DynamicOrder& dynamicOrder) : dynamicOrder(dynamicOrder) {}
     void accept(DynamicExprVisitorStrict* v) const override{
       v->visit(this);
@@ -251,6 +252,7 @@ struct DynamicLiteralNode : public DynamicExprNode {
 
 struct DynamicIndexLenNode : public DynamicExprNode {
   public:
+    DynamicIndexLenNode() : DynamicExprNode() {}
     DynamicIndexLenNode(const DynamicOrder& dynamicOrder) : dynamicOrder(dynamicOrder) {}
     void accept(DynamicExprVisitorStrict* v) const override{
       v->visit(this);
@@ -260,6 +262,7 @@ struct DynamicIndexLenNode : public DynamicExprNode {
 
 struct DynamicIndexMulInternalNode : public DynamicExprNode {
   public:
+    DynamicIndexMulInternalNode() : DynamicExprNode() {}
     DynamicIndexMulInternalNode(const DynamicOrder& dynamicOrder) : dynamicOrder(dynamicOrder) {}
     void accept(DynamicExprVisitorStrict* v) const override{
       v->visit(this);
@@ -340,6 +343,102 @@ struct DynamicModNode : public DynamicBinaryExprNode {
   }
 
   void accept(DynamicExprVisitorStrict* v) const override{
+    v->visit(this);
+  }
+};
+
+struct DynamicEqualNode : public DynamicStmtNode {
+  DynamicEqualNode() : DynamicStmtNode() {}
+  DynamicEqualNode(DynamicExpr a, DynamicExpr b) : a(a), b(b) {}
+
+  DynamicExpr a;
+  DynamicExpr b;
+
+  void accept(DynamicStmtVisitorStrict* v) const override{
+    v->visit(this);
+  }
+};
+
+struct DynamicNotEqualNode : public DynamicStmtNode {
+  DynamicNotEqualNode() : DynamicStmtNode() {}
+  DynamicNotEqualNode(DynamicExpr a, DynamicExpr b) : a(a), b(b) {}
+
+  DynamicExpr a;
+  DynamicExpr b;
+
+  void accept(DynamicStmtVisitorStrict* v) const override{
+    v->visit(this);
+  }
+};
+
+struct DynamicGreaterNode : public DynamicStmtNode {
+  DynamicGreaterNode() : DynamicStmtNode() {}
+  DynamicGreaterNode(DynamicExpr a, DynamicExpr b) : a(a), b(b) {}
+
+  DynamicExpr a;
+  DynamicExpr b;
+
+  void accept(DynamicStmtVisitorStrict* v) const override{
+    v->visit(this);
+  }
+};
+
+struct DynamicLessNode : public DynamicStmtNode {
+  DynamicLessNode() : DynamicStmtNode() {}
+  DynamicLessNode(DynamicExpr a, DynamicExpr b) : a(a), b(b) {}
+
+  DynamicExpr a;
+  DynamicExpr b;
+
+  void accept(DynamicStmtVisitorStrict* v) const override{
+    v->visit(this);
+  }
+};
+
+struct DynamicGeqNode : public DynamicStmtNode {
+  DynamicGeqNode() : DynamicStmtNode() {}
+  DynamicGeqNode(DynamicExpr a, DynamicExpr b) : a(a), b(b) {}
+
+  DynamicExpr a;
+  DynamicExpr b;
+
+  void accept(DynamicStmtVisitorStrict* v) const override{
+    v->visit(this);
+  }
+};
+
+struct DynamicLeqNode : public DynamicStmtNode {
+  DynamicLeqNode() : DynamicStmtNode() {}
+  DynamicLeqNode(DynamicExpr a, DynamicExpr b) : a(a), b(b) {}
+
+  DynamicExpr a;
+  DynamicExpr b;
+
+  void accept(DynamicStmtVisitorStrict* v) const override{
+    v->visit(this);
+  }
+};
+
+struct DynamicForallNode : public DynamicStmtNode {
+  DynamicForallNode() : DynamicStmtNode() {}
+  DynamicForallNode(DynamicIndexIterator it, DynamicStmt stmt) : it(it), stmt(stmt) {}
+  
+  DynamicIndexIterator it; 
+  DynamicStmt stmt;
+
+  void accept(DynamicStmtVisitorStrict* v) const override{
+    v->visit(this);
+  }
+};
+
+struct DynamicExistsNode : public DynamicStmtNode {
+  DynamicExistsNode() : DynamicStmtNode() {}
+  DynamicExistsNode(DynamicIndexIterator it, DynamicStmt stmt) : it(it), stmt(stmt) {}
+  
+  DynamicIndexIterator it; 
+  DynamicStmt stmt;
+
+  void accept(DynamicStmtVisitorStrict* v) const override{
     v->visit(this);
   }
 };

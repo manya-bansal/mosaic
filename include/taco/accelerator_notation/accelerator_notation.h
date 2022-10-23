@@ -32,6 +32,7 @@ namespace taco {
 
 class AcceleratorExprVisitorStrict;
 class AcceleratorStmtVisitorStrict;
+
 class AcceleratorAssignment;
 class TensorObject;
 
@@ -51,11 +52,25 @@ struct AcceleratorAssignmentNode;
 
 struct DynamicLiteralNode;
 struct DynamicIndexIteratorNode;
+struct DynamicIndexMulInternalNode;
+struct DynamicIndexAccessNode;
+struct DynamicIndexLenNode;
 struct DynamicAddNode;
 struct DynamicMulNode;
 struct DynamicDivNode;
 struct DynamicSubNode;
 struct DynamicModNode;
+
+struct DynamicEqualNode;
+struct DynamicNotEqualNode;
+struct DynamicGreaterNode;
+struct DynamicLessNode;
+struct DynamicGeqNode;
+struct DynamicLeqNode;
+struct DynamicForallNode;
+struct DynamicExistsNode;
+
+class DynamicStmtVisitorStrict;
 
 class IndexVar;
 
@@ -532,20 +547,38 @@ DynamicExpr operator*(const DynamicExpr&, const DynamicExpr&);
 DynamicExpr operator/(const DynamicExpr&, const DynamicExpr&);
 
 
-/// Return true if the index statement is of the given subtype.  The subtypes
-/// are Assignment, Forall, Where, Sequence, and Multi.
 template <typename SubType> bool isa(DynamicExpr);
-
-/// Casts the index statement to the given subtype. Assumes S is a subtype and
-/// the subtypes are Assignment, Forall, Where, Sequence, and Multi.
 template <typename SubType> SubType to(DynamicExpr);
 
+class DynamicStmt : public util::IntrusivePtr<const DynamicStmtNode> {
+public:
+  DynamicStmt() : util::IntrusivePtr<const DynamicStmtNode>(nullptr) {}
+  DynamicStmt(const DynamicStmtNode* n) : util::IntrusivePtr<const DynamicStmtNode>(n) {}
+
+  void accept(DynamicStmtVisitorStrict *) const;
+  friend std::ostream& operator<<(std::ostream&, const DynamicStmt&);
+
+};
+
+template <typename SubType> bool isa(DynamicStmt);
+template <typename SubType> SubType to(DynamicStmt);
+
+DynamicStmt operator==(const DynamicExpr&, const DynamicExpr&);
+DynamicStmt operator!=(const DynamicExpr&, const DynamicExpr&);
+DynamicStmt operator>(const DynamicExpr&, const DynamicExpr&);
+DynamicStmt operator<(const DynamicExpr&, const DynamicExpr&);
+DynamicStmt operator<=(const DynamicExpr&, const DynamicExpr&);
+DynamicStmt operator>=(const DynamicExpr&, const DynamicExpr&);
+
+DynamicStmt forall(const DynamicIndexIterator&, const DynamicStmt&);
+DynamicStmt exists(const DynamicIndexIterator&, const DynamicStmt&);
 
 class DynamicIndexIterator : public DynamicExpr {
 public:
   DynamicIndexIterator();
   DynamicIndexIterator(const DynamicIndexIteratorNode*);
   DynamicIndexIterator(DynamicOrder dynamicOrder);
+  const DynamicOrder * getDynamicOrderPtr() const;
 
   DynamicOrder getDynamicOrder() const;
   typedef DynamicIndexIteratorNode Node;
@@ -559,6 +592,36 @@ public:
 
   int getVal() const;
   typedef DynamicLiteralNode Node;
+};
+
+class DynamicIndexAccess : public DynamicExpr{
+public:
+  DynamicIndexAccess();
+  DynamicIndexAccess(const DynamicIndexAccessNode*);
+  DynamicIndexAccess(DynamicOrder dynamicOrder);
+
+  DynamicOrder getDynamicOrder() const;
+  typedef DynamicIndexAccessNode Node;
+};
+
+class DynamicIndexMulInternal : public DynamicExpr {
+  public: 
+    DynamicIndexMulInternal();
+    DynamicIndexMulInternal(const DynamicIndexMulInternalNode*);
+    DynamicIndexMulInternal(DynamicOrder dynamicOrder);
+
+    DynamicOrder getDynamicOrder() const;
+    typedef DynamicIndexMulInternalNode Node;
+};
+
+class DynamicIndexLen : public DynamicExpr {
+  public: 
+    DynamicIndexLen();
+    DynamicIndexLen(const DynamicIndexLenNode*);
+    DynamicIndexLen(DynamicOrder dynamicOrder);
+
+    DynamicOrder getDynamicOrder() const;
+    typedef DynamicIndexLenNode Node;
 };
 
 class DynamicAdd : public DynamicExpr {
@@ -621,6 +684,109 @@ public:
   typedef DynamicSubNode Node;
 };
 
+struct DynamicEqual : public DynamicStmt {
+  public:
+    DynamicEqual();
+    DynamicEqual(const DynamicEqualNode*);
+    DynamicEqual(DynamicExpr a, DynamicExpr b);
+
+    DynamicExpr getA() const;
+    DynamicExpr getB() const;
+
+    typedef DynamicEqualNode Node;
+
+};
+
+struct DynamicNotEqual : public DynamicStmt {
+  public:
+    DynamicNotEqual();
+    DynamicNotEqual(const DynamicNotEqualNode*);
+    DynamicNotEqual(DynamicExpr a, DynamicExpr b);
+
+    DynamicExpr getA() const;
+    DynamicExpr getB() const;
+
+    typedef DynamicNotEqualNode Node;
+
+};
+
+struct DynamicGreater : public DynamicStmt {
+  public:
+    DynamicGreater();
+    DynamicGreater(const DynamicGreaterNode*);
+    DynamicGreater(DynamicExpr a, DynamicExpr b);
+
+    DynamicExpr getA() const;
+    DynamicExpr getB() const;
+
+    typedef DynamicGreaterNode Node;
+
+};
+
+struct DynamicLess: public DynamicStmt {
+  public:
+    DynamicLess();
+    DynamicLess(const DynamicLessNode*);
+    DynamicLess(DynamicExpr a, DynamicExpr b);
+
+    DynamicExpr getA() const;
+    DynamicExpr getB() const;
+
+    typedef DynamicLessNode Node;
+
+};
+
+struct DynamicGeq: public DynamicStmt {
+  public:
+    DynamicGeq();
+    DynamicGeq(const DynamicGeqNode*);
+    DynamicGeq(DynamicExpr a, DynamicExpr b);
+
+    DynamicExpr getA() const;
+    DynamicExpr getB() const;
+
+    typedef DynamicGeqNode Node;
+
+};
+
+struct DynamicLeq: public DynamicStmt {
+  public:
+    DynamicLeq();
+    DynamicLeq(const DynamicLeqNode*);
+    DynamicLeq(DynamicExpr a, DynamicExpr b);
+
+    DynamicExpr getA() const;
+    DynamicExpr getB() const;
+
+    typedef DynamicLeqNode Node;
+
+};
+
+struct DynamicForall: public DynamicStmt {
+  public:
+    DynamicForall();
+    DynamicForall(const DynamicForallNode*);
+    DynamicForall(DynamicIndexIterator it, DynamicStmt stmt);
+
+    DynamicIndexIterator getIterator() const;
+    DynamicStmt getStmt() const;
+
+    typedef DynamicForallNode Node;
+
+};
+
+struct DynamicExists: public DynamicStmt {
+  public:
+    DynamicExists();
+    DynamicExists(const DynamicExistsNode*);
+    DynamicExists(DynamicIndexIterator it, DynamicStmt stmt);
+
+    DynamicIndexIterator getIterator() const;
+    DynamicStmt getStmt() const;
+
+    typedef DynamicExistsNode Node;
+
+};
 
 
 }

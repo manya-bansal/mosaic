@@ -17,6 +17,7 @@ class AcceleratorExprVisitorStrict;
 class AcceleratorStmtVisitorStrict;
 
 class DynamicExprVisitorStrict;
+class DynamicStmtVisitorStrict;
 
 /// A node of a scalar index expression tree.
 struct AcceleratorExprNode : public util::Manageable<AcceleratorExprNode>,
@@ -77,7 +78,7 @@ public:
   virtual ~DynamicStmtNode() = default;
 
   //TODO: NEED TO DEFINE VISITORS
-  // virtual void accept(AcceleratorStmtVisitorStrict*) const = 0
+  virtual void accept(DynamicStmtVisitorStrict*) const = 0;
 
 private:
   Type type;

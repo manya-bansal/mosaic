@@ -67,5 +67,14 @@ void AcceleratorNotationVisitor::visit(const AcceleratorForallNode* op) {
   op->stmt.accept(this);
 }
 
+void DynamicExprVisitorStrict::visit(const DynamicExpr& expr){
+  expr.accept(this);
+}
+
+void DynamicStmtVisitorStrict::visit(const DynamicStmt& stmt){
+  stmt.accept(this);
+}
+
+
 
 }

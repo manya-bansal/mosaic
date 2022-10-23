@@ -209,15 +209,20 @@ void DynamicNotationPrinter::print(const DynamicExpr& expr) {
   expr.accept(this);
 }
 
+void DynamicNotationPrinter::print(const DynamicStmt& expr) {
+  expr.accept(this);
+}
+
 void DynamicNotationPrinter::visit(const DynamicIndexIteratorNode* op){
    os << "iterate(" << op->dynamicOrder.getName() << ")";
 }
 
-void DynamicNotationPrinter::visit(const DynamicIndexAccessNode*){
+void DynamicNotationPrinter::visit(const DynamicIndexAccessNode* op){
+   os << op->dynamicOrder.getName() << "(" << "access" <<")";
 }
 
 void DynamicNotationPrinter::visit(const DynamicLiteralNode* op){
-  os << op->num << endl;
+  os << op->num;
 }
 
 void DynamicNotationPrinter::visit(const DynamicIndexLenNode* op){
@@ -258,6 +263,54 @@ void DynamicNotationPrinter::visit(const DynamicModNode* op){
   op->b.accept(this);
 }
 
+void DynamicNotationPrinter::visit(const DynamicEqualNode* op){
+  op->a.accept(this);
+  os << "==";
+  op->b.accept(this);
+}
 
+void DynamicNotationPrinter::visit(const DynamicNotEqualNode* op){
+  op->a.accept(this);
+  os << "!=";
+  op->b.accept(this);
+}
+
+void DynamicNotationPrinter::visit(const DynamicGreaterNode* op){
+  op->a.accept(this);
+  os << ">";
+  op->b.accept(this);
+}
+
+void DynamicNotationPrinter::visit(const DynamicLessNode* op){
+  op->a.accept(this);
+  os << "<";
+  op->b.accept(this);
+}
+
+void DynamicNotationPrinter::visit(const DynamicGeqNode* op){
+  op->a.accept(this);
+  os << ">=";
+  op->b.accept(this);
+}
+
+void DynamicNotationPrinter::visit(const DynamicLeqNode* op){
+  op->a.accept(this);
+  os << "<=";
+  op->b.accept(this);
+}
+
+void DynamicNotationPrinter::visit(const DynamicForallNode* op){
+  os << "forall(";
+  os << op->it << ", ";
+  op->stmt.accept(this);
+  os << ")";
+}
+
+void DynamicNotationPrinter::visit(const DynamicExistsNode* op){
+  os << "exists(";
+  os << op->it << ", ";
+  op->stmt.accept(this);
+  os << ")";
+}
 
 }

@@ -958,12 +958,68 @@ DynamicExpr operator/(const DynamicExpr& lhs, const DynamicExpr& rhs) {
   return new DynamicDivNode(lhs, rhs);
 }
 
+void  DynamicStmt::accept(DynamicStmtVisitorStrict *v) const {
+  ptr->accept(v);
+}
+
+std::ostream& operator<<(std::ostream& os, const DynamicStmt& expr) {
+  if (!expr.defined()) return os << "DynamicStmt()";
+  DynamicNotationPrinter printer(os);
+  printer.print(expr);
+  return os;
+}
+
+DynamicStmt operator==(const DynamicExpr& a, const DynamicExpr& b){
+  return DynamicEqual(a, b);
+}
+
+DynamicStmt operator!=(const DynamicExpr& a, const DynamicExpr& b){
+  return DynamicNotEqual(a, b);
+}
+
+DynamicStmt operator>(const DynamicExpr& a, const DynamicExpr& b){
+  return DynamicGreater(a, b);
+}
+
+DynamicStmt operator<(const DynamicExpr& a, const DynamicExpr& b){
+  return DynamicLess(a, b);
+}
+
+DynamicStmt operator>=(const DynamicExpr& a, const DynamicExpr& b){
+  return DynamicGeq(a, b);
+}
+
+DynamicStmt operator<=(const DynamicExpr& a, const DynamicExpr& b){
+  return DynamicLeq(a, b);
+}
+
+DynamicStmt forall(const DynamicIndexIterator& it, const DynamicStmt& stmt){
+  return DynamicForall(it, stmt);
+}
+
+DynamicStmt exists(const DynamicIndexIterator& it, const DynamicStmt& stmt){
+  return DynamicExists(it, stmt);
+}
+
 DynamicIndexIterator::DynamicIndexIterator() :  DynamicIndexIterator(new DynamicIndexIteratorNode) {}
 DynamicIndexIterator::DynamicIndexIterator(const DynamicIndexIteratorNode* n) : DynamicExpr(n){}
 DynamicIndexIterator::DynamicIndexIterator(DynamicOrder dynamicOrder) : DynamicExpr(new DynamicIndexIteratorNode(dynamicOrder)) {}
 
 DynamicOrder DynamicIndexIterator::getDynamicOrder() const{
    return  getNode(*this)->dynamicOrder;
+}
+
+const DynamicOrder * DynamicIndexIterator::getDynamicOrderPtr() const{
+   return  &(getNode(*this)->dynamicOrder);
+}
+
+template <> bool isa<DynamicIndexIterator>(DynamicExpr e) {
+  return isa<DynamicIndexIteratorNode>(e.ptr);
+}
+
+template <> DynamicIndexIterator to<DynamicIndexIterator>(DynamicExpr e) {
+  taco_iassert(isa<DynamicIndexIterator>(e));
+  return DynamicIndexIterator(to<DynamicIndexIteratorNode>(e.ptr));
 }
 
 DynamicLiteral::DynamicLiteral() : DynamicLiteral(new DynamicLiteralNode) {}
@@ -982,6 +1038,58 @@ template <> DynamicLiteral to<DynamicLiteral>(DynamicExpr e) {
   taco_iassert(isa<DynamicLiteral>(e));
   return DynamicLiteral(to<DynamicLiteralNode>(e.ptr));
 }
+
+DynamicIndexAccess::DynamicIndexAccess() :  DynamicIndexAccess(new DynamicIndexAccessNode) {}
+DynamicIndexAccess::DynamicIndexAccess(const DynamicIndexAccessNode* n) : DynamicExpr(n){}
+DynamicIndexAccess::DynamicIndexAccess(DynamicOrder dynamicOrder) : DynamicExpr(new DynamicIndexAccessNode(dynamicOrder)) {}
+
+DynamicOrder DynamicIndexAccess::getDynamicOrder() const{
+   return  getNode(*this)->dynamicOrder;
+}
+
+template <> bool isa<DynamicIndexAccess>(DynamicExpr e) {
+  return isa<DynamicIndexAccessNode>(e.ptr);
+}
+
+template <> DynamicIndexAccess to<DynamicIndexAccess>(DynamicExpr e) {
+  taco_iassert(isa<DynamicIndexAccess>(e));
+  return DynamicIndexAccess(to<DynamicIndexAccessNode>(e.ptr));
+}
+
+DynamicIndexMulInternal::DynamicIndexMulInternal() :  DynamicIndexMulInternal(new DynamicIndexMulInternalNode) {}
+DynamicIndexMulInternal::DynamicIndexMulInternal(const DynamicIndexMulInternalNode* n) : DynamicExpr(n){}
+DynamicIndexMulInternal::DynamicIndexMulInternal(DynamicOrder dynamicOrder) : DynamicExpr(new DynamicIndexMulInternalNode(dynamicOrder)) {}
+
+DynamicOrder DynamicIndexMulInternal::getDynamicOrder() const{
+   return  getNode(*this)->dynamicOrder;
+}
+
+template <> bool isa<DynamicIndexMulInternal>(DynamicExpr e) {
+  return isa<DynamicIndexMulInternalNode>(e.ptr);
+}
+
+template <> DynamicIndexMulInternal to<DynamicIndexMulInternal>(DynamicExpr e) {
+  taco_iassert(isa<DynamicIndexMulInternal>(e));
+  return DynamicIndexMulInternal(to<DynamicIndexMulInternalNode>(e.ptr));
+}
+
+DynamicIndexLen::DynamicIndexLen() :  DynamicIndexLen(new DynamicIndexLenNode) {}
+DynamicIndexLen::DynamicIndexLen(const DynamicIndexLenNode* n) : DynamicExpr(n){}
+DynamicIndexLen::DynamicIndexLen(DynamicOrder dynamicOrder) : DynamicExpr(new DynamicIndexLenNode(dynamicOrder)) {}
+
+DynamicOrder DynamicIndexLen::getDynamicOrder() const{
+   return  getNode(*this)->dynamicOrder;
+}
+
+template <> bool isa<DynamicIndexLen>(DynamicExpr e) {
+  return isa<DynamicIndexLenNode>(e.ptr);
+}
+
+template <> DynamicIndexLen to<DynamicIndexLen>(DynamicExpr e) {
+  taco_iassert(isa<DynamicIndexLen>(e));
+  return DynamicIndexLen(to<DynamicIndexLenNode>(e.ptr));
+}
+
 
 DynamicAdd::DynamicAdd() : DynamicAdd(new DynamicAddNode) {}
 DynamicAdd::DynamicAdd(const DynamicAddNode* n) : DynamicExpr(n){}
@@ -1084,5 +1192,166 @@ template <> DynamicSub to<DynamicSub>(DynamicExpr e) {
   return DynamicSub(to<DynamicSubNode>(e.ptr));
 }
 
+DynamicEqual::DynamicEqual() : DynamicEqual(new DynamicEqualNode) {}
+DynamicEqual::DynamicEqual(const DynamicEqualNode* n) : DynamicStmt(n){}
+DynamicEqual::DynamicEqual(DynamicExpr a, DynamicExpr b) : DynamicStmt(new DynamicEqualNode(a, b)) {}
+
+DynamicExpr DynamicEqual::getA() const{
+  return getNode(*this)->a;
+}
+DynamicExpr DynamicEqual::getB() const{
+  return getNode(*this)->a;
+}
+
+template <> bool isa<DynamicEqual>(DynamicStmt e) {
+  return isa<DynamicEqualNode>(e.ptr);
+}
+
+template <> DynamicEqual to<DynamicEqual>(DynamicStmt e) {
+  taco_iassert(isa<DynamicEqual>(e));
+  return DynamicEqual(to<DynamicEqualNode>(e.ptr));
+}
+
+DynamicNotEqual::DynamicNotEqual() : DynamicNotEqual(new DynamicNotEqualNode) {}
+DynamicNotEqual::DynamicNotEqual(const DynamicNotEqualNode* n) : DynamicStmt(n){}
+DynamicNotEqual::DynamicNotEqual(DynamicExpr a, DynamicExpr b) : DynamicStmt(new DynamicNotEqualNode(a, b)) {}
+
+DynamicExpr DynamicNotEqual::getA() const{
+  return getNode(*this)->a;
+}
+DynamicExpr DynamicNotEqual::getB() const{
+  return getNode(*this)->a;
+}
+
+template <> bool isa<DynamicNotEqual>(DynamicStmt e) {
+  return isa<DynamicNotEqualNode>(e.ptr);
+}
+
+template <> DynamicNotEqual to<DynamicNotEqual>(DynamicStmt e) {
+  taco_iassert(isa<DynamicNotEqual>(e));
+  return DynamicNotEqual(to<DynamicNotEqualNode>(e.ptr));
+}
+
+DynamicGreater::DynamicGreater() : DynamicGreater(new DynamicGreaterNode) {}
+DynamicGreater::DynamicGreater(const DynamicGreaterNode* n) : DynamicStmt(n){}
+DynamicGreater::DynamicGreater(DynamicExpr a, DynamicExpr b) : DynamicStmt(new DynamicGreaterNode(a, b)) {}
+
+DynamicExpr DynamicGreater::getA() const{
+  return getNode(*this)->a;
+}
+DynamicExpr DynamicGreater::getB() const{
+  return getNode(*this)->a;
+}
+
+template <> bool isa<DynamicGreater>(DynamicStmt e) {
+  return isa<DynamicGreaterNode>(e.ptr);
+}
+
+template <> DynamicGreater to<DynamicGreater>(DynamicStmt e) {
+  taco_iassert(isa<DynamicGreater>(e));
+  return DynamicGreater(to<DynamicGreaterNode>(e.ptr));
+}
+
+DynamicLess::DynamicLess() : DynamicLess(new DynamicLessNode) {}
+DynamicLess::DynamicLess(const DynamicLessNode* n) : DynamicStmt(n){}
+DynamicLess::DynamicLess(DynamicExpr a, DynamicExpr b) : DynamicStmt(new DynamicLessNode(a, b)) {}
+
+DynamicExpr DynamicLess::getA() const{
+  return getNode(*this)->a;
+}
+DynamicExpr DynamicLess::getB() const{
+  return getNode(*this)->a;
+}
+
+template <> bool isa<DynamicLess>(DynamicStmt e) {
+  return isa<DynamicLessNode>(e.ptr);
+}
+
+template <> DynamicLess to<DynamicLess>(DynamicStmt e) {
+  taco_iassert(isa<DynamicLess>(e));
+  return DynamicLess(to<DynamicLessNode>(e.ptr));
+}
+
+DynamicGeq::DynamicGeq() : DynamicGeq(new DynamicGeqNode) {}
+DynamicGeq::DynamicGeq(const DynamicGeqNode* n) : DynamicStmt(n){}
+DynamicGeq::DynamicGeq(DynamicExpr a, DynamicExpr b) : DynamicStmt(new DynamicGeqNode(a, b)) {}
+
+DynamicExpr DynamicGeq::getA() const{
+  return getNode(*this)->a;
+}
+DynamicExpr DynamicGeq::getB() const{
+  return getNode(*this)->a;
+}
+
+template <> bool isa<DynamicGeq>(DynamicStmt e) {
+  return isa<DynamicGeqNode>(e.ptr);
+}
+
+template <> DynamicGeq to<DynamicGeq>(DynamicStmt e) {
+  taco_iassert(isa<DynamicGeq>(e));
+  return DynamicGeq(to<DynamicGeqNode>(e.ptr));
+}
+
+DynamicLeq::DynamicLeq() : DynamicLeq(new DynamicLeqNode) {}
+DynamicLeq::DynamicLeq(const DynamicLeqNode* n) : DynamicStmt(n){}
+DynamicLeq::DynamicLeq(DynamicExpr a, DynamicExpr b) : DynamicStmt(new DynamicLeqNode(a, b)) {}
+
+DynamicExpr DynamicLeq::getA() const{
+  return getNode(*this)->a;
+}
+DynamicExpr DynamicLeq::getB() const{
+  return getNode(*this)->a;
+}
+
+template <> bool isa<DynamicLeq>(DynamicStmt e) {
+  return isa<DynamicLeqNode>(e.ptr);
+}
+
+template <> DynamicLeq to<DynamicLeq>(DynamicStmt e) {
+  taco_iassert(isa<DynamicLeq>(e));
+  return DynamicLeq(to<DynamicLeqNode>(e.ptr));
+}
+
+DynamicForall::DynamicForall() : DynamicForall(new DynamicForallNode) {}
+DynamicForall::DynamicForall(const DynamicForallNode* n) : DynamicStmt(n){}
+DynamicForall::DynamicForall(DynamicIndexIterator it, DynamicStmt stmt) : DynamicStmt(new DynamicForallNode(it, stmt)) {}
+
+DynamicIndexIterator DynamicForall::getIterator() const{
+    return getNode(*this)->it;
+}
+
+DynamicStmt DynamicForall::getStmt() const{
+  return getNode(*this)->stmt;
+}
+
+template <> bool isa<DynamicForall>(DynamicStmt e) {
+  return isa<DynamicForallNode>(e.ptr);
+}
+
+template <> DynamicForall to<DynamicForall>(DynamicStmt e) {
+  taco_iassert(isa<DynamicForall>(e));
+  return DynamicForall(to<DynamicForallNode>(e.ptr));
+}
+
+DynamicExists::DynamicExists() : DynamicExists(new DynamicExistsNode) {}
+DynamicExists::DynamicExists(const DynamicExistsNode* n) : DynamicStmt(n){}
+DynamicExists::DynamicExists(DynamicIndexIterator it, DynamicStmt stmt) : DynamicStmt(new DynamicExistsNode(it, stmt)) {}
+
+DynamicIndexIterator DynamicExists::getIterator() const{
+    return getNode(*this)->it;
+}
+
+DynamicStmt DynamicExists::getStmt() const{
+  return getNode(*this)->stmt;
+}
+
+template <> bool isa<DynamicExists>(DynamicStmt e) {
+  return isa<DynamicExistsNode>(e.ptr);
+}
+
+template <> DynamicExists to<DynamicExists>(DynamicStmt e) {
+  taco_iassert(isa<DynamicExists>(e));
+  return DynamicExists(to<DynamicExistsNode>(e.ptr));
+}
 
 }
