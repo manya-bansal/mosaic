@@ -49,6 +49,7 @@ struct DynamicGeqNode;
 struct DynamicLeqNode;
 struct DynamicForallNode;
 struct DynamicExistsNode;
+struct DynamicIndexVarNode;
 
 class AcceleratorExprVisitorStrict {
     public:
@@ -130,6 +131,7 @@ class DynamicExprVisitorStrict {
         virtual void visit(const DynamicMulNode*) = 0;
         virtual void visit(const DynamicDivNode*) = 0;
         virtual void visit(const DynamicModNode*) = 0;
+        virtual void visit(const DynamicIndexVarNode*) = 0;
 
 };
 

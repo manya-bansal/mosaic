@@ -313,4 +313,8 @@ void DynamicNotationPrinter::visit(const DynamicExistsNode* op){
   os << ")";
 }
 
+void DynamicNotationPrinter::visit(const DynamicIndexVarNode* op){
+  os << op->i;
+}
+
 }

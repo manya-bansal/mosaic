@@ -938,6 +938,9 @@ std::ostream& operator<<(std::ostream& os, const DynamicExpr& expr) {
 DynamicExpr::DynamicExpr(int val) : DynamicExpr(new DynamicLiteralNode(val)) {
 }
 
+DynamicExpr::DynamicExpr(IndexVar i) : DynamicExpr(new DynamicIndexVarNode(i)) {
+}
+
 void  DynamicExpr::accept(DynamicExprVisitorStrict *v) const {
   ptr->accept(v);
 }
@@ -1174,7 +1177,7 @@ template <> DynamicMod to<DynamicMod>(DynamicExpr e) {
 
 DynamicSub::DynamicSub() : DynamicSub(new DynamicSubNode) {}
 DynamicSub::DynamicSub(const DynamicSubNode* n) : DynamicExpr(n){}
-DynamicSub::DynamicSub(DynamicExpr a, DynamicExpr b) : DynamicExpr(new DynamicSubNode(a, b)) {}
+DynamicSub::DynamicSub(DynamicExpr a, DynamicExpr b) : DynamicSub(new DynamicSubNode(a, b)) {}
 
 DynamicExpr DynamicSub::getA() const{
   return getNode(*this)->a;
@@ -1190,6 +1193,23 @@ template <> bool isa<DynamicSub>(DynamicExpr e) {
 template <> DynamicSub to<DynamicSub>(DynamicExpr e) {
   taco_iassert(isa<DynamicSub>(e));
   return DynamicSub(to<DynamicSubNode>(e.ptr));
+}
+
+DynamicIndexVar::DynamicIndexVar() : DynamicIndexVar(new DynamicIndexVarNode) {}
+DynamicIndexVar::DynamicIndexVar(const DynamicIndexVarNode* n) : DynamicExpr(n){}
+DynamicIndexVar::DynamicIndexVar(IndexVar i) : DynamicIndexVar(new DynamicIndexVarNode(i)) {}
+
+IndexVar DynamicIndexVar::getIVar() const{
+  return getNode(*this)->i;
+}
+
+template <> bool isa<DynamicIndexVar>(DynamicExpr e) {
+  return isa<DynamicIndexVarNode>(e.ptr);
+}
+
+template <> DynamicIndexVar to<DynamicIndexVar>(DynamicExpr e) {
+  taco_iassert(isa<DynamicIndexVar>(e));
+  return DynamicIndexVar(to<DynamicIndexVarNode>(e.ptr));
 }
 
 DynamicEqual::DynamicEqual() : DynamicEqual(new DynamicEqualNode) {}

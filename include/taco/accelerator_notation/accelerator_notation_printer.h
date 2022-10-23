@@ -71,6 +71,7 @@ public:
   void visit(const DynamicMulNode*);
   void visit(const DynamicDivNode*);
   void visit(const DynamicModNode*);
+  void visit(const DynamicIndexVarNode*);
 
   void visit(const DynamicEqualNode*);
   void visit(const DynamicNotEqualNode*);

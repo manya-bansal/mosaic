@@ -60,6 +60,7 @@ struct DynamicMulNode;
 struct DynamicDivNode;
 struct DynamicSubNode;
 struct DynamicModNode;
+struct DynamicIndexVarNode;
 
 struct DynamicEqualNode;
 struct DynamicNotEqualNode;
@@ -534,7 +535,7 @@ public:
   DynamicExpr(const DynamicExprNode* n) : util::IntrusivePtr<const DynamicExprNode>(n) {}
 
   DynamicExpr(int num);
-  // DynamicExpr(int num);
+  DynamicExpr(IndexVar i);
 
   void accept(DynamicExprVisitorStrict *) const;
   friend std::ostream& operator<<(std::ostream&, const DynamicExpr&);
@@ -683,6 +684,18 @@ public:
 
   typedef DynamicSubNode Node;
 };
+
+class DynamicIndexVar : public DynamicExpr {
+public:
+  DynamicIndexVar();
+  DynamicIndexVar(const DynamicIndexVarNode*);
+  DynamicIndexVar(IndexVar i);
+
+  IndexVar getIVar() const;
+
+  typedef DynamicIndexVarNode Node;
+};
+
 
 struct DynamicEqual : public DynamicStmt {
   public:

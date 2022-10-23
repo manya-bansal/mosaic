@@ -48,6 +48,7 @@ TEST(accelerateNotation, AcceleratorExprTest) {
     DynamicIndexIterator interator(dynamicOrder);
     DynamicIndexIterator interator2(dynamicOrder);
     
+    IndexVar var; 
 
     std::cout << (interator == (dynamicOrder(interator) + 1)) << endl;
     std::cout << (dynamicOrder(interator) == dynamicOrder(interator)) << endl;
@@ -59,7 +60,7 @@ TEST(accelerateNotation, AcceleratorExprTest) {
     std::cout << (interator >= (dynamicOrder(interator) + 1)) << endl;
     std::cout << forall(interator, (interator >= (dynamicOrder(interator) + 1))) << endl;
     std::cout << exists(interator, (interator >= (dynamicOrder(interator) + 1))) << endl;
-    std::cout << forall(interator2, exists(interator, (interator >= (dynamicOrder(interator) + 1)))) << endl;
+    std::cout << forall(interator2, exists(interator, (interator >= DynamicExpr(var) + 1))) << endl;
 
 }
 

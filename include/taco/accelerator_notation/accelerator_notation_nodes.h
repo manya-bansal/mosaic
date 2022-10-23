@@ -347,6 +347,17 @@ struct DynamicModNode : public DynamicBinaryExprNode {
   }
 };
 
+struct DynamicIndexVarNode : public DynamicExprNode {
+  DynamicIndexVarNode() : DynamicExprNode() {}
+  DynamicIndexVarNode(IndexVar i) : i(i) {}
+  
+  IndexVar i; 
+
+  void accept(DynamicExprVisitorStrict* v) const override{
+    v->visit(this);
+  }
+};
+
 struct DynamicEqualNode : public DynamicStmtNode {
   DynamicEqualNode() : DynamicStmtNode() {}
   DynamicEqualNode(DynamicExpr a, DynamicExpr b) : a(a), b(b) {}
