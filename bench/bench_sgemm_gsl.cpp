@@ -48,5 +48,5 @@ static void bench_sgemm_gsl(benchmark::State& state) {
   gsl_compile = false;
 }
 
-TACO_BENCH(bench_sgemm_gsl)->DenseRange(100, 2000, 100);
+TACO_BENCH(bench_sgemm_gsl)->DenseRange(100, 4000, 100);
 

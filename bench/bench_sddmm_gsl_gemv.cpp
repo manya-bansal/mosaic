@@ -9,13 +9,10 @@
 #include "taco/accelerator_interface/gsl_interface.h"
 
 using namespace taco;
-
 extern bool gsl_compile;
 
-static void bench_sddmm_gsl(benchmark::State& state) {
-
+static void bench_sddmm_gsl_gemv(benchmark::State& state) {
   gsl_compile = true;
-
   int dim = state.range(0);
   int NUM_I = dim;
   int NUM_K = dim;
@@ -51,6 +48,7 @@ static void bench_sddmm_gsl(benchmark::State& state) {
   }
 
   B.pack();
+  B.pack();
   C.pack();
   D.pack();
 
@@ -63,18 +61,18 @@ static void bench_sddmm_gsl(benchmark::State& state) {
     state.PauseTiming();
     Tensor<float> A("A", {NUM_I, NUM_K}, {Dense, Dense}, 0);
     A(i,k) =  B(i,k) * accelerateExpr;
+    TensorVar precomputed("precomputed", Type(taco::Float32, {(size_t)NUM_I, (size_t)NUM_K}), Format{Dense, Dense});
 
     IndexStmt stmt = A.getAssignment().concretize();
-    stmt = stmt.accelerate(new GSLMM(), accelerateExpr);
+    stmt = stmt.holdConstant(new GSLGemv(), accelerateExpr, {k}, precomputed(i, k));
 
     A.compile(stmt);
     A.assemble();
     state.ResumeTiming();
     A.compute();
   }
-
   gsl_compile = false;
 }
 
-TACO_BENCH(bench_sddmm_gsl)->DenseRange(100, 2000, 100);
+TACO_BENCH(bench_sddmm_gsl_gemv)->DenseRange(100, 2000, 100);
 

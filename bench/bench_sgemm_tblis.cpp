@@ -44,5 +44,5 @@ static void bench_sgemm_tblis(benchmark::State& state) {
   }
 }
 
-TACO_BENCH(bench_sgemm_tblis)->DenseRange(100, 2000, 100);
+TACO_BENCH(bench_sgemm_tblis)->DenseRange(100, 4000, 100);
 

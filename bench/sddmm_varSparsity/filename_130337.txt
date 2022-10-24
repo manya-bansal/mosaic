@@ -1,7 +1,7 @@
 {
   "context": {
-    "date": "2022-10-15T21:50:39+00:00",
-    "host_name": "edo-slurm1",
+    "date": "2022-10-20T05:38:24+00:00",
+    "host_name": "edo-slurm2",
     "executable": "/home/manya227/taco-interoperable/build/bin/./taco-bench",
     "num_cpus": 40,
     "mhz_per_cpu": 2494,
@@ -32,7 +32,9 @@
         "num_sharing": 40
       }
     ],
-    "load_avg": [1,1,0.93],
+    "load_avg": [0,0,0],
     "library_build_type": "release"
   },
   "benchmarks": [
+!!!! temp dir !!!!!! /home/manya227/temp/taco_tmp_p5KBDn/
+Warning : Implicit Reduction is being added, given function is calculating sum(i154, (A146(i153,i154) * A149(i154,i155))).

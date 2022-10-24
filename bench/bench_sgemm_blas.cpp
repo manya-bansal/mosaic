@@ -40,5 +40,5 @@ static void bench_sgemm_blas(benchmark::State& state) {
   }
 }
 
-TACO_BENCH(bench_sgemm_blas)->DenseRange(100, 3000, 100);
+TACO_BENCH(bench_sgemm_blas)->DenseRange(100, 4000, 100);
 

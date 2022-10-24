@@ -8,7 +8,7 @@
 #include "taco/accelerator_interface/tblis_interface.h"
 #include "taco/accelerator_interface/gsl_interface.h"
 
-#define DIM_SIZE 5000
+#define DIM_SIZE 1000
 
 using namespace taco;
 

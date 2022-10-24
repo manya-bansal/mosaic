@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH -J sddmm__vary_sparsity_bench
+#SBATCH -J sddmm_var_sparsity_bench
 #SBATCH -o filename_%j.txt
 #SBATCH -e filename_%j.err
 #SBATCH --mail-type=ALL
@@ -10,12 +10,9 @@
 #SBATCH --exclusive
 #SBATCH --time=10:00:00
 
-
-RESULT_DIR=sddmm_varSparsity
-
-systems=("tblis" "blas" "taco" "gsl")
+systems=("blas" "taco" "gsl" "dot_blas" "gemv_blas" "dot_gsl" "gemv_gsl")
 
 for i in "${systems[@]}"
 do  
-    /home/manya227/taco-interoperable/build/bin/./taco-bench --benchmark_filter=bench_sddmm_varySparisty_$i  --benchmark_format=json --benchmark_out=/home/manya227/taco-interoperable/bench/$RESULT_DIR/result/$i
+    /home/manya227/taco-interoperable/build/bin/./taco-bench --benchmark_filter=bench_sddmm_varySparisty_$i  --benchmark_format=json --benchmark_out=/home/manya227/taco-interoperable/bench/sddmm_varSparsity/result/$i
 done

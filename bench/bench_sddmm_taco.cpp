@@ -65,5 +65,5 @@ static void bench_sddmm_taco(benchmark::State& state) {
   }
 }
 
-TACO_BENCH(bench_sddmm_taco)->DenseRange(100, 3000, 100);
+TACO_BENCH(bench_sddmm_taco)->DenseRange(100, 2000, 100);
 

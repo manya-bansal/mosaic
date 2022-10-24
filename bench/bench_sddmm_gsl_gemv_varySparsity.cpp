@@ -8,20 +8,18 @@
 #include "taco/accelerator_interface/tblis_interface.h"
 #include "taco/accelerator_interface/gsl_interface.h"
 
+#define DIM_SIZE 1000
+
 using namespace taco;
 
 extern bool gsl_compile;
 
-static void bench_sddmm_gsl(benchmark::State& state) {
-
+static void bench_sddmm_varySparisty_gemv_gsl(benchmark::State& state, float SPARSITY, int dim) {
   gsl_compile = true;
 
-  int dim = state.range(0);
   int NUM_I = dim;
   int NUM_K = dim;
   int NUM_J = dim;
-
-  float SPARSITY = .3;
   
   Tensor<float> B("B", {NUM_I, NUM_K}, CSR);
   Tensor<float> C("C", {NUM_I, NUM_J}, {Dense, Dense});
@@ -60,12 +58,13 @@ static void bench_sddmm_gsl(benchmark::State& state) {
 
    for (auto _ : state) {
     // Setup.
-    state.PauseTiming();
+     state.PauseTiming();
     Tensor<float> A("A", {NUM_I, NUM_K}, {Dense, Dense}, 0);
     A(i,k) =  B(i,k) * accelerateExpr;
+    TensorVar precomputed("precomputed", Type(taco::Float32, {(size_t)NUM_I, (size_t)NUM_K}), Format{Dense, Dense});
 
     IndexStmt stmt = A.getAssignment().concretize();
-    stmt = stmt.accelerate(new GSLMM(), accelerateExpr);
+    stmt = stmt.holdConstant(new GSLGemv(), accelerateExpr, {k}, precomputed(i, k));
 
     A.compile(stmt);
     A.assemble();
@@ -76,5 +75,16 @@ static void bench_sddmm_gsl(benchmark::State& state) {
   gsl_compile = false;
 }
 
-TACO_BENCH(bench_sddmm_gsl)->DenseRange(100, 2000, 100);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_gemv_gsl, 0.00625, 0.00625, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_gemv_gsl, 0.0125,  0.0125, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_gemv_gsl, 0.025,   0.025, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_gemv_gsl, 0.05,    0.05, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_gemv_gsl, 0.05,    0.05, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_gemv_gsl, 0.1,     0.1, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_gemv_gsl, 0.2,     0.2, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_gemv_gsl, 0.4,     0.4, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_gemv_gsl, 0.6,     0.6, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_gemv_gsl, 0.8,     0.8, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_gemv_gsl, 1,       1, DIM_SIZE);
+
 

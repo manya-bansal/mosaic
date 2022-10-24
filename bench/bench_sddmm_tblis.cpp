@@ -70,5 +70,5 @@ static void bench_sddmm_tblis(benchmark::State& state) {
   }
 }
 
-TACO_BENCH(bench_sddmm_tblis)->DenseRange(100, 3000, 100);
+TACO_BENCH(bench_sddmm_tblis)->DenseRange(100, 2000, 100);
 
