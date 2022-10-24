@@ -3096,6 +3096,14 @@ std::ostream& operator<<(std::ostream& os, const DynamicOrder& op){
   return os;
 }
 
+bool operator<(const DynamicOrder& a, const DynamicOrder& b) {
+  return a.content < b.content;
+}
+
+bool operator==(const DynamicOrder& a, const DynamicOrder& b) {
+  return a.content < b.content;
+}
+
 std::ostream& DynamicOrder::print(std::ostream& os) const {
   return os << *this;
 }

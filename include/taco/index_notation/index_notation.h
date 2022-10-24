@@ -1187,6 +1187,9 @@ class DynamicOrder : public IndexObjectNode{
     std::string getName() const;
     std::ostream& print(std::ostream& os) const override;
 
+    friend bool operator<(const DynamicOrder& a, const DynamicOrder& b);
+    friend bool operator==(const DynamicOrder& a, const DynamicOrder& b);
+
     DynamicIndexAccess operator()(const DynamicIndexIterator &index);
  
   private:
@@ -1195,6 +1198,7 @@ class DynamicOrder : public IndexObjectNode{
 }; 
 
 std::ostream& operator<<(std::ostream&, const DynamicOrder&);
+
 
 /// Index variables are used to index into tensors in index expressions, and
 /// they represent iteration over the tensor modes they index into.

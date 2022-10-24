@@ -317,4 +317,16 @@ void DynamicNotationPrinter::visit(const DynamicIndexVarNode* op){
   os << op->i;
 }
 
+void DynamicNotationPrinter::visit(const DynamicAndNode* op){
+  op->a.accept(this);
+  os << "&&";
+  op->b.accept(this);
+}
+
+void DynamicNotationPrinter::visit(const DynamicOrNode* op){
+  op->a.accept(this);
+  os << "&&";
+  op->b.accept(this);
+}
+
 }

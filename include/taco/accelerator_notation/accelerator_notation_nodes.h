@@ -454,6 +454,30 @@ struct DynamicExistsNode : public DynamicStmtNode {
   }
 };
 
+struct DynamicAndNode : public DynamicStmtNode {
+  DynamicAndNode() : DynamicStmtNode() {}
+  DynamicAndNode(DynamicStmt a, DynamicStmt b) : a(a), b(b) {}
+  
+  DynamicStmt a; 
+  DynamicStmt b;
+
+  void accept(DynamicStmtVisitorStrict* v) const override{
+    v->visit(this);
+  }
+};
+
+struct DynamicOrNode : public DynamicStmtNode {
+  DynamicOrNode() : DynamicStmtNode() {}
+  DynamicOrNode(DynamicStmt a, DynamicStmt b) : a(a), b(b) {}
+  
+  DynamicStmt a; 
+  DynamicStmt b;
+
+  void accept(DynamicStmtVisitorStrict* v) const override{
+    v->visit(this);
+  }
+};
+
 /// Returns true if expression e is of type E.
 template <typename E>
 inline bool isa(const AcceleratorExprNode* e) {

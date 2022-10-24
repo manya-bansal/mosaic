@@ -70,6 +70,8 @@ struct DynamicGeqNode;
 struct DynamicLeqNode;
 struct DynamicForallNode;
 struct DynamicExistsNode;
+struct DynamicAndNode;
+struct DynamicOrNode;
 
 class DynamicStmtVisitorStrict;
 
@@ -570,6 +572,8 @@ DynamicStmt operator>(const DynamicExpr&, const DynamicExpr&);
 DynamicStmt operator<(const DynamicExpr&, const DynamicExpr&);
 DynamicStmt operator<=(const DynamicExpr&, const DynamicExpr&);
 DynamicStmt operator>=(const DynamicExpr&, const DynamicExpr&);
+DynamicStmt operator&&(const DynamicStmt&, const DynamicStmt&);
+DynamicStmt operator||(const DynamicStmt&, const DynamicStmt&);
 
 DynamicStmt forall(const DynamicIndexIterator&, const DynamicStmt&);
 DynamicStmt exists(const DynamicIndexIterator&, const DynamicStmt&);
@@ -798,6 +802,32 @@ struct DynamicExists: public DynamicStmt {
     DynamicStmt getStmt() const;
 
     typedef DynamicExistsNode Node;
+
+};
+
+struct DynamicAnd: public DynamicStmt {
+  public:
+    DynamicAnd();
+    DynamicAnd(const DynamicAndNode*);
+    DynamicAnd(DynamicStmt a, DynamicStmt b);
+
+    DynamicStmt getA() const;
+    DynamicStmt getB() const;
+    
+    typedef DynamicAndNode Node;
+
+};
+
+struct DynamicOr: public DynamicStmt {
+  public:
+    DynamicOr();
+    DynamicOr(const DynamicOrNode*);
+    DynamicOr(DynamicStmt a, DynamicStmt b);
+
+    DynamicStmt getA() const;
+    DynamicStmt getB() const;
+    
+    typedef DynamicOrNode Node;
 
 };
 

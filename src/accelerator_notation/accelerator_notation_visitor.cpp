@@ -75,6 +75,79 @@ void DynamicStmtVisitorStrict::visit(const DynamicStmt& stmt){
   stmt.accept(this);
 }
 
+void DynamicNotationVisitor::visit(const DynamicIndexIteratorNode*){
+}
+void DynamicNotationVisitor::visit(const DynamicIndexAccessNode*){
+}
+void DynamicNotationVisitor::visit(const DynamicLiteralNode*){
+}
+void DynamicNotationVisitor::visit(const DynamicIndexLenNode* op){
+}
+void DynamicNotationVisitor::visit(const DynamicIndexMulInternalNode* op){
+}
+void DynamicNotationVisitor::visit(const DynamicAddNode* op){
+  op->a.accept(this);
+  op->b.accept(this);
+}
+void DynamicNotationVisitor::visit(const DynamicSubNode* op){
+  op->a.accept(this);
+  op->b.accept(this);
+}
+void DynamicNotationVisitor::visit(const DynamicMulNode* op){
+  op->a.accept(this);
+  op->b.accept(this);
+}
+void DynamicNotationVisitor::visit(const DynamicDivNode* op){
+  op->a.accept(this);
+  op->b.accept(this);
+}
+void DynamicNotationVisitor::visit(const DynamicModNode* op){
+  op->a.accept(this);
+  op->b.accept(this);
+}
+void DynamicNotationVisitor::visit(const DynamicIndexVarNode*){
+}
+void DynamicNotationVisitor::visit(const DynamicEqualNode* op){
+  op->a.accept(this);
+  op->b.accept(this);
+}
+void DynamicNotationVisitor::visit(const DynamicNotEqualNode* op){
+  op->a.accept(this);
+  op->b.accept(this);
+}
+void DynamicNotationVisitor::visit(const DynamicGreaterNode* op){
+  op->a.accept(this);
+  op->b.accept(this);
+}
+void DynamicNotationVisitor::visit(const DynamicLessNode* op){
+  op->a.accept(this);
+  op->b.accept(this);
+}
+void DynamicNotationVisitor::visit(const DynamicLeqNode* op){
+  op->a.accept(this);
+  op->b.accept(this);
+}
+void DynamicNotationVisitor::visit(const DynamicGeqNode* op){
+  op->a.accept(this);
+  op->b.accept(this);
+}
+void DynamicNotationVisitor::visit(const DynamicForallNode* op){
+  op->stmt.accept(this);
+}
+void DynamicNotationVisitor::visit(const DynamicExistsNode* op){
+  op->stmt.accept(this);
+}
+
+void DynamicNotationVisitor::visit(const DynamicAndNode* op){
+  op->a.accept(this);
+  op->b.accept(this);
+}
+
+void DynamicNotationVisitor::visit(const DynamicOrNode* op){
+  op->a.accept(this);
+  op->b.accept(this);
+}
+
 
 
 }

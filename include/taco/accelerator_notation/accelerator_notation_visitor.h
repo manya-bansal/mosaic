@@ -50,6 +50,8 @@ struct DynamicLeqNode;
 struct DynamicForallNode;
 struct DynamicExistsNode;
 struct DynamicIndexVarNode;
+struct DynamicAndNode;
+struct DynamicOrNode;
 
 class AcceleratorExprVisitorStrict {
     public:
@@ -149,6 +151,8 @@ class DynamicStmtVisitorStrict {
         virtual void visit(const DynamicLeqNode*) = 0;
         virtual void visit(const DynamicForallNode*) = 0;
         virtual void visit(const DynamicExistsNode*) = 0;
+        virtual void visit(const DynamicAndNode*) = 0; 
+        virtual void visit(const DynamicOrNode*) = 0; 
 };
 
 class DynamicNotationVisitorStrict : public DynamicExprVisitorStrict,
@@ -158,6 +162,36 @@ class DynamicNotationVisitorStrict : public DynamicExprVisitorStrict,
 
         using DynamicExprVisitorStrict::visit;
         using DynamicStmtVisitorStrict::visit;
+};
+
+class DynamicNotationVisitor : public DynamicNotationVisitorStrict {
+public:
+  virtual ~DynamicNotationVisitor() = default;
+
+  using DynamicNotationVisitorStrict::visit;
+
+  virtual void visit(const DynamicIndexIteratorNode*);
+  virtual void visit(const DynamicIndexAccessNode*);
+  virtual void visit(const DynamicLiteralNode*);
+  virtual void visit(const DynamicIndexLenNode*);
+  virtual void visit(const DynamicIndexMulInternalNode*);
+  virtual void visit(const DynamicAddNode*);
+  virtual void visit(const DynamicSubNode*);
+  virtual void visit(const DynamicMulNode*);
+  virtual void visit(const DynamicDivNode*);
+  virtual void visit(const DynamicModNode*);
+  virtual void visit(const DynamicIndexVarNode*);
+  virtual void visit(const DynamicEqualNode*);
+  virtual void visit(const DynamicNotEqualNode*);
+  virtual void visit(const DynamicGreaterNode*);
+  virtual void visit(const DynamicLessNode*);
+  virtual void visit(const DynamicLeqNode*);
+  virtual void visit(const DynamicGeqNode*);
+  virtual void visit(const DynamicForallNode*);
+  virtual void visit(const DynamicExistsNode*);
+  virtual void visit(const DynamicAndNode*);
+  virtual void visit(const DynamicOrNode*); 
+
 };
 
 #define ACCEL_RULE(Rule)                                                       \

@@ -2,6 +2,7 @@
 #include "taco/accelerator_notation/accelerator_notation.h"
 #include "taco/index_notation/index_notation.h"
 #include "taco/accelerator_notation/accelerator_notation_nodes.h"
+#include "taco/accelerator_notation/code_gen_dynamic_order.h"
 #include "op_factory.h"
 
 
@@ -49,6 +50,7 @@ TEST(accelerateNotation, AcceleratorExprTest) {
     DynamicIndexIterator interator2(dynamicOrder);
     
     IndexVar var; 
+    IndexVar var2; 
 
     std::cout << (interator == (dynamicOrder(interator) + 1)) << endl;
     std::cout << (dynamicOrder(interator) == dynamicOrder(interator)) << endl;
@@ -61,6 +63,12 @@ TEST(accelerateNotation, AcceleratorExprTest) {
     std::cout << forall(interator, (interator >= (dynamicOrder(interator) + 1))) << endl;
     std::cout << exists(interator, (interator >= (dynamicOrder(interator) + 1))) << endl;
     std::cout << forall(interator2, exists(interator, (interator >= DynamicExpr(var) + 1))) << endl;
+
+    GenerateSMTCode condition(DynamicExpr(var2) >= DynamicExpr(var) + 1, {});
+    cout << condition.generatePythonCode() << endl;
+
+    GenerateSMTCode condition2((DynamicExpr(var2) >= DynamicExpr(var) + 1) && (DynamicExpr(var2) >= DynamicExpr(var) + 1), {});
+    cout << condition2.generatePythonCode() << endl;
 
 }
 

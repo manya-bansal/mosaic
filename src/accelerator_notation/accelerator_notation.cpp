@@ -996,6 +996,14 @@ DynamicStmt operator<=(const DynamicExpr& a, const DynamicExpr& b){
   return DynamicLeq(a, b);
 }
 
+DynamicStmt operator&&(const DynamicStmt& a, const DynamicStmt& b){
+  return DynamicAnd(a, b);
+}
+
+DynamicStmt operator||(const DynamicStmt& a, const DynamicStmt& b){
+  return DynamicOr(a, b);
+}
+
 DynamicStmt forall(const DynamicIndexIterator& it, const DynamicStmt& stmt){
   return DynamicForall(it, stmt);
 }
@@ -1372,6 +1380,48 @@ template <> bool isa<DynamicExists>(DynamicStmt e) {
 template <> DynamicExists to<DynamicExists>(DynamicStmt e) {
   taco_iassert(isa<DynamicExists>(e));
   return DynamicExists(to<DynamicExistsNode>(e.ptr));
+}
+
+DynamicAnd::DynamicAnd() : DynamicAnd(new DynamicAndNode) {}
+DynamicAnd::DynamicAnd(const DynamicAndNode* n) : DynamicStmt(n) {}
+DynamicAnd::DynamicAnd(DynamicStmt a, DynamicStmt b) : DynamicAnd(new DynamicAndNode(a, b)) {}
+
+DynamicStmt DynamicAnd::getA() const{
+  return  getNode(*this)->a;
+}
+
+DynamicStmt DynamicAnd::getB() const{
+  return  getNode(*this)->b;
+}
+
+template <> bool isa<DynamicAnd>(DynamicStmt e) {
+  return isa<DynamicAndNode>(e.ptr);
+}
+
+template <> DynamicAnd to<DynamicAnd>(DynamicStmt e) {
+  taco_iassert(isa<DynamicAnd>(e));
+  return DynamicAnd(to<DynamicAndNode>(e.ptr));
+}
+
+DynamicOr::DynamicOr() : DynamicOr(new DynamicOrNode) {}
+DynamicOr::DynamicOr(const DynamicOrNode* n) : DynamicStmt(n) {}
+DynamicOr::DynamicOr(DynamicStmt a, DynamicStmt b) : DynamicOr(new DynamicOrNode(a, b)) {}
+
+DynamicStmt DynamicOr::getA() const{
+  return  getNode(*this)->a;
+}
+
+DynamicStmt DynamicOr::getB() const{
+  return  getNode(*this)->b;
+}
+
+template <> bool isa<DynamicOr>(DynamicStmt e) {
+  return isa<DynamicOrNode>(e.ptr);
+}
+
+template <> DynamicOr to<DynamicOr>(DynamicStmt e) {
+  taco_iassert(isa<DynamicOr>(e));
+  return DynamicOr(to<DynamicOrNode>(e.ptr));
 }
 
 }

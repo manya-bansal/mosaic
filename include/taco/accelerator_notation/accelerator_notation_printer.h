@@ -81,6 +81,8 @@ public:
   void visit(const DynamicGeqNode*);
   void visit(const DynamicForallNode*);
   void visit(const DynamicExistsNode*);
+  void visit(const DynamicAndNode*);
+  void visit(const DynamicOrNode*);
 
 private:
   std::ostream& os;
