@@ -7,8 +7,9 @@ using namespace std;
 
 namespace taco {
 
-GenerateSMTCode::GenerateSMTCode(const DynamicStmt& stmtLower, const std::map<DynamicOrder, std::vector<IndexVar>>& dynamicOrderToVar) 
-: stmtLower(stmtLower), dynamicOrderToVar(dynamicOrderToVar) {
+GenerateSMTCode::GenerateSMTCode(const DynamicStmt& stmtLower, const std::map<DynamicOrder, std::vector<IndexVar>>& dynamicOrderToVar, 
+    const std::map<IndexVar, int>& varToDim, bool tile) 
+: stmtLower(stmtLower), dynamicOrderToVar(dynamicOrderToVar), varToDim(varToDim), tile(tile) {
 
     struct Visitor : DynamicNotationVisitor {
         using DynamicNotationVisitor::visit;
@@ -29,8 +30,45 @@ GenerateSMTCode::GenerateSMTCode(const DynamicStmt& stmtLower, const std::map<Dy
 
 std::string GenerateSMTCode::generatePythonCode(){
     //declare var
+    string pythonCode;
+    pythonCode += "import z3\n\n"
+                  "s = z3.Solver()\n";
+
+    std::set<std::string> emitted;
+    for (auto entry : indexVarName){
+        if (emitted.count(entry.second)){
+            continue;
+        }
+        pythonCode += entry.second + " = z3.Int(\'" + entry.second + "\')\n";
+        pythonCode += "s.add(" + entry.second + " > 0)\n";
+        emitted.insert(entry.second);
+        taco_uassert(varToDim.count(entry.first));
+        if (tile){
+                pythonCode += "s.add(" + entry.second + " < " + std::to_string(varToDim[entry.first]) + ")\n";
+            }else{
+                pythonCode += "s.add(" +  entry.second + " == " + std::to_string(varToDim[entry.first]) + ")\n";
+        }
+    }
+
+    for (auto entry: dynamicOrderToVar){
+        for (auto var : entry.second){
+            if (emitted.count(var.getName())){
+                continue;
+            }
+            pythonCode += var.getName() + " = z3.Int(\'" + var.getName() + "\')\n";
+            pythonCode += "s.add(" + var.getName() + " > 0)\n";
+            emitted.insert(var.getName());
+            taco_uassert(varToDim.count(var));
+            if (tile){
+                pythonCode += "s.add(" + var.getName() + " < " + std::to_string(varToDim[var]) + ")\n";
+            }else{
+                pythonCode += "s.add(" + var.getName() + " == " + std::to_string(varToDim[var]) + ")\n";
+            }
+        }
+    }
+
     stmtLower.accept(this);
-    string pythonCode = "s.add(" + this->s +")\n";
+    pythonCode += "\ns.add(" + this->s +")\n";
     //ennumerate solutions
     return pythonCode;
 }

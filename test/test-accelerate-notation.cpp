@@ -70,8 +70,11 @@ TEST(accelerateNotation, AcceleratorExprTest) {
     // GenerateSMTCode condition2((DynamicExpr(var2) >= DynamicExpr(var) + 1) && (DynamicExpr(var2) >= DynamicExpr(var) + 1), {});
     // cout << condition2.generatePythonCode() << endl;
     std::map<DynamicOrder, std::vector<IndexVar>> mapRef; 
+    std::map<IndexVar, int> dimRef;
     mapRef[dynamicOrder] = {var, var2, var};
-    GenerateSMTCode condition3(exists(interator2, forall(interator, (interator >= (dynamicOrder(interator2) + 1)))), mapRef);
+    dimRef[var] = 10;
+    dimRef[var2] = 10;
+    GenerateSMTCode condition3(exists(interator2, forall(interator, (interator >= (dynamicOrder(interator2) + 1)))), mapRef, dimRef, true);
     cout << condition3.generatePythonCode() << endl;
 
 }

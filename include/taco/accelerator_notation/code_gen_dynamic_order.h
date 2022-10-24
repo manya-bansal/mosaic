@@ -8,7 +8,8 @@ namespace taco {
 
 class GenerateSMTCode : public DynamicNotationVisitorStrict {
 public:
-  GenerateSMTCode(const DynamicStmt& stmtLower, const std::map<DynamicOrder, std::vector<IndexVar>>& dynamicOrderToVar);
+  GenerateSMTCode(const DynamicStmt& stmtLower, const std::map<DynamicOrder, std::vector<IndexVar>>& dynamicOrderToVar,
+                  const std::map<IndexVar, int>& varToDim, bool tile=false);
 
   std::string generatePythonCode();
   std::string lower(DynamicStmt stmt);
@@ -47,6 +48,8 @@ private:
   std::map<DynamicIndexIterator, int> curIterator;
   std::string s;
   std::map<IndexVar, std::string> indexVarName;
+  std::map<IndexVar, int> varToDim;
+  bool tile; 
 };
 
 }
