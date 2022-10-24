@@ -1024,6 +1024,14 @@ const DynamicOrder * DynamicIndexIterator::getDynamicOrderPtr() const{
    return  &(getNode(*this)->dynamicOrder);
 }
 
+bool operator==(const DynamicIndexIterator& a, const DynamicIndexIterator& b){
+  return a.ptr == b.ptr;
+}
+
+bool operator<(const DynamicIndexIterator& a, const DynamicIndexIterator& b){
+  return a.ptr < b.ptr;
+}
+
 template <> bool isa<DynamicIndexIterator>(DynamicExpr e) {
   return isa<DynamicIndexIteratorNode>(e.ptr);
 }

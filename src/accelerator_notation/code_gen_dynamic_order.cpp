@@ -44,9 +44,13 @@ std::string GenerateSMTCode::lower(DynamicExpr expr){
     return this->s;
 }
 
-void GenerateSMTCode::visit(const DynamicIndexIteratorNode*){
+void GenerateSMTCode::visit(const DynamicIndexIteratorNode* op){
+    taco_uassert(curIterator.count(DynamicIndexIterator(op)));
+    s =  std::to_string(curIterator[DynamicIndexIterator(op)]);
 }
-void GenerateSMTCode::visit(const DynamicIndexAccessNode*){
+void GenerateSMTCode::visit(const DynamicIndexAccessNode* op){
+    taco_uassert(dynamicOrderToVar.count(op->dynamicOrder));
+    // s = dynamicOrderToVar[op->dynamicOrder].;
 }
 void GenerateSMTCode::visit(const DynamicLiteralNode* op){
     s = std::to_string(op->num);
@@ -55,7 +59,9 @@ void GenerateSMTCode::visit(const DynamicIndexLenNode* op){
     taco_uassert(dynamicOrderToVar.count(op->dynamicOrder));
     s = std::to_string(dynamicOrderToVar[op->dynamicOrder].size());
 }
-void GenerateSMTCode::visit(const DynamicIndexMulInternalNode*){
+void GenerateSMTCode::visit(const DynamicIndexMulInternalNode* op){
+    taco_uassert(dynamicOrderToVar.count(op->dynamicOrder));
+    taco_uerror << "Unimplimented";
 }
 void GenerateSMTCode::visit(const DynamicAddNode* op){
     s = lower(op->a) + " + " + lower(op->b);
@@ -94,9 +100,40 @@ void GenerateSMTCode::visit(const DynamicLeqNode* op){
 void GenerateSMTCode::visit(const DynamicGeqNode* op){
     s = "(" + lower(op->a) + ")" + " >= " + "(" + lower(op->b) + ")";
 }
-void GenerateSMTCode::visit(const DynamicForallNode*){
+void GenerateSMTCode::visit(const DynamicForallNode* op){
+    std::vector<std::string> conditions; 
+    //first we initialize our iterator
+    if (curIterator.count(op->it)){
+        taco_uerror << "Using the same iterator twice";
+    }
+    curIterator[op->it] = 0;
+    //next we iterate
+    std::vector<IndexVar> indexVars = dynamicOrderToVar[op->it.getDynamicOrder()];
+    for (size_t i = 0; i < indexVars.size(); i++){
+        conditions.push_back(lower(op->stmt));
+        curIterator[op->it]++;
+    }
+    s = "z3.And(" + util::join(conditions) + ")";
+    //remove entry from dict
+    curIterator.erase(op->it);
 }
-void GenerateSMTCode::visit(const DynamicExistsNode*){
+
+void GenerateSMTCode::visit(const DynamicExistsNode* op){
+    std::vector<std::string> conditions; 
+    //first we initialize our iterator
+    if (curIterator.count(op->it)){
+        taco_uerror << "Using the same iterator twice";
+    }
+    curIterator[op->it] = 0;
+    //next we iterate
+    std::vector<IndexVar> indexVars = dynamicOrderToVar[op->it.getDynamicOrder()];
+    for (size_t i = 0; i < indexVars.size(); i++){
+        conditions.push_back(lower(op->stmt));
+        curIterator[op->it]++;
+    }
+    s = "z3.Or(" + util::join(conditions) + ")";
+    //remove entry from dict
+    curIterator.erase(op->it);
 }
 
 void GenerateSMTCode::visit(const DynamicAndNode* op){

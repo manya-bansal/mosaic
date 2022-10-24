@@ -64,11 +64,15 @@ TEST(accelerateNotation, AcceleratorExprTest) {
     std::cout << exists(interator, (interator >= (dynamicOrder(interator) + 1))) << endl;
     std::cout << forall(interator2, exists(interator, (interator >= DynamicExpr(var) + 1))) << endl;
 
-    GenerateSMTCode condition(DynamicExpr(var2) >= DynamicExpr(var) + 1, {});
-    cout << condition.generatePythonCode() << endl;
+    // GenerateSMTCode condition(DynamicExpr(var2) >= DynamicExpr(var) + 1, {});
+    // cout << condition.generatePythonCode() << endl;
 
-    GenerateSMTCode condition2((DynamicExpr(var2) >= DynamicExpr(var) + 1) && (DynamicExpr(var2) >= DynamicExpr(var) + 1), {});
-    cout << condition2.generatePythonCode() << endl;
+    // GenerateSMTCode condition2((DynamicExpr(var2) >= DynamicExpr(var) + 1) && (DynamicExpr(var2) >= DynamicExpr(var) + 1), {});
+    // cout << condition2.generatePythonCode() << endl;
+    std::map<DynamicOrder, std::vector<IndexVar>> mapRef; 
+    mapRef[dynamicOrder] = {var, var2, var};
+    GenerateSMTCode condition3(exists(interator2, forall(interator, (interator >= ((interator2) + 1)))), mapRef);
+    cout << condition3.generatePythonCode() << endl;
 
 }
 

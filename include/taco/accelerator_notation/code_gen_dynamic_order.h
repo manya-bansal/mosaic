@@ -44,6 +44,7 @@ public:
 private:
   DynamicStmt stmtLower;
   std::map<DynamicOrder, std::vector<IndexVar>> dynamicOrderToVar;
+  std::map<DynamicIndexIterator, int> curIterator;
   std::string s;
   std::map<IndexVar, std::string> indexVarName;
 };

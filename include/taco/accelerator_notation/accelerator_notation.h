@@ -585,9 +585,14 @@ public:
   DynamicIndexIterator(DynamicOrder dynamicOrder);
   const DynamicOrder * getDynamicOrderPtr() const;
 
+  friend bool operator==(const DynamicIndexIterator& a, const DynamicIndexIterator& b);
+  friend bool operator<(const DynamicIndexIterator& a, const DynamicIndexIterator& b);
+
   DynamicOrder getDynamicOrder() const;
   typedef DynamicIndexIteratorNode Node;
 };
+
+
 
 class DynamicLiteral : public DynamicExpr {
 public:
@@ -598,6 +603,7 @@ public:
   int getVal() const;
   typedef DynamicLiteralNode Node;
 };
+
 
 class DynamicIndexAccess : public DynamicExpr{
 public:
