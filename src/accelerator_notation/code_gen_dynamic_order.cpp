@@ -49,8 +49,10 @@ void GenerateSMTCode::visit(const DynamicIndexIteratorNode* op){
     s =  std::to_string(curIterator[DynamicIndexIterator(op)]);
 }
 void GenerateSMTCode::visit(const DynamicIndexAccessNode* op){
-    taco_uassert(dynamicOrderToVar.count(op->dynamicOrder));
-    // s = dynamicOrderToVar[op->dynamicOrder].;
+    taco_uassert(curIterator.count(op->it));
+    taco_uassert(dynamicOrderToVar.count(op->it.getDynamicOrder()));
+    std::vector<IndexVar> indices = dynamicOrderToVar[op->it.getDynamicOrder()];
+    s = indices[curIterator[op->it]].getName();
 }
 void GenerateSMTCode::visit(const DynamicLiteralNode* op){
     s = std::to_string(op->num);
@@ -144,8 +146,5 @@ void GenerateSMTCode::visit(const DynamicOrNode* op){
     s = "z3.Or(" + lower(op->a) + "," + lower(op->b) + ")";
 
 }
-
-
-
 
 }

@@ -3112,7 +3112,7 @@ DynamicIndexAccess DynamicOrder::operator()(const DynamicIndexIterator& index){
   if (getName() != index.getDynamicOrder().getName()){
     taco_uerror << "Indexing into a dynmaic order that the iterator was not initialized with";
   }
-  return DynamicIndexAccess(index.getDynamicOrder());
+  return DynamicIndexAccess(index);
 }
 
 // class IndexVar

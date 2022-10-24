@@ -233,11 +233,11 @@ struct DynamicIndexIteratorNode : public DynamicExprNode {
 struct DynamicIndexAccessNode : public DynamicExprNode {
   public:
     DynamicIndexAccessNode() :  DynamicExprNode() {}
-    DynamicIndexAccessNode(const DynamicOrder& dynamicOrder) : dynamicOrder(dynamicOrder) {}
+    DynamicIndexAccessNode(const DynamicIndexIterator& it) : it(it) {}
     void accept(DynamicExprVisitorStrict* v) const override{
       v->visit(this);
     }
-    DynamicOrder dynamicOrder;
+    DynamicIndexIterator it;
 };
 
 struct DynamicLiteralNode : public DynamicExprNode {

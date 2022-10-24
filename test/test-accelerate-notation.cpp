@@ -71,7 +71,7 @@ TEST(accelerateNotation, AcceleratorExprTest) {
     // cout << condition2.generatePythonCode() << endl;
     std::map<DynamicOrder, std::vector<IndexVar>> mapRef; 
     mapRef[dynamicOrder] = {var, var2, var};
-    GenerateSMTCode condition3(exists(interator2, forall(interator, (interator >= ((interator2) + 1)))), mapRef);
+    GenerateSMTCode condition3(exists(interator2, forall(interator, (interator >= (dynamicOrder(interator2) + 1)))), mapRef);
     cout << condition3.generatePythonCode() << endl;
 
 }

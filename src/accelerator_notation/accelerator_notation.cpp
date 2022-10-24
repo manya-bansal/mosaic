@@ -1060,10 +1060,10 @@ template <> DynamicLiteral to<DynamicLiteral>(DynamicExpr e) {
 
 DynamicIndexAccess::DynamicIndexAccess() :  DynamicIndexAccess(new DynamicIndexAccessNode) {}
 DynamicIndexAccess::DynamicIndexAccess(const DynamicIndexAccessNode* n) : DynamicExpr(n){}
-DynamicIndexAccess::DynamicIndexAccess(DynamicOrder dynamicOrder) : DynamicExpr(new DynamicIndexAccessNode(dynamicOrder)) {}
+DynamicIndexAccess::DynamicIndexAccess(DynamicIndexIterator it) : DynamicExpr(new DynamicIndexAccessNode(it)) {}
 
-DynamicOrder DynamicIndexAccess::getDynamicOrder() const{
-   return  getNode(*this)->dynamicOrder;
+DynamicIndexIterator DynamicIndexAccess::getIterator() const{
+   return  getNode(*this)->it;
 }
 
 template <> bool isa<DynamicIndexAccess>(DynamicExpr e) {

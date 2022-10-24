@@ -609,9 +609,9 @@ class DynamicIndexAccess : public DynamicExpr{
 public:
   DynamicIndexAccess();
   DynamicIndexAccess(const DynamicIndexAccessNode*);
-  DynamicIndexAccess(DynamicOrder dynamicOrder);
+  DynamicIndexAccess(DynamicIndexIterator DynamicIndexIterator);
 
-  DynamicOrder getDynamicOrder() const;
+  DynamicIndexIterator getIterator() const;
   typedef DynamicIndexAccessNode Node;
 };
 

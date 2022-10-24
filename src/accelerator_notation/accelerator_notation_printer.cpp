@@ -218,7 +218,7 @@ void DynamicNotationPrinter::visit(const DynamicIndexIteratorNode* op){
 }
 
 void DynamicNotationPrinter::visit(const DynamicIndexAccessNode* op){
-   os << op->dynamicOrder.getName() << "(" << "access" <<")";
+   os << op->it.getDynamicOrder().getName() << "(" << "access" <<")";
 }
 
 void DynamicNotationPrinter::visit(const DynamicLiteralNode* op){
