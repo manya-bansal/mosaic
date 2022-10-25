@@ -50,6 +50,15 @@ static std::string exec(const char* cmd) {
     return result;
 }
 
+bool GenerateSMTCode::isSat(){
+    std::string result = runSMT();
+    if (result.substr(0,3) == "sat"){
+        return true;
+    }
+    return false; 
+
+}
+
 // GROSS!!!!!
 std::string GenerateSMTCode::runSMT(){
     std::string pythonCode = generatePythonCode();
@@ -59,10 +68,8 @@ std::string GenerateSMTCode::runSMT(){
     SMTPython.close();
     std::string result =  exec("python3 SMTpython.py");
     system("rm -rf SMTpython.py");
-    cout << result;
     return result; 
 }
-
 
 std::string GenerateSMTCode::generatePythonCode(){
     //declare var

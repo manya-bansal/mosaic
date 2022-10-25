@@ -74,8 +74,13 @@ TEST(accelerateNotation, AcceleratorExprTest) {
     mapRef[dynamicOrder] = {var, var2, var};
     dimRef[var] = 10;
     dimRef[var2] = 10;
-    GenerateSMTCode condition3(forall(interator, dynamicOrder(interator) > 4), mapRef, dimRef, true);
-    condition3.runSMT();
+    GenerateSMTCode condition(forall(interator, dynamicOrder(interator) > 4), mapRef, dimRef, true);
+    condition.runSMT();
+    ASSERT_TRUE(condition.isSat());
+
+    GenerateSMTCode condition1(forall(interator, interator > interator), mapRef, dimRef, true);
+    condition1.runSMT();
+    ASSERT_FALSE(condition1.isSat());
 
 }
 

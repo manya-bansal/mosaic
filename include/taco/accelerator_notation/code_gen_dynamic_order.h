@@ -16,6 +16,7 @@ public:
   std::string lower(DynamicExpr expr);
 
   std::string runSMT();
+  bool isSat();
 
   
 
