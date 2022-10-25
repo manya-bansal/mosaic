@@ -15,6 +15,8 @@ public:
   std::string lower(DynamicStmt stmt);
   std::string lower(DynamicExpr expr);
 
+  std::string runSMT();
+
   
 
   using DynamicNotationVisitorStrict::visit;

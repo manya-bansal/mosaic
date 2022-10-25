@@ -2,6 +2,15 @@
 #include "taco/accelerator_notation/accelerator_notation_nodes.h"
 #include "taco/accelerator_notation/accelerator_notation.h"
 #include "taco/accelerator_notation/code_gen_dynamic_order.h"
+#include "taco/util/env.h"
+#include <fstream>
+#include <cstdio>
+#include <iostream>
+#include <memory>
+#include <stdexcept>
+#include <string>
+#include <array>
+
 
 using namespace std;
 
@@ -27,6 +36,33 @@ GenerateSMTCode::GenerateSMTCode(const DynamicStmt& stmtLower, const std::map<Dy
     visitStmt.constructIndexVarNames(stmtLower);
     indexVarName = visitStmt.indexVarName;
 }
+
+static std::string exec(const char* cmd) {
+    std::array<char, 128> buffer;
+    std::string result;
+    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
+    if (!pipe) {
+        throw std::runtime_error("popen() failed!");
+    }
+    while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+        result += buffer.data();
+    }
+    return result;
+}
+
+// GROSS!!!!!
+std::string GenerateSMTCode::runSMT(){
+    std::string pythonCode = generatePythonCode();
+    //gets generated in build/bin
+    ofstream SMTPython("SMTpython.py");
+    SMTPython << pythonCode;
+    SMTPython.close();
+    std::string result =  exec("python3 SMTpython.py");
+    system("rm -rf SMTpython.py");
+    cout << result;
+    return result; 
+}
+
 
 std::string GenerateSMTCode::generatePythonCode(){
     //declare var
@@ -68,8 +104,19 @@ std::string GenerateSMTCode::generatePythonCode(){
     }
 
     stmtLower.accept(this);
-    pythonCode += "\ns.add(" + this->s +")\n";
-    //ennumerate solutions
+    pythonCode += "\ns.add(" + this->s +")\n\n";
+
+    pythonCode += "print(s.check())\n";
+    //now we ennumerate solutions
+    pythonCode += "while s.check() == z3.sat:\n";
+    std::vector<std::string> conditions; 
+    //only inlcude values that are greater than the ones we have seen before 
+    for (auto var : emitted){
+        conditions.push_back(var + " > " + "s.model()[" + var + "]");
+    }
+
+    pythonCode += "\tprint(s.model())\n";
+    pythonCode += "\ts.add(z3.Or(" + util::join(conditions) + "))\n";
     return pythonCode;
 }
 

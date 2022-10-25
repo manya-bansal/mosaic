@@ -74,8 +74,8 @@ TEST(accelerateNotation, AcceleratorExprTest) {
     mapRef[dynamicOrder] = {var, var2, var};
     dimRef[var] = 10;
     dimRef[var2] = 10;
-    GenerateSMTCode condition3(exists(interator2, forall(interator, (interator >= (dynamicOrder(interator2) + 1)))), mapRef, dimRef, true);
-    cout << condition3.generatePythonCode() << endl;
+    GenerateSMTCode condition3(forall(interator, dynamicOrder(interator) > 4), mapRef, dimRef, true);
+    condition3.runSMT();
 
 }
 
