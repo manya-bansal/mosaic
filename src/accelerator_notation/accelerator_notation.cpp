@@ -877,7 +877,7 @@ AcceleratorAccess TensorObject::operator()(const std::vector<IndexVar>& indices)
   return AcceleratorAccess(new AcceleratorAccessNode(*this, indices, false));
 }
 
-AcceleratorDynamicIndex TensorObject::operator()(const std::vector<IndexObject>& indices){
+AcceleratorDynamicIndex TensorObject::operator[](const std::vector<IndexObject>& indices) const{
    return AcceleratorDynamicIndex(new AcceleratorDynamicIndexNode(*this, indices));
 }
 

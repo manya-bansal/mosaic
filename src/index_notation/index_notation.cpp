@@ -3115,6 +3115,13 @@ DynamicIndexAccess DynamicOrder::operator()(const DynamicIndexIterator& index){
   return DynamicIndexAccess(index);
 }
 
+DynamicIndexAccess DynamicOrder::operator()(const DynamicIndexIterator& index) const{
+  if (getName() != index.getDynamicOrder().getName()){
+    taco_uerror << "Indexing into a dynmaic order that the iterator was not initialized with";
+  }
+  return DynamicIndexAccess(index);
+}
+
 // class IndexVar
 IndexVar::IndexVar() : IndexVar(util::uniqueName('i')) {}
 
@@ -4558,6 +4565,7 @@ IndexStmt IndexStmt::holdConstant(FunctionInterface functionInterface, IndexExpr
   auto tensorAccess = getTensorAccess(rewritten, workspace.getTensorVar());
   Forall forall = getForAllTensor(rewritten, workspace.getTensorVar());
   IndexStmt consumer = makeConcreteNotation(tensorAccess);
+
   
   rewritten = replace(rewritten, {{forall, consumer}});
 

@@ -493,14 +493,13 @@ public:
   }
 
   AcceleratorAccess operator()(const std::vector<IndexVar>& indices);
-
   /// Create an index expression that accesses (reads or writes) this tensor.
   template <typename... IndexVars>
   AcceleratorAccess operator()(const IndexVars&... indices) {
     return this->operator()({indices...});
   }
 
-  AcceleratorDynamicIndex operator()(const std::vector<IndexObject>& indices);
+  AcceleratorDynamicIndex operator[](const std::vector<IndexObject>& indices) const;
   
   /// Assign a scalar expression to a scalar tensor.
   AcceleratorAssignment operator=(AcceleratorExpr);

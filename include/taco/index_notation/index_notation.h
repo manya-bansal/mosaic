@@ -1191,6 +1191,7 @@ class DynamicOrder : public IndexObjectNode{
     friend bool operator==(const DynamicOrder& a, const DynamicOrder& b);
 
     DynamicIndexAccess operator()(const DynamicIndexIterator &index);
+    DynamicIndexAccess operator()(const DynamicIndexIterator &index) const;
  
   private:
     struct Content;

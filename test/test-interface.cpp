@@ -24,6 +24,7 @@
 #include "taco/accelerator_interface/gsl_interface.h"
 #include "taco/accelerator_interface/tensor_interface.h"
 #include "taco/accelerator_interface/avx2_interface.h"
+#include "taco/accelerator_interface/dynamic_order_interface.h"
 
 
 using namespace taco;
@@ -1800,6 +1801,5 @@ TEST(interface, sdmmDot){
    expected.compute();
 
   ASSERT_TENSOR_EQ(expected, A);
-
 
 }
