@@ -78,6 +78,8 @@ TEST(accelerateNotation, AcceleratorExprTest) {
     condition.runSMT();
     ASSERT_TRUE(condition.isSat());
 
+    cout << util::join(condition.getTilings()) << endl;
+
     GenerateSMTCode condition1(forall(interator, interator > interator), mapRef, dimRef, true);
     condition1.runSMT();
     ASSERT_FALSE(condition1.isSat());

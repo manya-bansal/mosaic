@@ -50,6 +50,67 @@ static std::string exec(const char* cmd) {
     return result;
 }
 
+//from https://stackoverflow.com/questions/9435385/split-a-string-using-c11
+std::vector<std::string> split(const std::string &s, char delim) {
+  std::stringstream ss(s);
+  std::string item;
+  std::vector<std::string> elems;
+  while (std::getline(ss, item, delim)) {
+    elems.push_back(item);
+  }
+  return elems;
+}
+
+static std::map<IndexVar, int> compare(std::map<IndexVar, int> a, std::map<IndexVar, int> b){
+    int aProduct = 1;
+    for (auto val: a){
+        aProduct *= val.second;
+    }
+
+    int bProduct = 1;
+    for (auto val: b){
+        bProduct *= val.second;
+    }
+
+    if (aProduct > bProduct){
+        return a; 
+    }
+
+    return b;
+}
+
+std::map<IndexVar, int> GenerateSMTCode::getTilings(){
+    std::map<IndexVar, int> tilings;
+    if (!isSat()){
+        return tilings;
+    }
+    std::string SMTRetrun = runSMT();
+    std::vector<std::string> potentialTilings = split(SMTRetrun, '\n');
+    bool first = true; 
+    for (auto potentialTiling : potentialTilings){
+        std::map<IndexVar, int> curTiling;
+        if (first){
+            first = false; 
+            continue;
+        }
+        potentialTiling = potentialTiling.substr(1, potentialTiling.size()-2);
+        std::vector<std::string> indexVarTilings = split(potentialTiling, ',');
+        for (auto tiling : indexVarTilings){
+            tiling.erase(remove(tiling.begin(), tiling.end(), ' '), tiling.end());
+            std::vector<std::string> value = split(tiling, '=');
+            taco_uassert(nameToVar.count(value[0]));
+            curTiling[nameToVar[value[0]]] = stoi(value[1]); 
+        }
+
+        if (tilings.size() == 0){
+            tilings = curTiling;
+        }else{
+            tilings = compare(tilings, curTiling);
+        }
+    }
+    return tilings;
+}
+
 bool GenerateSMTCode::isSat(){
     std::string result = runSMT();
     if (result.substr(0,3) == "sat"){
@@ -91,6 +152,7 @@ std::string GenerateSMTCode::generatePythonCode(){
             }else{
                 pythonCode += "s.add(" +  entry.second + " == " + std::to_string(varToDim[entry.first]) + ")\n";
         }
+        nameToVar[entry.second] = entry.first;
     }
 
     for (auto entry: dynamicOrderToVar){
@@ -107,6 +169,8 @@ std::string GenerateSMTCode::generatePythonCode(){
             }else{
                 pythonCode += "s.add(" + var.getName() + " == " + std::to_string(varToDim[var]) + ")\n";
             }
+
+            nameToVar[var.getName()] = var;
         }
     }
 

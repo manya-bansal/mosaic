@@ -17,6 +17,7 @@ public:
 
   std::string runSMT();
   bool isSat();
+  std::map<IndexVar, int> getTilings();
 
   
 
@@ -52,6 +53,7 @@ private:
   std::string s;
   std::map<IndexVar, std::string> indexVarName;
   std::map<IndexVar, int> varToDim;
+  std::map<std::string, IndexVar> nameToVar;
   bool tile; 
 };
 
