@@ -4186,7 +4186,7 @@ static IndexStmt constructProducer(Access workspace, Access result, std::vector<
     }
   }
 
-  IndexStmt s = Assignment(workspace, result);
+  IndexStmt s = Assignment(workspace, result, Add());
   for (const auto &iVar: varsToGenerate){
     s = forall(iVar, s);
   }
@@ -4457,9 +4457,9 @@ IndexStmt IndexStmt::holdConstant(FunctionInterface functionInterface, IndexExpr
   IndexStmt rewritten = replace(*this, substitution);
 
   auto tensorAccess = getTensorAccess(rewritten, workspace.getTensorVar());
+  
   Forall forall = getForAllTensor(rewritten, workspace.getTensorVar());
   IndexStmt consumer = makeConcreteNotation(tensorAccess);
-  
   rewritten = replace(rewritten, {{forall, consumer}});
 
   std::vector<TensorVar> temps;
@@ -4469,7 +4469,6 @@ IndexStmt IndexStmt::holdConstant(FunctionInterface functionInterface, IndexExpr
   for (auto &entry: tensorVarToIndexVar){
      temps.push_back(to<Access>(entry.second).getTensorVar());
   }
-
   // return DimReduction(rewritten, reducedCode, temps);
 
   return DimReduction(rewritten, reducedCode, temps);

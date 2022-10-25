@@ -218,6 +218,9 @@ const string cHeaders =
   "    printf(\"next\\n\");\n"
   "}\n"
 
+  "int lC = 0;\n"
+  "int kB = 0;\n"
+
   "#endif\n";
 } // anonymous namespace
 
