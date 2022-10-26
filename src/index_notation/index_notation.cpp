@@ -4581,7 +4581,7 @@ IndexStmt IndexStmt::holdConstant(FunctionInterface functionInterface, IndexExpr
 }
 
 
-IndexStmt IndexStmt::accelerate(FunctionInterface functionInterface, IndexExpr exprToAccelerate) const{
+IndexStmt IndexStmt::accelerate(FunctionInterface functionInterface, IndexExpr exprToAccelerate, bool fullStmt) const{
 
   AcceleratorStmt referenceStmt = functionInterface.getNode()->getStmt();
   if (!isa<AcceleratorAssignment>(referenceStmt)){

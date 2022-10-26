@@ -778,7 +778,7 @@ public:
                        std::vector<IndexVar> iw_vars, TensorVar workspace) const;
 
 
-  IndexStmt accelerate(FunctionInterface functionInterface, IndexExpr exprToAccelerate) const;
+  IndexStmt accelerate(FunctionInterface functionInterface, IndexExpr exprToAccelerate, bool fullStmt = false) const;
 
   IndexStmt holdConstant(FunctionInterface functionInterface, IndexExpr exprToAccelerate, std::vector<IndexVar> indexVarsToHoldConstant, Access workspace) const;
 

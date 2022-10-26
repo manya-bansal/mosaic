@@ -27,7 +27,7 @@ class AVXSaxpy : public AbstractFunctionInterface{
         std::string getFunctionName() const override {return "_mm256_storeu_ps";}
         std::vector<Argument>  callBefore() const override {
                                 taco::TransferLoad _mm256_load_ps("_mm256_loadu_ps", "__m256");
-                                taco::TransferLoad _mm256_add_ps("a", "__m256");
+                                taco::TransferLoad _mm256_add_ps("_mm256_add_ps", "__m256");
                                 return { 
                                          var = _mm256_load_ps(x),
                                          var2 = _mm256_load_ps(y),
