@@ -11,7 +11,7 @@
 using namespace taco;
 extern bool gsl_compile;
 
-static void bench_sddmm_gsl_dot(benchmark::State& state) {
+static void bench_sddmm_dot_gsl(benchmark::State& state) {
   gsl_compile = true;
   int dim = state.range(0);
   int NUM_I = dim;
@@ -74,5 +74,5 @@ static void bench_sddmm_gsl_dot(benchmark::State& state) {
   gsl_compile = false;
 }
 
-TACO_BENCH(bench_sddmm_gsl_dot)->DenseRange(100, 2000, 100);
+TACO_BENCH(bench_sddmm_dot_gsl)->DenseRange(100, 2000, 100);
 

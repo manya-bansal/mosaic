@@ -10,7 +10,7 @@
 
 using namespace taco;
 
-static void bench_sddmm_blas_dot(benchmark::State& state) {
+static void bench_sddmm_dot_blas(benchmark::State& state) {
   int dim = state.range(0);
   int NUM_I = dim;
   int NUM_K = dim;
@@ -71,5 +71,5 @@ static void bench_sddmm_blas_dot(benchmark::State& state) {
   }
 }
 
-TACO_BENCH(bench_sddmm_blas_dot)->DenseRange(100, 2000, 100);
+TACO_BENCH(bench_sddmm_dot_blas)->DenseRange(100, 2000, 100);
 

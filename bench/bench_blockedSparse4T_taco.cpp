@@ -20,7 +20,7 @@ static void bench_blockedSparse4T_taco(benchmark::State& state) {
    Tensor<float> C("C", {dim, dim, dim, dim}, Format{Sparse, Dense, Sparse, Dense});
 
    
-   float SPARSITY = .4;
+   float SPARSITY = .2;
    for (int i = 0; i < dim; i++) {
     for (int k = 0; k < dim; k++) {
       float rand_float = (float)rand()/(float)(RAND_MAX);

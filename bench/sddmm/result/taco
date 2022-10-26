@@ -1,9 +1,9 @@
 {
   "context": {
-    "date": "2022-10-20T22:41:40+00:00",
-    "host_name": "edo-slurm1",
+    "date": "2022-10-25T17:55:52-07:00",
+    "host_name": "lagos",
     "executable": "/home/manya227/taco-interoperable/build/bin/./taco-bench",
-    "num_cpus": 40,
+    "num_cpus": 144,
     "mhz_per_cpu": 2494,
     "cpu_scaling_enabled": false,
     "caches": [
@@ -11,28 +11,28 @@
         "type": "Data",
         "level": 1,
         "size": 32768,
-        "num_sharing": 1
+        "num_sharing": 144
       },
       {
         "type": "Instruction",
         "level": 1,
         "size": 32768,
-        "num_sharing": 1
+        "num_sharing": 144
       },
       {
         "type": "Unified",
         "level": 2,
-        "size": 4194304,
-        "num_sharing": 1
+        "size": 262144,
+        "num_sharing": 144
       },
       {
         "type": "Unified",
         "level": 3,
-        "size": 16777216,
-        "num_sharing": 40
+        "size": 47185920,
+        "num_sharing": 144
       }
     ],
-    "load_avg": [1,1,1],
+    "load_avg": [1.02,1.23,1],
     "library_build_type": "release"
   },
   "benchmarks": [
@@ -47,8 +47,8 @@
       "aggregate_name": "mean",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 4.4737868010997772e-01,
-      "cpu_time": 4.4643580000000432e-01,
+      "real_time": 8.2006790325976908e-01,
+      "cpu_time": 8.1615040000000272e-01,
       "time_unit": "ms"
     },
     {
@@ -62,8 +62,8 @@
       "aggregate_name": "median",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 4.4990167953073978e-01,
-      "cpu_time": 4.4912400000000219e-01,
+      "real_time": 6.5911700949072838e-01,
+      "cpu_time": 6.5404450000000613e-01,
       "time_unit": "ms"
     },
     {
@@ -77,8 +77,8 @@
       "aggregate_name": "stddev",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 2.3118897029724805e-02,
-      "cpu_time": 2.2872534241357080e-02,
+      "real_time": 3.4972281086089924e-01,
+      "cpu_time": 3.4925491449280754e-01,
       "time_unit": "ms"
     },
     {
@@ -92,8 +92,8 @@
       "aggregate_name": "cv",
       "aggregate_unit": "percentage",
       "iterations": 10,
-      "real_time": 5.1676349494440721e-02,
-      "cpu_time": 5.1233647125425108e-02,
+      "real_time": 4.2645591843157304e-01,
+      "cpu_time": 4.2792960034425803e-01,
       "time_unit": "ms"
     },
     {
@@ -107,8 +107,8 @@
       "aggregate_name": "mean",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 2.8783344663679600e+00,
-      "cpu_time": 2.8768818000000071e+00,
+      "real_time": 4.8343901973566981e+00,
+      "cpu_time": 4.8318191999999982e+00,
       "time_unit": "ms"
     },
     {
@@ -122,8 +122,8 @@
       "aggregate_name": "median",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 2.8480892069637775e+00,
-      "cpu_time": 2.8467930000000141e+00,
+      "real_time": 4.6704619962838478e+00,
+      "cpu_time": 4.6677700000000435e+00,
       "time_unit": "ms"
     },
     {
@@ -137,8 +137,8 @@
       "aggregate_name": "stddev",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 1.2148959517384580e-01,
-      "cpu_time": 1.2117311615829023e-01,
+      "real_time": 2.0241908855574611e+00,
+      "cpu_time": 2.0240445756678458e+00,
       "time_unit": "ms"
     },
     {
@@ -152,8 +152,8 @@
       "aggregate_name": "cv",
       "aggregate_unit": "percentage",
       "iterations": 10,
-      "real_time": 4.2208296705402701e-02,
-      "cpu_time": 4.2119601910057591e-02,
+      "real_time": 4.1870655923972150e-01,
+      "cpu_time": 4.1889907132035209e-01,
       "time_unit": "ms"
     },
     {
@@ -167,8 +167,8 @@
       "aggregate_name": "mean",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 9.2452387325465679e+00,
-      "cpu_time": 9.2431458999999982e+00,
+      "real_time": 1.3742699597787578e+01,
+      "cpu_time": 1.3740522299999970e+01,
       "time_unit": "ms"
     },
     {
@@ -182,8 +182,8 @@
       "aggregate_name": "median",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 9.1427126899361610e+00,
-      "cpu_time": 9.1407169999999915e+00,
+      "real_time": 1.1820603001979180e+01,
+      "cpu_time": 1.1818609499999965e+01,
       "time_unit": "ms"
     },
     {
@@ -197,8 +197,8 @@
       "aggregate_name": "stddev",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 2.4578504143072796e-01,
-      "cpu_time": 2.4561679766728509e-01,
+      "real_time": 3.6475859072550549e+00,
+      "cpu_time": 3.6470859601350298e+00,
       "time_unit": "ms"
     },
     {
@@ -212,8 +212,8 @@
       "aggregate_name": "cv",
       "aggregate_unit": "percentage",
       "iterations": 10,
-      "real_time": 2.6585039990960554e-02,
-      "cpu_time": 2.6572857371783463e-02,
+      "real_time": 2.6541989667315985e-01,
+      "cpu_time": 2.6542556974963305e-01,
       "time_unit": "ms"
     },
     {
@@ -227,8 +227,8 @@
       "aggregate_name": "mean",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 2.1385355805978183e+01,
-      "cpu_time": 2.1382001500000005e+01,
+      "real_time": 2.9304675104503985e+01,
+      "cpu_time": 2.9301042499999944e+01,
       "time_unit": "ms"
     },
     {
@@ -242,8 +242,8 @@
       "aggregate_name": "median",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 2.1306182723492384e+01,
-      "cpu_time": 2.1303034000000110e+01,
+      "real_time": 2.8044586011674255e+01,
+      "cpu_time": 2.8044405999999913e+01,
       "time_unit": "ms"
     },
     {
@@ -257,8 +257,8 @@
       "aggregate_name": "stddev",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 4.9639549211252171e-01,
-      "cpu_time": 4.9618919535053096e-01,
+      "real_time": 4.8279917811357231e+00,
+      "cpu_time": 4.8273861208671542e+00,
       "time_unit": "ms"
     },
     {
@@ -272,8 +272,8 @@
       "aggregate_name": "cv",
       "aggregate_unit": "percentage",
       "iterations": 10,
-      "real_time": 2.3211935149274276e-02,
-      "cpu_time": 2.3205928376280903e-02,
+      "real_time": 1.6475158874543142e-01,
+      "cpu_time": 1.6475134360380397e-01,
       "time_unit": "ms"
     },
     {
@@ -287,8 +287,8 @@
       "aggregate_name": "mean",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 4.2273561842739589e+01,
-      "cpu_time": 4.2268431899999918e+01,
+      "real_time": 5.4882688299403526e+01,
+      "cpu_time": 5.4880967500000018e+01,
       "time_unit": "ms"
     },
     {
@@ -302,8 +302,8 @@
       "aggregate_name": "median",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 4.2023164918646216e+01,
-      "cpu_time": 4.2018251999999642e+01,
+      "real_time": 5.2120968000963330e+01,
+      "cpu_time": 5.2119058500000200e+01,
       "time_unit": "ms"
     },
     {
@@ -317,8 +317,8 @@
       "aggregate_name": "stddev",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 8.8214359205118120e-01,
-      "cpu_time": 8.8203822368085461e-01,
+      "real_time": 5.5574165657466814e+00,
+      "cpu_time": 5.5576556431754627e+00,
       "time_unit": "ms"
     },
     {
@@ -332,8 +332,8 @@
       "aggregate_name": "cv",
       "aggregate_unit": "percentage",
       "iterations": 10,
-      "real_time": 2.0867500953262775e-02,
-      "cpu_time": 2.0867540716145098e-02,
+      "real_time": 1.0125991889152922e-01,
+      "cpu_time": 1.0126745019893207e-01,
       "time_unit": "ms"
     },
     {
@@ -347,8 +347,8 @@
       "aggregate_name": "mean",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 7.2426565550267711e+01,
-      "cpu_time": 7.2418387500000065e+01,
+      "real_time": 9.2647559703618768e+01,
+      "cpu_time": 9.2642762200000021e+01,
       "time_unit": "ms"
     },
     {
@@ -362,8 +362,8 @@
       "aggregate_name": "median",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 7.2204490192234516e+01,
-      "cpu_time": 7.2196487000000033e+01,
+      "real_time": 8.9763163501629606e+01,
+      "cpu_time": 8.9761341500000043e+01,
       "time_unit": "ms"
     },
     {
@@ -377,8 +377,8 @@
       "aggregate_name": "stddev",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 8.3380931316049389e-01,
-      "cpu_time": 8.3329524967255930e-01,
+      "real_time": 6.6522537964084352e+00,
+      "cpu_time": 6.6524834279586527e+00,
       "time_unit": "ms"
     },
     {
@@ -392,8 +392,8 @@
       "aggregate_name": "cv",
       "aggregate_unit": "percentage",
       "iterations": 10,
-      "real_time": 1.1512478975435997e-02,
-      "cpu_time": 1.1506680532931760e-02,
+      "real_time": 7.1801716285772837e-02,
+      "cpu_time": 7.1807913213954772e-02,
       "time_unit": "ms"
     },
     {
@@ -407,8 +407,8 @@
       "aggregate_name": "mean",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 1.1184389791451395e+02,
-      "cpu_time": 1.1183107419999995e+02,
+      "real_time": 1.4397407380165532e+02,
+      "cpu_time": 1.4396906799999982e+02,
       "time_unit": "ms"
     },
     {
@@ -422,8 +422,8 @@
       "aggregate_name": "median",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 1.1149414302781224e+02,
-      "cpu_time": 1.1148263350000009e+02,
+      "real_time": 1.4163325001572957e+02,
+      "cpu_time": 1.4162039500000034e+02,
       "time_unit": "ms"
     },
     {
@@ -437,8 +437,8 @@
       "aggregate_name": "stddev",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 1.2961054934427829e+00,
-      "cpu_time": 1.2942314807012314e+00,
+      "real_time": 6.7215543037735728e+00,
+      "cpu_time": 6.7216047490667394e+00,
       "time_unit": "ms"
     },
     {
@@ -452,8 +452,8 @@
       "aggregate_name": "cv",
       "aggregate_unit": "percentage",
       "iterations": 10,
-      "real_time": 1.1588522195761095e-02,
-      "cpu_time": 1.1573093524851721e-02,
+      "real_time": 4.6685865908284753e-02,
+      "cpu_time": 4.6687839564723360e-02,
       "time_unit": "ms"
     },
     {
@@ -467,8 +467,8 @@
       "aggregate_name": "mean",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 1.6795348976738754e+02,
-      "cpu_time": 1.6793687380000020e+02,
+      "real_time": 2.1666160720196785e+02,
+      "cpu_time": 2.1665221749999992e+02,
       "time_unit": "ms"
     },
     {
@@ -482,8 +482,8 @@
       "aggregate_name": "median",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 1.6770414332859218e+02,
-      "cpu_time": 1.6768832950000066e+02,
+      "real_time": 2.1088584300741786e+02,
+      "cpu_time": 2.1087639799999994e+02,
       "time_unit": "ms"
     },
     {
@@ -497,8 +497,8 @@
       "aggregate_name": "stddev",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 1.6614054520014381e+00,
-      "cpu_time": 1.6613236201720565e+00,
+      "real_time": 1.7350304360184278e+01,
+      "cpu_time": 1.7348930441683642e+01,
       "time_unit": "ms"
     },
     {
@@ -512,8 +512,8 @@
       "aggregate_name": "cv",
       "aggregate_unit": "percentage",
       "iterations": 10,
-      "real_time": 9.8920567491777283e-03,
-      "cpu_time": 9.8925482092191621e-03,
+      "real_time": 8.0080197799006686e-02,
+      "cpu_time": 8.0077326887658770e-02,
       "time_unit": "ms"
     },
     {
@@ -527,8 +527,8 @@
       "aggregate_name": "mean",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 2.3843512195162475e+02,
-      "cpu_time": 2.3841022439999975e+02,
+      "real_time": 3.0370169979869388e+02,
+      "cpu_time": 3.0368986400000040e+02,
       "time_unit": "ms"
     },
     {
@@ -542,8 +542,8 @@
       "aggregate_name": "median",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 2.3787463037297130e+02,
-      "cpu_time": 2.3785267049999879e+02,
+      "real_time": 3.0051814300531987e+02,
+      "cpu_time": 3.0050275000000147e+02,
       "time_unit": "ms"
     },
     {
@@ -557,8 +557,8 @@
       "aggregate_name": "stddev",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 3.2414878854333651e+00,
-      "cpu_time": 3.2389998874695136e+00,
+      "real_time": 8.1059375399612215e+00,
+      "cpu_time": 8.1091255868699914e+00,
       "time_unit": "ms"
     },
     {
@@ -572,8 +572,8 @@
       "aggregate_name": "cv",
       "aggregate_unit": "percentage",
       "iterations": 10,
-      "real_time": 1.3594842315600715e-02,
-      "cpu_time": 1.3585826260685812e-02,
+      "real_time": 2.6690458253391978e-02,
+      "cpu_time": 2.6701996174854161e-02,
       "time_unit": "ms"
     },
     {
@@ -587,8 +587,8 @@
       "aggregate_name": "mean",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 3.2650807043537498e+02,
-      "cpu_time": 3.2646782409999986e+02,
+      "real_time": 4.1584718140220502e+02,
+      "cpu_time": 4.1583510480000069e+02,
       "time_unit": "ms"
     },
     {
@@ -602,8 +602,8 @@
       "aggregate_name": "median",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 3.2531177415512502e+02,
-      "cpu_time": 3.2526909499999948e+02,
+      "real_time": 4.1217563450481975e+02,
+      "cpu_time": 4.1216621049999878e+02,
       "time_unit": "ms"
     },
     {
@@ -617,8 +617,8 @@
       "aggregate_name": "stddev",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 4.0288055492960009e+00,
-      "cpu_time": 4.0228412158202351e+00,
+      "real_time": 1.1851604718401987e+01,
+      "cpu_time": 1.1850631701613475e+01,
       "time_unit": "ms"
     },
     {
@@ -632,8 +632,8 @@
       "aggregate_name": "cv",
       "aggregate_unit": "percentage",
       "iterations": 10,
-      "real_time": 1.2339068813594341e-02,
-      "cpu_time": 1.2322320666394385e-02,
+      "real_time": 2.8499903927301558e-02,
+      "cpu_time": 2.8498391705801585e-02,
       "time_unit": "ms"
     },
     {
@@ -647,8 +647,8 @@
       "aggregate_name": "mean",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 4.3183705457486212e+02,
-      "cpu_time": 4.3179264800000038e+02,
+      "real_time": 5.4873736570298206e+02,
+      "cpu_time": 5.4872148470000047e+02,
       "time_unit": "ms"
     },
     {
@@ -662,8 +662,8 @@
       "aggregate_name": "median",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 4.3060295237228274e+02,
-      "cpu_time": 4.3055573850000246e+02,
+      "real_time": 5.4753777050063945e+02,
+      "cpu_time": 5.4752523350000001e+02,
       "time_unit": "ms"
     },
     {
@@ -677,8 +677,8 @@
       "aggregate_name": "stddev",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 2.9661069192829284e+00,
-      "cpu_time": 2.9666768656421918e+00,
+      "real_time": 3.9517115346706797e+00,
+      "cpu_time": 3.9498730627284457e+00,
       "time_unit": "ms"
     },
     {
@@ -692,8 +692,8 @@
       "aggregate_name": "cv",
       "aggregate_unit": "percentage",
       "iterations": 10,
-      "real_time": 6.8685789879773546e-03,
-      "cpu_time": 6.8706053226783729e-03,
+      "real_time": 7.2014624511822344e-03,
+      "cpu_time": 7.1983204100126274e-03,
       "time_unit": "ms"
     },
     {
@@ -707,8 +707,8 @@
       "aggregate_name": "mean",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 5.5892732618376613e+02,
-      "cpu_time": 5.5886800339999888e+02,
+      "real_time": 7.1255422710091807e+02,
+      "cpu_time": 7.1253087180000136e+02,
       "time_unit": "ms"
     },
     {
@@ -722,8 +722,8 @@
       "aggregate_name": "median",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 5.5756870936602354e+02,
-      "cpu_time": 5.5751223899999763e+02,
+      "real_time": 7.1032301800732967e+02,
+      "cpu_time": 7.1029160399999830e+02,
       "time_unit": "ms"
     },
     {
@@ -737,8 +737,8 @@
       "aggregate_name": "stddev",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 3.8802011373841880e+00,
-      "cpu_time": 3.8852589777833417e+00,
+      "real_time": 6.7467376561612253e+00,
+      "cpu_time": 6.7484270621684912e+00,
       "time_unit": "ms"
     },
     {
@@ -752,8 +752,8 @@
       "aggregate_name": "cv",
       "aggregate_unit": "percentage",
       "iterations": 10,
-      "real_time": 6.9422283642443369e-03,
-      "cpu_time": 6.9520154207191980e-03,
+      "real_time": 9.4683848604910376e-03,
+      "cpu_time": 9.4710662081497737e-03,
       "time_unit": "ms"
     },
     {
@@ -767,8 +767,8 @@
       "aggregate_name": "mean",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 7.2340656705200684e+02,
-      "cpu_time": 7.2334146330000021e+02,
+      "real_time": 9.0259787630202482e+02,
+      "cpu_time": 9.0257235469999830e+02,
       "time_unit": "ms"
     },
     {
@@ -782,8 +782,8 @@
       "aggregate_name": "median",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 7.2388213849626482e+02,
-      "cpu_time": 7.2381133999999747e+02,
+      "real_time": 9.0094524250889663e+02,
+      "cpu_time": 9.0091527399999200e+02,
       "time_unit": "ms"
     },
     {
@@ -797,8 +797,8 @@
       "aggregate_name": "stddev",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 2.5127224423825281e+00,
-      "cpu_time": 2.5140366738957405e+00,
+      "real_time": 4.9539648405534171e+00,
+      "cpu_time": 4.9589986249085136e+00,
       "time_unit": "ms"
     },
     {
@@ -812,8 +812,8 @@
       "aggregate_name": "cv",
       "aggregate_unit": "percentage",
       "iterations": 10,
-      "real_time": 3.4734581586980322e-03,
-      "cpu_time": 3.4755876739407418e-03,
+      "real_time": 5.4885624823869357e-03,
+      "cpu_time": 5.4942948330794052e-03,
       "time_unit": "ms"
     },
     {
@@ -827,8 +827,8 @@
       "aggregate_name": "mean",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 9.0252166688442230e+02,
-      "cpu_time": 9.0243337680000184e+02,
+      "real_time": 1.1379211482984831e+03,
+      "cpu_time": 1.1378923102000058e+03,
       "time_unit": "ms"
     },
     {
@@ -842,8 +842,8 @@
       "aggregate_name": "median",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 9.0112113999202847e+02,
-      "cpu_time": 9.0103539200000432e+02,
+      "real_time": 1.1265184489966487e+03,
+      "cpu_time": 1.1264901125000151e+03,
       "time_unit": "ms"
     },
     {
@@ -857,8 +857,8 @@
       "aggregate_name": "stddev",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 6.5106279060223660e+00,
-      "cpu_time": 6.5087779990186334e+00,
+      "real_time": 2.8456303098030002e+01,
+      "cpu_time": 2.8453982861358902e+01,
       "time_unit": "ms"
     },
     {
@@ -872,8 +872,8 @@
       "aggregate_name": "cv",
       "aggregate_unit": "percentage",
       "iterations": 10,
-      "real_time": 7.2138189529538715e-03,
-      "cpu_time": 7.2124748112692141e-03,
+      "real_time": 2.5007271497309195e-02,
+      "cpu_time": 2.5005866202187078e-02,
       "time_unit": "ms"
     },
     {
@@ -887,8 +887,8 @@
       "aggregate_name": "mean",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 1.1098435593768954e+03,
-      "cpu_time": 1.1097368179000043e+03,
+      "real_time": 1.3962187598008313e+03,
+      "cpu_time": 1.3961824224000011e+03,
       "time_unit": "ms"
     },
     {
@@ -902,8 +902,8 @@
       "aggregate_name": "median",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 1.1072276721242815e+03,
-      "cpu_time": 1.1071243904999974e+03,
+      "real_time": 1.3875374730050680e+03,
+      "cpu_time": 1.3875016564999996e+03,
       "time_unit": "ms"
     },
     {
@@ -917,8 +917,8 @@
       "aggregate_name": "stddev",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 6.5780832698225087e+00,
-      "cpu_time": 6.5737037905384721e+00,
+      "real_time": 1.7474598040595922e+01,
+      "cpu_time": 1.7466320437381942e+01,
       "time_unit": "ms"
     },
     {
@@ -932,8 +932,8 @@
       "aggregate_name": "cv",
       "aggregate_unit": "percentage",
       "iterations": 10,
-      "real_time": 5.9270364856788211e-03,
-      "cpu_time": 5.9236601728490310e-03,
+      "real_time": 1.2515659109958275e-02,
+      "cpu_time": 1.2510056105245753e-02,
       "time_unit": "ms"
     },
     {
@@ -947,8 +947,8 @@
       "aggregate_name": "mean",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 1.3467200295999646e+03,
-      "cpu_time": 1.3465904321999956e+03,
+      "real_time": 1.6870136979996460e+03,
+      "cpu_time": 1.6869612720000077e+03,
       "time_unit": "ms"
     },
     {
@@ -962,8 +962,8 @@
       "aggregate_name": "median",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 1.3468736368231475e+03,
-      "cpu_time": 1.3467535229999967e+03,
+      "real_time": 1.6823340569972061e+03,
+      "cpu_time": 1.6822599060000132e+03,
       "time_unit": "ms"
     },
     {
@@ -977,8 +977,8 @@
       "aggregate_name": "stddev",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 8.1723291807636222e+00,
-      "cpu_time": 8.1773340384675173e+00,
+      "real_time": 1.6239439975246142e+01,
+      "cpu_time": 1.6243592846656135e+01,
       "time_unit": "ms"
     },
     {
@@ -992,8 +992,8 @@
       "aggregate_name": "cv",
       "aggregate_unit": "percentage",
       "iterations": 10,
-      "real_time": 6.0683208099245132e-03,
-      "cpu_time": 6.0726215209384602e-03,
+      "real_time": 9.6261458899248066e-03,
+      "cpu_time": 9.6289067901352849e-03,
       "time_unit": "ms"
     },
     {
@@ -1007,8 +1007,8 @@
       "aggregate_name": "mean",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 1.6297478483524173e+03,
-      "cpu_time": 1.6295898552999956e+03,
+      "real_time": 2.0231674106937135e+03,
+      "cpu_time": 2.0231236143000046e+03,
       "time_unit": "ms"
     },
     {
@@ -1022,8 +1022,8 @@
       "aggregate_name": "median",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 1.6310742623172700e+03,
-      "cpu_time": 1.6309202424999967e+03,
+      "real_time": 2.0190300329850288e+03,
+      "cpu_time": 2.0189759680000066e+03,
       "time_unit": "ms"
     },
     {
@@ -1037,8 +1037,8 @@
       "aggregate_name": "stddev",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 1.3516332612498157e+01,
-      "cpu_time": 1.3511191253995147e+01,
+      "real_time": 1.2043236639763414e+01,
+      "cpu_time": 1.2039775877360785e+01,
       "time_unit": "ms"
     },
     {
@@ -1052,8 +1052,8 @@
       "aggregate_name": "cv",
       "aggregate_unit": "percentage",
       "iterations": 10,
-      "real_time": 8.2935115552767273e-03,
-      "cpu_time": 8.2911606316473010e-03,
+      "real_time": 5.9526644093352461e-03,
+      "cpu_time": 5.9510826685330916e-03,
       "time_unit": "ms"
     },
     {
@@ -1067,8 +1067,8 @@
       "aggregate_name": "mean",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 1.9480962469242513e+03,
-      "cpu_time": 1.9479125488999925e+03,
+      "real_time": 2.3987140530996844e+03,
+      "cpu_time": 2.3986686342999974e+03,
       "time_unit": "ms"
     },
     {
@@ -1082,8 +1082,8 @@
       "aggregate_name": "median",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 1.9452946656383574e+03,
-      "cpu_time": 1.9451083679999927e+03,
+      "real_time": 2.3958167954988312e+03,
+      "cpu_time": 2.3957761269999764e+03,
       "time_unit": "ms"
     },
     {
@@ -1097,8 +1097,8 @@
       "aggregate_name": "stddev",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 9.4719470056972810e+00,
-      "cpu_time": 9.4670807886074613e+00,
+      "real_time": 1.1279031906965741e+01,
+      "cpu_time": 1.1288300703488627e+01,
       "time_unit": "ms"
     },
     {
@@ -1112,8 +1112,8 @@
       "aggregate_name": "cv",
       "aggregate_unit": "percentage",
       "iterations": 10,
-      "real_time": 4.8621555637469397e-03,
-      "cpu_time": 4.8601159194511193e-03,
+      "real_time": 4.7021160743985586e-03,
+      "cpu_time": 4.7060692511130811e-03,
       "time_unit": "ms"
     },
     {
@@ -1127,8 +1127,8 @@
       "aggregate_name": "mean",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 2.3500495083630085e+03,
-      "cpu_time": 2.3498326789999992e+03,
+      "real_time": 2.8397279917960991e+03,
+      "cpu_time": 2.8396689754999757e+03,
       "time_unit": "ms"
     },
     {
@@ -1142,8 +1142,8 @@
       "aggregate_name": "median",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 2.3442726868670434e+03,
-      "cpu_time": 2.3440651355000027e+03,
+      "real_time": 2.8317410090021440e+03,
+      "cpu_time": 2.8316719839999819e+03,
       "time_unit": "ms"
     },
     {
@@ -1157,8 +1157,8 @@
       "aggregate_name": "stddev",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 3.0707355708101364e+01,
-      "cpu_time": 3.0696424757037683e+01,
+      "real_time": 3.3101378402885160e+01,
+      "cpu_time": 3.3105742357172460e+01,
       "time_unit": "ms"
     },
     {
@@ -1172,8 +1172,8 @@
       "aggregate_name": "cv",
       "aggregate_unit": "percentage",
       "iterations": 10,
-      "real_time": 1.3066684594866863e-02,
-      "cpu_time": 1.3063238515391202e-02,
+      "real_time": 1.1656531364452579e-02,
+      "cpu_time": 1.1658310402656559e-02,
       "time_unit": "ms"
     },
     {
@@ -1187,8 +1187,8 @@
       "aggregate_name": "mean",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 2.7638342172373086e+03,
-      "cpu_time": 2.7635891378999931e+03,
+      "real_time": 3.2950343522970797e+03,
+      "cpu_time": 3.2949499136999862e+03,
       "time_unit": "ms"
     },
     {
@@ -1202,8 +1202,8 @@
       "aggregate_name": "median",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 2.7611993588507175e+03,
-      "cpu_time": 2.7609541729999878e+03,
+      "real_time": 3.2785785789965303e+03,
+      "cpu_time": 3.2785316674999763e+03,
       "time_unit": "ms"
     },
     {
@@ -1217,8 +1217,8 @@
       "aggregate_name": "stddev",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 1.6667076454875442e+01,
-      "cpu_time": 1.6663769535724448e+01,
+      "real_time": 3.8746714638406040e+01,
+      "cpu_time": 3.8682998071883567e+01,
       "time_unit": "ms"
     },
     {
@@ -1232,8 +1232,8 @@
       "aggregate_name": "cv",
       "aggregate_unit": "percentage",
       "iterations": 10,
-      "real_time": 6.0304183047330626e-03,
-      "cpu_time": 6.0297564884724420e-03,
+      "real_time": 1.1759123121552405e-02,
+      "cpu_time": 1.1740086825309404e-02,
       "time_unit": "ms"
     }
   ]
