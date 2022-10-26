@@ -10,6 +10,9 @@ namespace taco {
 class AcceleratorExpr;
 class AcceleratorStmt;
 
+class DynamicExpr;
+class DynamicStmt;
+
 struct AcceleratorAccessNode;
 struct AcceleratorLiteralNode;
 struct AcceleratorNegNode;
@@ -19,12 +22,36 @@ struct AcceleratorSubNode;
 struct AcceleratorMulNode;
 struct AcceleratorDivNode;
 struct AcceleratorReductionNode;
+struct AcceleratorDynamicIndexNode;
 
 struct AcceleratorBinaryExprNode;
 struct AcceleratorUnaryExprNode;
 
 struct AcceleratorAssignmentNode;
 struct AcceleratorForallNode;
+
+struct DynamicIndexIteratorNode;
+struct DynamicIndexAccessNode;
+struct DynamicLiteralNode;
+struct DynamicIndexLenNode;
+struct DynamicIndexMulInternalNode;
+struct DynamicAddNode;
+struct DynamicSubNode;
+struct DynamicMulNode;
+struct DynamicDivNode;
+struct DynamicModNode;
+
+struct DynamicEqualNode;
+struct DynamicNotEqualNode;
+struct DynamicGreaterNode;
+struct DynamicLessNode;
+struct DynamicGeqNode;
+struct DynamicLeqNode;
+struct DynamicForallNode;
+struct DynamicExistsNode;
+struct DynamicIndexVarNode;
+struct DynamicAndNode;
+struct DynamicOrNode;
 
 class AcceleratorExprVisitorStrict {
     public:
@@ -41,6 +68,7 @@ class AcceleratorExprVisitorStrict {
         virtual void visit(const AcceleratorDivNode*) = 0;
         virtual void visit(const AcceleratorMulNode*) = 0;
         virtual void visit(const AcceleratorReductionNode*) = 0;
+        virtual void visit(const AcceleratorDynamicIndexNode*) = 0;
 
 };
 
@@ -79,12 +107,90 @@ public:
   virtual void visit(const AcceleratorMulNode*);
   virtual void visit(const AcceleratorDivNode*);
   virtual void visit(const AcceleratorReductionNode*);
+  virtual void visit(const AcceleratorDynamicIndexNode*);
 
   virtual void visit(const AcceleratorForallNode*);
   virtual void visit(const AcceleratorAssignmentNode*); 
 
   virtual void visit(const AcceleratorBinaryExprNode*);
   virtual void visit(const AcceleratorUnaryExprNode*);
+
+};
+
+class DynamicExprVisitorStrict {
+    public:
+        virtual ~DynamicExprVisitorStrict() = default;
+
+        void visit(const DynamicExpr&);
+
+        virtual void visit(const DynamicIndexIteratorNode*) = 0;
+        virtual void visit(const DynamicIndexAccessNode*) = 0;
+        virtual void visit(const DynamicLiteralNode*) = 0;
+        virtual void visit(const DynamicIndexLenNode*) = 0;
+        virtual void visit(const DynamicIndexMulInternalNode*) = 0;
+        virtual void visit(const DynamicAddNode*) = 0;
+        virtual void visit(const DynamicSubNode*) = 0;
+        virtual void visit(const DynamicMulNode*) = 0;
+        virtual void visit(const DynamicDivNode*) = 0;
+        virtual void visit(const DynamicModNode*) = 0;
+        virtual void visit(const DynamicIndexVarNode*) = 0;
+
+};
+
+class DynamicStmtVisitorStrict {
+    public:
+        virtual ~DynamicStmtVisitorStrict() = default;
+
+        void visit(const DynamicStmt&);
+
+        virtual void visit(const DynamicEqualNode*) = 0;
+        virtual void visit(const DynamicNotEqualNode*) = 0;
+        virtual void visit(const DynamicGreaterNode*) = 0;
+        virtual void visit(const DynamicLessNode*) = 0;
+        virtual void visit(const DynamicGeqNode*) = 0;
+        virtual void visit(const DynamicLeqNode*) = 0;
+        virtual void visit(const DynamicForallNode*) = 0;
+        virtual void visit(const DynamicExistsNode*) = 0;
+        virtual void visit(const DynamicAndNode*) = 0; 
+        virtual void visit(const DynamicOrNode*) = 0; 
+};
+
+class DynamicNotationVisitorStrict : public DynamicExprVisitorStrict,
+                                     public DynamicStmtVisitorStrict{
+    public:
+        virtual ~DynamicNotationVisitorStrict() = default;
+
+        using DynamicExprVisitorStrict::visit;
+        using DynamicStmtVisitorStrict::visit;
+};
+
+class DynamicNotationVisitor : public DynamicNotationVisitorStrict {
+public:
+  virtual ~DynamicNotationVisitor() = default;
+
+  using DynamicNotationVisitorStrict::visit;
+
+  virtual void visit(const DynamicIndexIteratorNode*);
+  virtual void visit(const DynamicIndexAccessNode*);
+  virtual void visit(const DynamicLiteralNode*);
+  virtual void visit(const DynamicIndexLenNode*);
+  virtual void visit(const DynamicIndexMulInternalNode*);
+  virtual void visit(const DynamicAddNode*);
+  virtual void visit(const DynamicSubNode*);
+  virtual void visit(const DynamicMulNode*);
+  virtual void visit(const DynamicDivNode*);
+  virtual void visit(const DynamicModNode*);
+  virtual void visit(const DynamicIndexVarNode*);
+  virtual void visit(const DynamicEqualNode*);
+  virtual void visit(const DynamicNotEqualNode*);
+  virtual void visit(const DynamicGreaterNode*);
+  virtual void visit(const DynamicLessNode*);
+  virtual void visit(const DynamicLeqNode*);
+  virtual void visit(const DynamicGeqNode*);
+  virtual void visit(const DynamicForallNode*);
+  virtual void visit(const DynamicExistsNode*);
+  virtual void visit(const DynamicAndNode*);
+  virtual void visit(const DynamicOrNode*); 
 
 };
 
@@ -140,6 +246,7 @@ private:
   ACCEL_RULE(AcceleratorDivNode)
   ACCEL_RULE(AcceleratorMulNode)
   ACCEL_RULE(AcceleratorReductionNode)
+  ACCEL_RULE(AcceleratorDynamicIndexNode)
 
 
   ACCEL_RULE(AcceleratorForallNode)

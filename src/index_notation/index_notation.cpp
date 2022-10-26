@@ -3020,6 +3020,108 @@ template <> SuchThat to<SuchThat>(IndexStmt s) {
   return SuchThat(to<SuchThatNode>(s.ptr));
 }
 
+std::ostream& operator<<(std::ostream& os, const IndexObject& op){
+
+  return op.getNode()->print(os);
+
+}
+
+//class dynamic order
+struct DynamicOrder::Content {
+  int min;
+  int max;
+  std::string name;
+};
+
+DynamicOrder::DynamicOrder() : DynamicOrder(util::uniqueName('I')){
+}
+
+DynamicOrder::DynamicOrder(std::string name) : content(new Content) {
+  content->min = -1;
+  content->max = -1;
+  content->name = name;
+}
+
+void DynamicOrder::setMin(int min){
+  taco_uassert(min > 0);
+  content->min = min;
+}
+
+void DynamicOrder::setMax(int max){
+  taco_uassert(max > 0);
+  content->max = max;
+}
+
+bool DynamicOrder::hasMin() const{
+  return (content->min != -1);
+}
+
+bool DynamicOrder::hasMax() const{
+  return (content->max != -1);
+}
+
+bool DynamicOrder::hasFixedSize() const{
+  if (!hasMin() || !hasMax()){
+    return false;
+  }
+  return getMin() == getMax();
+}
+
+int DynamicOrder::getMin() const{
+  return content->min;
+}
+
+int DynamicOrder::getMax() const{
+  return content->max;
+}
+
+void DynamicOrder::setSize(int size){
+   content->max = size;
+   content->min = size;
+}
+
+std::string DynamicOrder::getName() const{
+  return content->name;
+}
+
+std::ostream& operator<<(std::ostream& os, const DynamicOrder& op){
+
+  if (op.hasMin()){
+    os << "min(" << op.getMin() << ") ";
+  }
+  os << "...";
+  if (op.hasMax()){
+    os << " max(" << op.getMax() << ")";
+  }
+  return os;
+}
+
+bool operator<(const DynamicOrder& a, const DynamicOrder& b) {
+  return a.content < b.content;
+}
+
+bool operator==(const DynamicOrder& a, const DynamicOrder& b) {
+  return a.content < b.content;
+}
+
+std::ostream& DynamicOrder::print(std::ostream& os) const {
+  return os << *this;
+}
+
+DynamicIndexAccess DynamicOrder::operator()(const DynamicIndexIterator& index){
+  if (getName() != index.getDynamicOrder().getName()){
+    taco_uerror << "Indexing into a dynmaic order that the iterator was not initialized with";
+  }
+  return DynamicIndexAccess(index);
+}
+
+DynamicIndexAccess DynamicOrder::operator()(const DynamicIndexIterator& index) const{
+  if (getName() != index.getDynamicOrder().getName()){
+    taco_uerror << "Indexing into a dynmaic order that the iterator was not initialized with";
+  }
+  return DynamicIndexAccess(index);
+}
+
 // class IndexVar
 IndexVar::IndexVar() : IndexVar(util::uniqueName('i')) {}
 
@@ -3040,6 +3142,10 @@ template <> IndexVar to<IndexVar>(IndexExpr e) {
 
 std::string IndexVar::getName() const {
   return getNode(*this)->getName();
+}
+
+std::ostream& IndexVar::print(std::ostream& os) const {
+  return os << *this;
 }
 
 WindowedIndexVar IndexVar::operator()(int lo, int hi, int stride) {

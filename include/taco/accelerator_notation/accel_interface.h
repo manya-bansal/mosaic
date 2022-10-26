@@ -472,14 +472,13 @@ struct AbstractFunctionInterface :  public util::Manageable<AbstractFunctionInte
     virtual std::vector<Argument> getArguments() const= 0;
     virtual std::string getReturnType()   const = 0;
     virtual std::string getFunctionName() const = 0;
-    // virtual std::vector<DeclVar> getDecelerations() const {return {};}
-
+    virtual DynamicStmt getConstraints() const {return DynamicStmt();}
     /// call any functions before main function (useful to call "void"
     /// functions)
     virtual std::vector<Argument> callBefore() const {return {};}
-
     /// call any functions after main function (useful for error checking)
     virtual std::vector<Argument> callAfter() const {return {};}
+
     virtual bool checkerFunction(IndexStmt stmt) const {return true;}
     
 

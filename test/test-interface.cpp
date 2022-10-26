@@ -24,6 +24,7 @@
 #include "taco/accelerator_interface/gsl_interface.h"
 #include "taco/accelerator_interface/tensor_interface.h"
 #include "taco/accelerator_interface/avx2_interface.h"
+#include "taco/accelerator_interface/dynamic_order_interface.h"
 
 
 using namespace taco;
@@ -1867,6 +1868,31 @@ TEST(interface, sdmmTblisDot){
 
   ASSERT_TENSOR_EQ(expected, A);
 
+}
+
+TEST(interface, TTTPtest){
+
+  int dim = 16;
+  int NUM_I = dim;
+  int NUM_K = dim;
+  int NUM_J = dim;
+
+  float SPARSITY = .3;
+
+
+  Tensor<float> B("B", {NUM_I, NUM_K, NUM_K}, CSR)
+  Tensor<float> B("B", {NUM_I, NUM_K, NUM_K}, CSR);
+  Tensor<float> C1("C1", {NUM_I, NUM_J}, {Dense, Dense});
+  Tensor<float> C2("C2", {NUM_J, NUM_K}, {Dense, Dense});
+  Tensor<float> C3("A", {NUM_I, NUM_K}, {Dense, Dense}, 0);
+  Tensor<float> expected("expected", {NUM_I, NUM_K, NUM_K}, {Dense, Dense});
+  TensorVar precomputed("precomputed", Type(taco::Float32, {16, 16}), Format{Dense, Dense});
+
+
+  }
+
+ 
+  ASSERT_TENSOR_EQ(expected, A);
 
 }
 

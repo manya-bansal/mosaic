@@ -2,6 +2,7 @@
 #include "taco/accelerator_notation/accelerator_notation.h"
 #include "taco/index_notation/index_notation.h"
 #include "taco/accelerator_notation/accelerator_notation_nodes.h"
+#include "taco/accelerator_notation/code_gen_dynamic_order.h"
 #include "op_factory.h"
 
 
@@ -21,7 +22,7 @@ static TensorObject A("A", matrixType), B("B", matrixType), C("C", matrixType);
 static const IndexVar i("i"), j("j"), k("k");
 
 
-TEST(accelerateNotation, AcceleratorExprNode) {
+TEST(accelerateNotation, AcceleratorExprTest) {
     // AcceleratorExpr((TensorVar()));
     // AcceleratorExpr expr = TensorVar();
     std::cout << AcceleratorExpr((TensorObject())) << std::endl;
@@ -42,6 +43,49 @@ TEST(accelerateNotation, AcceleratorExprNode) {
     std::cout << forall(i, stmt) << std::endl;
 
     std::cout << sum(i, x(i)*t(i)) + 5 << endl;
+    std::vector<IndexObject> incides = {new DynamicOrder(), new IndexVar(i)};
+
+
+    std::cout << x[incides]<< std::endl;
+
+    DynamicOrder dynamicOrder;
+    DynamicIndexIterator interator(dynamicOrder);
+    DynamicIndexIterator interator2(dynamicOrder);
+    
+    IndexVar var; 
+    IndexVar var2; 
+
+    std::cout << (interator == (dynamicOrder(interator) + 1)) << endl;
+    std::cout << (dynamicOrder(interator) == dynamicOrder(interator)) << endl;
+    std::cout << (interator != interator) << endl;
+    std::cout << (interator > interator) << endl;
+    std::cout << (interator > (dynamicOrder(interator) + 1)) << endl;
+    std::cout << (interator < (dynamicOrder(interator) + 1)) << endl;
+    std::cout << (interator <= (dynamicOrder(interator) + 1)) << endl;
+    std::cout << (interator >= (dynamicOrder(interator) + 1)) << endl;
+    std::cout << forall(interator, (interator >= (dynamicOrder(interator) + 1))) << endl;
+    std::cout << exists(interator, (interator >= (dynamicOrder(interator) + 1))) << endl;
+    std::cout << forall(interator2, exists(interator, (interator >= DynamicExpr(var) + 1))) << endl;
+
+    // GenerateSMTCode condition(DynamicExpr(var2) >= DynamicExpr(var) + 1, {});
+    // cout << condition.generatePythonCode() << endl;
+
+    // GenerateSMTCode condition2((DynamicExpr(var2) >= DynamicExpr(var) + 1) && (DynamicExpr(var2) >= DynamicExpr(var) + 1), {});
+    // cout << condition2.generatePythonCode() << endl;
+    std::map<DynamicOrder, std::vector<IndexVar>> mapRef; 
+    std::map<IndexVar, int> dimRef;
+    mapRef[dynamicOrder] = {var, var2, var};
+    dimRef[var] = 10;
+    dimRef[var2] = 10;
+    GenerateSMTCode condition(forall(interator, dynamicOrder(interator) > 4), mapRef, dimRef, true);
+    condition.runSMT();
+    ASSERT_TRUE(condition.isSat());
+
+    cout << util::join(condition.getTilings()) << endl;
+
+    GenerateSMTCode condition1(forall(interator, interator > interator), mapRef, dimRef, true);
+    condition1.runSMT();
+    ASSERT_FALSE(condition1.isSat());
 
 }
 

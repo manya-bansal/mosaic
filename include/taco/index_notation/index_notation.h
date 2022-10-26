@@ -82,6 +82,8 @@ class IndexExprVisitorStrict;
 class IndexStmtVisitorStrict;
 
 class AcceleratorDescription;
+class DynamicIndexAccess;
+class DynamicIndexIterator;
 
 /// Return true if the index statement is of the given subtype.  The subtypes
 /// are Assignment, Forall, Where, Sequence, and Multi.
@@ -1140,9 +1142,68 @@ private:
   std::shared_ptr<Content> content;
 };
 
+struct IndexObjectNode : public util::Manageable<IndexObjectNode>{
+
+    IndexObjectNode() {}
+    virtual ~IndexObjectNode() = default;
+
+    virtual std::ostream& print(std::ostream& os) const {
+        os << "Printing a Index Object" << std::endl;
+        return os;
+    };
+
+};
+
+class IndexObject : public util::IntrusivePtr<const IndexObjectNode> {
+  public: 
+    IndexObject(IndexObjectNode * arg) : IntrusivePtr(arg) {}
+    IndexObject() : IndexObject(new IndexObjectNode())  {}
+
+    template<typename T>
+    const T* getNode() const {
+      return static_cast<const T*>(ptr);
+    }
+
+    const IndexObjectNode* getNode() const {
+      return ptr;
+    }
+ 
+};
+
+std::ostream& operator<<(std::ostream&, const IndexObject&);
+ 
+class DynamicOrder : public IndexObjectNode{
+  public: 
+    DynamicOrder();
+    explicit DynamicOrder(std::string name);
+    void setMin(int min);
+    void setMax(int max);
+    void setSize(int size);
+    bool hasMin() const;
+    bool hasMax() const;
+    bool hasFixedSize() const;
+    int getMin() const;
+    int getMax() const;
+    std::string getName() const;
+    std::ostream& print(std::ostream& os) const override;
+
+    friend bool operator<(const DynamicOrder& a, const DynamicOrder& b);
+    friend bool operator==(const DynamicOrder& a, const DynamicOrder& b);
+
+    DynamicIndexAccess operator()(const DynamicIndexIterator &index);
+    DynamicIndexAccess operator()(const DynamicIndexIterator &index) const;
+ 
+  private:
+    struct Content;
+    std::shared_ptr<Content> content;
+}; 
+
+std::ostream& operator<<(std::ostream&, const DynamicOrder&);
+
+
 /// Index variables are used to index into tensors in index expressions, and
 /// they represent iteration over the tensor modes they index into.
-class IndexVar : public IndexExpr, public IndexVarInterface {
+class IndexVar : public IndexExpr, public IndexVarInterface, public IndexObjectNode {
 
 public:
   IndexVar();
@@ -1170,6 +1231,8 @@ public:
   /// Indexing into an IndexVar with a vector returns an index set into it.
   IndexSetVar operator()(std::vector<int>&& indexSet);
   IndexSetVar operator()(std::vector<int>& indexSet);
+
+  std::ostream& print(std::ostream& os) const override;
 
 private:
   struct Content;

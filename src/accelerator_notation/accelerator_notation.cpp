@@ -271,6 +271,70 @@ template <> AcceleratorAccess to<AcceleratorAccess>(AcceleratorExpr e) {
   return AcceleratorAccess(to<AcceleratorAccessNode>(e.ptr));
 }
 
+
+AcceleratorDynamicIndex::AcceleratorDynamicIndex(const AcceleratorDynamicIndexNode* n) : AcceleratorExpr(n){
+}
+AcceleratorDynamicIndex::AcceleratorDynamicIndex(const TensorObject& tensorObject, const std::vector<IndexObject>& indices)
+: AcceleratorDynamicIndex(new AcceleratorDynamicIndexNode(tensorObject, indices)){
+}
+
+AcceleratorAssignment AcceleratorDynamicIndex::operator=(const AcceleratorExpr& expr){
+  AcceleratorAssignment assignment = AcceleratorAssignment(*this, expr);
+  return assignment;
+}
+
+AcceleratorAssignment AcceleratorDynamicIndex::operator=(const AcceleratorExpr& expr) const{
+  AcceleratorAssignment assignment = AcceleratorAssignment(*this, expr);
+  return assignment;
+}
+
+AcceleratorAssignment AcceleratorDynamicIndex::operator=(const AcceleratorAccess& expr){
+  AcceleratorAssignment assignment = AcceleratorAssignment(*this, expr);
+  return assignment;
+}
+
+AcceleratorAssignment AcceleratorDynamicIndex::operator=(const AcceleratorAccess& expr) const{
+  return operator=(static_cast<AcceleratorExpr>(expr));
+}
+
+AcceleratorAssignment AcceleratorDynamicIndex::operator=(const AcceleratorDynamicIndex& expr){
+  AcceleratorAssignment assignment = AcceleratorAssignment(*this, expr);
+  return assignment;
+}
+
+
+AcceleratorAssignment AcceleratorDynamicIndex::operator=(const AcceleratorDynamicIndex& expr) const{
+  AcceleratorAssignment assignment = AcceleratorAssignment(*this, expr);
+  return assignment;
+}
+
+AcceleratorAssignment AcceleratorDynamicIndex::operator=(const TensorObject& t){
+  return operator=(static_cast<AcceleratorExpr>(AcceleratorAccess(t)));
+}
+
+AcceleratorAssignment AcceleratorDynamicIndex::operator+=(const AcceleratorExpr& expr){
+  AcceleratorAssignment assignment = AcceleratorAssignment(*this, expr, AcceleratorAdd());
+  return assignment;
+}
+
+
+const TensorObject& AcceleratorDynamicIndex::getTensorObject() const{
+  return getNode(*this)->t;
+}
+const std::vector<IndexObject>& AcceleratorDynamicIndex::getIndexObjects() const{
+   return getNode(*this)->indexObject;
+}
+
+template <> bool isa<AcceleratorDynamicIndex>(AcceleratorExpr e) {
+  return isa<AcceleratorDynamicIndexNode>(e.ptr);
+}
+
+template <> AcceleratorDynamicIndex to<AcceleratorDynamicIndex>(AcceleratorExpr e) {
+  taco_iassert(isa<AcceleratorDynamicIndex>(e));
+  return AcceleratorDynamicIndex(to<AcceleratorDynamicIndexNode>(e.ptr));
+}
+
+
 AcceleratorLiteral::AcceleratorLiteral(const AcceleratorLiteralNode* n) : AcceleratorExpr(n) {
 }
 
@@ -575,6 +639,10 @@ AcceleratorAssignment::AcceleratorAssignment(AcceleratorAccess lhs, AcceleratorE
     : AcceleratorAssignment(new AcceleratorAssignmentNode(lhs, rhs, op)) {
 }
 
+AcceleratorAssignment::AcceleratorAssignment(AcceleratorDynamicIndex lhs, AcceleratorExpr rhs, AcceleratorExpr op)
+    : AcceleratorAssignment(new AcceleratorAssignmentNode(lhs, rhs, op)) {
+}
+
 AcceleratorAssignment::AcceleratorAssignment(TensorObject tensor, std::vector<IndexVar> indices, AcceleratorExpr rhs,
              AcceleratorExpr op)
       :  AcceleratorAssignment(AcceleratorAccess(tensor, indices), rhs, op) { 
@@ -809,6 +877,10 @@ AcceleratorAccess TensorObject::operator()(const std::vector<IndexVar>& indices)
   return AcceleratorAccess(new AcceleratorAccessNode(*this, indices, false));
 }
 
+AcceleratorDynamicIndex TensorObject::operator[](const std::vector<IndexObject>& indices) const{
+   return AcceleratorDynamicIndex(new AcceleratorDynamicIndexNode(*this, indices));
+}
+
 AcceleratorAssignment TensorObject::operator=(AcceleratorExpr expr) {
   taco_uassert(getOrder() == 0)
       << "Must use index variable on the left-hand-side when assigning an "
@@ -855,23 +927,510 @@ std::ostream& operator<<(std::ostream& os, const TensorObject& var){
   return os << var.getName() << " : " << var.getType();
 }
 
-struct DynamicOrder::Content {
-  int min;
-  int max;
-  std::vector<IndexVar> vars;
-};
 
-DynamicOrder::DynamicOrder() : content(new Content) {
+std::ostream& operator<<(std::ostream& os, const DynamicExpr& expr) {
+  if (!expr.defined()) return os << "DynamicExpr()";
+  DynamicNotationPrinter printer(os);
+  printer.print(expr);
+  return os;
 }
 
-void DynamicOrder::setMin(int min){
-  content->min = min;
+DynamicExpr::DynamicExpr(int val) : DynamicExpr(new DynamicLiteralNode(val)) {
 }
 
-void DynamicOrder::setMax(int max){
-  content->max = max;
+DynamicExpr::DynamicExpr(IndexVar i) : DynamicExpr(new DynamicIndexVarNode(i)) {
 }
 
+void  DynamicExpr::accept(DynamicExprVisitorStrict *v) const {
+  ptr->accept(v);
+}
+
+DynamicExpr operator+(const DynamicExpr& lhs, const DynamicExpr& rhs) {
+  return new DynamicAddNode(lhs, rhs);
+}
+
+DynamicExpr operator-(const DynamicExpr& lhs, const DynamicExpr& rhs) {
+  return new DynamicSubNode(lhs, rhs);
+}
+
+DynamicExpr operator*(const DynamicExpr& lhs, const DynamicExpr& rhs) {
+  return new DynamicMulNode(lhs, rhs);
+}
+
+DynamicExpr operator/(const DynamicExpr& lhs, const DynamicExpr& rhs) {
+  return new DynamicDivNode(lhs, rhs);
+}
+
+void  DynamicStmt::accept(DynamicStmtVisitorStrict *v) const {
+  ptr->accept(v);
+}
+
+std::ostream& operator<<(std::ostream& os, const DynamicStmt& expr) {
+  if (!expr.defined()) return os << "DynamicStmt()";
+  DynamicNotationPrinter printer(os);
+  printer.print(expr);
+  return os;
+}
+
+DynamicStmt operator==(const DynamicExpr& a, const DynamicExpr& b){
+  return DynamicEqual(a, b);
+}
+
+DynamicStmt operator!=(const DynamicExpr& a, const DynamicExpr& b){
+  return DynamicNotEqual(a, b);
+}
+
+DynamicStmt operator>(const DynamicExpr& a, const DynamicExpr& b){
+  return DynamicGreater(a, b);
+}
+
+DynamicStmt operator<(const DynamicExpr& a, const DynamicExpr& b){
+  return DynamicLess(a, b);
+}
+
+DynamicStmt operator>=(const DynamicExpr& a, const DynamicExpr& b){
+  return DynamicGeq(a, b);
+}
+
+DynamicStmt operator<=(const DynamicExpr& a, const DynamicExpr& b){
+  return DynamicLeq(a, b);
+}
+
+DynamicStmt operator&&(const DynamicStmt& a, const DynamicStmt& b){
+  return DynamicAnd(a, b);
+}
+
+DynamicStmt operator||(const DynamicStmt& a, const DynamicStmt& b){
+  return DynamicOr(a, b);
+}
+
+DynamicStmt forall(const DynamicIndexIterator& it, const DynamicStmt& stmt){
+  return DynamicForall(it, stmt);
+}
+
+DynamicStmt exists(const DynamicIndexIterator& it, const DynamicStmt& stmt){
+  return DynamicExists(it, stmt);
+}
+
+DynamicIndexIterator::DynamicIndexIterator() :  DynamicIndexIterator(new DynamicIndexIteratorNode) {}
+DynamicIndexIterator::DynamicIndexIterator(const DynamicIndexIteratorNode* n) : DynamicExpr(n){}
+DynamicIndexIterator::DynamicIndexIterator(DynamicOrder dynamicOrder) : DynamicExpr(new DynamicIndexIteratorNode(dynamicOrder)) {}
+
+DynamicOrder DynamicIndexIterator::getDynamicOrder() const{
+   return  getNode(*this)->dynamicOrder;
+}
+
+const DynamicOrder * DynamicIndexIterator::getDynamicOrderPtr() const{
+   return  &(getNode(*this)->dynamicOrder);
+}
+
+bool operator==(const DynamicIndexIterator& a, const DynamicIndexIterator& b){
+  return a.ptr == b.ptr;
+}
+
+bool operator<(const DynamicIndexIterator& a, const DynamicIndexIterator& b){
+  return a.ptr < b.ptr;
+}
+
+template <> bool isa<DynamicIndexIterator>(DynamicExpr e) {
+  return isa<DynamicIndexIteratorNode>(e.ptr);
+}
+
+template <> DynamicIndexIterator to<DynamicIndexIterator>(DynamicExpr e) {
+  taco_iassert(isa<DynamicIndexIterator>(e));
+  return DynamicIndexIterator(to<DynamicIndexIteratorNode>(e.ptr));
+}
+
+DynamicLiteral::DynamicLiteral() : DynamicLiteral(new DynamicLiteralNode) {}
+DynamicLiteral::DynamicLiteral(const DynamicLiteralNode* n) : DynamicExpr(n){}
+DynamicLiteral::DynamicLiteral(int num) : DynamicExpr(new DynamicLiteralNode(num)) {}
+
+int DynamicLiteral::getVal() const{
+  return  getNode(*this)->num;
+}
+
+template <> bool isa<DynamicLiteral>(DynamicExpr e) {
+  return isa<DynamicLiteralNode>(e.ptr);
+}
+
+template <> DynamicLiteral to<DynamicLiteral>(DynamicExpr e) {
+  taco_iassert(isa<DynamicLiteral>(e));
+  return DynamicLiteral(to<DynamicLiteralNode>(e.ptr));
+}
+
+DynamicIndexAccess::DynamicIndexAccess() :  DynamicIndexAccess(new DynamicIndexAccessNode) {}
+DynamicIndexAccess::DynamicIndexAccess(const DynamicIndexAccessNode* n) : DynamicExpr(n){}
+DynamicIndexAccess::DynamicIndexAccess(DynamicIndexIterator it) : DynamicExpr(new DynamicIndexAccessNode(it)) {}
+
+DynamicIndexIterator DynamicIndexAccess::getIterator() const{
+   return  getNode(*this)->it;
+}
+
+template <> bool isa<DynamicIndexAccess>(DynamicExpr e) {
+  return isa<DynamicIndexAccessNode>(e.ptr);
+}
+
+template <> DynamicIndexAccess to<DynamicIndexAccess>(DynamicExpr e) {
+  taco_iassert(isa<DynamicIndexAccess>(e));
+  return DynamicIndexAccess(to<DynamicIndexAccessNode>(e.ptr));
+}
+
+DynamicIndexMulInternal::DynamicIndexMulInternal() :  DynamicIndexMulInternal(new DynamicIndexMulInternalNode) {}
+DynamicIndexMulInternal::DynamicIndexMulInternal(const DynamicIndexMulInternalNode* n) : DynamicExpr(n){}
+DynamicIndexMulInternal::DynamicIndexMulInternal(DynamicOrder dynamicOrder) : DynamicExpr(new DynamicIndexMulInternalNode(dynamicOrder)) {}
+
+DynamicOrder DynamicIndexMulInternal::getDynamicOrder() const{
+   return  getNode(*this)->dynamicOrder;
+}
+
+template <> bool isa<DynamicIndexMulInternal>(DynamicExpr e) {
+  return isa<DynamicIndexMulInternalNode>(e.ptr);
+}
+
+template <> DynamicIndexMulInternal to<DynamicIndexMulInternal>(DynamicExpr e) {
+  taco_iassert(isa<DynamicIndexMulInternal>(e));
+  return DynamicIndexMulInternal(to<DynamicIndexMulInternalNode>(e.ptr));
+}
+
+DynamicIndexLen::DynamicIndexLen() :  DynamicIndexLen(new DynamicIndexLenNode) {}
+DynamicIndexLen::DynamicIndexLen(const DynamicIndexLenNode* n) : DynamicExpr(n){}
+DynamicIndexLen::DynamicIndexLen(DynamicOrder dynamicOrder) : DynamicExpr(new DynamicIndexLenNode(dynamicOrder)) {}
+
+DynamicOrder DynamicIndexLen::getDynamicOrder() const{
+   return  getNode(*this)->dynamicOrder;
+}
+
+template <> bool isa<DynamicIndexLen>(DynamicExpr e) {
+  return isa<DynamicIndexLenNode>(e.ptr);
+}
+
+template <> DynamicIndexLen to<DynamicIndexLen>(DynamicExpr e) {
+  taco_iassert(isa<DynamicIndexLen>(e));
+  return DynamicIndexLen(to<DynamicIndexLenNode>(e.ptr));
+}
+
+
+DynamicAdd::DynamicAdd() : DynamicAdd(new DynamicAddNode) {}
+DynamicAdd::DynamicAdd(const DynamicAddNode* n) : DynamicExpr(n){}
+DynamicAdd::DynamicAdd(DynamicExpr a, DynamicExpr b) : DynamicExpr(new DynamicAddNode(a, b)) {}
+
+DynamicExpr DynamicAdd::getA() const{
+  return getNode(*this)->a;
+}
+DynamicExpr DynamicAdd::getB() const{
+  return getNode(*this)->a;
+}
+
+template <> bool isa<DynamicAdd>(DynamicExpr e) {
+  return isa<DynamicAddNode>(e.ptr);
+}
+
+template <> DynamicAdd to<DynamicAdd>(DynamicExpr e) {
+  taco_iassert(isa<DynamicAdd>(e));
+  return DynamicAdd(to<DynamicAddNode>(e.ptr));
+}
+
+
+DynamicMul::DynamicMul() : DynamicMul(new DynamicMulNode) {}
+DynamicMul::DynamicMul(const DynamicMulNode* n) : DynamicExpr(n){}
+DynamicMul::DynamicMul(DynamicExpr a, DynamicExpr b) : DynamicExpr(new DynamicMulNode(a, b)) {}
+
+DynamicExpr DynamicMul::getA() const{
+  return getNode(*this)->a;
+}
+DynamicExpr DynamicMul::getB() const{
+  return getNode(*this)->a;
+}
+
+template <> bool isa<DynamicMul>(DynamicExpr e) {
+  return isa<DynamicMulNode>(e.ptr);
+}
+
+template <> DynamicMul to<DynamicMul>(DynamicExpr e) {
+  taco_iassert(isa<DynamicMul>(e));
+  return DynamicMul(to<DynamicMulNode>(e.ptr));
+}
+
+DynamicDiv::DynamicDiv() : DynamicDiv(new DynamicDivNode) {}
+DynamicDiv::DynamicDiv(const DynamicDivNode* n) : DynamicExpr(n){}
+DynamicDiv::DynamicDiv(DynamicExpr a, DynamicExpr b) : DynamicExpr(new DynamicDivNode(a, b)) {}
+
+DynamicExpr DynamicDiv::getA() const{
+  return getNode(*this)->a;
+}
+DynamicExpr DynamicDiv::getB() const{
+  return getNode(*this)->a;
+}
+
+template <> bool isa<DynamicDiv>(DynamicExpr e) {
+  return isa<DynamicDivNode>(e.ptr);
+}
+
+template <> DynamicDiv to<DynamicDiv>(DynamicExpr e) {
+  taco_iassert(isa<DynamicDiv>(e));
+  return DynamicDiv(to<DynamicDivNode>(e.ptr));
+}
+
+DynamicMod::DynamicMod() : DynamicMod(new DynamicModNode) {}
+DynamicMod::DynamicMod(const DynamicModNode* n) : DynamicExpr(n){}
+DynamicMod::DynamicMod(DynamicExpr a, DynamicExpr b) : DynamicExpr(new DynamicModNode(a, b)) {}
+
+DynamicExpr DynamicMod::getA() const{
+  return getNode(*this)->a;
+}
+DynamicExpr DynamicMod::getB() const{
+  return getNode(*this)->a;
+}
+
+template <> bool isa<DynamicMod>(DynamicExpr e) {
+  return isa<DynamicModNode>(e.ptr);
+}
+
+template <> DynamicMod to<DynamicMod>(DynamicExpr e) {
+  taco_iassert(isa<DynamicMod>(e));
+  return DynamicMod(to<DynamicModNode>(e.ptr));
+}
+
+DynamicSub::DynamicSub() : DynamicSub(new DynamicSubNode) {}
+DynamicSub::DynamicSub(const DynamicSubNode* n) : DynamicExpr(n){}
+DynamicSub::DynamicSub(DynamicExpr a, DynamicExpr b) : DynamicSub(new DynamicSubNode(a, b)) {}
+
+DynamicExpr DynamicSub::getA() const{
+  return getNode(*this)->a;
+}
+DynamicExpr DynamicSub::getB() const{
+  return getNode(*this)->a;
+}
+
+template <> bool isa<DynamicSub>(DynamicExpr e) {
+  return isa<DynamicSubNode>(e.ptr);
+}
+
+template <> DynamicSub to<DynamicSub>(DynamicExpr e) {
+  taco_iassert(isa<DynamicSub>(e));
+  return DynamicSub(to<DynamicSubNode>(e.ptr));
+}
+
+DynamicIndexVar::DynamicIndexVar() : DynamicIndexVar(new DynamicIndexVarNode) {}
+DynamicIndexVar::DynamicIndexVar(const DynamicIndexVarNode* n) : DynamicExpr(n){}
+DynamicIndexVar::DynamicIndexVar(IndexVar i) : DynamicIndexVar(new DynamicIndexVarNode(i)) {}
+
+IndexVar DynamicIndexVar::getIVar() const{
+  return getNode(*this)->i;
+}
+
+template <> bool isa<DynamicIndexVar>(DynamicExpr e) {
+  return isa<DynamicIndexVarNode>(e.ptr);
+}
+
+template <> DynamicIndexVar to<DynamicIndexVar>(DynamicExpr e) {
+  taco_iassert(isa<DynamicIndexVar>(e));
+  return DynamicIndexVar(to<DynamicIndexVarNode>(e.ptr));
+}
+
+DynamicEqual::DynamicEqual() : DynamicEqual(new DynamicEqualNode) {}
+DynamicEqual::DynamicEqual(const DynamicEqualNode* n) : DynamicStmt(n){}
+DynamicEqual::DynamicEqual(DynamicExpr a, DynamicExpr b) : DynamicStmt(new DynamicEqualNode(a, b)) {}
+
+DynamicExpr DynamicEqual::getA() const{
+  return getNode(*this)->a;
+}
+DynamicExpr DynamicEqual::getB() const{
+  return getNode(*this)->a;
+}
+
+template <> bool isa<DynamicEqual>(DynamicStmt e) {
+  return isa<DynamicEqualNode>(e.ptr);
+}
+
+template <> DynamicEqual to<DynamicEqual>(DynamicStmt e) {
+  taco_iassert(isa<DynamicEqual>(e));
+  return DynamicEqual(to<DynamicEqualNode>(e.ptr));
+}
+
+DynamicNotEqual::DynamicNotEqual() : DynamicNotEqual(new DynamicNotEqualNode) {}
+DynamicNotEqual::DynamicNotEqual(const DynamicNotEqualNode* n) : DynamicStmt(n){}
+DynamicNotEqual::DynamicNotEqual(DynamicExpr a, DynamicExpr b) : DynamicStmt(new DynamicNotEqualNode(a, b)) {}
+
+DynamicExpr DynamicNotEqual::getA() const{
+  return getNode(*this)->a;
+}
+DynamicExpr DynamicNotEqual::getB() const{
+  return getNode(*this)->a;
+}
+
+template <> bool isa<DynamicNotEqual>(DynamicStmt e) {
+  return isa<DynamicNotEqualNode>(e.ptr);
+}
+
+template <> DynamicNotEqual to<DynamicNotEqual>(DynamicStmt e) {
+  taco_iassert(isa<DynamicNotEqual>(e));
+  return DynamicNotEqual(to<DynamicNotEqualNode>(e.ptr));
+}
+
+DynamicGreater::DynamicGreater() : DynamicGreater(new DynamicGreaterNode) {}
+DynamicGreater::DynamicGreater(const DynamicGreaterNode* n) : DynamicStmt(n){}
+DynamicGreater::DynamicGreater(DynamicExpr a, DynamicExpr b) : DynamicStmt(new DynamicGreaterNode(a, b)) {}
+
+DynamicExpr DynamicGreater::getA() const{
+  return getNode(*this)->a;
+}
+DynamicExpr DynamicGreater::getB() const{
+  return getNode(*this)->a;
+}
+
+template <> bool isa<DynamicGreater>(DynamicStmt e) {
+  return isa<DynamicGreaterNode>(e.ptr);
+}
+
+template <> DynamicGreater to<DynamicGreater>(DynamicStmt e) {
+  taco_iassert(isa<DynamicGreater>(e));
+  return DynamicGreater(to<DynamicGreaterNode>(e.ptr));
+}
+
+DynamicLess::DynamicLess() : DynamicLess(new DynamicLessNode) {}
+DynamicLess::DynamicLess(const DynamicLessNode* n) : DynamicStmt(n){}
+DynamicLess::DynamicLess(DynamicExpr a, DynamicExpr b) : DynamicStmt(new DynamicLessNode(a, b)) {}
+
+DynamicExpr DynamicLess::getA() const{
+  return getNode(*this)->a;
+}
+DynamicExpr DynamicLess::getB() const{
+  return getNode(*this)->a;
+}
+
+template <> bool isa<DynamicLess>(DynamicStmt e) {
+  return isa<DynamicLessNode>(e.ptr);
+}
+
+template <> DynamicLess to<DynamicLess>(DynamicStmt e) {
+  taco_iassert(isa<DynamicLess>(e));
+  return DynamicLess(to<DynamicLessNode>(e.ptr));
+}
+
+DynamicGeq::DynamicGeq() : DynamicGeq(new DynamicGeqNode) {}
+DynamicGeq::DynamicGeq(const DynamicGeqNode* n) : DynamicStmt(n){}
+DynamicGeq::DynamicGeq(DynamicExpr a, DynamicExpr b) : DynamicStmt(new DynamicGeqNode(a, b)) {}
+
+DynamicExpr DynamicGeq::getA() const{
+  return getNode(*this)->a;
+}
+DynamicExpr DynamicGeq::getB() const{
+  return getNode(*this)->a;
+}
+
+template <> bool isa<DynamicGeq>(DynamicStmt e) {
+  return isa<DynamicGeqNode>(e.ptr);
+}
+
+template <> DynamicGeq to<DynamicGeq>(DynamicStmt e) {
+  taco_iassert(isa<DynamicGeq>(e));
+  return DynamicGeq(to<DynamicGeqNode>(e.ptr));
+}
+
+DynamicLeq::DynamicLeq() : DynamicLeq(new DynamicLeqNode) {}
+DynamicLeq::DynamicLeq(const DynamicLeqNode* n) : DynamicStmt(n){}
+DynamicLeq::DynamicLeq(DynamicExpr a, DynamicExpr b) : DynamicStmt(new DynamicLeqNode(a, b)) {}
+
+DynamicExpr DynamicLeq::getA() const{
+  return getNode(*this)->a;
+}
+DynamicExpr DynamicLeq::getB() const{
+  return getNode(*this)->a;
+}
+
+template <> bool isa<DynamicLeq>(DynamicStmt e) {
+  return isa<DynamicLeqNode>(e.ptr);
+}
+
+template <> DynamicLeq to<DynamicLeq>(DynamicStmt e) {
+  taco_iassert(isa<DynamicLeq>(e));
+  return DynamicLeq(to<DynamicLeqNode>(e.ptr));
+}
+
+DynamicForall::DynamicForall() : DynamicForall(new DynamicForallNode) {}
+DynamicForall::DynamicForall(const DynamicForallNode* n) : DynamicStmt(n){}
+DynamicForall::DynamicForall(DynamicIndexIterator it, DynamicStmt stmt) : DynamicStmt(new DynamicForallNode(it, stmt)) {}
+
+DynamicIndexIterator DynamicForall::getIterator() const{
+    return getNode(*this)->it;
+}
+
+DynamicStmt DynamicForall::getStmt() const{
+  return getNode(*this)->stmt;
+}
+
+template <> bool isa<DynamicForall>(DynamicStmt e) {
+  return isa<DynamicForallNode>(e.ptr);
+}
+
+template <> DynamicForall to<DynamicForall>(DynamicStmt e) {
+  taco_iassert(isa<DynamicForall>(e));
+  return DynamicForall(to<DynamicForallNode>(e.ptr));
+}
+
+DynamicExists::DynamicExists() : DynamicExists(new DynamicExistsNode) {}
+DynamicExists::DynamicExists(const DynamicExistsNode* n) : DynamicStmt(n){}
+DynamicExists::DynamicExists(DynamicIndexIterator it, DynamicStmt stmt) : DynamicStmt(new DynamicExistsNode(it, stmt)) {}
+
+DynamicIndexIterator DynamicExists::getIterator() const{
+    return getNode(*this)->it;
+}
+
+DynamicStmt DynamicExists::getStmt() const{
+  return getNode(*this)->stmt;
+}
+
+template <> bool isa<DynamicExists>(DynamicStmt e) {
+  return isa<DynamicExistsNode>(e.ptr);
+}
+
+template <> DynamicExists to<DynamicExists>(DynamicStmt e) {
+  taco_iassert(isa<DynamicExists>(e));
+  return DynamicExists(to<DynamicExistsNode>(e.ptr));
+}
+
+DynamicAnd::DynamicAnd() : DynamicAnd(new DynamicAndNode) {}
+DynamicAnd::DynamicAnd(const DynamicAndNode* n) : DynamicStmt(n) {}
+DynamicAnd::DynamicAnd(DynamicStmt a, DynamicStmt b) : DynamicAnd(new DynamicAndNode(a, b)) {}
+
+DynamicStmt DynamicAnd::getA() const{
+  return  getNode(*this)->a;
+}
+
+DynamicStmt DynamicAnd::getB() const{
+  return  getNode(*this)->b;
+}
+
+template <> bool isa<DynamicAnd>(DynamicStmt e) {
+  return isa<DynamicAndNode>(e.ptr);
+}
+
+template <> DynamicAnd to<DynamicAnd>(DynamicStmt e) {
+  taco_iassert(isa<DynamicAnd>(e));
+  return DynamicAnd(to<DynamicAndNode>(e.ptr));
+}
+
+DynamicOr::DynamicOr() : DynamicOr(new DynamicOrNode) {}
+DynamicOr::DynamicOr(const DynamicOrNode* n) : DynamicStmt(n) {}
+DynamicOr::DynamicOr(DynamicStmt a, DynamicStmt b) : DynamicOr(new DynamicOrNode(a, b)) {}
+
+DynamicStmt DynamicOr::getA() const{
+  return  getNode(*this)->a;
+}
+
+DynamicStmt DynamicOr::getB() const{
+  return  getNode(*this)->b;
+}
+
+template <> bool isa<DynamicOr>(DynamicStmt e) {
+  return isa<DynamicOrNode>(e.ptr);
+}
+
+template <> DynamicOr to<DynamicOr>(DynamicStmt e) {
+  taco_iassert(isa<DynamicOr>(e));
+  return DynamicOr(to<DynamicOrNode>(e.ptr));
+}
 
 
 }

@@ -25,6 +25,7 @@ public:
   void visit(const AcceleratorMulNode*);
   void visit(const AcceleratorDivNode*);
   void visit(const AcceleratorReductionNode*);
+  void visit(const AcceleratorDynamicIndexNode*);
 
   // Tensor Expressions
   void visit(const AcceleratorForallNode*);
@@ -49,6 +50,42 @@ private:
 
   template <typename Node> void visitAcceleratedBinary(Node op, Precedence p);
   template <typename Node> void visitImmediate(Node op);
+};
+
+class DynamicNotationPrinter : public DynamicNotationVisitorStrict {
+public:
+  DynamicNotationPrinter(std::ostream& os);
+
+  void print(const DynamicExpr& expr);
+  void print(const DynamicStmt& expr);
+
+  using DynamicNotationVisitorStrict::visit;
+
+  void visit(const DynamicIndexIteratorNode*);
+  void visit(const DynamicIndexAccessNode*);
+  void visit(const DynamicLiteralNode*);
+  void visit(const DynamicIndexLenNode*);
+  void visit(const DynamicIndexMulInternalNode*);
+  void visit(const DynamicAddNode*);
+  void visit(const DynamicSubNode*);
+  void visit(const DynamicMulNode*);
+  void visit(const DynamicDivNode*);
+  void visit(const DynamicModNode*);
+  void visit(const DynamicIndexVarNode*);
+
+  void visit(const DynamicEqualNode*);
+  void visit(const DynamicNotEqualNode*);
+  void visit(const DynamicGreaterNode*);
+  void visit(const DynamicLessNode*);
+  void visit(const DynamicLeqNode*);
+  void visit(const DynamicGeqNode*);
+  void visit(const DynamicForallNode*);
+  void visit(const DynamicExistsNode*);
+  void visit(const DynamicAndNode*);
+  void visit(const DynamicOrNode*);
+
+private:
+  std::ostream& os;
 };
 
 }

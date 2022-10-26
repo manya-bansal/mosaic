@@ -276,4 +276,19 @@ ArgumentMap hasPreciseMatch(IndexExpr e1, AcceleratorExpr e2){
 
 }
 
+
+bool matches(std::set<IndexVar> reduxVar, std::set<IndexVar> reduxVarsRef,  std::set<DynamicOrder> reduxOrderRef){
+  return true;
+}
+
+bool isSameReduxPattern(AcceleratorStmt refStmt, IndexStmt stmt){
+  std::vector<IndexVar> reduxVars = getReductionVars(stmt);
+  return true;
+}
+
+bool matches(AcceleratorStmt refStmt, IndexStmt stmt){
+  isSameReduxPattern(refStmt, stmt);
+  return true;
+}
+
 }
