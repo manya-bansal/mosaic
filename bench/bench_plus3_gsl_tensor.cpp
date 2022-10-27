@@ -33,7 +33,7 @@ static void bench_plus3_gsl_tensor(benchmark::State& state) {
     Tensor<float> A("A", {dim, dim, dim}, Format{Dense, Dense, Dense});
     A(i, j, k) = accelerateExpr;
     IndexStmt stmt = A.getAssignment().concretize();
-    stmt = stmt.accelerate(new GslTensorPlus(), accelerateExpr);
+    stmt = stmt.accelerate(new GslTensorPlus(), accelerateExpr, true);
     A.compile(stmt);
     A.assemble();
     state.ResumeTiming();

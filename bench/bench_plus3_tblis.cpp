@@ -30,7 +30,7 @@ static void bench_plus3_tblis(benchmark::State& state) {
     Tensor<float> A("A", {dim, dim, dim}, Format{Dense, Dense, Dense});
     A(i, j, k) = accelerateExpr;
     IndexStmt stmt = A.getAssignment().concretize();
-    stmt = stmt.accelerate(new TblisPlus(), accelerateExpr);
+    stmt = stmt.accelerate(new TblisPlus(), accelerateExpr, true);
     A.compile(stmt);
     A.assemble();
     state.ResumeTiming();
