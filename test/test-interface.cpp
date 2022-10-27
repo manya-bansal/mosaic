@@ -1803,18 +1803,13 @@ TEST(interface, sdmmCblasDot){
 
 }
 
-<<<<<<< HEAD
 TEST(interface, sdmmTblisDot){
-=======
-// TEST(interface, TTTPtest){
->>>>>>> origin/master
 
-//   int dim = 16;
-//   int NUM_I = dim;
-//   int NUM_K = dim;
-//   int NUM_J = dim;
+  int dim = 16;
+  int NUM_I = dim;
+  int NUM_K = dim;
+  int NUM_J = dim;
 
-<<<<<<< HEAD
   float SPARSITY = .3;
   
   Tensor<float> B("B", {NUM_I, NUM_K}, CSR);
@@ -1823,9 +1818,6 @@ TEST(interface, sdmmTblisDot){
   Tensor<float> A("A", {NUM_I, NUM_K}, {Dense, Dense}, 0);
   Tensor<float> expected("expected", {NUM_I, NUM_K}, {Dense, Dense});
   TensorVar precomputed("precomputed", Type(taco::Float32, {16, 16}), Format{Dense, Dense});
-=======
-//   float SPARSITY = .3;
->>>>>>> origin/master
 
   for (int i = 0; i < NUM_I; i++) {
     for (int j = 0; j < NUM_J; j++) {
@@ -1911,7 +1903,6 @@ TEST(interface, sdmmCblasGemv){
   int NUM_K = dim;
   int NUM_J = dim;
 
-<<<<<<< HEAD
   float SPARSITY = .3;
   
   Tensor<float> B("B", {NUM_I, NUM_K}, CSR);
@@ -1920,15 +1911,6 @@ TEST(interface, sdmmCblasGemv){
   Tensor<float> A("A", {NUM_I, NUM_K}, {Dense, Dense}, 0);
   Tensor<float> expected("expected", {NUM_I, NUM_K}, {Dense, Dense});
   TensorVar precomputed("precomputed", Type(taco::Float32, {16, 16}), Format{Dense, Dense});
-=======
-//   Tensor<float> B("B", {NUM_I, NUM_K, NUM_K}, CSR)
-//   Tensor<float> B("B", {NUM_I, NUM_K, NUM_K}, CSR);
-//   Tensor<float> C1("C1", {NUM_I, NUM_J}, {Dense, Dense});
-//   Tensor<float> C2("C2", {NUM_J, NUM_K}, {Dense, Dense});
-//   Tensor<float> C3("A", {NUM_I, NUM_K}, {Dense, Dense}, 0);
-//   Tensor<float> expected("expected", {NUM_I, NUM_K, NUM_K}, {Dense, Dense});
-//   TensorVar precomputed("precomputed", Type(taco::Float32, {16, 16}), Format{Dense, Dense});
->>>>>>> origin/master
 
   for (int i = 0; i < NUM_I; i++) {
     for (int j = 0; j < NUM_J; j++) {
@@ -1946,7 +1928,6 @@ TEST(interface, sdmmCblasGemv){
     }
   }
 
-<<<<<<< HEAD
   for (int j = 0; j < NUM_J; j++) {
     for (int k = 0; k < NUM_K; k++) {
       float rand_float = (float)rand()/(float)(RAND_MAX);
@@ -2028,11 +2009,100 @@ TEST(interface, DimReduceBlockedSparse) {
    A.compute();
 
 }
-=======
-//   }
 
- 
-//   ASSERT_TENSOR_EQ(expected, A);
+TEST(interface, blasGmev) {
 
-// }
->>>>>>> origin/master
+   // actual computation
+   Tensor<float> A("A", {16, 16}, Format{Dense, Dense});
+   Tensor<float> b("b", {16}, Format{Dense});
+   Tensor<float> d("d", {16}, Format{Dense});
+
+   for (int i = 0; i < 16; i++) {
+      for (int j = 0; j < 16; j++) {
+         A.insert({i, j}, (float) i + j);
+      }
+   }
+
+   A.pack();
+
+   for (int i = 0; i < 16; i++) {
+      b.insert({i}, (float) i);
+   }
+
+   b.pack();
+
+   Tensor<float> expected("expected", {16}, Format{Dense});
+
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar k("k");
+
+   IndexExpr accelerateExpr = A(i, j) * b(j);
+   d(i) = accelerateExpr;
+
+   IndexStmt stmt = d.getAssignment().concretize();
+   stmt = stmt.accelerate(new CblasGemv(), accelerateExpr, true);
+   
+   d.compile(stmt);
+   d.assemble();
+   d.compute();
+
+   expected(i) = accelerateExpr;
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+   ASSERT_TENSOR_EQ(expected, d);
+
+}
+
+TEST(interface, gslGmev) {
+
+   gsl_compile =true;
+
+   // actual computation
+   Tensor<float> A("A", {16, 16}, Format{Dense, Dense});
+   Tensor<float> b("b", {16}, Format{Dense});
+   Tensor<float> d("d", {16}, Format{Dense});
+
+   for (int i = 0; i < 16; i++) {
+      for (int j = 0; j < 16; j++) {
+         A.insert({i, j}, (float) i + j);
+      }
+   }
+
+   A.pack();
+
+   for (int i = 0; i < 16; i++) {
+      b.insert({i}, (float) i);
+   }
+
+   b.pack();
+
+   Tensor<float> expected("expected", {16}, Format{Dense});
+
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar k("k");
+
+   IndexExpr accelerateExpr = A(i, j) * b(j);
+   d(i) = accelerateExpr;
+
+   IndexStmt stmt = d.getAssignment().concretize();
+   stmt = stmt.accelerate(new GSLGemv(), accelerateExpr, true);
+   
+   d.compile(stmt);
+   d.assemble();
+   d.compute();
+
+   expected(i) = accelerateExpr;
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+   ASSERT_TENSOR_EQ(expected, d);
+
+   gsl_compile = false;
+   
+}
+
