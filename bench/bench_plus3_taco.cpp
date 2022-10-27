@@ -38,5 +38,5 @@ static void bench_plus3_taco(benchmark::State& state) {
 
 }
 
-TACO_BENCH(bench_plus3_taco)->DenseRange(100, 1000, 100);
+TACO_BENCH(bench_plus3_taco)->DenseRange(100, 2000, 100);
 

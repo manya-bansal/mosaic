@@ -75,6 +75,15 @@ struct DynamicOrNode;
 
 class DynamicStmtVisitorStrict;
 
+struct PropertyTagNode;
+struct PropertyAddNode;
+struct PropertyDivNode;
+struct PropertyMulNode;
+struct PropertySubNode;
+struct PropertyAssignNode;
+
+struct PropertyAssign;
+
 class IndexVar;
 
 
@@ -836,6 +845,117 @@ struct DynamicOr: public DynamicStmt {
 
 };
 
+class PropertyExpr : public util::IntrusivePtr<const PropertyExprNode> {
+public:
+  PropertyExpr() : util::IntrusivePtr<const PropertyExprNode>(nullptr) {}
+  PropertyExpr(const PropertyExprNode* n) : util::IntrusivePtr<const PropertyExprNode>(n) {}
+
+  PropertyExpr(std::string property);
+  // DynamicExpr(IndexVar i);
+
+  void accept(PropertyExprVisitorStrict *) const;
+  friend std::ostream& operator<<(std::ostream&, const PropertyExpr&);
+
+};
+
+PropertyExpr operator+(const PropertyExpr&, const PropertyExpr&);
+PropertyExpr operator-(const PropertyExpr&, const PropertyExpr&);
+PropertyExpr operator*(const PropertyExpr&, const PropertyExpr&);
+PropertyExpr operator/(const PropertyExpr&, const PropertyExpr&);
+
+template <typename SubType> bool isa(PropertyExpr);
+template <typename SubType> SubType to(PropertyExpr);
+
+struct PropertyTag: public PropertyExpr {
+  public:
+    PropertyTag();
+    PropertyTag(const PropertyTagNode*);
+    PropertyTag(const std::string& tag);
+
+    std::string getTag() const;
+
+    PropertyAssign operator=(const PropertyExpr&);
+    PropertyAssign operator=(const PropertyExpr&) const;
+    
+    typedef PropertyTagNode Node;
+
+};
+
+struct PropertyAdd: public PropertyExpr {
+  public:
+    PropertyAdd();
+    PropertyAdd(const PropertyAddNode*);
+    PropertyAdd(PropertyExpr a, PropertyExpr b);
+
+    PropertyExpr getA() const;
+    PropertyExpr getB() const;
+    
+    typedef PropertyAddNode Node;
+};
+
+struct PropertySub: public PropertyExpr {
+  public:
+    PropertySub();
+    PropertySub(const PropertySubNode*);
+    PropertySub(PropertyExpr a, PropertyExpr b);
+
+    PropertyExpr getA() const;
+    PropertyExpr getB() const;
+    
+    typedef PropertySubNode Node;
+};
+
+struct PropertyMul: public PropertyExpr {
+  public:
+    PropertyMul();
+    PropertyMul(const PropertyMulNode*);
+    PropertyMul(PropertyExpr a, PropertyExpr b);
+
+    PropertyExpr getA() const;
+    PropertyExpr getB() const;
+    
+    typedef PropertyMulNode Node;
+};
+
+struct PropertyDiv: public PropertyExpr {
+  public:
+    PropertyDiv();
+    PropertyDiv(const PropertyDivNode*);
+    PropertyDiv(PropertyExpr a, PropertyExpr b);
+
+    PropertyExpr getA() const;
+    PropertyExpr getB() const;
+    
+    typedef PropertyDivNode Node;
+};
+
+class PropertyStmt : public util::IntrusivePtr<const PropertyStmtNode> {
+public:
+  PropertyStmt() : util::IntrusivePtr<const PropertyStmtNode>(nullptr) {}
+  PropertyStmt(const PropertyStmtNode* n) : util::IntrusivePtr<const PropertyStmtNode>(n) {}
+
+  // DynamicExpr(int num);
+  // DynamicExpr(IndexVar i);
+
+  void accept(PropertyStmtVisitorStrict *) const;
+  friend std::ostream& operator<<(std::ostream&, const PropertyStmt&);
+
+};
+
+template <typename SubType> bool isa(PropertyStmt);
+template <typename SubType> SubType to(PropertyStmt);
+
+struct PropertyAssign: public PropertyStmt {
+  public:
+    PropertyAssign();
+    PropertyAssign(const PropertyAssignNode*);
+    PropertyAssign(PropertyTag rhs, PropertyExpr lhs);
+
+    PropertyTag getLhs() const;
+    PropertyExpr getRhs() const;
+    
+    typedef PropertyAssignNode Node;
+};
 
 }
 

@@ -148,6 +148,15 @@ void DynamicNotationVisitor::visit(const DynamicOrNode* op){
   op->b.accept(this);
 }
 
+void PropertyExprVisitorStrict::visit(const PropertyExpr& expr) {
+  expr.accept(this);
+}
 
+void PropertyStmtVisitorStrict::visit(const PropertyStmt& expr) {
+  expr.accept(this);
+}
+
+void PropertyExprVisitorStrict::visit(const PropertyTagNode*){
+}
 
 }

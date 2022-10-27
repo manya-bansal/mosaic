@@ -43,5 +43,5 @@ static void bench_plus3_gsl_tensor(benchmark::State& state) {
   gsl_compile = false;
 }
 
-TACO_BENCH(bench_plus3_gsl_tensor)->DenseRange(100, 1000, 100);
+TACO_BENCH(bench_plus3_gsl_tensor)->DenseRange(100, 2000, 100);
 

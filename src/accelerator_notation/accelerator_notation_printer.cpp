@@ -329,4 +329,39 @@ void DynamicNotationPrinter::visit(const DynamicOrNode* op){
   op->b.accept(this);
 }
 
+PropertyNotationPrinter::PropertyNotationPrinter(std::ostream& os) : os(os){
+}
+
+void PropertyNotationPrinter::print(const PropertyExpr& expr) {
+  expr.accept(this);
+}
+
+void PropertyNotationPrinter::print(const PropertyStmt& expr) {
+  expr.accept(this);
+}
+
+void PropertyNotationPrinter::visit(const PropertyTagNode* op){
+  os << op->property;
+}
+
+void PropertyNotationPrinter::visit(const PropertyAddNode* op){
+  os << op->a  << " + " << op->b;
+}
+
+void PropertyNotationPrinter::visit(const PropertySubNode* op){
+  os << op->a  << " - " << op->b;
+}
+
+void PropertyNotationPrinter::visit(const PropertyMulNode* op){
+  os << op->a  << " * " << op->b;
+}
+
+void PropertyNotationPrinter::visit(const PropertyDivNode* op){
+  os << op->a  << " / " << op->b;
+}
+
+void PropertyNotationPrinter::visit(const PropertyAssignNode* op){
+  os << op->lhs  << " = " << op->rhs;
+}
+
 }

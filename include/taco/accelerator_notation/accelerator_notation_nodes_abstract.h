@@ -19,6 +19,9 @@ class AcceleratorStmtVisitorStrict;
 class DynamicExprVisitorStrict;
 class DynamicStmtVisitorStrict;
 
+class PropertyExprVisitorStrict;
+class PropertyStmtVisitorStrict;
+
 /// A node of a scalar index expression tree.
 struct AcceleratorExprNode : public util::Manageable<AcceleratorExprNode>,
                        private util::Uncopyable {
@@ -79,6 +82,34 @@ public:
 
   //TODO: NEED TO DEFINE VISITORS
   virtual void accept(DynamicStmtVisitorStrict*) const = 0;
+
+private:
+  Type type;
+};
+
+struct PropertyExprNode : public util::Manageable<PropertyExprNode>,
+                       private util::Uncopyable {
+public:
+  PropertyExprNode() = default;
+  // DynamicStmtNode(Type type);
+  virtual ~PropertyExprNode() = default;
+
+  //TODO: NEED TO DEFINE VISITORS
+  virtual void accept(PropertyExprVisitorStrict*) const = 0;
+
+private:
+  Type type;
+};
+
+struct PropertyStmtNode : public util::Manageable<PropertyStmtNode>,
+                       private util::Uncopyable {
+public:
+  PropertyStmtNode() = default;
+  // DynamicStmtNode(Type type);
+  virtual ~PropertyStmtNode() = default;
+
+  //TODO: NEED TO DEFINE VISITORS
+  virtual void accept(PropertyStmtVisitorStrict*) const = 0;
 
 private:
   Type type;
