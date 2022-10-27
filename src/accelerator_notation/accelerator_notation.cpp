@@ -1432,5 +1432,171 @@ template <> DynamicOr to<DynamicOr>(DynamicStmt e) {
   return DynamicOr(to<DynamicOrNode>(e.ptr));
 }
 
+PropertyExpr::PropertyExpr(std::string property) : PropertyExpr(new PropertyTagNode(property)) {}
+
+void PropertyExpr::accept(PropertyExprVisitorStrict * v) const{
+  ptr->accept(v);
+}
+
+std::ostream& operator<<(std::ostream& os, const PropertyExpr& expr) {
+  if (!expr.defined()) return os << "DynamicExpr()";
+  PropertyNotationPrinter printer(os);
+  printer.print(expr);
+  return os;
+}
+
+PropertyExpr operator+(const PropertyExpr& a, const PropertyExpr& b){
+  return PropertyAdd(a, b);
+}
+
+PropertyExpr operator-(const PropertyExpr& a, const PropertyExpr& b){
+  return PropertySub(a, b);
+}
+
+PropertyExpr operator*(const PropertyExpr& a, const PropertyExpr& b){
+  return PropertyMul(a, b);
+}
+
+PropertyExpr operator/(const PropertyExpr& a, const PropertyExpr& b){
+  return PropertyDiv(a, b);
+}
+
+PropertyTag::PropertyTag() : PropertyExpr(new PropertyTagNode) {}
+PropertyTag::PropertyTag(const PropertyTagNode* n) : PropertyExpr(n) {}
+PropertyTag::PropertyTag(const std::string& tag) : PropertyTag(new PropertyTagNode(tag)) {}
+
+std::string PropertyTag::getTag() const{
+  return getNode(*this)->property;
+}
+
+template <> bool isa<PropertyTag>(PropertyExpr e) {
+  return isa<PropertyTagNode>(e.ptr);
+}
+
+template <> PropertyTag to<PropertyTag>(PropertyExpr e) {
+  taco_iassert(isa<PropertyTag>(e));
+  return PropertyTag(to<PropertyTagNode>(e.ptr));
+}
+
+PropertyAssign PropertyTag::operator=(const PropertyExpr& expr){
+  return PropertyAssign(*this, expr);
+}
+
+PropertyAssign PropertyTag::operator=(const PropertyExpr& expr) const{
+   return PropertyAssign(*this, expr);
+}
+
+PropertyAdd::PropertyAdd() : PropertyExpr(new PropertyAddNode) {}
+PropertyAdd::PropertyAdd(const PropertyAddNode* n) : PropertyExpr(n) {}
+PropertyAdd::PropertyAdd(PropertyExpr a, PropertyExpr b) : PropertyAdd(new PropertyAddNode(a, b)) {}
+
+PropertyExpr PropertyAdd::getA() const{
+  return getNode(*this)->a;
+}
+PropertyExpr PropertyAdd::getB() const{
+   return getNode(*this)->b;
+}
+
+template <> bool isa<PropertyAdd>(PropertyExpr e) {
+  return isa<PropertyAddNode>(e.ptr);
+}
+
+template <> PropertyAdd to<PropertyAdd>(PropertyExpr e) {
+  taco_iassert(isa<PropertyAdd>(e));
+  return PropertyAdd(to<PropertyAddNode>(e.ptr));
+}
+
+PropertySub::PropertySub() : PropertyExpr(new PropertySubNode) {}
+PropertySub::PropertySub(const PropertySubNode* n) : PropertyExpr(n) {}
+PropertySub::PropertySub(PropertyExpr a, PropertyExpr b) : PropertySub(new PropertySubNode(a, b)) {}
+
+PropertyExpr PropertySub::getA() const{
+  return getNode(*this)->a;
+}
+PropertyExpr PropertySub::getB() const{
+   return getNode(*this)->b;
+}
+
+template <> bool isa<PropertySub>(PropertyExpr e) {
+  return isa<PropertySubNode>(e.ptr);
+}
+
+template <> PropertySub to<PropertySub>(PropertyExpr e) {
+  taco_iassert(isa<PropertySub>(e));
+  return PropertySub(to<PropertySubNode>(e.ptr));
+}
+
+PropertyMul::PropertyMul() : PropertyExpr(new PropertyMulNode) {}
+PropertyMul::PropertyMul(const PropertyMulNode* n) : PropertyExpr(n) {}
+PropertyMul::PropertyMul(PropertyExpr a, PropertyExpr b) : PropertyMul(new PropertyMulNode(a, b)) {}
+
+PropertyExpr PropertyMul::getA() const{
+  return getNode(*this)->a;
+}
+PropertyExpr PropertyMul::getB() const{
+   return getNode(*this)->b;
+}
+
+template <> bool isa<PropertyMul>(PropertyExpr e) {
+  return isa<PropertyMulNode>(e.ptr);
+}
+
+template <> PropertyMul to<PropertyMul>(PropertyExpr e) {
+  taco_iassert(isa<PropertyMul>(e));
+  return PropertyMul(to<PropertyMulNode>(e.ptr));
+}
+
+PropertyDiv::PropertyDiv() : PropertyExpr(new PropertyDivNode) {}
+PropertyDiv::PropertyDiv(const PropertyDivNode* n) : PropertyExpr(n) {}
+PropertyDiv::PropertyDiv(PropertyExpr a, PropertyExpr b) : PropertyDiv(new PropertyDivNode(a, b)) {}
+
+PropertyExpr PropertyDiv::getA() const{
+  return getNode(*this)->a;
+}
+PropertyExpr PropertyDiv::getB() const{
+   return getNode(*this)->b;
+}
+
+template <> bool isa<PropertyDiv>(PropertyExpr e) {
+  return isa<PropertyDivNode>(e.ptr);
+}
+
+template <> PropertyDiv to<PropertyDiv>(PropertyExpr e) {
+  taco_iassert(isa<PropertyDiv>(e));
+  return PropertyDiv(to<PropertyDivNode>(e.ptr));
+}
+
+PropertyAssign::PropertyAssign() : PropertyStmt(new PropertyAssignNode) {}
+PropertyAssign::PropertyAssign(const PropertyAssignNode* n) : PropertyStmt(n) {}
+PropertyAssign::PropertyAssign(PropertyTag rhs, PropertyExpr lhs) : PropertyAssign(new PropertyAssignNode(rhs, lhs)) {}
+
+PropertyTag PropertyAssign::getLhs() const{
+   return getNode(*this)->lhs;
+}
+
+PropertyExpr PropertyAssign::getRhs() const{
+   return getNode(*this)->rhs;
+}
+
+template <> bool isa<PropertyAssign>(PropertyStmt e) {
+  return isa<PropertyAssignNode>(e.ptr);
+}
+
+template <> PropertyAssign to<PropertyAssign>(PropertyStmt e) {
+  taco_iassert(isa<PropertyAssign>(e));
+  return PropertyAssign(to<PropertyAssignNode>(e.ptr));
+}
+
+void PropertyStmt::accept(PropertyStmtVisitorStrict * v) const{
+  ptr->accept(v);
+}
+
+std::ostream& operator<<(std::ostream& os, const PropertyStmt& expr) {
+  if (!expr.defined()) return os << "DynamicStmt()";
+  PropertyNotationPrinter printer(os);
+  printer.print(expr);
+  return os;
+}
+
 
 }

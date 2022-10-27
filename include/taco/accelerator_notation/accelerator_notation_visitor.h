@@ -13,6 +13,9 @@ class AcceleratorStmt;
 class DynamicExpr;
 class DynamicStmt;
 
+class PropertyExpr;
+class PropertyStmt;
+
 struct AcceleratorAccessNode;
 struct AcceleratorLiteralNode;
 struct AcceleratorNegNode;
@@ -52,6 +55,13 @@ struct DynamicExistsNode;
 struct DynamicIndexVarNode;
 struct DynamicAndNode;
 struct DynamicOrNode;
+
+struct PropertyTagNode;
+struct PropertyAddNode;
+struct PropertySubNode;
+struct PropertyMulNode;
+struct PropertyDivNode;
+struct PropertyAssignNode;
 
 class AcceleratorExprVisitorStrict {
     public:
@@ -193,6 +203,53 @@ public:
   virtual void visit(const DynamicOrNode*); 
 
 };
+
+class PropertyExprVisitorStrict {
+  public:
+    virtual ~PropertyExprVisitorStrict() = default;
+
+    void visit(const PropertyExpr&);
+
+    virtual void visit(const PropertyTagNode*) = 0;
+    virtual void visit(const PropertyAddNode*) = 0;
+    virtual void visit(const PropertySubNode*) = 0;
+    virtual void visit(const PropertyMulNode*) = 0;
+    virtual void visit(const PropertyDivNode*) = 0;
+};
+
+class PropertyStmtVisitorStrict {
+    public:
+      virtual ~PropertyStmtVisitorStrict() = default;
+
+      void visit(const PropertyStmt&);
+
+      virtual void visit(const PropertyAssignNode*) = 0;
+};
+
+class PropertyNotationVisitorStrict : public PropertyExprVisitorStrict,
+                                     public PropertyStmtVisitorStrict{
+    public:
+        virtual ~PropertyNotationVisitorStrict() = default;
+
+        using PropertyExprVisitorStrict::visit;
+        using PropertyStmtVisitorStrict::visit;
+};
+
+class PropertyNotationVisitor : public DynamicNotationVisitorStrict {
+public:
+  virtual ~PropertyNotationVisitor() = default;
+  
+  using DynamicNotationVisitorStrict::visit;
+
+  virtual void visit(const PropertyTagNode*);
+  virtual void visit(const PropertyAddNode*);
+  virtual void visit(const PropertyMulNode*);
+  virtual void visit(const PropertyDivNode*);
+  virtual void visit(const PropertySubNode*);
+  virtual void visit(const PropertyAssignNode*);
+
+};
+
 
 #define ACCEL_RULE(Rule)                                                       \
 std::function<void(const Rule*)> Rule##Func;                                   \

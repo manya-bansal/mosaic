@@ -88,5 +88,27 @@ private:
   std::ostream& os;
 };
 
+class PropertyNotationPrinter : public PropertyNotationVisitorStrict {
+public:
+  PropertyNotationPrinter(std::ostream& os);
+
+  void print(const PropertyExpr& expr);
+  void print(const PropertyStmt& expr);
+
+  using PropertyNotationVisitorStrict::visit;
+
+  void visit(const PropertyTagNode*);
+  void visit(const PropertyAddNode*);
+  void visit(const PropertyMulNode*);
+  void visit(const PropertySubNode*);
+  void visit(const PropertyDivNode*);
+
+  void visit(const PropertyAssignNode*);
+
+
+private:
+  std::ostream& os;
+};
+
 }
 #endif

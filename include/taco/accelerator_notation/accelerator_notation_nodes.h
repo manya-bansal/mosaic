@@ -478,6 +478,78 @@ struct DynamicOrNode : public DynamicStmtNode {
   }
 };
 
+struct PropertyTagNode : public PropertyExprNode {
+  PropertyTagNode() : PropertyExprNode() {}
+  PropertyTagNode(const std::string& property) : property(property) {}
+  
+  std::string property;
+
+  void accept(PropertyExprVisitorStrict* v) const override{
+    v->visit(this);
+  }
+};
+
+struct PropertyAddNode : public PropertyExprNode {
+  PropertyAddNode() : PropertyExprNode() {}
+  PropertyAddNode(PropertyExpr a, PropertyExpr b) : a(a), b(b) {}
+  
+  PropertyExpr a;
+  PropertyExpr b;
+
+  void accept(PropertyExprVisitorStrict* v) const override{
+    v->visit(this);
+  }
+};
+
+struct PropertySubNode : public PropertyExprNode {
+  PropertySubNode() : PropertyExprNode() {}
+  PropertySubNode(PropertyExpr a, PropertyExpr b) : a(a), b(b) {}
+  
+  PropertyExpr a;
+  PropertyExpr b;
+
+  void accept(PropertyExprVisitorStrict* v) const override{
+    v->visit(this);
+  }
+};
+
+struct PropertyMulNode : public PropertyExprNode {
+  PropertyMulNode() : PropertyExprNode() {}
+  PropertyMulNode(PropertyExpr a, PropertyExpr b) : a(a), b(b) {}
+  
+  PropertyExpr a;
+  PropertyExpr b;
+
+  void accept(PropertyExprVisitorStrict* v) const override{
+    v->visit(this);
+  }
+};
+
+struct PropertyDivNode : public PropertyExprNode {
+  PropertyDivNode() : PropertyExprNode() {}
+  PropertyDivNode(PropertyExpr a, PropertyExpr b) : a(a), b(b) {}
+  
+  PropertyExpr a;
+  PropertyExpr b;
+
+  void accept(PropertyExprVisitorStrict* v) const override{
+    v->visit(this);
+  }
+};
+
+struct PropertyAssignNode : public PropertyStmtNode {
+  PropertyAssignNode() : PropertyStmtNode() {}
+  PropertyAssignNode(PropertyTag lhs, PropertyExpr rhs) : lhs(lhs), rhs(rhs) {}
+  
+  PropertyTag lhs;
+  PropertyExpr rhs;
+
+  void accept(PropertyStmtVisitorStrict* v) const override{
+    v->visit(this);
+  }
+};
+
+
 /// Returns true if expression e is of type E.
 template <typename E>
 inline bool isa(const AcceleratorExprNode* e) {
@@ -531,6 +603,31 @@ inline const SubType* to(const DynamicStmtNode* s) {
       "Cannot convert " << typeid(s).name() << " to " << typeid(SubType).name();
   return static_cast<const SubType*>(s);
 }
+
+template <typename E>
+inline bool isa(const PropertyExprNode* e) {
+  return e != nullptr && dynamic_cast<const E*>(e) != nullptr;
+}
+
+template <typename E>
+inline const E* to(const PropertyExprNode* e) {
+  taco_iassert(isa<E>(e)) <<
+      "Cannot convert " << typeid(e).name() << " to " << typeid(E).name();
+  return static_cast<const E*>(e);
+}
+
+template <typename E>
+inline bool isa(const PropertyStmtNode* e) {
+  return e != nullptr && dynamic_cast<const E*>(e) != nullptr;
+}
+
+template <typename E>
+inline const E* to(const PropertyStmtNode* e) {
+  taco_iassert(isa<E>(e)) <<
+      "Cannot convert " << typeid(e).name() << " to " << typeid(E).name();
+  return static_cast<const E*>(e);
+}
+
 
 }
 #endif

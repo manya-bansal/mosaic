@@ -87,6 +87,10 @@ TEST(accelerateNotation, AcceleratorExprTest) {
     condition1.runSMT();
     ASSERT_FALSE(condition1.isSat());
 
+    //property notation test
+
+    cout <<  (PropertyTag("symmetric") = (PropertyExpr("symmetric") + PropertyExpr("symmetric"))) << endl;
+
 }
 
 TEST(accelerateNotation, makeReductionNotation) {
