@@ -255,6 +255,7 @@ LowererImplImperative::lower(IndexStmt stmt, string name,
   }else{
     arguments = getArguments(stmt);
   }
+
   vector<TensorVar> temporaries = getTemporaries(stmt);
 
   needCompute = {};
@@ -3097,6 +3098,10 @@ std::vector<Stmt> LowererImplImperative::prepareFunctionCall(ConcreteAccelerateC
 }
 
 Stmt LowererImplImperative::lowerInterface(InterfaceCall interface){
+
+  if (this->assemble){
+    return Stmt();
+  }
     // first check whether the rhs contains the rhs
   // if it does, we know that the ffi is setting
   // its values by reference as oppoosed to returning a new 

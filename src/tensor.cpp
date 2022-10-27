@@ -743,6 +743,7 @@ void TensorBase::compileAccelerated(std::vector<IndexExpr> AcceleratedExpression
 }
 
 void TensorBase::compile(taco::IndexStmt stmt, bool assembleWhileCompute) {
+
   if (!needsCompile()) {
     return;
   }

@@ -3916,6 +3916,7 @@ static Assignment getTensorAccess(IndexStmt stmt, TensorVar t)
   return assign;
 }
 
+
 static Forall getForAllTensor(IndexStmt stmt, TensorVar t)
 { 
   Forall forall;
@@ -4583,6 +4584,7 @@ IndexStmt IndexStmt::holdConstant(FunctionInterface functionInterface, IndexExpr
 
 IndexStmt IndexStmt::accelerate(FunctionInterface functionInterface, IndexExpr exprToAccelerate, bool fullStmt) const{
 
+
   AcceleratorStmt referenceStmt = functionInterface.getNode()->getStmt();
   if (!isa<AcceleratorAssignment>(referenceStmt)){
     taco_uerror << "Reference statement in function interface must be an assignment" << endl;
@@ -4605,6 +4607,43 @@ IndexStmt IndexStmt::accelerate(FunctionInterface functionInterface, IndexExpr e
   }
 
   assert(argumentMap.possible);
+
+  if (fullStmt){
+    // we are replacing the full statement, this means that we do not to insert a 
+    // temp worksparse
+    const AccessNode * lhsAccess;
+    match(*this,
+    function<void(const AccessNode*,Matcher*)>([&](const AccessNode* n,
+                                                       Matcher* ctx) {
+      lhsAccess = n;      
+    }),
+    function<void(const AssignmentNode*,Matcher*)>([&](const AssignmentNode* n,
+                                                       Matcher* ctx) {
+      if (!equals(n->rhs, exprToAccelerate)){
+        taco_uerror << "Indicated that " << exprToAccelerate << "is the full expression, but not true";
+      }
+      ctx->match(n->lhs);
+      })
+    );
+
+    std::vector<IndexStmt> stmts;
+    auto access  = Access(lhsAccess);
+    if (setByReference(referenceStmt)){
+      std::vector<IndexVar> vars; 
+      TensorVar copyTemp = argumentMap.tensors[assign.getLhs().getTensorObject()];
+      if (access.getTensorVar().getOrder() != copyTemp.getOrder()){
+        taco_uerror << "Set by reference, but of different orders??";
+      }
+      for (int i = 0; i < copyTemp.getOrder(); i++){
+        vars.push_back(IndexVar());
+      }
+      stmts.push_back(makeConcreteNotation(Assignment(Access(access.getTensorVar(), vars), Access(copyTemp, vars))));
+    }
+    
+    stmts.push_back(InterfaceCall(Assignment(Access(lhsAccess), exprToAccelerate), getConcreteCodeGenerator(exprToAccelerate, access, argumentMap, functionInterface), access.getTensorVar()));
+    return ForallMany(stmts);
+  }
+
 
   auto access = replaceTemporary(*this, exprToAccelerate, assign, argumentMap);
   std::map<IndexExpr,IndexExpr> subsitution = {{exprToAccelerate, access}};
@@ -4963,11 +5002,16 @@ IndexStmt makeConcreteNotationScheduled(IndexStmt stmt, ProvenanceGraph provGrap
 vector<TensorVar> getResults(IndexStmt stmt) {
   vector<TensorVar> result;
   set<TensorVar> collected;
+  set<std::string> names; 
 
   for (auto& access : getResultAccesses(stmt).first) {
     TensorVar tensor = access.getTensorVar();
+    if (util::contains(names, tensor.getName())){
+      continue;
+    }
     taco_iassert(!util::contains(collected, tensor));
     collected.insert(tensor);
+    names.insert(tensor.getName());
     result.push_back(tensor);
   }
 

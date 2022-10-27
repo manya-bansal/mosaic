@@ -1152,7 +1152,7 @@ TEST(interface, gslTensorPlus) {
 
 
    IndexStmt stmt = A.getAssignment().concretize();
-   stmt = stmt.accelerate(new GslTensorPlus(), accelerateExpr);
+   stmt = stmt.accelerate(new GslTensorPlus(), accelerateExpr, true);
    
    A.compile(stmt);
    A.assemble();
@@ -1171,8 +1171,8 @@ TEST(interface, gslTensorPlus) {
 
 
 TEST(interface, tblisPlus) {
-
-   int dim = 16;
+   
+   int dim = 2;
 
    // actual computation
    Tensor<float> A("A", {dim, dim, dim}, Format{Dense, Dense, Dense});
@@ -1200,11 +1200,11 @@ TEST(interface, tblisPlus) {
    IndexExpr accelerateExpr = B(i, j, k) + C(i, j, k);
    A(i, j, k) = accelerateExpr;
 
-
-   IndexStmt stmt = A.getAssignment().concretize();
-   stmt = stmt.accelerate(new TblisPlus(), accelerateExpr);
    
+   IndexStmt stmt = A.getAssignment().concretize();
+   stmt = stmt.accelerate(new TblisPlus(), accelerateExpr, true);
    A.compile(stmt);
+   // taco_uerror << "stop";
    A.assemble();
    A.compute();
 
