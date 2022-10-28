@@ -15,10 +15,9 @@ extern bool gsl_compile;
 
 static void bench_gemv_gsl(benchmark::State& state) {
 
+   gsl_compile = true;
      // actual computation
    int dim = state.range(0);
-   gsl_compile = true;
-  
    Tensor<float> b("b", {dim}, Format{Dense});
    Tensor<float> A("A", {dim, dim}, Format{Dense, Dense});
 
@@ -42,6 +41,10 @@ static void bench_gemv_gsl(benchmark::State& state) {
     state.PauseTiming();
     Tensor<float> res("res", {dim}, Format{Dense});
     res(i) = accelerateExpr;
+
+    IndexStmt stmt = res.getAssignment().concretize();
+    stmt = stmt.accelerate(new GSLGemv(), accelerateExpr, true);
+
     res.compile();
     res.assemble();
     state.ResumeTiming();

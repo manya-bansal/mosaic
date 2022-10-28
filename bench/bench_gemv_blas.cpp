@@ -40,6 +40,10 @@ static void bench_gemv_blas(benchmark::State& state) {
     state.PauseTiming();
     Tensor<float> res("res", {dim}, Format{Dense});
     res(i) = accelerateExpr;
+   
+    IndexStmt stmt = res.getAssignment().concretize();
+    stmt = stmt.accelerate(new CblasGemv(), accelerateExpr, true);
+
     res.compile();
     res.assemble();
     state.ResumeTiming();
