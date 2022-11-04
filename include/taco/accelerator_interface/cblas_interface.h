@@ -259,6 +259,41 @@ class CblasGemv : public AbstractFunctionInterface{
         IndexVar j;
 };
 
+class CblasSymmetricGemV : public AbstractFunctionInterface{
+    public: 
+        CblasSymmetricGemV() : x(TensorObject(Type(taco::Float32, {Dimension(), Dimension()}), Format{Dense, Dense})), 
+                  y(TensorObject(Type(taco::Float32, {Dimension()}), dense)),
+                  s(TensorObject(Type(taco::Float32, {Dimension()}), dense)),
+                  i(IndexVar()),
+                  j(IndexVar()) {};
+        AcceleratorStmt getStmt() const override { 
+                                                    return y(i) = x(i, j)*s(j);}
+        std::vector<Argument> getArguments() const override {return 
+                                                {
+                                                    new StringLiteral("CblasRowMajor"), 
+                                                    new StringLiteral("CblasUpper"),
+                                                    new DimArg(i), 
+                                                    new LiteralArg(Datatype(taco::UInt32), 1),
+                                                    new TensorObjectArg(x), 
+                                                    new DimArg(i),
+                                                    new TensorObjectArg(s), 
+                                                    new LiteralArg(Datatype(taco::UInt32), 1),
+                                                    new LiteralArg(Datatype(taco::UInt32), 0),
+                                                    new TensorObjectArg(y), 
+                                                    new LiteralArg(Datatype(taco::UInt32), 1)
+                                                };}
+        std::string getReturnType() const override {return "void";}
+        std::string getFunctionName() const override {return "cblas_ssymv";}
+
+    private: 
+        TensorObject x;
+        TensorObject y;
+        TensorObject s;
+        IndexVar i;
+        IndexVar j;
+
+};
+
 
 
 #endif 

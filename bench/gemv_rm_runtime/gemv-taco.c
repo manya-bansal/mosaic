@@ -7,6 +7,8 @@
 #include <math.h>
 #include <complex.h>
 #include <string.h>
+#include <immintrin.h>
+#include "cblas.h"
 #if _OPENMP
 #include <omp.h>
 #endif

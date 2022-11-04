@@ -2,28 +2,6 @@
 #include <time.h>
 #include "gemv-taco.c"
 
-// from https://www.includehelp.com/c-programs/calculate-median-of-an-array.aspx#:~:text=To%20calculate%20the%20median%20first,be%20considered%20as%20the%20median.
-void array_sort(double *array , int n)
-{ 
-    // declare some local variables
-    int i=0 , j=0 ;
-    double temp=0;
-
-    for(i=0 ; i<n ; i++)
-    {
-        for(j=0 ; j<n-1 ; j++)
-        {
-            if(array[j]>array[j+1])
-            {
-                temp        = array[j];
-                array[j]    = array[j+1];
-                array[j+1]  = temp;
-            }
-        }
-    }
-
-}
-
 double run_gemv_taco(int dim){
     clock_t start, end;
     double cpu_time_used_ms;
@@ -58,13 +36,12 @@ double run_gemv_taco(int dim){
 }
 
 int main(int argc, char *argv[]) {
-   for (int i = 100; i<=5000; i+=100){
-        double time_taken[11];
-        for (int j = 0; j<11; j++){
-            time_taken[j] = run_gemv_taco(i);
+    for (int i = 100; i<=5000; i+=100){
+        double time_taken = 0;
+        for (int j = 0; j<10; j++){
+            time_taken += run_gemv_taco(i);
         }
-        array_sort(time_taken, 11);
-        printf("%d=%f\n", i, time_taken[5]/10);
+        printf("%d=%f\n", i, time_taken/10);
     }
     
 }

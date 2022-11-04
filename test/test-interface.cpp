@@ -2101,8 +2101,153 @@ TEST(interface, gslGmev) {
    expected.compute();
 
    ASSERT_TENSOR_EQ(expected, d);
-
    gsl_compile = false;
    
 }
 
+TEST(interface, tensorPlusSampleCode) {
+
+   gsl_compile = true;
+
+   int dim = 16;
+
+   // actual computation
+   Tensor<float> A("A", {dim, dim, dim}, Format{Dense, Dense, Dense});
+   Tensor<float> B("B", {dim, dim, dim}, Format{Dense, Dense, Dense});
+   Tensor<float> C("C", {dim, dim, dim}, Format{Dense, Dense, Dense});
+   Tensor<float> D("D", {dim, dim, dim}, Format{Dense, Dense, Dense});
+   Tensor<float> expected("expected", {dim, dim, dim}, Format{Dense, Dense, Dense});
+
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar k("k");
+   IndexVar l("l");
+
+   for (int i = 0; i < dim; i++) {
+      for (int j = 0; j < dim; j++) {
+         for (int k = 0; k < dim; k++) {
+            B.insert({i, j, k}, (float) i + j * k);
+            C.insert({i, j, k}, (float) i + j * k);
+         }
+      }
+   }
+
+   C.pack();
+   B.pack();
+
+   IndexExpr accelerateExpr = B(i, j, k) + C(i, j, k);
+   A(i, j, k) = accelerateExpr + D(i, j, k);
+
+
+   IndexStmt stmt = A.getAssignment().concretize();
+   stmt = stmt.accelerate(new TblisPlus(), accelerateExpr);
+   
+   A.compile(stmt);
+   A.assemble();
+   A.compute();
+
+   // expected(i, j, k) = accelerateExpr;
+   // expected.compile();
+   // expected.assemble();
+   // expected.compute();
+
+   // ASSERT_TENSOR_EQ(expected, A);
+
+   gsl_compile = false;
+
+}
+
+
+TEST(interface, symmtericBlasGemv) {
+
+   // actual computation
+   Tensor<float> A("A", {16, 16}, Format{Dense, Dense});
+   Tensor<float> b("b", {16}, Format{Dense});
+   Tensor<float> d("d", {16}, Format{Dense});
+
+   for (int i = 0; i < 16; i++) {
+      for (int j = 0; j < 16; j++) {
+         A.insert({i, j}, (float) i + j);
+      }
+   }
+
+   A.pack();
+
+   for (int i = 0; i < 16; i++) {
+      b.insert({i}, (float) i);
+   }
+
+   b.pack();
+
+   Tensor<float> expected("expected", {16}, Format{Dense});
+
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar k("k");
+
+   IndexExpr accelerateExpr = A(i, j) * b(j);
+   d(i) = accelerateExpr;
+
+   IndexStmt stmt = d.getAssignment().concretize();
+   stmt = stmt.accelerate(new CblasSymmetricGemV(), accelerateExpr, true);
+   
+   d.compile(stmt);
+   d.assemble();
+   d.compute();
+
+   expected(i) = accelerateExpr;
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+   ASSERT_TENSOR_EQ(expected, d);
+
+}
+
+
+
+TEST(interface, symmtericGSLGemv) {
+
+   // actual computation
+   Tensor<float> A("A", {16, 16}, Format{Dense, Dense});
+   Tensor<float> b("b", {16}, Format{Dense});
+   Tensor<float> d("d", {16}, Format{Dense});
+
+   for (int i = 0; i < 16; i++) {
+      for (int j = 0; j < 16; j++) {
+         A.insert({i, j}, (float) i + j);
+      }
+   }
+
+   A.pack();
+
+   for (int i = 0; i < 16; i++) {
+      b.insert({i}, (float) i);
+   }
+
+   b.pack();
+
+   Tensor<float> expected("expected", {16}, Format{Dense});
+
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar k("k");
+
+   IndexExpr accelerateExpr = A(i, j) * b(j);
+   d(i) = accelerateExpr;
+
+   IndexStmt stmt = d.getAssignment().concretize();
+   stmt = stmt.accelerate(new CblasSymmetricGemV(), accelerateExpr, true);
+   
+   d.compile(stmt);
+   d.assemble();
+   d.compute();
+
+   expected(i) = accelerateExpr;
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+   ASSERT_TENSOR_EQ(expected, d);
+
+}

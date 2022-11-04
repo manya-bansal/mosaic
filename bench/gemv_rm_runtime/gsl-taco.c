@@ -7,6 +7,9 @@
 #include <math.h>
 #include <complex.h>
 #include <string.h>
+#include <immintrin.h>
+#include "gsl/gsl_vector.h"
+#include "gsl/gsl_blas.h"
 #if _OPENMP
 #include <omp.h>
 #endif
@@ -132,41 +135,53 @@ void deinit_taco_tensor_t(taco_tensor_t* t) {
   free(t->mode_types);
   free(t);
 }
+  
+ void set_gsl_float_data(gsl_vector_float * vec, float * data){
+     vec->data = data;}
+ void set_gsl_mat_data_row_major_s(gsl_matrix_float * mat, float * data){
+     mat->data = data;}
+ void print_array(float * vals, int num_elem){
+      for (int i = 0; i < num_elem; i++){
+      printf("elem[%d]=%f\n", i, vals[i]);
+    }
+    printf("next\n");
+}
+int lC = 0;
+int kB = 0;
 #endif
 
-int assemble(taco_tensor_t *expected, taco_tensor_t *A, taco_tensor_t *b) {
+int assemble(taco_tensor_t *d, taco_tensor_t *A, taco_tensor_t *b) {
 
-  int expected1_dimension = (int)(expected->dimensions[0]);
-  float*  expected_vals = (float*)(expected->vals);
+  int d1_dimension = (int)(d->dimensions[0]);
+  float*  d_vals = (float*)(d->vals);
 
-  expected_vals = (float*)malloc(sizeof(float) * expected1_dimension);
+  d_vals = (float*)malloc(sizeof(float) * d1_dimension);
 
-  expected->vals = (uint8_t*)expected_vals;
+  d->vals = (uint8_t*)d_vals;
   return 0;
 }
 
-int compute(taco_tensor_t *expected, taco_tensor_t *A, taco_tensor_t *b) {
-  
-  int expected1_dimension = (int)(expected->dimensions[0]);
-  float*  expected_vals = (float*)(expected->vals);
+int compute(taco_tensor_t *d, taco_tensor_t *A, taco_tensor_t *b) {
+
+  float*  d_vals = (float*)(d->vals);
   int A1_dimension = (int)(A->dimensions[0]);
-  int A2_dimension = (int)(A->dimensions[1]);
   float*  A_vals = (float*)(A->vals);
   int b1_dimension = (int)(b->dimensions[0]);
   float*  b_vals = (float*)(b->vals);
 
-  #pragma omp parallel for schedule(runtime)
-  for (int32_t i = 0; i < A1_dimension; i++) {
-    float tjexpected_val = 0.0;
-    for (int32_t j = 0; j < b1_dimension; j++) {
-      int32_t jA = i * A2_dimension + j;
-      tjexpected_val += A_vals[jA] * b_vals[j];
-    }
-    expected_vals[i] = tjexpected_val;
-  }
+gsl_vector_float *  var1;
+gsl_vector_float * var2;
+gsl_matrix_float * mat;
+  var1 = gsl_vector_float_calloc(b1_dimension);
+  var2 = gsl_vector_float_calloc(A1_dimension);
+set_gsl_float_data(var1, b_vals);
+set_gsl_float_data(var2, d_vals);
+  mat = gsl_matrix_float_alloc(A1_dimension, b1_dimension);
+set_gsl_mat_data_row_major_s(mat, A_vals);
+gsl_blas_sgemv(111, 1, mat, var1, 0, var2);
   return 0;
 }
-#include "/home/manya227/temp/taco_tmp_imrq8O/ybs509v1s8cz.h"
+#include "/home/manya227/temp/taco_tmp_2GPm8N/ybs509v1s8cz.h"
 int _shim_assemble(void** parameterPack) {
   return assemble((taco_tensor_t*)(parameterPack[0]), (taco_tensor_t*)(parameterPack[1]), (taco_tensor_t*)(parameterPack[2]));
 }

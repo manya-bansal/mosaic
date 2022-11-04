@@ -7,6 +7,8 @@
 #include <math.h>
 #include <complex.h>
 #include <string.h>
+#include <immintrin.h>
+#include "cblas.h"
 #if _OPENMP
 #include <omp.h>
 #endif
@@ -134,39 +136,29 @@ void deinit_taco_tensor_t(taco_tensor_t* t) {
 }
 #endif
 
-int assemble(taco_tensor_t *expected, taco_tensor_t *A, taco_tensor_t *b) {
+int assemble(taco_tensor_t *d, taco_tensor_t *A, taco_tensor_t *b) {
 
-  int expected1_dimension = (int)(expected->dimensions[0]);
-  float*  expected_vals = (float*)(expected->vals);
+  int d1_dimension = (int)(d->dimensions[0]);
+  float*  d_vals = (float*)(d->vals);
 
-  expected_vals = (float*)malloc(sizeof(float) * expected1_dimension);
+  d_vals = (float*)malloc(sizeof(float) * d1_dimension);
 
-  expected->vals = (uint8_t*)expected_vals;
+  d->vals = (uint8_t*)d_vals;
   return 0;
 }
 
-int compute(taco_tensor_t *expected, taco_tensor_t *A, taco_tensor_t *b) {
-  
-  int expected1_dimension = (int)(expected->dimensions[0]);
-  float*  expected_vals = (float*)(expected->vals);
+int compute(taco_tensor_t *d, taco_tensor_t *A, taco_tensor_t *b) {
+
+  float*  d_vals = (float*)(d->vals);
   int A1_dimension = (int)(A->dimensions[0]);
-  int A2_dimension = (int)(A->dimensions[1]);
   float*  A_vals = (float*)(A->vals);
   int b1_dimension = (int)(b->dimensions[0]);
   float*  b_vals = (float*)(b->vals);
 
-  #pragma omp parallel for schedule(runtime)
-  for (int32_t i = 0; i < A1_dimension; i++) {
-    float tjexpected_val = 0.0;
-    for (int32_t j = 0; j < b1_dimension; j++) {
-      int32_t jA = i * A2_dimension + j;
-      tjexpected_val += A_vals[jA] * b_vals[j];
-    }
-    expected_vals[i] = tjexpected_val;
-  }
+cblas_sgemv(CblasRowMajor, CblasNoTrans, A1_dimension, b1_dimension, 1, A_vals, A1_dimension, b_vals, 1, 0, d_vals, 1);
   return 0;
 }
-#include "/home/manya227/temp/taco_tmp_imrq8O/ybs509v1s8cz.h"
+#include "/home/manya227/temp/taco_tmp_wgPHZQ/ybs509v1s8cz.h"
 int _shim_assemble(void** parameterPack) {
   return assemble((taco_tensor_t*)(parameterPack[0]), (taco_tensor_t*)(parameterPack[1]), (taco_tensor_t*)(parameterPack[2]));
 }
