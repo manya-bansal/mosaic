@@ -59,7 +59,7 @@ double run_gemv_mkl(int dim)
 	MKL_INT beta = 1;
 	MKL_INT dimMkl = (MKL_INT)dim;
 	start = clock();
-	sgemv("n", &dimMkl, &dimMkl, &alpha, A_vals, &dimMkl, b_vals, &beta, &alpha, c_vals, &beta);
+	ssymv("u", &dimMkl, &alpha, A_vals, &dimMkl, b_vals, &beta, &alpha, c_vals, &beta);
 	end = clock();
 	cpu_time_used_ms = ((double)(end - start)) / (CLOCKS_PER_SEC / 1000);
 	return cpu_time_used_ms;

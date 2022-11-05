@@ -7,9 +7,9 @@
 #include <math.h>
 #include <complex.h>
 #include <string.h>
-#if _OPENMP
-#include <omp.h>
-#endif
+#include <immintrin.h>
+#include "cblas.h"
+#include "tblis.h"
 #define TACO_MIN(_a,_b) ((_a) < (_b) ? (_a) : (_b))
 #define TACO_MAX(_a,_b) ((_a) > (_b) ? (_a) : (_b))
 #define TACO_DEREF(_a) (((___context___*)(*__ctx__))->_a)
@@ -132,44 +132,15 @@ void deinit_taco_tensor_t(taco_tensor_t* t) {
   free(t->mode_types);
   free(t);
 }
+
+void print_array(float *vals, int num_elem)
+{
+    for (int i = 0; i < num_elem; i++)
+    {
+        printf("elem[%d]=%f\n", i, vals[i]);
+    }
+    printf("next\n");
+}
+
 #endif
 
-int assemble(taco_tensor_t *expected, taco_tensor_t *A, taco_tensor_t *b) {
-
-  int expected1_dimension = (int)(expected->dimensions[0]);
-  float*  expected_vals = (float*)(expected->vals);
-
-  expected_vals = (float*)malloc(sizeof(float) * expected1_dimension);
-
-  expected->vals = (uint8_t*)expected_vals;
-  return 0;
-}
-
-int compute(taco_tensor_t *expected, taco_tensor_t *A, taco_tensor_t *b) {
-  
-  int expected1_dimension = (int)(expected->dimensions[0]);
-  float*  expected_vals = (float*)(expected->vals);
-  int A1_dimension = (int)(A->dimensions[0]);
-  int A2_dimension = (int)(A->dimensions[1]);
-  float*  A_vals = (float*)(A->vals);
-  int b1_dimension = (int)(b->dimensions[0]);
-  float*  b_vals = (float*)(b->vals);
-
-  #pragma omp parallel for schedule(runtime)
-  for (int32_t i = 0; i < A1_dimension; i++) {
-    float tjexpected_val = 0.0;
-    for (int32_t j = 0; j < b1_dimension; j++) {
-      int32_t jA = i * A2_dimension + j;
-      tjexpected_val += A_vals[jA] * b_vals[j];
-    }
-    expected_vals[i] = tjexpected_val;
-  }
-  return 0;
-}
-
-int _shim_assemble(void** parameterPack) {
-  return assemble((taco_tensor_t*)(parameterPack[0]), (taco_tensor_t*)(parameterPack[1]), (taco_tensor_t*)(parameterPack[2]));
-}
-int _shim_compute(void** parameterPack) {
-  return compute((taco_tensor_t*)(parameterPack[0]), (taco_tensor_t*)(parameterPack[1]), (taco_tensor_t*)(parameterPack[2]));
-}

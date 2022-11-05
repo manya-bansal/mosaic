@@ -675,25 +675,25 @@ TEST(interface, cblasSgemm) {
 TEST(interface, tblisTTM) {
 
    // actual computation
-   Tensor<float> A("A", {16, 16, 16}, Format{Dense, Dense, Dense});
-   Tensor<float> B("B", {16, 16, 16}, Format{Dense, Dense, Dense});
-   Tensor<float> C("C", {16, 16}, Format{Dense, Dense});
-   Tensor<float> expected("expected", {16, 16, 16}, Format{Dense, Dense, Dense});
+   Tensor<float> A("A", {2, 2, 2}, Format{Dense, Dense, Dense});
+   Tensor<float> B("B", {2, 2, 2}, Format{Dense, Dense, Dense});
+   Tensor<float> C("C", {2, 2}, Format{Dense, Dense});
+   Tensor<float> expected("expected", {2, 2, 2}, Format{Dense, Dense, Dense});
 
    IndexVar i("i");
    IndexVar j("j");
    IndexVar k("k");
    IndexVar l("l");
 
-   for (int i = 0; i < 16; i++) {
-      for (int j = 0; j < 16; j++) {
+   for (int i = 0; i < 2; i++) {
+      for (int j = 0; j < 2; j++) {
          C.insert({i, j}, (float) i + j);
       }
    }
 
-   for (int i = 0; i < 16; i++) {
-      for (int j = 0; j < 16; j++) {
-         for (int k = 0; k < 16; k++) {
+   for (int i = 0; i < 2; i++) {
+      for (int j = 0; j < 2; j++) {
+         for (int k = 0; k < 2; k++) {
             B.insert({i, j, k}, (float) i + j + k);
          }
       }
@@ -1118,7 +1118,7 @@ TEST(interface, gslSgemm) {
 }
 
 
-TEST(interface, gslTensorPlus) {
+TEST(DISABLED_interface, gslTensorPlus) {
 
    gsl_compile = true;
 
@@ -2237,7 +2237,7 @@ TEST(interface, symmtericGSLGemv) {
    d(i) = accelerateExpr;
 
    IndexStmt stmt = d.getAssignment().concretize();
-   stmt = stmt.accelerate(new CblasSymmetricGemV(), accelerateExpr, true);
+   stmt = stmt.accelerate(new GSLSymmetricGemv(), accelerateExpr, true);
    
    d.compile(stmt);
    d.assemble();

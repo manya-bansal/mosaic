@@ -158,29 +158,27 @@ string Module::compile() {
   // we are compiling 
 
   if (gsl_compile){
-    cmd += " -I/home/manya227/tensor-algebra-systems/tblis/include"
-           " -I/home/manya227/tensor-algebra-systems/tblis/include/tblis"
-           " -I/home/manya227/tensor-algebra-systems/gsl/include" 
-           " -I/home/manya227/tensor-algebra-systems/cblas"
-           " -I/home/manya227/tensor-algebra-systems/tensor-gsl/include/tensor"
-           " -L/home/manya227/tensor-algebra-systems/tblis/lib"
-           " -L/home/manya227/tensor-algebra-systems/gsl/lib"
-           " -L/home/manya227/tensor-algebra-systems/tensor-gsl/lib"
-           " -Wl,-R/home/manya227/tensor-algebra-systems/tblis/lib -l:libtblis.so.0.0.0 "
-           " -Wl,-R/home/manya227/tensor-algebra-systems/gsl/lib -l:libgsl.so.25.1.0"
-           " -Wl,-R/home/manya227/tensor-algebra-systems/tensor-gsl/lib -l:libtensor.so.0.0.0 -l:libgslcblas.so.0.0.0";
+    cmd += " -I/home/ubuntu/tensor-algebra-systems/tblis/include"
+           " -I/home/ubuntu/tensor-algebra-systems/tblis/include/tblis"
+           " -I/home/ubuntu/tensor-algebra-systems/gsl/include" 
+           " -I/home/ubuntu/tensor-algebra-systems/tensor-gsl/include/"
+            " -I/home/ubuntu/tensor-algebra-systems/tensor-gsl/include/tensor"
+           " -L/home/ubuntu/tensor-algebra-systems/tblis/lib"
+           " -L/home/ubuntu/tensor-algebra-systems/gsl/lib"
+           " -L/home/ubuntu/tensor-algebra-systems/tensor-gsl/lib"
+           " -Wl,-R/home/ubuntu/tensor-algebra-systems/tblis/lib -l:libtblis.so.0.0.0 "
+           " -Wl,-R/home/ubuntu/tensor-algebra-systems/gsl/lib -l:libgsl.so.27.0.0"
+           " -Wl,-R/home/ubuntu/tensor-algebra-systems/tensor-gsl/lib -l:libtensor.so.0.0.0 -l:libgslcblas.so.0.0.0 -lopenblas";
   }
   else {
     cmd += " -mavx2"
-           " -I/home/manya227/tensor-algebra-systems/tblis/include"
-           " -I/home/manya227/tensor-algebra-systems/tblis/include/tblis"
-           " -I/home/manya227/tensor-algebra-systems/gsl/include" 
-           " -I/home/manya227/tensor-algebra-systems/tensor-gsl/include/tensor"
-           " -I/home/manya227/tensor-algebra-systems/" 
-           " -L/home/manya227/tensor-algebra-systems/cblas"
-           " -L/home/manya227/tensor-algebra-systems/tblis/lib"
-           " -Wl,-R/home/manya227/tensor-algebra-systems/cblas -l:libblas.so.3.7.1" 
-           " -Wl,-R/home/manya227/tensor-algebra-systems/tblis/lib -l:libtblis.so.0.0.0 ";
+           " -I/home/ubuntu/tensor-algebra-systems/tblis/include"
+           " -I/home/ubuntu/tensor-algebra-systems/tblis/include/tblis"
+           " -I/home/ubuntu/tensor-algebra-systems/gsl/include" 
+           " -I/home/ubuntu/tensor-algebra-systems/tensor-gsl/include/"
+           " -I/home/ubuntu/tensor-algebra-systems/tensor-gsl/include/tensor"
+           " -L/home/ubuntu/tensor-algebra-systems/tblis/lib"
+           " -Wl,-R/home/ubuntu/tensor-algebra-systems/tblis/lib -l:libtblis.so.0.0.0 -lopenblas";
   }
 
   // cmd += " -lblas";

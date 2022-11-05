@@ -257,7 +257,7 @@ class GSLSymmetricGemv : public AbstractFunctionInterface{
                   a(DeclVar("gsl_vector_float * ", "var1")),
                   b(DeclVar("gsl_vector_float *", "var2")),
                   mat(DeclVar("gsl_matrix_float *", "mat")) {};
-        AcceleratorStmt getStmt() const override {  x.addProperty("symmetric");
+        AcceleratorStmt getStmt() const override {
                                                     return y(i) = x(i, j) * s(j);}
         std::vector<Argument> getArguments() const override {return 
                                                 {
