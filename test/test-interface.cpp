@@ -2251,3 +2251,149 @@ TEST(interface, symmtericGSLGemv) {
    ASSERT_TENSOR_EQ(expected, d);
 
 }
+
+TEST(interface, DimReduceBlockedSparseDense) {
+
+   int dim = 4;
+
+   Tensor<float> A("A", {dim, dim, dim, dim}, Format{Dense, Dense, Dense, Dense});
+   Tensor<float> B("B", {dim, dim, dim, dim}, Format{Sparse, Dense, Sparse, Dense});
+   Tensor<float> C("C", {dim, dim, dim, dim}, Format{Dense, Dense, Dense, Dense});
+
+   TensorVar precomputed("precomputed", Type(taco::Float32, {4, 4, 4, 4}), Format{Dense, Dense, Dense, Dense});
+   float SPARSITY = .4;
+   for (int i = 0; i < dim; i++) {
+    for (int k = 0; k < dim; k++) {
+      float rand_float = (float)rand()/(float)(RAND_MAX);
+         if (rand_float < SPARSITY) {
+             for (int m = 0; m < dim; m++) {
+                 for (int n = 0; n < dim; n++) {
+                     B.insert({i, m, k, n}, (float) (float) 100);
+                     C.insert({i, m, k, n}, (float) (float) 100);
+                 }
+            }
+         }
+    }
+  }
+
+   C.pack();
+   B.pack();
+
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar k("k");
+   IndexVar l("l");
+   IndexVar m("m");
+   IndexVar n("n");
+
+   IndexExpr accelerateExpr = B(i, k, j, l) * C(j, l, m, n);
+   A(i, k, m, n) = accelerateExpr;
+
+   IndexStmt stmt = A.getAssignment().concretize();
+   stmt = stmt.holdConstant(new MatrixMultiply(), accelerateExpr, {j, m, i}, precomputed(i, k, m, n));
+   
+   A.compile(stmt);
+   A.assemble();
+   A.compute();
+
+}
+
+TEST(interface, tblisSgmev) {
+   // actual computation
+   Tensor<float> A("A", {16, 16}, Format{Dense, Dense});
+   Tensor<float> b("b", {16}, Format{Dense});
+   Tensor<float> c("c", {16}, Format{Dense});
+   Tensor<float> d("d", {16}, Format{Dense});
+
+   for (int i = 0; i < 16; i++) {
+      for (int j = 0; j < 16; j++) {
+         A.insert({i, j}, (float) i + j);
+      }
+   }
+
+   A.pack();
+
+   for (int i = 0; i < 16; i++) {
+      c.insert({i}, (float) i);
+      b.insert({i}, (float) i);
+   }
+
+   c.pack();
+   b.pack();
+
+   Tensor<float> expected("expected", {16}, Format{Dense});
+
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar k("k");
+
+   IndexExpr accelerateExpr = A(i, j) * b(j);
+   d(i) = accelerateExpr;
+
+
+   IndexStmt stmt = d.getAssignment().concretize();
+   stmt = stmt.accelerate(new TblisGemv(), accelerateExpr, true);
+   
+   d.compile(stmt);
+   d.assemble();
+   d.compute();
+
+   expected(i) = accelerateExpr;
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+   ASSERT_TENSOR_EQ(expected, d);
+
+}
+
+TEST(interface, sparseGemv) {
+   // actual computation
+   Tensor<float> A("A", {16, 16}, Format{Dense, Dense});
+   Tensor<float> b("b", {16}, Format{Dense});
+   Tensor<float> c("c", {16}, Format{Dense});
+   Tensor<float> d("d", {16}, Format{Dense});
+
+   for (int i = 0; i < 16; i++) {
+      for (int j = 0; j < 16; j++) {
+         A.insert({i, j}, (float) i + j);
+      }
+   }
+
+   A.pack();
+
+   for (int i = 0; i < 16; i++) {
+      c.insert({i}, (float) i);
+      b.insert({i}, (float) i);
+   }
+
+   c.pack();
+   b.pack();
+
+   Tensor<float> expected("expected", {16}, Format{Dense});
+
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar k("k");
+
+   IndexExpr accelerateExpr = A(i, j) * b(j);
+   d(i) = accelerateExpr;
+
+
+   IndexStmt stmt = d.getAssignment().concretize();
+   stmt = stmt.accelerate(new TblisGemv(), accelerateExpr, true);
+   
+   d.compile(stmt);
+   d.assemble();
+   d.compute();
+
+   expected(i) = accelerateExpr;
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+   ASSERT_TENSOR_EQ(expected, d);
+
+}
+
+

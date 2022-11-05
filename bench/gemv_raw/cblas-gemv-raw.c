@@ -59,6 +59,6 @@ int main(int argc, char *argv[]) {
             time_taken[j] = run_gemv_cblas(i);
         }
         array_sort(time_taken, 11);
-        printf("%d=%f\n", i, time_taken[5]/10);
+        printf("%d=%f\n", i, time_taken[5]);
     }
 }

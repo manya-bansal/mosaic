@@ -253,8 +253,8 @@ class TblisGemv : public AbstractFunctionInterface{
     public: 
         TblisGemv() : 
                     x(TensorObject(Type(taco::Float32, {Dimension(), Dimension()}),  Format{Dense, Dense})),
-                    y(TensorObject(Type(taco::Float32, {Dimension(), Dimension()}),  Format{Dense, Dense})),
-                    z(TensorObject(Type(taco::Float32, {Dimension(), Dimension()}),  Format{Dense, Dense})),
+                    y(TensorObject(Type(taco::Float32, {Dimension()}),  Format{Dense})),
+                    z(TensorObject(Type(taco::Float32, {Dimension()}),  Format{Dense})),
                     i(IndexVar()),
                     j(IndexVar()),
                     k(IndexVar()),
@@ -262,7 +262,7 @@ class TblisGemv : public AbstractFunctionInterface{
                     var2(DeclVar("tblis_tensor", "var2")),
                     result(DeclVar("tblis_tensor", "result")) {};
 
-        AcceleratorStmt getStmt() const override {return z(i, k) = x(i, j) * y(j, k);}
+        AcceleratorStmt getStmt() const override {return z(i) = x(i, j) * y(j);}
         std::vector<Argument> getArguments() const override {
                                                 return 
                                                 {   new StringLiteral("NULL"),
@@ -270,18 +270,19 @@ class TblisGemv : public AbstractFunctionInterface{
                                                     new AddrDeclVarArg(var),
                                                     new StringLiteral("\"ij\""),
                                                     new AddrDeclVarArg(var2),
-                                                    new StringLiteral("\"jk\""),
-                                                    new AddrDeclVarArg(result),
-                                                    new StringLiteral("\"ik\"")
+                                                    new StringLiteral("\"j\""),
+                                                    new AddrDeclVarArg(result), 
+                                                    new StringLiteral("\"i\"")
                                                 }; }
 
         std::string getReturnType() const override {return "void";}
         std::string getFunctionName() const override {return "tblis_tensor_mult";}
         std::vector<Argument>  callBefore() const override {
                                 taco::TransferLoad tblis_init_tensor_s_helper_row_major("tblis_init_tensor_s_helper_row_major", "void");
-                                return { tblis_init_tensor_s_helper_row_major(AddrDeclVarArg(var), DimList(y), 2,  DataArray(x)),
-                                         tblis_init_tensor_s_helper_row_major(AddrDeclVarArg(var2), DimList(y), 2,  DataArray(y)), 
-                                         tblis_init_tensor_s_helper_row_major(AddrDeclVarArg(result), DimList(y), 2, DataArray(z)),
+                                taco::TransferLoad tblis_set_vector("tblis_set_vector", "void");
+                                return { tblis_init_tensor_s_helper_row_major(AddrDeclVarArg(var), DimList(x), 2,  DataArray(x)),
+                                         tblis_set_vector(AddrDeclVarArg(var2), DimList(y), 1,  DataArray(y)), 
+                                         tblis_set_vector(AddrDeclVarArg(result), DimList(y), 1, DataArray(z))
                                          };
 
                             }

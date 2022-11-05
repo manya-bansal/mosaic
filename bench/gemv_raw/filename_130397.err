@@ -1,0 +1,8 @@
+/usr/bin/ld: warning: libgfortran.so.4, needed by /home/manya227/tensor-algebra-systems/atlas/lib/libtatlas.so, not found (try using -rpath or -rpath-link)
+/home/manya227/tensor-algebra-systems/atlas/lib/libtatlas.so: undefined reference to `_gfortran_stop_string@GFORTRAN_7'
+/home/manya227/tensor-algebra-systems/atlas/lib/libtatlas.so: undefined reference to `_gfortran_st_write@GFORTRAN_7'
+/home/manya227/tensor-algebra-systems/atlas/lib/libtatlas.so: undefined reference to `_gfortran_st_write_done@GFORTRAN_7'
+/home/manya227/tensor-algebra-systems/atlas/lib/libtatlas.so: undefined reference to `_gfortran_transfer_integer_write@GFORTRAN_7'
+/home/manya227/tensor-algebra-systems/atlas/lib/libtatlas.so: undefined reference to `_gfortran_transfer_character_write@GFORTRAN_7'
+collect2: error: ld returned 1 exit status
+make: *** [gsl] Error 1

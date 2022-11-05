@@ -1,3 +1,0 @@
-cp: cannot create regular file '/usr/lib/x86_64-linux-gnu/libgfortran.so.4': Permission denied
-./gsl-gemv-raw: error while loading shared libraries: libgfortran.so.4: cannot open shared object file: No such file or directory
-make: *** [gsl] Error 127
