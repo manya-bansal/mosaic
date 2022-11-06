@@ -57,17 +57,22 @@ double run_gemv_mkl(int dim)
 	}
 	float alpha = 1;
 	MKL_INT beta = 1;
+	MKL_INT inc = 1;
+	MKL_INT two = dim;
 	MKL_INT dimMkl = (MKL_INT)dim;
 	start = clock();
-	sgemv("n", &dimMkl, &dimMkl, &alpha, A_vals, &dimMkl, b_vals, &beta, &alpha, c_vals, &beta);
+	ssymv("u", &two, &alpha, A_vals, &dimMkl, b_vals, &inc, &alpha, c_vals, &inc);
 	end = clock();
 	cpu_time_used_ms = ((double)(end - start)) / (CLOCKS_PER_SEC / 1000);
+	free(A_vals);
+    free(c_vals);
+    free(b_vals);
 	return cpu_time_used_ms;
 }
 
 int main(int argc, char *argv[])
 {	
-	for (int i = 100; i <= 5000; i += 100)
+	for (int i = 16; i <= 16; i += 100)
 	{
 		double time_taken[11];
 		for (int j = 0; j < 11; j++)

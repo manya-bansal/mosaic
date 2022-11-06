@@ -28,21 +28,17 @@ static void bench_sgemm_tblis(benchmark::State& state) {
     // Setup.
     state.PauseTiming();
     Tensor<float> A("A", {dim, dim}, Format{Dense, Dense});
-    A(i, k) = accelerateExpr + C(i,k);
-
-    // IndexStmt stmt = A.getAssignment().concretize();
-    // stmt = stmt.accelerate(new TblisMultiply(), accelerateExpr);
-    
-
-    A.registerAccelerator(new TblisMultiply());
-    A.accelerateOn();
-    A.compile();
-
+    A(i, k) = accelerateExpr;
+    IndexStmt stmt = A.getAssignment().concretize();
+    stmt = stmt.accelerate(new TblisMultiply(), accelerateExpr, true);
+    A.compile(stmt);
     A.assemble();
+    auto func = A.compute_split();
+    auto pair = A.returnFuncPackedRaw(func);
     state.ResumeTiming();
-    A.compute();
+    pair.first(func.data());
   }
 }
 
-TACO_BENCH(bench_sgemm_tblis)->DenseRange(100, 4000, 100);
+TACO_BENCH(bench_sgemm_tblis)->DenseRange(100, 1000, 100);
 

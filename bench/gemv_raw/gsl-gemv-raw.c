@@ -71,7 +71,7 @@ double run_gemv_gsl(int dim){
 }
 
 int main(int argc, char *argv[]) {
-	for (int i = 100; i <= 5000; i += 100)
+	for (int i = 100; i <= 1000; i += 100)
 	{
 		double time_taken[11];
 		for (int j = 0; j < 11; j++)

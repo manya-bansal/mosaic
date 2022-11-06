@@ -247,6 +247,7 @@ const string cHeaders =
   " mkl_sparse_s_mm(SPARSE_OPERATION_NON_TRANSPOSE, (float)1, A_csr, desc, SPARSE_LAYOUT_ROW_MAJOR, (float*)b->vals, m, m, 0, c, m);\n"
   "}\n"
     "#include \"cuda-wrappers.h\"\n"
+    "#include \"mkl-wrappers.h\"\n"
   "int lC = 0;\n"
   "int kB = 0;\n"
   "#endif\n";

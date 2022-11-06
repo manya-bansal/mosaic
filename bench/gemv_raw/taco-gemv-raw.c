@@ -60,8 +60,13 @@ double run_gemv_taco(int dim){
     start = clock();
     compute(c, A, b);
     end = clock();
-    print_array(c_vals, 10);
     cpu_time_used_ms = ((double) (end - start)) / (CLOCKS_PER_SEC/1000);
+    deinit_taco_tensor_t(c);
+    deinit_taco_tensor_t(A);
+    deinit_taco_tensor_t(b);
+    free(A_vals);
+    free(c_vals);
+    free(b_vals);
     return cpu_time_used_ms;
 }
 

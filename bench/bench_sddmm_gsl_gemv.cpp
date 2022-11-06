@@ -7,9 +7,24 @@
 #include "taco/accelerator_interface/cblas_interface.h"
 #include "taco/accelerator_interface/tblis_interface.h"
 #include "taco/accelerator_interface/gsl_interface.h"
+#include "taco/storage/file_io_mtx.h"
 
 using namespace taco;
 extern bool gsl_compile;
+
+static std::string exec(const char* cmd) {
+    std::array<char, 128> buffer;
+    std::string result;
+    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
+    if (!pipe) {
+        throw std::runtime_error("popen() failed!");
+    }
+    while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+        result += buffer.data();
+    }
+    return result;
+}
+
 
 static void bench_sddmm_gemv_gsl(benchmark::State& state) {
   gsl_compile = true;
@@ -17,37 +32,26 @@ static void bench_sddmm_gemv_gsl(benchmark::State& state) {
   int NUM_I = dim;
   int NUM_K = dim;
   int NUM_J = dim;
-
-  float SPARSITY = .3;
   
   Tensor<float> B("B", {NUM_I, NUM_K}, CSR);
   Tensor<float> C("C", {NUM_I, NUM_J}, {Dense, Dense});
   Tensor<float> D("D", {NUM_J, NUM_K}, {Dense, Dense});
 
-  for (int i = 0; i < NUM_I; i++) {
-    for (int j = 0; j < NUM_J; j++) {
-      float rand_float = (float)rand()/(float)(RAND_MAX);
-      C.insert({i, j}, (float) ((int) (rand_float*3/SPARSITY)));
+  std::string generateData = "python3 /home/ubuntu/mosaic/data/data_gen.py --bench sddmm_dim --dim ";
+  generateData += std::to_string(dim);
+  generateData += " --nnz 0.4";
+  generateData += " --out_dir /home/ubuntu/mosaic/data/spdata/";
+  exec(generateData.c_str());
+  std::string filename = "/home/ubuntu/mosaic/data/spdata/sddmm_dim/B_"+ std::to_string(dim) + "_0.4"  + ".mtx";
+  B = castToType<float>("B", readMTX(filename, CSR));
+
+  for (int i = 0; i < dim; i++) {
+    for (int j = 0; j < dim; j++) {
+      C.insert({i, j}, (float) i+j);
+      D.insert({i, j}, (float) i+j);
     }
   }
 
-  for (int i = 0; i < NUM_I; i++) {
-    for (int k = 0; k < NUM_K; k++) {
-      float rand_float = (float)rand()/(float)(RAND_MAX);
-      if (rand_float < SPARSITY) {
-        B.insert({i, k}, (float) ((int) (rand_float*3/SPARSITY)));
-      }
-    }
-  }
-
-  for (int j = 0; j < NUM_J; j++) {
-    for (int k = 0; k < NUM_K; k++) {
-      float rand_float = (float)rand()/(float)(RAND_MAX);
-      D.insert({j, k}, (float) ((int) (rand_float*3/SPARSITY)));
-    }
-  }
-
-  B.pack();
   B.pack();
   C.pack();
   D.pack();
@@ -68,9 +72,13 @@ static void bench_sddmm_gemv_gsl(benchmark::State& state) {
 
     A.compile(stmt);
     A.assemble();
+    auto func = A.compute_split();
+    auto pair = A.returnFuncPackedRaw(func);
     state.ResumeTiming();
-    A.compute();
+    pair.first(func.data());
   }
+  std::string eraseData = "rm -rf /home/ubuntu/mosaic/data/spdata/sddmm_dim/B_" + std::to_string(dim) + "_0.4"+ ".mtx";
+  exec(eraseData.c_str());
   gsl_compile = false;
 }
 

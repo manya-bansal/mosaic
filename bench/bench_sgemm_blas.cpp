@@ -33,12 +33,13 @@ static void bench_sgemm_blas(benchmark::State& state) {
     IndexStmt stmt = A.getAssignment().concretize();
     stmt = stmt.accelerate(new Sgemm(), accelerateExpr);
     A.compile(stmt);
-
     A.assemble();
+    auto func = A.compute_split();
+    auto pair = A.returnFuncPackedRaw(func);
     state.ResumeTiming();
-    A.compute();
+    pair.first(func.data());
   }
 }
 
-TACO_BENCH(bench_sgemm_blas)->DenseRange(100, 4000, 100);
+TACO_BENCH(bench_sgemm_blas)->DenseRange(100, 1000, 100);
 

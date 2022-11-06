@@ -36,17 +36,21 @@ static void bench_gemv_taco(benchmark::State& state) {
    IndexExpr accelerateExpr = A(i, j) * b(j);
 
    for (auto _ : state) {
-    // Setup.
-    state.PauseTiming();
+   state.PauseTiming();
     Tensor<float> res("res", {dim}, Format{Dense});
     res(i) = accelerateExpr;
+
+    // Setup.
     res.compile();
     res.assemble();
+    auto func = res.compute_split();
+    auto pair = res.returnFuncPackedRaw(func);
     state.ResumeTiming();
-    res.compute();
+    pair.first(func.data());
+   
   }
 
 }
 
-TACO_BENCH(bench_gemv_taco)->DenseRange(100, 2000, 100);
+TACO_BENCH(bench_gemv_taco)->DenseRange(250, 5000, 250);
 

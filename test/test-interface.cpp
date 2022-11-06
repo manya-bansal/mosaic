@@ -2566,3 +2566,106 @@ TEST(interface, cudaSparseGemv) {
 
 }
 
+TEST(interface, symmtericMklGemv) {
+
+   // actual computation
+   Tensor<float> A("A", {16, 16}, Format{Dense, Dense});
+   Tensor<float> b("b", {16}, Format{Dense});
+   Tensor<float> d("d", {16}, Format{Dense});
+
+   for (int i = 0; i < 16; i++) {
+      for (int j = 0; j < 16; j++) {
+         A.insert({i, j}, (float) i + j);
+      }
+   }
+
+   A.pack();
+
+   for (int i = 0; i < 16; i++) {
+      b.insert({i}, (float) i);
+   }
+
+   b.pack();
+
+   Tensor<float> expected("expected", {16}, Format{Dense});
+
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar k("k");
+
+   IndexExpr accelerateExpr = A(i, j) * b(j);
+   d(i) = accelerateExpr;
+
+   IndexStmt stmt = d.getAssignment().concretize();
+   stmt = stmt.accelerate(new MklSymmgemv(), accelerateExpr, true);
+   
+   d.compile(stmt);
+   d.assemble();
+   d.compute();
+
+   expected(i) = accelerateExpr;
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+   ASSERT_TENSOR_EQ(expected, d);
+
+}
+
+TEST(interface, sdmmMkl){
+  int dim = 16;
+  int NUM_I = dim;
+  int NUM_K = dim;
+  int NUM_J = dim;
+
+  float SPARSITY = .3;
+  
+  Tensor<float> B("B", {NUM_I, NUM_K}, CSR);
+  Tensor<float> C("C", {NUM_I, NUM_J}, {Dense, Dense});
+  Tensor<float> D("D", {NUM_J, NUM_K}, {Dense, Dense});
+  Tensor<float> A("A", {NUM_I, NUM_K}, {Dense, Dense}, 0);
+  Tensor<float> expected("expected", {NUM_I, NUM_K}, {Dense, Dense});
+
+  for (int i = 0; i < NUM_I; i++) {
+    for (int j = 0; j < NUM_J; j++) {
+      C.insert({i, j}, (float) i+j);
+      D.insert({i, j}, (float) i+j);
+    }
+  }
+
+  for (int i = 0; i < NUM_I; i++) {
+    for (int k = 0; k < NUM_K; k++) {
+      float rand_float = (float)rand()/(float)(RAND_MAX);
+      if (rand_float < SPARSITY) {
+        B.insert({i, k}, (float) ((int) (rand_float*3/SPARSITY)));
+      }
+    }
+  }
+
+  B.pack();
+  C.pack();
+  D.pack();
+
+  IndexVar i("i"), j("j"), k("k");
+
+  IndexExpr accelerateExpr = C(i,j) * D(j,k);
+
+  A(i,k) =  B(i,k) * accelerateExpr;
+
+  IndexStmt stmt = A.getAssignment().concretize();
+  stmt = stmt.accelerate(new MklMM(), accelerateExpr);
+
+   A.compile(stmt);
+   A.assemble();
+   A.compute();
+
+
+   expected(i,k) =  B(i,k) * accelerateExpr;
+
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+  ASSERT_TENSOR_EQ(expected, A);
+
+}

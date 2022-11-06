@@ -15,11 +15,7 @@ class CudaSpmv : public AbstractFunctionInterface{
                   y(TensorObject(Type(taco::Float32, {Dimension()}), dense)),
                   s(TensorObject(Type(taco::Float32, {Dimension()}), dense)),
                   i(IndexVar()),
-                  j(IndexVar()),
-                  a(DeclVar("float", "var1")),
-                  b(DeclVar("MKL_INT", "var2")),
-                  zero(DeclVar("float", "var4")),
-                  dim(DeclVar("MKL_INT", "var3")) {};
+                  j(IndexVar()) {};
         AcceleratorStmt getStmt() const override {return y(i) = x(i, j)*s(j);}
         std::vector<Argument> getArguments() const override {return 
                                                 {
@@ -36,10 +32,6 @@ class CudaSpmv : public AbstractFunctionInterface{
         TensorObject s;
         IndexVar i;
         IndexVar j;
-        DeclVar a;
-        DeclVar b;
-        DeclVar dim;
-        DeclVar zero;
 };
 
 #endif

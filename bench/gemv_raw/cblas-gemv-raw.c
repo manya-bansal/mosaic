@@ -49,6 +49,9 @@ double run_gemv_cblas(int dim){
     cblas_sgemv(CblasRowMajor, CblasNoTrans, dim, dim, 1, A_vals, dim, b_vals, 1, 0, c_vals, 1);
     end = clock();
     cpu_time_used_ms = ((double) (end - start)) / (CLOCKS_PER_SEC/1000);
+    free(A_vals);
+    free(c_vals);
+    free(b_vals);
     return cpu_time_used_ms;
 }
 

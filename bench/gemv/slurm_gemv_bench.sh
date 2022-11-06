@@ -10,7 +10,7 @@
 #SBATCH --exclusive
 #SBATCH --time=10:00:00
 
-systems=("blas" "taco" "gsl")
+systems=("blas" "taco" "gsl" "mkl" "tblis")
 
 for i in "${systems[@]}"
 do  

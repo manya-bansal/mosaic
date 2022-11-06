@@ -34,19 +34,19 @@ static void bench_sgemm_gsl(benchmark::State& state) {
     // Setup.
     state.PauseTiming();
     Tensor<float> A("A", {dim, dim}, Format{Dense, Dense});
-    A(i, k) = accelerateExpr + C(i,k);
-
-    A.registerAccelerator(new GSLMM());
-    A.accelerateOn();
-    A.compile();
-
+    A(i, k) = accelerateExpr;
+    IndexStmt stmt = A.getAssignment().concretize();
+    stmt = stmt.accelerate(new GSLMM(), accelerateExpr, true);
+    A.compile(stmt);
     A.assemble();
+    auto func = A.compute_split();
+    auto pair = A.returnFuncPackedRaw(func);
     state.ResumeTiming();
-    A.compute();
+    pair.first(func.data());
   }
 
   gsl_compile = false;
 }
 
-TACO_BENCH(bench_sgemm_gsl)->DenseRange(100, 4000, 100);
+TACO_BENCH(bench_sgemm_gsl)->DenseRange(100, 1000, 100);
 

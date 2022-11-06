@@ -21,7 +21,7 @@ static void bench_sgemm_taco(benchmark::State& state) {
    IndexVar j("j");
    IndexVar k("k");
 
-   IndexExpr accelerateExpr = B(i, j) * C(j, k) + C(i,k);
+   IndexExpr accelerateExpr = B(i, j) * C(j, k);
   
   
    for (auto _ : state) {
@@ -29,13 +29,14 @@ static void bench_sgemm_taco(benchmark::State& state) {
     state.PauseTiming();
     Tensor<float> A("A", {dim, dim}, Format{Dense, Dense});
     A(i, k) = accelerateExpr;
-
     A.compile();
     A.assemble();
+    auto func = A.compute_split();
+    auto pair = A.returnFuncPackedRaw(func);
     state.ResumeTiming();
-    A.compute();
+    pair.first(func.data());
   }
 }
 
-TACO_BENCH(bench_sgemm_taco)->DenseRange(100, 4000, 100);
+TACO_BENCH(bench_sgemm_taco)->DenseRange(100, 1000, 100);
 

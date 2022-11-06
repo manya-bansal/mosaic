@@ -45,14 +45,16 @@ static void bench_gemv_gsl(benchmark::State& state) {
     IndexStmt stmt = res.getAssignment().concretize();
     stmt = stmt.accelerate(new GSLGemv(), accelerateExpr, true);
 
-    res.compile();
+    res.compile(stmt);
     res.assemble();
+    auto func = res.compute_split();
+    auto pair = res.returnFuncPackedRaw(func);
     state.ResumeTiming();
-    res.compute();
+    pair.first(func.data());
   }
   gsl_compile = false;
 
 }
 
-TACO_BENCH(bench_gemv_gsl)->DenseRange(100, 2000, 100);
+TACO_BENCH(bench_gemv_gsl)->DenseRange(250, 5000, 250);
 

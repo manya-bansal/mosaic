@@ -160,6 +160,7 @@ string Module::compile() {
   if (gsl_compile){
     cmd +=  " -I/usr/include/mkl"
             " -I/home/ubuntu/tensor-algebra-systems/cuda-wrappers/"
+            " -I/home/ubuntu/tensor-algebra-systems/mkl/"
             " -I/opt/nvidia/hpc_sdk/Linux_x86_64/22.9/math_libs/11.7/targets/x86_64-linux/include/"
             " -I/usr/local/cuda-11.8/targets/x86_64-linux/include/"
             " -I/home/ubuntu/tensor-algebra-systems/tblis/include"
@@ -174,13 +175,16 @@ string Module::compile() {
            " -Wl,-R/home/ubuntu/tensor-algebra-systems/gsl/lib -l:libgsl.so.27.0.0"
            " -L/usr/lib/intel64 -Wl,-R/usr/lib/mkl/intel64"
            " -L/usr/local/cuda-11.8/targets/x86_64-linux/lib/"
+           " -L/home/ubuntu/tensor-algebra-systems/atlas/lib/"
+           " -Wl,-R/home/ubuntu/tensor-algebra-systems/atlas/lib/"
            " -Wl,-R/usr/local/cuda-11.8/targets/x86_64-linux/lib/"
            " -Wl,--no-as-needed -lmkl_intel_lp64 -lmkl_sequential -lmkl_avx512 -lmkl_core -lpthread -lm -ldl "
-           " -Wl,-R/home/ubuntu/tensor-algebra-systems/tensor-gsl/lib -l:libtensor.so.0.0.0 -l:libgslcblas.so.0.0.0 -lopenblas -lcudart -lcusparse";
+           " -Wl,-R/home/ubuntu/tensor-algebra-systems/tensor-gsl/lib -l:libtensor.so.0.0.0 -l:libtatlas.so -lopenblas -lcudart -lcusparse";
   }
   else if(mkl_compile){
     cmd += " -I/usr/include/mkl"
           " -I/home/ubuntu/tensor-algebra-systems/cuda-wrappers/"
+          " -I/home/ubuntu/tensor-algebra-systems/mkl/"
           " -I/opt/nvidia/hpc_sdk/Linux_x86_64/22.9/math_libs/11.7/targets/x86_64-linux/include/"
             " -I/usr/local/cuda-11.8/targets/x86_64-linux/include/"
            " -I/home/ubuntu/tensor-algebra-systems/tblis/include"
@@ -198,6 +202,7 @@ string Module::compile() {
   else {
     cmd +=  " -I/usr/include/mkl"
              " -I/home/ubuntu/tensor-algebra-systems/cuda-wrappers/"
+             " -I/home/ubuntu/tensor-algebra-systems/mkl/"
             " -mavx2"
              " -I/opt/nvidia/hpc_sdk/Linux_x86_64/22.9/math_libs/11.7/targets/x86_64-linux/include/"
             " -I/usr/local/cuda-11.8/targets/x86_64-linux/include/"
