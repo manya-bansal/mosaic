@@ -995,6 +995,27 @@ void TensorBase::compute() {
   }
 }
 
+std::vector<void*> TensorBase::compute_split() {
+  taco_uassert(!needsCompile()) << error::compute_without_compile;
+  if (!needsCompute()) {
+    return {};
+  }
+  setNeedsCompute(false);
+  // Sync operand tensors if needed.
+  auto operands = getTensors(getAssignment().getRhs());
+  for (auto& operand : operands) {
+    operand.second.syncValues();
+    operand.second.removeDependentTensor(*this);
+  }
+  auto arguments = packArguments(*this);
+
+  return arguments;
+}
+
+std::pair<int (*)(void**),void**> TensorBase::returnFuncPackedRaw(std::vector<void*> args){
+   return this->content->module->returnFuncPackedRaw("_shim_compute", args.data());
+}
+
 void TensorBase::evaluate() {
   this->compile();
   if (!getAssignment().getOperator().defined()) {

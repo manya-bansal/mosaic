@@ -2997,6 +2997,11 @@ ir::Expr LowererImplImperative::lowerArgument(Argument argument, TensorVar resul
           return getValuesArray(t->tvar);
         }
       }
+      case TENSOR_NAME:
+      { 
+        auto t = argument.getNode<TensorName>();
+        return RawString::make(t->tvar.getName());
+      }
       case DECLVAR_ADDR:
       {
         auto t = argument.getNode<AddrDeclVarArg>();

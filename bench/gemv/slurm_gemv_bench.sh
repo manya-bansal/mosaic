@@ -14,5 +14,5 @@ systems=("blas" "taco" "gsl")
 
 for i in "${systems[@]}"
 do  
-    /home/manya227/taco-interoperable/build/bin/./taco-bench --benchmark_filter=bench_gemv_$i  --benchmark_format=json --benchmark_out=/home/manya227/taco-interoperable/bench/gemv/result/$i
+    /home/ubuntu/taco-interoperable/build/bin/./taco-bench --benchmark_filter=bench_gemv_$i  --benchmark_format=json --benchmark_out=/home/ubuntu/taco-interoperable/bench/gemv/result/$i
 done

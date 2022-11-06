@@ -62,6 +62,8 @@ public:
   int callFuncPacked(std::string name, std::vector<void*> args) {
     return callFuncPacked(name, args.data());
   }
+
+  std::pair<int (*)(void**),void**> returnFuncPackedRaw(std::string name, void** args);
   
   /// Set the source of the module
   void setSource(std::string source);

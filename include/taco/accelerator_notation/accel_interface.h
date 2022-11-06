@@ -19,7 +19,7 @@ template <typename CType>
 class Tensor;
 
 
-enum ArgType {DIM, TENSORVAR, TENSOR_OBJECT, TENSOR, EXPR, LITERAL, USER_DEFINED, DECLVAR, UNKNOWN, DIMLIST, DATA_ARRAY, STRING, DECLVAR_ADDR, TENSOR_ADDR, CAST};
+enum ArgType {DIM, TENSORVAR, TENSOR_OBJECT, TENSOR, EXPR, LITERAL, USER_DEFINED, DECLVAR, UNKNOWN, DIMLIST, DATA_ARRAY, STRING, DECLVAR_ADDR, TENSOR_ADDR, TENSOR_NAME, CAST};
 
 struct TransferTypeArgs : public util::Manageable<TransferTypeArgs>{
 
@@ -142,6 +142,14 @@ struct  AddrTensorVar : public TransferTypeArgs{
 
 };
 
+struct  TensorName : public TransferTypeArgs{
+    explicit TensorName(const TensorObject& var): TransferTypeArgs(TENSOR_NAME), var(var) {}
+    explicit TensorName(const TensorVar& tvar): TransferTypeArgs(TENSOR_NAME), tvar(tvar) {}
+    TensorObject var;
+    TensorVar tvar;
+
+};
+
 struct AddrDeclVarArg : public TransferTypeArgs {
 
   explicit AddrDeclVarArg(const DeclVar& var): TransferTypeArgs(DECLVAR_ADDR), var(var) {}
@@ -167,7 +175,6 @@ struct TensorArg : public TransferTypeArgs{
 
     ir::Expr irExpr; 
 };
-
 
 struct LiteralArg : public TransferTypeArgs{
     template <typename T> 

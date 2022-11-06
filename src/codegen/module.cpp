@@ -19,6 +19,7 @@
 using namespace std;
 
 bool gsl_compile = false;
+bool mkl_compile = false;
 
 namespace taco {
 namespace ir {
@@ -156,29 +157,61 @@ string Module::compile() {
   // GSL has its own implementatio of cblas, 
   // we need to include the correct one depending on what 
   // we are compiling 
-
   if (gsl_compile){
-    cmd += " -I/home/ubuntu/tensor-algebra-systems/tblis/include"
+    cmd +=  " -I/usr/include/mkl"
+            " -I/home/ubuntu/tensor-algebra-systems/cuda-wrappers/"
+            " -I/opt/nvidia/hpc_sdk/Linux_x86_64/22.9/math_libs/11.7/targets/x86_64-linux/include/"
+            " -I/usr/local/cuda-11.8/targets/x86_64-linux/include/"
+            " -I/home/ubuntu/tensor-algebra-systems/tblis/include"
            " -I/home/ubuntu/tensor-algebra-systems/tblis/include/tblis"
            " -I/home/ubuntu/tensor-algebra-systems/gsl/include" 
            " -I/home/ubuntu/tensor-algebra-systems/tensor-gsl/include/"
-            " -I/home/ubuntu/tensor-algebra-systems/tensor-gsl/include/tensor"
+           " -I/home/ubuntu/tensor-algebra-systems/tensor-gsl/include/tensor"
            " -L/home/ubuntu/tensor-algebra-systems/tblis/lib"
            " -L/home/ubuntu/tensor-algebra-systems/gsl/lib"
            " -L/home/ubuntu/tensor-algebra-systems/tensor-gsl/lib"
            " -Wl,-R/home/ubuntu/tensor-algebra-systems/tblis/lib -l:libtblis.so.0.0.0 "
            " -Wl,-R/home/ubuntu/tensor-algebra-systems/gsl/lib -l:libgsl.so.27.0.0"
-           " -Wl,-R/home/ubuntu/tensor-algebra-systems/tensor-gsl/lib -l:libtensor.so.0.0.0 -l:libgslcblas.so.0.0.0 -lopenblas";
+           " -L/usr/lib/intel64 -Wl,-R/usr/lib/mkl/intel64"
+           " -L/usr/local/cuda-11.8/targets/x86_64-linux/lib/"
+           " -Wl,-R/usr/local/cuda-11.8/targets/x86_64-linux/lib/"
+           " -Wl,--no-as-needed -lmkl_intel_lp64 -lmkl_sequential -lmkl_avx512 -lmkl_core -lpthread -lm -ldl "
+           " -Wl,-R/home/ubuntu/tensor-algebra-systems/tensor-gsl/lib -l:libtensor.so.0.0.0 -l:libgslcblas.so.0.0.0 -lopenblas -lcudart -lcusparse";
+  }
+  else if(mkl_compile){
+    cmd += " -I/usr/include/mkl"
+          " -I/home/ubuntu/tensor-algebra-systems/cuda-wrappers/"
+          " -I/opt/nvidia/hpc_sdk/Linux_x86_64/22.9/math_libs/11.7/targets/x86_64-linux/include/"
+            " -I/usr/local/cuda-11.8/targets/x86_64-linux/include/"
+           " -I/home/ubuntu/tensor-algebra-systems/tblis/include"
+           " -I/home/ubuntu/tensor-algebra-systems/tblis/include/tblis"
+           " -I/home/ubuntu/tensor-algebra-systems/gsl/include" 
+           " -I/home/ubuntu/tensor-algebra-systems/tensor-gsl/include/"
+           " -I/home/ubuntu/tensor-algebra-systems/tensor-gsl/include/tensor"
+           " -L/usr/lib/intel64 -Wl,-R/usr/lib/mkl/intel64"
+           " -L/home/ubuntu/tensor-algebra-systems/tblis/lib"
+           " -L/usr/local/cuda-11.8/targets/x86_64-linux/lib/"
+           " -Wl,-R/usr/local/cuda-11.8/targets/x86_64-linux/lib/"
+           " -Wl,-R/home/ubuntu/tensor-algebra-systems/tblis/lib"
+           " -Wl,--no-as-needed -lmkl_intel_lp64 -lmkl_sequential -lmkl_avx512 -lmkl_core -lpthread -lm -ldl -l:libtblis.so.0.0.0 -lcudart -lcusparse";
   }
   else {
-    cmd += " -mavx2"
+    cmd +=  " -I/usr/include/mkl"
+             " -I/home/ubuntu/tensor-algebra-systems/cuda-wrappers/"
+            " -mavx2"
+             " -I/opt/nvidia/hpc_sdk/Linux_x86_64/22.9/math_libs/11.7/targets/x86_64-linux/include/"
+            " -I/usr/local/cuda-11.8/targets/x86_64-linux/include/"
            " -I/home/ubuntu/tensor-algebra-systems/tblis/include"
            " -I/home/ubuntu/tensor-algebra-systems/tblis/include/tblis"
            " -I/home/ubuntu/tensor-algebra-systems/gsl/include" 
            " -I/home/ubuntu/tensor-algebra-systems/tensor-gsl/include/"
            " -I/home/ubuntu/tensor-algebra-systems/tensor-gsl/include/tensor"
            " -L/home/ubuntu/tensor-algebra-systems/tblis/lib"
-           " -Wl,-R/home/ubuntu/tensor-algebra-systems/tblis/lib -l:libtblis.so.0.0.0 -lopenblas";
+           " -L/usr/local/cuda-11.8/targets/x86_64-linux/lib/"
+           " -Wl,-R/usr/local/cuda-11.8/targets/x86_64-linux/lib/"
+           " -L/usr/lib/intel64 -Wl,-R/usr/lib/mkl/intel64"
+          " -Wl,--no-as-needed -lmkl_intel_lp64 -lmkl_sequential -lmkl_avx512 -lmkl_core -lpthread -lm -ldl"
+           " -Wl,-R/home/ubuntu/tensor-algebra-systems/tblis/lib -l:libtblis.so.0.0.0 -lopenblas -lcudart -lcusparse";
   }
 
   // cmd += " -lblas";
@@ -256,5 +289,36 @@ int Module::callFuncPackedRaw(std::string name, void** args) {
   return ret;
 }
 
-} // namespace ir
+std::pair<int (*)(void**),void**>  Module::returnFuncPackedRaw(std::string name, void** args) {
+  typedef int (*fnptr_t)(void**);
+  static_assert(sizeof(void*) == sizeof(fnptr_t),
+    "Unable to cast dlsym() returned void pointer to function pointer");
+  void* v_func_ptr = getFuncPtr(name);
+  fnptr_t func_ptr;
+  *reinterpret_cast<void**>(&func_ptr) = v_func_ptr;
+
+#if USE_OPENMP
+  omp_sched_t existingSched;
+  ParallelSchedule tacoSched;
+  int existingChunkSize, tacoChunkSize;
+  int existingNumThreads = omp_get_max_threads();
+  omp_get_schedule(&existingSched, &existingChunkSize);
+  taco_get_parallel_schedule(&tacoSched, &tacoChunkSize);
+  switch (tacoSched) {
+    case ParallelSchedule::Static:
+      omp_set_schedule(omp_sched_static, tacoChunkSize);
+      break;
+    case ParallelSchedule::Dynamic:
+      omp_set_schedule(omp_sched_dynamic, tacoChunkSize);
+      break;
+    default:
+      break;
+  }
+  omp_set_num_threads(taco_get_num_threads());
+#endif
+  return {func_ptr, args};
+}
+ // namespace ir
 } // namespace taco
+
+}

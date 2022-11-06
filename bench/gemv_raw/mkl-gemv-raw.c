@@ -66,7 +66,7 @@ double run_gemv_mkl(int dim)
 }
 
 int main(int argc, char *argv[])
-{
+{	
 	for (int i = 100; i <= 5000; i += 100)
 	{
 		double time_taken[11];
@@ -77,5 +77,5 @@ int main(int argc, char *argv[])
 		array_sort(time_taken, 11);
 		printf("%d=%f\n", i, time_taken[5]);
 	}
-	// // mkl_scsrgemv("n", (MKL_INT[]){0, 1}, (float[]){1}, (MKL_INT[]){0, 1}, (MKL_INT[]){0},  (float[]){0, 1},  (float[]){0, 0});
+	// mkl_scsrgemv("n", (MKL_INT[]){0, 1}, (float[]){1}, (MKL_INT[]){0, 1}, (MKL_INT[]){0},  (float[]){0, 1},  (float[]){0, 0});
 }

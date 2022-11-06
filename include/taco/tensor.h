@@ -90,6 +90,8 @@ public:
   /// Set the name of the tensor.
   void setName(std::string name) const;
 
+  std::vector<void*> compute_split();
+
   /// Get the name of the tensor.
   std::string getName() const;
 
@@ -131,6 +133,7 @@ public:
   /// Reserve space for `numCoordinates` additional coordinates.
   void reserve(size_t numCoordinates);
 
+  std::pair<int (*)(void**),void**> returnFuncPackedRaw(std::vector<void*> args);
 
  /* --- Set Properties      --- */
 

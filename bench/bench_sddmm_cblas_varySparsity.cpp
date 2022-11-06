@@ -71,7 +71,7 @@ static void bench_sddmm_varySparisty_blas(benchmark::State& state, float SPARSIT
 TACO_BENCH_ARGS(bench_sddmm_varySparisty_blas, 0.00625, 0.00625, DIM_SIZE);
 TACO_BENCH_ARGS(bench_sddmm_varySparisty_blas, 0.0125,  0.0125, DIM_SIZE);
 TACO_BENCH_ARGS(bench_sddmm_varySparisty_blas, 0.025,   0.025, DIM_SIZE);
-TACO_BENCH_ARGS(bench_sddmm_varySparisty_blas, 0.05,    0.05, DIM_SIZE);
+// TACO_BENCH_ARGS(bench_sddmm_varySparisty_blas, 0.05,    0.05, DIM_SIZE);
 TACO_BENCH_ARGS(bench_sddmm_varySparisty_blas, 0.05,    0.05, DIM_SIZE);
 TACO_BENCH_ARGS(bench_sddmm_varySparisty_blas, 0.1,     0.1, DIM_SIZE);
 TACO_BENCH_ARGS(bench_sddmm_varySparisty_blas, 0.2,     0.2, DIM_SIZE);
