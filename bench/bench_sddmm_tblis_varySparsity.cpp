@@ -37,16 +37,17 @@ static void bench_sddmm_varySparisty_tblis(benchmark::State& state, float SPARSI
   Tensor<float> C("C", {NUM_I, NUM_J}, {Dense, Dense});
   Tensor<float> D("D", {NUM_J, NUM_K}, {Dense, Dense});
 
-  std::stringstream ss;
-  ss << SPARSITY;
+  std::map<float, std::string> floatToString = { {0.00625, "0.00625"}, {0.0125, "0.0125"}, {0.025, "0.025"},
+                                                  {0.05, "0.05"}, {0.1, "0.1"}, {0.2, "0.2"}, {0.4, "0.4"},
+                                                  {0.6, "0.6"}, {0.8, "0.8"}, {1.0, "1.0"}};
 
   std::string generateData = "python3 /home/ubuntu/mosaic/data/data_gen.py --bench sddmm_sp --dim ";
   generateData += std::to_string(dim);
   generateData += " --nnz ";
-  generateData += ss.str();
+  generateData += floatToString[SPARSITY];
   generateData += " --out_dir /home/ubuntu/mosaic/data/spdata/";
   exec(generateData.c_str());
-  std::string filename = "/home/ubuntu/mosaic/data/spdata/sddmm_sp/B_"+ std::to_string(dim) + "_" + ss.str() + ".mtx";
+  std::string filename = "/home/ubuntu/mosaic/data/spdata/sddmm_sp/B_"+ std::to_string(dim) + "_" + floatToString[SPARSITY] + ".mtx";
   B = castToType<float>("B", readMTX(filename, CSR));
 
   for (int i = 0; i < dim; i++) {
@@ -80,7 +81,7 @@ static void bench_sddmm_varySparisty_tblis(benchmark::State& state, float SPARSI
     state.ResumeTiming();
     pair.first(func.data());
   }
-  std::string eraseData = "rm -rf /home/ubuntu/mosaic/data/spdata/spmv/B_" + std::to_string(dim) + "_0.2.mtx";
+  std::string eraseData = "rm -rf /home/ubuntu/mosaic/data/spdata/sddmm_sp/B_" + std::to_string(dim) + "_" + floatToString[SPARSITY] + ".mtx";
   exec(eraseData.c_str());
 }
 
@@ -93,6 +94,6 @@ TACO_BENCH_ARGS(bench_sddmm_varySparisty_tblis, 0.2,     0.2, DIM_SIZE);
 TACO_BENCH_ARGS(bench_sddmm_varySparisty_tblis, 0.4,     0.4, DIM_SIZE);
 TACO_BENCH_ARGS(bench_sddmm_varySparisty_tblis, 0.6,     0.6, DIM_SIZE);
 TACO_BENCH_ARGS(bench_sddmm_varySparisty_tblis, 0.8,     0.8, DIM_SIZE);
-TACO_BENCH_ARGS(bench_sddmm_varySparisty_tblis, 1,       1, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_tblis, 1.0,     1.0, DIM_SIZE);
 
 

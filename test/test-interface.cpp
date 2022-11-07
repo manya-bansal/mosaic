@@ -1972,7 +1972,7 @@ TEST(interface, DimReduceBlockedSparse) {
    int dim = 4;
 
    Tensor<float> A("A", {dim, dim, dim, dim}, Format{Dense, Dense, Dense, Dense});
-   Tensor<float> B("B", {dim, dim, dim, dim}, Format{Sparse, Dense, Sparse, Dense});
+   Tensor<float> B("B", {dim, dim, dim, dim}, Format{Dense, Dense, Dense, Dense});
    Tensor<float> C("C", {dim, dim, dim, dim}, Format{Sparse, Dense, Sparse, Dense});
 
    TensorVar precomputed("precomputed", Type(taco::Float32, {4, 4, 4, 4}), Format{Dense, Dense, Dense, Dense});
@@ -2668,4 +2668,43 @@ TEST(interface, sdmmMkl){
 
   ASSERT_TENSOR_EQ(expected, A);
 
+}
+
+
+TEST(interface, mklDot) {
+
+
+   Tensor<float> A("A", {16}, Format{Dense}, 0);
+   Tensor<float> B("B", {16}, Format{Dense});
+   Tensor<float> C("C", {16}, Format{Dense});
+   Tensor<float> expected("expected", {16}, Format{Dense}, 0);
+   TensorVar accelWorkspace("accelWorkspace", Type(taco::Float32, {16}), taco::dense);
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar iw("iw");
+
+   for (int i = 0; i < 16; i++) {
+      C.insert({i}, (float) i);
+      B.insert({i}, (float) i);
+   }
+
+   C.pack();
+   B.pack();
+
+   IndexExpr accelerateExpr = B(j) * C(j);
+   A(i) = sum(j, accelerateExpr);
+
+   IndexStmt stmt = A.getAssignment().concretize();
+   stmt = stmt.accelerate(new MklDot(), accelerateExpr);
+    
+   A.compile(stmt);
+   A.assemble();
+   A.compute();
+
+   expected(i) = sum(j, accelerateExpr);
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+   ASSERT_TENSOR_EQ(expected, A);
 }

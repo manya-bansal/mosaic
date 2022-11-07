@@ -7,6 +7,7 @@
 #include "taco/format.h"
 #include "taco/index_notation/index_notation.h"
 #include "taco/accelerator_interface/cblas_interface.h"
+#include "taco/accelerator_interface/mkl_interface.h"
 #include "taco/accelerator_interface/tblis_interface.h"
 #include "taco/accelerator_interface/gsl_interface.h"
 #include "taco/storage/file_io_mtx.h"
@@ -28,7 +29,7 @@ static std::string exec(const char* cmd) {
     return result;
 }
 
-static void bench_blockedSparse4T_blas(benchmark::State& state) {
+static void bench_blockedSparse4T_mkl(benchmark::State& state) {
 
    int dim = state.range(0);
   
@@ -72,7 +73,7 @@ static void bench_blockedSparse4T_blas(benchmark::State& state) {
     TensorVar precomputed("precomputed", Type(taco::Float32, {Dimension(dim), Dimension(dim), Dimension(dim), Dimension(dim)}), Format{Dense, Dense, Dense, Dense});
     A(i, k, m, n) = accelerateExpr;
     IndexStmt stmt = A.getAssignment().concretize();
-    stmt = stmt.holdConstant(new MatrixMultiply(), accelerateExpr, {j, m, i}, precomputed(i, k, m, n));
+    stmt = stmt.holdConstant(new MklMM(), accelerateExpr, {j, m, i}, precomputed(i, k, m, n));
     
 
     A.compile(stmt);
@@ -85,5 +86,5 @@ static void bench_blockedSparse4T_blas(benchmark::State& state) {
 
 }
 
-TACO_BENCH(bench_blockedSparse4T_blas)->DenseRange(10, 100, 5);
+TACO_BENCH(bench_blockedSparse4T_mkl)->DenseRange(10, 100, 5);
 

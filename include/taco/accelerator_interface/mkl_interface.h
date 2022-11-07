@@ -156,5 +156,31 @@ public:
         IndexVar k;
 };
 
+class MklDot : public AbstractFunctionInterface{
+    public: 
+        MklDot() : x(TensorObject(Type(taco::Float32, {Dimension()}), dense)),
+                  y(TensorObject(Type(taco::Float32, {Dimension()}), dense)),
+                  s(TensorObject(Type(taco::Float32))),
+                  i(IndexVar()) {};
+
+        // IndexExpr getRHS() const override {return x(i);}
+        // IndexExpr getLHS() const override {return x(i);}
+        AcceleratorStmt getStmt() const override {return s = x(i) * y(i);}
+        std::vector<Argument> getArguments() const override {return 
+                                                {
+                                                    new DimArg(i), 
+                                                    new TensorObjectArg(x),
+                                                    new TensorObjectArg(y),
+
+                                                };}
+        std::string getReturnType() const override {return "float";}
+        std::string getFunctionName() const override {return "sdot_mkl_internal";}
+
+    private: 
+        TensorObject x;
+        TensorObject y;
+        TensorObject s;
+        IndexVar i;
+};
 
 #endif 

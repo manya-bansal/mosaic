@@ -8,13 +8,12 @@
 #include "taco/accelerator_interface/cblas_interface.h"
 #include "taco/accelerator_interface/tblis_interface.h"
 #include "taco/accelerator_interface/gsl_interface.h"
+#include "taco/accelerator_interface/mkl_interface.h"
 #include "taco/storage/file_io_mtx.h"
 
 #define DIM_SIZE 2000
 
 using namespace taco;
-
-extern bool gsl_compile;
 
 static std::string exec(const char* cmd) {
     std::array<char, 128> buffer;
@@ -29,9 +28,8 @@ static std::string exec(const char* cmd) {
     return result;
 }
 
-static void bench_sddmm_varySparisty_dot_gsl(benchmark::State& state, float SPARSITY, int dim) {
-  gsl_compile = true;
 
+static void bench_sddmm_varySparisty_dot_mkl(benchmark::State& state, float SPARSITY, int dim) {
   int NUM_I = dim;
   int NUM_K = dim;
   int NUM_J = dim;
@@ -65,6 +63,7 @@ static void bench_sddmm_varySparisty_dot_gsl(benchmark::State& state, float SPAR
   D.pack();
 
   IndexVar i("i"), j("j"), k("k");
+
   IndexExpr accelerateExpr = C(i,j) * D(j,k);
 
    for (auto _ : state) {
@@ -73,8 +72,9 @@ static void bench_sddmm_varySparisty_dot_gsl(benchmark::State& state, float SPAR
     Tensor<float> A("A", {NUM_I, NUM_K}, {Dense, Dense}, 0);
     A(i,k) =  B(i,k) * accelerateExpr;
     TensorVar precomputed("precomputed", Type(taco::Float32, {(size_t)NUM_I, (size_t)NUM_K}), Format{Dense, Dense});
+
     IndexStmt stmt = A.getAssignment().concretize();
-    stmt = stmt.holdConstant(new GSLDot(), accelerateExpr, {i, k}, precomputed(i, k));
+    stmt = stmt.holdConstant(new MklDot(), accelerateExpr, {i, k}, precomputed(i, k));
 
     A.compile(stmt);
     A.assemble();
@@ -83,20 +83,19 @@ static void bench_sddmm_varySparisty_dot_gsl(benchmark::State& state, float SPAR
     state.ResumeTiming();
     pair.first(func.data());
   }
-  std::string eraseData = "rm -rf /home/ubuntu/mosaic/data/spdata/sddmm_sp/B_" + std::to_string(dim) + "_" +  floatToString[SPARSITY]  + ".mtx";
+  std::string eraseData = "rm -rf /home/ubuntu/mosaic/data/spdata/sddmm_sp/B_" + std::to_string(dim) + "_" + floatToString[SPARSITY] + ".mtx";
   exec(eraseData.c_str());
-  gsl_compile = false;
 }
 
-TACO_BENCH_ARGS(bench_sddmm_varySparisty_dot_gsl, 0.00625, 0.00625, DIM_SIZE);
-TACO_BENCH_ARGS(bench_sddmm_varySparisty_dot_gsl, 0.0125,  0.0125, DIM_SIZE);
-TACO_BENCH_ARGS(bench_sddmm_varySparisty_dot_gsl, 0.025,   0.025, DIM_SIZE);
-TACO_BENCH_ARGS(bench_sddmm_varySparisty_dot_gsl, 0.05,    0.05, DIM_SIZE);
-TACO_BENCH_ARGS(bench_sddmm_varySparisty_dot_gsl, 0.1,     0.1, DIM_SIZE);
-TACO_BENCH_ARGS(bench_sddmm_varySparisty_dot_gsl, 0.2,     0.2, DIM_SIZE);
-TACO_BENCH_ARGS(bench_sddmm_varySparisty_dot_gsl, 0.4,     0.4, DIM_SIZE);
-TACO_BENCH_ARGS(bench_sddmm_varySparisty_dot_gsl, 0.6,     0.6, DIM_SIZE);
-TACO_BENCH_ARGS(bench_sddmm_varySparisty_dot_gsl, 0.8,     0.8, DIM_SIZE);
-TACO_BENCH_ARGS(bench_sddmm_varySparisty_dot_gsl, 1,       1, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_dot_mkl, 0.00625, 0.00625, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_dot_mkl, 0.0125,  0.0125, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_dot_mkl, 0.025,   0.025, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_dot_mkl, 0.05,    0.05, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_dot_mkl, 0.1,     0.1, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_dot_mkl, 0.2,     0.2, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_dot_mkl, 0.4,     0.4, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_dot_mkl, 0.6,     0.6, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_dot_mkl, 0.8,     0.8, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_dot_mkl, 1,       1, DIM_SIZE);
 
 

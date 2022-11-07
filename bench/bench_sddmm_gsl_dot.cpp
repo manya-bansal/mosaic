@@ -82,5 +82,5 @@ static void bench_sddmm_dot_gsl(benchmark::State& state) {
   gsl_compile = false;
 }
 
-TACO_BENCH(bench_sddmm_dot_gsl)->DenseRange(100, 2000, 100);
+TACO_BENCH(bench_sddmm_dot_gsl)->DenseRange(100, 1000, 100);
 
