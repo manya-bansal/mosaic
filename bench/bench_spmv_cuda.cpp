@@ -31,9 +31,9 @@ static void bench_spmv_cuda(benchmark::State& state) {
 
     std::string generateData = "python3 /home/ubuntu/mosaic/data/data_gen.py --bench spmv --dim ";
     generateData += std::to_string(dim);
-    generateData += " --nnz 0.2 --out_dir /home/ubuntu/mosaic/data/spdata/";
+    generateData += " --nnz 0.4 --out_dir /home/ubuntu/mosaic/data/spdata/";
     exec(generateData.c_str());
-    std::string filename = "/home/ubuntu/mosaic/data/spdata/spmv/B_" + std::to_string(dim) + "_0.2.mtx";
+    std::string filename = "/home/ubuntu/mosaic/data/spdata/spmv/B_" + std::to_string(dim) + "_0.4.mtx";
     B = castToType<float>("B", readMTX(filename, CSR));
 
     for (int i = 0; i < dim; i++) {
@@ -60,9 +60,9 @@ static void bench_spmv_cuda(benchmark::State& state) {
     state.ResumeTiming();
     pair.first(func.data());
   }
-  std::string eraseData = "rm -rf /home/ubuntu/mosaic/data/spdata/spmv/B_" + std::to_string(dim) + "_0.2.mtx";
+  std::string eraseData = "rm -rf /home/ubuntu/mosaic/data/spdata/spmv/B_" + std::to_string(dim) + "_0.4.mtx";
   exec(eraseData.c_str());
 }
 
-TACO_BENCH(bench_spmv_cuda)->DenseRange(250, 5000, 250);
+TACO_BENCH(bench_spmv_cuda)->DenseRange(10000, 20000, 1000);
 

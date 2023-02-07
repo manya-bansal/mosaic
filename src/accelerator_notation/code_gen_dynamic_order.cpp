@@ -10,6 +10,7 @@
 #include <stdexcept>
 #include <string>
 #include <array>
+#include <chrono>
 
 
 using namespace std;
@@ -122,12 +123,23 @@ bool GenerateSMTCode::isSat(){
 
 // GROSS!!!!!
 std::string GenerateSMTCode::runSMT(){
+    auto start = std::chrono::high_resolution_clock::now();
     std::string pythonCode = generatePythonCode();
+    auto stop = std::chrono::high_resolution_clock::now();
+
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    std::cout << "Time taken by function: "
+         << duration.count() << " us" << std::endl;
     //gets generated in build/bin
     ofstream SMTPython("SMTpython.py");
     SMTPython << pythonCode;
     SMTPython.close();
+    start = std::chrono::high_resolution_clock::now();
     std::string result =  exec("python3 SMTpython.py");
+    stop = std::chrono::high_resolution_clock::now();
+    duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    std::cout << "Time taken to run function: "
+         << duration.count() << " us" << std::endl;
     system("rm -rf SMTpython.py");
     return result; 
 }

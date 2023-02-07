@@ -57,7 +57,7 @@ double run_gemv_cblas(int dim){
 }
 
 int main(int argc, char *argv[]) {
-   for (int i = 100; i<=5000; i+=100){
+   for (int i = 100; i<=1000; i+=100){
         double time_taken[11];
         for (int j = 0; j<11; j++){
             time_taken[j] = run_gemv_cblas(i);

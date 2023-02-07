@@ -100,7 +100,8 @@
         "*.ipp": "cpp",
         "cblas-netlib.h": "c",
         "gemv_header.h": "c",
-        "cblas.h": "c"
+        "cblas.h": "c",
+        "unistd.h": "c"
     },
     "C_Cpp.dimInactiveRegions": false
 }

@@ -55,5 +55,4 @@ class GslTensorPlus : public AbstractFunctionInterface{
         DeclVar var2;
 
 };
-
 #endif

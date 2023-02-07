@@ -11,7 +11,7 @@
 #SBATCH --time=10:00:00
 
 
-systems=("blas" "taco" "gsl" "dot_blas" "gemv_blas" "dot_gsl" "gemv_gsl" "tblis" "mkl" "gemv_mkl")
+systems=("tblis" "mkl")
 
 for i in "${systems[@]}"
 do 

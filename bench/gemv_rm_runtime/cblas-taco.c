@@ -9,6 +9,7 @@
 #include <string.h>
 #include <immintrin.h>
 #include "cblas.h"
+#include <unistd.h>
 #if _OPENMP
 #include <omp.h>
 #endif
@@ -155,10 +156,11 @@ int compute(taco_tensor_t *d, taco_tensor_t *A, taco_tensor_t *b) {
   int b1_dimension = (int)(b->dimensions[0]);
   float*  b_vals = (float*)(b->vals);
 
-cblas_sgemv(CblasRowMajor, CblasNoTrans, A1_dimension, b1_dimension, 1, A_vals, A1_dimension, b_vals, 1, 0, d_vals, 1);
+  usleep(4);
+
   return 0;
 }
-#include "/home/manya227/temp/taco_tmp_wgPHZQ/ybs509v1s8cz.h"
+
 int _shim_assemble(void** parameterPack) {
   return assemble((taco_tensor_t*)(parameterPack[0]), (taco_tensor_t*)(parameterPack[1]), (taco_tensor_t*)(parameterPack[2]));
 }

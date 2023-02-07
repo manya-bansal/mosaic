@@ -97,7 +97,7 @@ class GSLSgemv : public AbstractFunctionInterface{
                   j(IndexVar()),
                   a(DeclVar("gsl_vector_float * ", "var1")),
                   b(DeclVar("gsl_vector_float *", "var2")),
-                  mat(DeclVar("gsl_matrix_float *", "mat")) {};
+                  mat(DeclVar("gsl_matrix_float *", "mat")) {}
         AcceleratorStmt getStmt() const override {return y(i) = x(i, j) * s(j) + y(i);}
         std::vector<Argument> getArguments() const override {return 
                                                 {

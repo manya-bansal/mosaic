@@ -11,7 +11,6 @@
 #SBATCH --time=10:00:00
 
 systems=("blas" "taco" "gsl" "dot_blas" "gemv_blas" "dot_gsl" "gemv_gsl" "mkl" "gemv_mkl" "tblis" "dot_mkl")
-
 for i in "${systems[@]}"
 do  
     /home/ubuntu/taco-interoperable/build/bin/./taco-bench --benchmark_filter=bench_sddmm_varySparisty_$i  --benchmark_format=json --benchmark_out=/home/ubuntu/taco-interoperable/bench/sddmm_varSparsity/result/$i

@@ -310,5 +310,55 @@ class TblisGemv : public AbstractFunctionInterface{
 
 };
 
+class TblisTTV : public AbstractFunctionInterface{
+    public: 
+        TblisTTV() : 
+                    x(TensorObject(Type(taco::Float32, {Dimension(), Dimension(), Dimension()}),  Format{Dense, Dense, Dense})),
+                    y(TensorObject(Type(taco::Float32, {Dimension()}),  Format{Dense})),
+                    z(TensorObject(Type(taco::Float32, {Dimension(), Dimension()}),  Format{Dense, Dense})),
+                    i(IndexVar()),
+                    j(IndexVar()),
+                    k(IndexVar()),
+                    l(IndexVar()),
+                    var(DeclVar("tblis_tensor", "var1")),
+                    var2(DeclVar("tblis_tensor", "var2")),
+                    result(DeclVar("tblis_tensor", "result")) {};
+
+        AcceleratorStmt getStmt() const override {return z(i, j) = x(i, j, k) * y(k);}
+        std::vector<Argument> getArguments() const override {
+                                                return 
+                                                {   new StringLiteral("NULL"),
+                                                    new StringLiteral("NULL"),
+                                                    new AddrDeclVarArg(var),
+                                                    new StringLiteral("\"ijk\""),
+                                                    new AddrDeclVarArg(var2),
+                                                    new StringLiteral("\"k\""),
+                                                    new AddrDeclVarArg(result),
+                                                    new StringLiteral("\"ij\"")
+                                                }; }
+
+        std::string getReturnType() const override {return "void";}
+        std::string getFunctionName() const override {return "tblis_tensor_mult";}
+        std::vector<Argument>  callBefore() const override {
+                                taco::TransferLoad tblis_init_tensor_s_helper_row_major_dim("tblis_init_tensor_s_helper_row_major_dim", "void");
+                                return { tblis_init_tensor_s_helper_row_major_dim(AddrDeclVarArg(var), Dim(i), 3,  DataArray(y)),
+                                         tblis_init_tensor_s_helper_row_major_dim(AddrDeclVarArg(var2), Dim(i), 1,  DataArray(z)), 
+                                         tblis_init_tensor_s_helper_row_major_dim(AddrDeclVarArg(result), Dim(i), 2, DataArray(x))};
+                            }
+
+    private: 
+        TensorObject x;
+        TensorObject y;
+        TensorObject z;
+        IndexVar i;
+        IndexVar j;
+        IndexVar k;
+        IndexVar l;
+        DeclVar var;
+        DeclVar var2;
+        DeclVar result;
+
+};
+
 #endif 
     

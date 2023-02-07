@@ -15,7 +15,8 @@
   ->Repetitions(10)               \
   ->Iterations(1)                 \
   ->ReportAggregatesOnly(true)    \
-  ->UseRealTime()
+  ->UseRealTime()                 \
+  ->MinWarmUpTime(10)
 
 #define GRAPHBLAS_BENCH(bench,times)   \
   BENCHMARK(bench)                \
@@ -32,10 +33,12 @@
 
 #define TACO_BENCH_ARG(bench, name, arg)  \
   BENCHMARK_CAPTURE(bench, name, arg)     \
-  ->Unit(benchmark::kMicrosecond)         \
+  ->Unit(benchmark::kMillisecond)         \
+  ->Repetitions(10)                       \
   ->Iterations(1)                         \
   ->ReportAggregatesOnly(true)            \
-  ->UseRealTime()
+  ->UseRealTime()                         \
+  ->MinWarmUpTime(10)
 
 #define TACO_BENCH_ARGS(bench, name, ...)       \
   BENCHMARK_CAPTURE(bench, name, __VA_ARGS__)   \

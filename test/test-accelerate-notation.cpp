@@ -3,8 +3,11 @@
 #include "taco/index_notation/index_notation.h"
 #include "taco/accelerator_notation/accelerator_notation_nodes.h"
 #include "taco/accelerator_notation/code_gen_dynamic_order.h"
+#include "taco/accelerator_interface/tile_interface.h"
 #include "op_factory.h"
-
+#include <chrono>
+#include <unistd.h>
+#include <random>
 
 using namespace taco;
 
@@ -56,6 +59,11 @@ TEST(accelerateNotation, AcceleratorExprTest) {
     IndexVar var2; 
 
     std::cout << (interator == (dynamicOrder(interator) + 1)) << endl;
+
+
+    std::cout << forall(interator,(dynamicOrder(interator)  == 4)) << endl;
+
+
     std::cout << (dynamicOrder(interator) == dynamicOrder(interator)) << endl;
     std::cout << (interator != interator) << endl;
     std::cout << (interator > interator) << endl;
@@ -91,6 +99,7 @@ TEST(accelerateNotation, AcceleratorExprTest) {
 
     cout <<  (PropertyTag("symmetric") = (PropertyExpr("symmetric") + PropertyExpr("symmetric"))) << endl;
 
+
 }
 
 TEST(accelerateNotation, makeReductionNotation) {
@@ -123,3 +132,144 @@ TEST(accelerateNotation, makeReductionNotation) {
   ASSERT_NOTATION_EQ(a(i) = sum(j, B(i,j)*c(j)),
                      makeReductionNotation(a(i)=B(i,j)*c(j)));
 }
+
+
+
+TEST(accelerateNotation, testCCLTimeAVX) {
+
+
+    DynamicOrder dynamicOrder;
+    DynamicIndexIterator interator(dynamicOrder);
+    IndexVar var;
+
+    std::map<DynamicOrder, std::vector<IndexVar>> mapRef; 
+    std::map<IndexVar, int> dimRef;
+
+    mapRef[dynamicOrder] = {var};
+    dimRef[var] = 10;
+
+    GenerateSMTCode condition(forall(interator, dynamicOrder(interator) == 4), mapRef, dimRef, true);
+    condition.runSMT();
+    ASSERT_TRUE(condition.isSat());
+
+    condition.getTilings();
+
+}
+
+TEST(accelerateNotation, testCCLTimeStardust) {
+
+
+    DynamicOrder dynamicOrder;
+    DynamicIndexIterator interator(dynamicOrder);
+    IndexVar var;
+
+    std::map<DynamicOrder, std::vector<IndexVar>> mapRef; 
+    std::map<IndexVar, int> dimRef;
+
+    IndexVar var2, var3, var4, var5;
+    dimRef[var] = 20;
+    dimRef[var2] = 20;
+    dimRef[var3] = 20;
+    dimRef[var4] = 20;
+
+    GenerateSMTCode condition( ((DynamicExpr(var) * DynamicExpr(var2) * DynamicExpr(var3) * DynamicExpr(var4)) == 65536),
+    mapRef, dimRef, true);
+
+    std::cout << util::join(condition.getTilings()) << std::endl;
+
+}
+
+
+
+
+bool checker_function(int tile){
+  if (tile < 16) return true;
+  return false;
+}
+
+int tryall(int num)
+{
+    for (int i = 0; i < num; i++){
+      usleep(326);
+    }
+}
+
+void findIndex(int last, IndexStmt stmt, std::vector<IndexVar> vars, IndexExpr accelerateExpr)
+{   
+  for (auto var: vars){
+    for (int i = 0; i < last; i++){
+      usleep(326);
+      if (checker_function(i)){
+        tryall(14);
+        return;
+      }
+    }
+  }
+    
+}
+
+int randomSearch(int last){
+
+  std::mt19937 rng(9);
+  std::uniform_int_distribution<int> gen(1, last); // uniform, unbiased
+
+  std:set<int> seen;
+
+  int r = gen(rng);
+  int i = 0;
+  while (!checker_function(r)){
+    i++;
+    seen.insert(r);
+    while (seen.count(r) == 1){
+      r = gen(rng);
+    }
+  }
+  std::cout << r << std::endl;
+  return i;
+}
+
+
+TEST (accelerateNotation, testCheckerFunction){
+
+  // binary search over 0-65536
+  //   Tensor<float> A("A", {16}, Format{Dense});
+  //  Tensor<float> expected("expected", {16}, Format{Dense});
+  //  Tensor<float> B("B", {16}, Format{Dense});
+  //  Tensor<float> C("C", {16}, Format{Dense});
+  //  IndexVar i("i");
+
+  //  for (int i = 0; i < 16; i++) {
+  //     C.insert({i}, (float) i);
+  //     B.insert({i}, (float) i);
+  //  }
+
+  //  C.pack();
+  //  B.pack();
+
+  //  IndexExpr accelerateExpr = B(i) + C(i);
+  //  A(i) = accelerateExpr;
+  //  IndexStmt stmt = A.getAssignment().concretize();
+  //  stmt = stmt.tile(new TileSaxpy(), accelerateExpr, {{i,  4}});
+
+  //   auto start = std::chrono::high_resolution_clock::now();
+  //   findIndex(65536, stmt, {i}, accelerateExpr);
+  //     auto stop = std::chrono::high_resolution_clock::now();
+
+  //   auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+  //   std::cout << "Time taken by function: "
+  //         << duration.count() << " us" << std::endl;
+  
+  auto start = std::chrono::high_resolution_clock::now();
+  int i = randomSearch(65536);
+  auto stop = std::chrono::high_resolution_clock::now();
+
+  auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+  std::cout << "Time taken by function: "
+        << duration.count() << " us" << std::endl;
+
+  std::cout << i << std::endl;
+
+
+}
+
+

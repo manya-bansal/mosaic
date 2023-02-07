@@ -352,6 +352,7 @@ TEST(interface, tiledSaxpyInterface) {
    IndexExpr accelerateExpr = B(i) + C(i);
    A(i) = accelerateExpr;
    IndexStmt stmt = A.getAssignment().concretize();
+   
    stmt = stmt.tile(new TileSaxpy(), accelerateExpr, {{i,  4}});
 
    A.compile(stmt);
@@ -2679,6 +2680,8 @@ TEST(interface, mklDot) {
    Tensor<float> C("C", {16}, Format{Dense});
    Tensor<float> expected("expected", {16}, Format{Dense}, 0);
    TensorVar accelWorkspace("accelWorkspace", Type(taco::Float32, {16}), taco::dense);
+   float SPARSITY = .3;
+
    IndexVar i("i");
    IndexVar j("j");
    IndexVar iw("iw");
@@ -2707,4 +2710,113 @@ TEST(interface, mklDot) {
    expected.compute();
 
    ASSERT_TENSOR_EQ(expected, A);
+}
+
+
+
+TEST(interface, MMAddSparse) {
+
+   int dim = 16;
+
+   Tensor<float> A("A", {dim, dim}, CSR);
+   Tensor<float> B("B", {dim, dim}, CSR);
+   Tensor<float> C("C", {dim, dim}, CSR);
+   IndexVar i("i");
+   IndexVar j("j");
+  
+
+  float SPARSITY = 0.3;
+  for (int i = 0; i < dim; i++) {
+    for (int k = 0; k < dim; k++) {
+      float rand_float = (float)rand()/(float)(RAND_MAX);
+      if (rand_float < SPARSITY) {
+        B.insert({i, k}, (float) ((int) (rand_float*3/SPARSITY)));
+      }
+    }
+  }
+
+   IndexExpr expr = B(i, j) + C(i, j);
+   A(i, j) = expr;
+
+   IndexStmt stmt = A.getAssignment().concretize();
+   stmt = stmt.accelerate(new MklAdd(), expr, true);
+
+   A.compile(stmt);
+   A.assemble();
+   A.compute();
+    
+
+}
+
+
+TEST(interface, TTVBlas) {
+
+   int dim = 16;
+
+   Tensor<float> A("A", {dim, dim}, {Dense, Dense});
+   Tensor<float> B("B", {dim, dim, dim}, {Dense, Dense, Dense});
+   Tensor<float> C("C", {dim}, {Dense});
+   TensorVar precomputed("precomputed", Type(taco::Float32, {16, 16}), Format{Dense, Dense});
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar k("k");
+  
+
+//   float SPARSITY = 0.3;
+//   for (int i = 0; i < dim; i++) {
+//     for (int k = 0; k < dim; k++) {
+//       float rand_float = (float)rand()/(float)(RAND_MAX);
+//       if (rand_float < SPARSITY) {
+//         B.insert({i, k}, (float) ((int) (rand_float*3/SPARSITY)));
+//       }
+//     }
+//   }
+
+   IndexExpr expr = B(i, j, k) * C(k);
+   A(i, j) = expr;
+
+   IndexStmt stmt = A.getAssignment().concretize();
+   stmt = stmt.holdConstant(new CblasGemv(), expr, {i}, precomputed(i, j));
+
+   A.compile(stmt);
+   A.assemble();
+   A.compute();
+    
+
+}
+
+TEST(interface, TTVTblis) {
+
+   int dim = 16;
+
+   Tensor<float> A("A", {dim, dim}, {Dense, Dense});
+   Tensor<float> B("B", {dim, dim, dim}, {Dense, Dense, Dense});
+   Tensor<float> C("C", {dim}, {Dense});
+   TensorVar precomputed("precomputed", Type(taco::Float32, {16, 16}), Format{Dense, Dense});
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar k("k");
+  
+
+//   float SPARSITY = 0.3;
+//   for (int i = 0; i < dim; i++) {
+//     for (int k = 0; k < dim; k++) {
+//       float rand_float = (float)rand()/(float)(RAND_MAX);
+//       if (rand_float < SPARSITY) {
+//         B.insert({i, k}, (float) ((int) (rand_float*3/SPARSITY)));
+//       }
+//     }
+//   }
+
+   IndexExpr expr = B(i, j, k) * C(k);
+   A(i, j) = expr;
+
+   IndexStmt stmt = A.getAssignment().concretize();
+   stmt = stmt.accelerate(new TblisTTV(), expr);
+
+   A.compile(stmt);
+   A.assemble();
+   A.compute();
+    
+
 }

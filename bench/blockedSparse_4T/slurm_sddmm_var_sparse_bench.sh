@@ -10,9 +10,9 @@
 #SBATCH --exclusive
 #SBATCH --time=10:00:00
 
-systems=("blas" "taco" "mkl" "tblis" "gsl")
+systems=("taco" "blas")
 
 for i in "${systems[@]}"
 do  
-    /home/manya227/taco-interoperable/build/bin/./taco-bench --benchmark_filter=bench_blockedSparse4T_$i  --benchmark_format=json --benchmark_out=/home/manya227/taco-interoperable/bench/blockedSparse_4T/result/$i
+    /home/ubuntu/taco-interoperable/build/bin/./taco-bench --benchmark_filter=bench_blockedSparse4T_$i  --benchmark_format=json --benchmark_out=/home/ubuntu/taco-interoperable/bench/blockedSparse_4T/result/$i
 done

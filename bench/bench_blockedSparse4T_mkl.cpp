@@ -38,7 +38,7 @@ static void bench_blockedSparse4T_mkl(benchmark::State& state) {
 
    std::mt19937 mt(0); 
    
-   float SPARSITY = .2;
+   float SPARSITY = .05;
    for (int i = 0; i < dim; i++) {
     for (int k = 0; k < dim; k++) {
       const float randnum = mt();
@@ -86,5 +86,5 @@ static void bench_blockedSparse4T_mkl(benchmark::State& state) {
 
 }
 
-TACO_BENCH(bench_blockedSparse4T_mkl)->DenseRange(10, 100, 5);
+TACO_BENCH(bench_blockedSparse4T_mkl)->DenseRange(10, 100, 10);
 

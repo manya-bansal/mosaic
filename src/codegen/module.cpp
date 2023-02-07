@@ -137,7 +137,7 @@ string Module::compile() {
     string defaultFlags = "-g -O0 -std=c99";
 #else
     // Otherwise, use the standard set of optimizing flags.
-    string defaultFlags = "-O3 -ffast-math -std=c99";
+    string defaultFlags = "-std=c99";
 #endif
     cflags = util::getFromEnv("TACO_CFLAGS", defaultFlags) + " -shared -fPIC";
 #if USE_OPENMP
