@@ -2318,7 +2318,16 @@ IndexStmt IndexStmt::concretizeAccelerated(const std::vector<FunctionInterface>&
     stmt = makeReductionNotation(stmt);
   }
 
-  stmt = autoAccelerate(stmt, functionInterface);
+  auto start = std::chrono::high_resolution_clock::now();
+  stmt = autoAccelerateVerify(stmt, functionInterface);
+  auto stop = std::chrono::high_resolution_clock::now();
+
+  auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+  std::cout << "Time taken by function: "
+        << duration.count() << "us" << std::endl;
+  
+  // taco_uerror << "Returning";
+  
 
   if (isReductionNotation(stmt)) {
     stmt = makeConcreteNotation(stmt);
@@ -4707,6 +4716,62 @@ IndexStmt IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<FunctionInterfac
 
   return stmtRewrite;
 }
+
+
+
+IndexStmt IndexStmt::autoAccelerateVerify(IndexStmt stmt, std::vector<FunctionInterface> functionInterfaces) const{
+
+  std::stack<std::tuple<Access, ConcreteAccelerateCodeGenerator, FunctionInterface, ArgumentMap>> varCodeGen;
+  // std::map<ConcreteAccelerateCodeGenerator, FunctionInterface> abstractInterface;
+
+  if (!isa<Assignment>(stmt)) {
+    cout << "Cannot autoschedule this expression since it is not an assignment" << endl;
+    return stmt;
+  }
+
+  IndexStmt stmtRewrite = stmt;
+  for (auto descripton: functionInterfaces){
+    AcceleratorStmt referenceStmt = descripton.getNode()->getStmt();
+    
+    if (!isa<AcceleratorAssignment>(referenceStmt)){
+      taco_uerror << "Reference statement in function interface must be an assignemnt" << endl;
+    }
+
+    AcceleratorAssignment assign = to<AcceleratorAssignment>(referenceStmt);
+    AcceleratorAssignment reduxRefStmt = makeReductionNotation(assign);
+    std::vector<IndexExpr> matchedExprs = allMatchedOpPatterns(to<Assignment>(stmt).getRhs(), reduxRefStmt.getRhs());
+
+    // cout << to<Assignment>(stmt).getRhs() << endl;
+    // cout << reduxRefStmt.getRhs() << endl;
+
+    ArgumentMap argumentMap;
+
+    //  cout << "testing" << endl;
+
+    for (auto expr: matchedExprs){
+      argumentMap = hasPreciseMatch(expr, reduxRefStmt.getRhs());
+      // cout << "inside" << endl;
+      if (argumentMap.possible){
+        auto access = replaceTemporary(stmt, expr, reduxRefStmt, argumentMap);
+        std::map<IndexExpr,IndexExpr> subsitution = {{expr, access}};
+        stmtRewrite = replace(stmtRewrite, subsitution);
+        auto codeGen = getConcreteCodeGenerator(expr, access, argumentMap, descripton);
+        varCodeGen.push(std::make_tuple(access, codeGen, descripton, argumentMap));
+        }
+      }
+  }
+  
+  stmtRewrite = makeConcreteNotation(stmtRewrite);
+
+  while (!varCodeGen.empty()){
+    auto tensorCodeGen = varCodeGen.top();
+    rewriteStmt(stmtRewrite, std::get<0>(tensorCodeGen), std::get<1>(tensorCodeGen), std::get<2>(tensorCodeGen), std::get<3>(tensorCodeGen));
+    varCodeGen.pop();
+  }
+
+  return stmtRewrite;
+}
+
 
 IndexStmt makeConcreteNotation(IndexStmt stmt) {
 

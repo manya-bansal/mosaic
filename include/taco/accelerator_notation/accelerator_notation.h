@@ -449,6 +449,9 @@ public:
   /// Return the assignment's right-hand side.
   AcceleratorExpr getRhs() const;
 
+
+  AcceleratorExpr getRhs();
+
   /// Return the assignment compound operator (e.g., `+=`) or an undefined
   /// expression if the assignment is not compound (`=`).
   AcceleratorExpr getOperator() const;

@@ -35,7 +35,6 @@ bool hasOpMatch(IndexExpr e1, AcceleratorExpr e2);
 
 ArgumentMap hasPreciseMatch(IndexExpr e1, AcceleratorExpr e2);
 
-
 }
 
 #endif

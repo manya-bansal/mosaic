@@ -250,6 +250,7 @@ inline void addArg(std::vector<Argument>& argument, const StringLiteral& s) { ar
 inline void addArg(std::vector<Argument>& argument, const AddrDeclVarArg& var) { argument.push_back(new AddrDeclVarArg(var)); }
 inline void addArg(std::vector<Argument>& argument, const CastArg& var) { argument.push_back(new CastArg(var)); }
 inline void addArg(std::vector<Argument>& argument, const std::string& var) { argument.push_back(new StringLiteral(var)); }
+inline void addArg(std::vector<Argument>& argument, const TensorName& var) { argument.push_back(new TensorName(var)); }
 
 template <typename CType>
 inline void addArg(std::vector<Argument>& argument, const Tensor<CType>& t) { argument.push_back(new TensorArg(t)); }

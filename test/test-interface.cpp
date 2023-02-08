@@ -2820,3 +2820,74 @@ TEST(interface, TTVTblis) {
     
 
 }
+
+
+TEST(interface, sdmmMKL_COO_to_CSR){
+  int dim = 300;
+  int NUM_I = dim;
+  int NUM_K = dim;
+  int NUM_J = dim;
+
+  float SPARSITY = .05;
+  
+  Tensor<float> B("B", {NUM_I, NUM_K}, COO(2));
+  Tensor<float> C("C", {NUM_I, NUM_J}, {Dense, Dense});
+  Tensor<float> D("D", {NUM_J, NUM_K}, {Dense, Dense});
+  Tensor<float> A("A", {NUM_I, NUM_K}, {Dense, Dense}, 0);
+  Tensor<float> expected("expected", {NUM_I, NUM_K}, {Dense, Dense});
+
+  for (int i = 0; i < NUM_I; i++) {
+    for (int j = 0; j < NUM_J; j++) {
+      float rand_float = (float)rand()/(float)(RAND_MAX);
+      C.insert({i, j}, (float) ((int) (rand_float*3/SPARSITY)));
+    }
+  }
+
+  std::mt19937 mt(0); 
+  
+//   float SPARSITY = .5;
+   for (int i = 0; i < NUM_I; i++) {
+    for (int k = 0; k < NUM_K; k++) {
+      const float randnum = mt();
+      float rand_float = randnum/(float)(mt.max());
+         if (rand_float < SPARSITY) {
+                     B.insert({i, k}, (float) (float) 100);
+      }
+    }
+  }
+
+  for (int j = 0; j < NUM_J; j++) {
+    for (int k = 0; k < NUM_K; k++) {
+      float rand_float = (float)rand()/(float)(RAND_MAX);
+      D.insert({j, k}, (float) ((int) (rand_float*3/SPARSITY)));
+    }
+  }
+
+  B.pack();
+  C.pack();
+  D.pack();
+
+  IndexVar i("i"), j("j"), k("k");
+
+  IndexExpr accelerateExpr = B(i,j) * C(j,k);
+
+  A(i,k) = accelerateExpr;
+
+  IndexStmt stmt = A.getAssignment().concretize();
+  stmt = stmt.accelerate(new SparseMklMMCOOCSR(), accelerateExpr);
+
+   A.compile(stmt);
+   A.assemble();
+   auto func = A.compute_split();
+   auto pair = A.returnFuncPackedRaw(func);
+   pair.first(func.data());
+
+   expected(i,k) = (accelerateExpr);
+
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+  ASSERT_TENSOR_EQ(expected, A);
+
+}

@@ -636,6 +636,10 @@ void TensorBase::registerAccelerator(FunctionInterface functionInterface){
   functionInterfaces.push_back(functionInterface);
 }
 
+void TensorBase::registerAccelerators(std::vector<FunctionInterface> functionInterfaceAdd){
+  functionInterfaces.insert(std::end(functionInterfaces), std::begin(functionInterfaceAdd), std::end(functionInterfaceAdd));
+}
+
 std::vector<FunctionInterface> TensorBase::getRegisteredAccelerators(){
   return functionInterfaces;
 }

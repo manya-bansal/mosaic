@@ -9,6 +9,18 @@
 #include <unistd.h>
 #include <random>
 
+#include "taco/accelerator_interface/cblas_interface.h"
+#include "taco/accelerator_interface/tblis_interface.h"
+#include "taco/accelerator_interface/test_interface.h"
+#include "taco/accelerator_interface/cuda_interface.h"
+#include "taco/accelerator_interface/tile_interface.h"
+#include "taco/accelerator_interface/tensorflow_interface.h"
+#include "taco/accelerator_interface/gsl_interface.h"
+#include "taco/accelerator_interface/tensor_interface.h"
+#include "taco/accelerator_interface/avx2_interface.h"
+#include "taco/accelerator_interface/dynamic_order_interface.h"
+#include "taco/accelerator_interface/mkl_interface.h"
+
 using namespace taco;
 
 
@@ -272,4 +284,57 @@ TEST (accelerateNotation, testCheckerFunction){
 
 }
 
+
+TEST (accelerateNotation, timeEndToEnd){
+
+  // binary search over 0-65536
+   Tensor<float> A("A", {16, 16}, Format{Dense, Dense});
+   Tensor<float> B("B", {16, 16}, Format{Dense, Dense});
+   Tensor<float> C("C", {16, 16}, Format{Dense, Dense});
+   Tensor<float> D("D", {16, 16}, CSR);
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar k("k");
+
+
+  IndexExpr accelerateExpr = B(i, j) * C(j, k);
+  A(i, k) = accelerateExpr;
+
+  std::vector<FunctionInterface> interfaces =  {
+                         new MatrixMultiply()
+                          // new CudaSpmv(), new GSLVecAdd(), new MklSgemv(),
+                          // new SparseMklSgemv(), new SparseMklMM(), new MklSymmgemv(),
+                          // new MklMM(), new MklDot(), new MklAdd(), new SparseMklMMCOOCSR(), 
+                          // new TblisMultiply(), new TblisTTM(), new TblisDot(), 
+                          // new TblisSaxpy(), new TblisPlus(), new TblisGemv(), 
+                          // new TblisTTV(), new GslTensorPlus()
+  };
+
+  //  std::vector<FunctionInterface> interfaces =  {
+  //                         new MatrixMultiply()
+  // };
+
+  cout << "Registering #" << interfaces.size() << " Interfaces!!";
+
+  A.registerAccelerators(interfaces);
+
+  A.accelerateOn();
+
+  A.compile();
+  A.assemble();
+  A.compute();
+
+
+  // auto start = std::chrono::high_resolution_clock::now();
+  // int i = randomSearch(65536);
+  // auto stop = std::chrono::high_resolution_clock::now();
+
+  // auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+  // std::cout << "Time taken by function: "
+  //       << duration.count() << " us" << std::endl;
+
+  // std::cout << i << std::endl;
+
+
+}
 

@@ -658,6 +658,10 @@ AcceleratorExpr AcceleratorAssignment::getRhs() const{
   return getNode(*this)->rhs;
 }
 
+AcceleratorExpr AcceleratorAssignment::getRhs(){
+  return getNode(*this)->rhs;
+}
+
 /// Return the assignment compound operator (e.g., `+=`) or an undefined
 /// expression if the assignment is not compound (`=`).
 AcceleratorExpr AcceleratorAssignment::getOperator() const{

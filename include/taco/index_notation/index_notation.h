@@ -616,6 +616,8 @@ public:
 
   IndexStmt autoAccelerate(IndexStmt stmt, std::vector<FunctionInterface> functionInterface) const;
 
+  IndexStmt autoAccelerateVerify(IndexStmt stmt, std::vector<FunctionInterface> functionInterface) const;
+
   /// Takes any index notation and concretizes unknowns to make it concrete notation
   /// given a Provenance Graph of indexVars
   IndexStmt concretizeScheduled(ProvenanceGraph provGraph, std::vector<IndexVar> forallIndexVarList) const;
