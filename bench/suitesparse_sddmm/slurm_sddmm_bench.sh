@@ -13,7 +13,7 @@
 
 systems=("mkl" "taco" "gsl" "blas" "tblis")
 
-SUITSPARSE_INPUT=3elt
+SUITSPARSE_INPUT=exdata_1
 
 mkdir $SUITSPARSE_INPUT
 for i in "${systems[@]}"

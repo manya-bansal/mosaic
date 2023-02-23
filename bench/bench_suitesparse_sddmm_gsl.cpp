@@ -11,7 +11,7 @@
 #include "taco/accelerator_interface/mkl_interface.h"
 #include "taco/storage/file_io_mtx.h"
 
-#define SUITSPARSE_INPUT "3elt"
+#define SUITSPARSE_INPUT "exdata_1"
 #define SUITSPARSE_DATA_PATH "/home/ubuntu/mosaic/data/suitesparse"
 
 using namespace taco;

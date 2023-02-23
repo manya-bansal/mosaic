@@ -149,6 +149,7 @@ TEST(accelerateNotation, makeReductionNotation) {
 
 TEST(accelerateNotation, testCCLTimeAVX) {
 
+    auto start = std::chrono::high_resolution_clock::now();
 
     DynamicOrder dynamicOrder;
     DynamicIndexIterator interator(dynamicOrder);
@@ -163,6 +164,13 @@ TEST(accelerateNotation, testCCLTimeAVX) {
     GenerateSMTCode condition(forall(interator, dynamicOrder(interator) == 4), mapRef, dimRef, true);
     condition.runSMT();
     ASSERT_TRUE(condition.isSat());
+
+    auto stop = std::chrono::high_resolution_clock::now();
+
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    std::cout << "Time taken by function here: "
+        << duration.count() << " us" << std::endl;
+
 
     condition.getTilings();
 
