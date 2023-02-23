@@ -1,0 +1,160 @@
+{
+  "context": {
+    "date": "2023-02-23T19:02:12+00:00",
+    "host_name": "ip-172-31-32-166",
+    "executable": "/home/ubuntu/taco-interoperable/build/bin/./taco-bench",
+    "num_cpus": 4,
+    "mhz_per_cpu": 2500,
+    "cpu_scaling_enabled": false,
+    "caches": [
+      {
+        "type": "Data",
+        "level": 1,
+        "size": 32768,
+        "num_sharing": 2
+      },
+      {
+        "type": "Instruction",
+        "level": 1,
+        "size": 32768,
+        "num_sharing": 2
+      },
+      {
+        "type": "Unified",
+        "level": 2,
+        "size": 1048576,
+        "num_sharing": 2
+      },
+      {
+        "type": "Unified",
+        "level": 3,
+        "size": 37486592,
+        "num_sharing": 4
+      }
+    ],
+    "load_avg": [0.230469,0.19043,0.179688],
+    "library_build_type": "release"
+  },
+  "benchmarks": [
+    {
+      "name": "bench_spmv_mkl_col/100/min_warmup_time:10.000/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "bench_spmv_mkl_col/100/min_warmup_time:10.000/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.7805750000879925e-01,
+      "cpu_time": 2.7744449999999865e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_spmv_mkl_col/100/min_warmup_time:10.000/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "bench_spmv_mkl_col/100/min_warmup_time:10.000/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.6666999954395578e-02,
+      "cpu_time": 1.6040000000001886e-02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_spmv_mkl_col/100/min_warmup_time:10.000/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "bench_spmv_mkl_col/100/min_warmup_time:10.000/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 8.2134981469536328e-01,
+      "cpu_time": 8.2121583723284941e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_spmv_mkl_col/100/min_warmup_time:10.000/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "bench_spmv_mkl_col/100/min_warmup_time:10.000/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 2.9538847708454954e+00,
+      "cpu_time": 2.9599283360558717e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_spmv_mkl_col/200/min_warmup_time:10.000/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 1,
+      "run_name": "bench_spmv_mkl_col/200/min_warmup_time:10.000/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 3.2623600009173977e-02,
+      "cpu_time": 3.1492299999993922e-02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_spmv_mkl_col/200/min_warmup_time:10.000/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 1,
+      "run_name": "bench_spmv_mkl_col/200/min_warmup_time:10.000/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.8214999929332407e-02,
+      "cpu_time": 2.7209499999986120e-02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_spmv_mkl_col/200/min_warmup_time:10.000/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 1,
+      "run_name": "bench_spmv_mkl_col/200/min_warmup_time:10.000/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.4067697081591047e-02,
+      "cpu_time": 1.3962097900712508e-02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_spmv_mkl_col/200/min_warmup_time:10.000/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 1,
+      "run_name": "bench_spmv_mkl_col/200/min_warmup_time:10.000/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 4.3121228428607256e-01,
+      "cpu_time": 4.4334957753848403e-01,
+      "time_unit": "ms"
+    }
+  ]
+}
