@@ -1,6 +1,0 @@
-gcc -I/home/manya227/tensor-algebra-systems/gsl/include -I/home/manya227/tensor-algebra-systems/atlas/include -L/home/manya227/tensor-algebra-systems/atlas/lib  -L/home/manya227/tensor-algebra-systems/gsl/lib gsl-gemv-raw.c -o gsl-gemv-raw -Wl,-R/home/manya227/tensor-algebra-systems/gsl/lib -l:libgsl.so.25.1.0 -Wl,-R/home/manya227/tensor-algebra-systems/atlas/lib -l:libtatlas.so
-Makefile:22: recipe for target 'gsl' failed
-gcc -I. taco-gemv-raw.c -o taco-gemv-raw
-./taco-gemv-raw > result/taco
-gcc -I/home/manya227/tensor-algebra-systems/cblas -L/home/manya227/tensor-algebra-systems/cblas -Wl,-R/home/manya227/tensor-algebra-systems/cblas cblas-gemv-raw.c -o cblas-gemv-raw -l:libblas.so.3.7.1
-./cblas-gemv-raw > result/blas

@@ -31,8 +31,8 @@ static void bench_spmv_mkl_block(benchmark::State& state) {
     float SPARSITY = .2;
     int block_size = 10;
 
-    for (int i = 0; i < (dim/block_size); i+=block_size) {
-      for (int j = 0; j < (dim/block_size); j+=(dim/block_size)) {
+    for (int i = 0; i < dim; i+=block_size) {
+      for (int j = 0; j < dim; j+=block_size) {
         float rand_float = (float)rand()/(float)(RAND_MAX);
         if (rand_float < SPARSITY) {
           for (int k = 0; k < block_size; k++ ){
@@ -73,5 +73,5 @@ static void bench_spmv_mkl_block(benchmark::State& state) {
   }
 }
 
-TACO_BENCH(bench_spmv_mkl_block)->DenseRange(10000, 20000, 1000);
+TACO_BENCH(bench_spmv_mkl_block)->DenseRange(5000, 10000, 500);
 

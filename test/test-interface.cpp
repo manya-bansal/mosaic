@@ -2891,3 +2891,32 @@ TEST(interface, sdmmMKL_COO_to_CSR){
   ASSERT_TENSOR_EQ(expected, A);
 
 }
+
+TEST(interface, sanityCheckNonZeroes){
+   srand (time(NULL));
+   int dim = 10000;
+   int block_size = 10;
+   int num_non_zeroes = 0;
+   for (int i = 0; i < (dim); i+=block_size) {
+      for (int j = 0; j < (dim); j+=block_size) {
+        float rand_float = (float)rand()/(float)(RAND_MAX);
+        if (rand_float < 0.2) {
+               num_non_zeroes += block_size * block_size;
+            }
+      }
+    }
+
+   std::cout << "Number of non zeroes is " << num_non_zeroes << std::endl;
+
+   num_non_zeroes = 0;
+   for (int i = 0; i < dim; i++) {
+      for (int j = 0; j < dim; j++) {
+        float rand_float = (float)rand()/(float)(RAND_MAX);
+        if (rand_float < 0.2) {
+               num_non_zeroes += 1;
+            }
+       }
+    }
+    std::cout << "Number of non zeroes is " << num_non_zeroes << std::endl;
+}
+

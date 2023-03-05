@@ -69,5 +69,5 @@ static void bench_spmv_mkl_random(benchmark::State& state) {
 
 }
 
-TACO_BENCH(bench_spmv_mkl_random)->DenseRange(10000, 20000, 1000);
+TACO_BENCH(bench_spmv_mkl_random)->DenseRange(5000, 10000, 500);
 

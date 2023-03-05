@@ -71,5 +71,5 @@ static void bench_spmv_mkl_col(benchmark::State& state) {
 
 }
 
-TACO_BENCH(bench_spmv_mkl_col)->DenseRange(10000, 20000, 1000);
+TACO_BENCH(bench_spmv_mkl_col)->DenseRange(5000, 10000, 500);
 
