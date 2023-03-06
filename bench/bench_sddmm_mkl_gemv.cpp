@@ -36,12 +36,12 @@ static void bench_sddmm_gemv_mkl(benchmark::State& state) {
   Tensor<float> C("C", {NUM_I, NUM_J}, {Dense, Dense});
   Tensor<float> D("D", {NUM_J, NUM_K}, {Dense, Dense});
 
-  std::string generateData = "python3 /home/ubuntu/mosaic/data/data_gen.py --bench sddmm_dim --dim ";
+  std::string generateData = "python3 /home/reviewer/mosaic-benchmarks/data/data_gen.py --bench sddmm_dim --dim ";
   generateData += std::to_string(dim);
   generateData += " --nnz 0.4";
-  generateData += " --out_dir /home/ubuntu/mosaic/data/spdata/";
+  generateData += " --out_dir /home/reviewer/mosaic-benchmarks/data/spdata/";
   exec(generateData.c_str());
-  std::string filename = "/home/ubuntu/mosaic/data/spdata/sddmm_dim/B_"+ std::to_string(dim) + "_0.4"  + ".mtx";
+  std::string filename = "/home/reviewer/mosaic-benchmarks/data/spdata/sddmm_dim/B_"+ std::to_string(dim) + "_0.4"  + ".mtx";
   B = castToType<float>("B", readMTX(filename, CSR));
 
   for (int i = 0; i < dim; i++) {
@@ -75,7 +75,7 @@ static void bench_sddmm_gemv_mkl(benchmark::State& state) {
     state.ResumeTiming();
     pair.first(func.data());
   }
-  std::string eraseData = "rm -rf /home/ubuntu/mosaic/data/spdata/sddmm_dim/B_" + std::to_string(dim) + "_0.4"+ ".mtx";
+  std::string eraseData = "rm -rf /home/reviewer/mosaic-benchmarks/data/spdata/sddmm_dim/B_" + std::to_string(dim) + "_0.4"+ ".mtx";
   exec(eraseData.c_str());
 }
 

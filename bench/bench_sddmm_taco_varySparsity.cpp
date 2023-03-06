@@ -41,13 +41,13 @@ static void bench_sddmm_varySparisty_taco(benchmark::State& state, float SPARSIT
                                                   {0.05, "0.05"}, {0.1, "0.1"}, {0.2, "0.2"}, {0.4, "0.4"},
                                                   {0.6, "0.6"}, {0.8, "0.8"}, {1.0, "1.0"}};
 
-  std::string generateData = "python3 /home/ubuntu/mosaic/data/data_gen.py --bench sddmm_sp --dim ";
+  std::string generateData = "python3 /home/reviewer/mosaic-benchmarks/data/data_gen.py --bench sddmm_sp --dim ";
   generateData += std::to_string(dim);
   generateData += " --nnz ";
   generateData += floatToString[SPARSITY];
-  generateData += " --out_dir /home/ubuntu/mosaic/data/spdata/";
+  generateData += " --out_dir /home/reviewer/mosaic-benchmarks/data/spdata/";
   exec(generateData.c_str());
-  std::string filename = "/home/ubuntu/mosaic/data/spdata/sddmm_sp/B_"+ std::to_string(dim) + "_" + floatToString[SPARSITY] + ".mtx";
+  std::string filename = "/home/reviewer/mosaic-benchmarks/data/spdata/sddmm_sp/B_"+ std::to_string(dim) + "_" + floatToString[SPARSITY] + ".mtx";
   B = castToType<float>("B", readMTX(filename, CSR));
 
   for (int i = 0; i < dim; i++) {
@@ -77,19 +77,17 @@ static void bench_sddmm_varySparisty_taco(benchmark::State& state, float SPARSIT
     state.ResumeTiming();
     pair.first(func.data());
   }
-  std::string eraseData = "rm -rf /home/ubuntu/mosaic/data/spdata/sddmm_sp/B_" + std::to_string(dim) + "_" + floatToString[SPARSITY] + ".mtx";
+  std::string eraseData = "rm -rf /home/reviewer/mosaic-benchmarks/data/spdata/sddmm_sp/B_" + std::to_string(dim) + "_" + floatToString[SPARSITY] + ".mtx";
   exec(eraseData.c_str());
 }
 
-TACO_BENCH_ARGS(bench_sddmm_varySparisty_taco, 0.00625, 0.00625, DIM_SIZE);
-TACO_BENCH_ARGS(bench_sddmm_varySparisty_taco, 0.0125,  0.0125, DIM_SIZE);
-TACO_BENCH_ARGS(bench_sddmm_varySparisty_taco, 0.025,   0.025, DIM_SIZE);
-TACO_BENCH_ARGS(bench_sddmm_varySparisty_taco, 0.05,    0.05, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_taco, 0.00078125, 0.00078125, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_taco, 0.0015625,  0.0015625, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_taco, 0.003125,   0.003125, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_taco, 0.00625,    0.00625, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_taco, 0.0125,     0.0125, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_taco, 0.025,     0.025, DIM_SIZE);
+TACO_BENCH_ARGS(bench_sddmm_varySparisty_taco, 0.05,     0.05, DIM_SIZE);
 TACO_BENCH_ARGS(bench_sddmm_varySparisty_taco, 0.1,     0.1, DIM_SIZE);
-TACO_BENCH_ARGS(bench_sddmm_varySparisty_taco, 0.2,     0.2, DIM_SIZE);
-TACO_BENCH_ARGS(bench_sddmm_varySparisty_taco, 0.4,     0.4, DIM_SIZE);
-TACO_BENCH_ARGS(bench_sddmm_varySparisty_taco, 0.6,     0.6, DIM_SIZE);
-TACO_BENCH_ARGS(bench_sddmm_varySparisty_taco, 0.8,     0.8, DIM_SIZE);
-TACO_BENCH_ARGS(bench_sddmm_varySparisty_taco, 1.0,     1.0, DIM_SIZE);
 
 

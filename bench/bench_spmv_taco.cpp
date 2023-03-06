@@ -28,11 +28,11 @@ static void bench_spmv_taco(benchmark::State& state) {
     Tensor<float> B("B", {dim, dim}, CSR);
     Tensor<float> C("C", {dim}, Format{Dense});
 
-    std::string generateData = "python3 /home/ubuntu/mosaic/data/data_gen.py --bench spmv --dim ";
+    std::string generateData = "python3 /home/reviewer/mosaic-benchmarks/data/data_gen.py --bench spmv --dim ";
     generateData += std::to_string(dim);
-    generateData += " --nnz 0.2 --out_dir /home/ubuntu/mosaic/data/spdata/";
+    generateData += " --nnz 0.2 --out_dir /home/reviewer/mosaic-benchmarks/data/spdata/";
     exec(generateData.c_str());
-    std::string filename = "/home/ubuntu/mosaic/data/spdata/spmv/B_" + std::to_string(dim) + "_0.2.mtx";
+    std::string filename = "/home/reviewer/mosaic-benchmarks/data/spdata/spmv/B_" + std::to_string(dim) + "_0.2.mtx";
     B = castToType<float>("B", readMTX(filename, CSR));
 
     for (int i = 0; i < dim; i++) {
@@ -58,7 +58,7 @@ static void bench_spmv_taco(benchmark::State& state) {
     state.ResumeTiming();
     pair.first(func.data());
   }
-  std::string eraseData = "rm -rf /home/ubuntu/mosaic/data/spdata/spmv/B_" + std::to_string(dim) + "_0.2.mtx";
+  std::string eraseData = "rm -rf /home/reviewer/mosaic-benchmarks/data/spdata/spmv/B_" + std::to_string(dim) + "_0.2.mtx";
   exec(eraseData.c_str());
 }
 

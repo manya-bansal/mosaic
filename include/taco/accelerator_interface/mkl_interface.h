@@ -183,4 +183,31 @@ class MklDot : public AbstractFunctionInterface{
         IndexVar i;
 };
 
+class MklAdd : public AbstractFunctionInterface{
+    public: 
+        MklAdd() : x(TensorObject(Type(taco::Float32, {Dimension(), Dimension()}), CSR)),
+                  y(TensorObject(Type(taco::Float32, {Dimension(), Dimension()}), CSR)),
+                  z(TensorObject(Type(taco::Float32, {Dimension(), Dimension()}), CSR)),
+                  i(IndexVar()) {};
+
+        // IndexExpr getRHS() const override {return x(i);}
+        // IndexExpr getLHS() const override {return x(i);}
+        AcceleratorStmt getStmt() const override {return z(i, j) = x(i, j) + y(i, j);}
+        std::vector<Argument> getArguments() const override {return 
+                                                {   new DimArg(i), 
+                                                    new TensorName(x),
+                                                    new TensorName(y),
+                                                    new TensorName(z)
+                                                };}
+        std::string getReturnType() const override {return "void";}
+        std::string getFunctionName() const override {return "mkl_sparse_s_add_internal";}
+
+    private: 
+        TensorObject x;
+        TensorObject y;
+        TensorObject z;
+        IndexVar i;
+        IndexVar j;
+};
+
 #endif 
