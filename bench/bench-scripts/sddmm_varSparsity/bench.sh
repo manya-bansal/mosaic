@@ -1,18 +1,6 @@
-#!/bin/bash
 
-#SBATCH -J sddmm_var_sparsity_bench
-#SBATCH -o filename_%j.txt
-#SBATCH -e filename_%j.err
-#SBATCH --mail-type=ALL
-#SBATCH --mail-user=manya227@stanford.edu
-#SBATCH --nodes=1
-#SBATCH --mem MaxMemPerNode
-#SBATCH --exclusive
-#SBATCH --time=10:00:00
 
-# systems=("dot_mkl" "mkl" "taco" "blas" "gemv_mkl" "tblis" "gemv_gsl")
-
-systems=("dot_mkl")
+systems=("dot_mkl" "mkl" "taco" "blas" "gemv_mkl" "tblis" "gemv_gsl")
 
 for i in "${systems[@]}"
 do  

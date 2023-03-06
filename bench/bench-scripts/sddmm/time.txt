@@ -1,6 +1,6 @@
 {
   "context": {
-    "date": "2023-03-06T23:41:52+00:00",
+    "date": "2023-03-06T23:47:11+00:00",
     "host_name": "ip-172-31-2-241",
     "executable": "/home/reviewer/mosaic/build/bin/./taco-bench",
     "num_cpus": 4,
@@ -32,11 +32,11 @@
         "num_sharing": 4
       }
     ],
-    "load_avg": [0.00292969,0.128906,0.262695],
+    "load_avg": [0.908691,0.788086,0.533203],
     "library_build_type": "release"
   },
   "benchmarks": [
-!!!! temp dir !!!!!! /home/reviewer/temp/taco_tmp_WzbRvV/
+!!!! temp dir !!!!!! /home/reviewer/temp/taco_tmp_gwSJFF/
 Warning : Implicit Reduction is being added, given function is calculating sum(i218, (A210(i217,i218) * A213(i218,i219))).
 Warning : Implicit Reduction is being added, given function is calculating sum(i472, (A464(i471,i472) * A467(i472,i473))).
 Warning : Implicit Reduction is being added, given function is calculating sum(i726, (A718(i725,i726) * A721(i726,i727))).
@@ -58,8 +58,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "mean",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 3.6195729480823507e-01,
-      "cpu_time": 3.6030440000000830e-01,
+      "real_time": 3.7197979690972716e-01,
+      "cpu_time": 3.7012479999999626e-01,
       "time_unit": "ms"
     },
     {
@@ -73,8 +73,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "median",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 1.0594499326543882e-01,
-      "cpu_time": 1.0425800000000984e-01,
+      "real_time": 1.0981999366777018e-01,
+      "cpu_time": 1.0776249999998322e-01,
       "time_unit": "ms"
     },
     {
@@ -88,8 +88,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "stddev",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 8.0783387694265785e-01,
-      "cpu_time": 8.0821138524758251e-01,
+      "real_time": 8.2469939456641350e-01,
+      "cpu_time": 8.2501343073590383e-01,
       "time_unit": "ms"
     },
     {
@@ -103,8 +103,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "cv",
       "aggregate_unit": "percentage",
       "iterations": 10,
-      "real_time": 2.2318485869186535e+00,
-      "cpu_time": 2.2431349304853447e+00,
+      "real_time": 2.2170542632092283e+00,
+      "cpu_time": 2.2290141885545420e+00,
       "time_unit": "ms"
     }Warning : Implicit Reduction is being added, given function is calculating sum(i2923, (A2915(i2922,i2923) * A2918(i2923,i2924))).
 Warning : Implicit Reduction is being added, given function is calculating sum(i3177, (A3169(i3176,i3177) * A3172(i3177,i3178))).
@@ -128,8 +128,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "mean",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 1.1318238000967540e+00,
-      "cpu_time": 8.4651599999998606e-01,
+      "real_time": 8.1898869975702837e-01,
+      "cpu_time": 8.1699819999999368e-01,
       "time_unit": "ms"
     },
     {
@@ -143,8 +143,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "median",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 8.0276600056095049e-01,
-      "cpu_time": 8.0065100000006884e-01,
+      "real_time": 7.9662599455332384e-01,
+      "cpu_time": 7.9474750000005367e-01,
       "time_unit": "ms"
     },
     {
@@ -158,8 +158,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "stddev",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 1.0271785999001102e+00,
-      "cpu_time": 1.3268337891469406e-01,
+      "real_time": 5.8052717934239648e-02,
+      "cpu_time": 5.7977527833929621e-02,
       "time_unit": "ms"
     },
     {
@@ -173,8 +173,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "cv",
       "aggregate_unit": "percentage",
       "iterations": 10,
-      "real_time": 9.0754285235237309e-01,
-      "cpu_time": 1.5674054467333901e-01,
+      "real_time": 7.0883417501929266e-02,
+      "cpu_time": 7.0964082704135775e-02,
       "time_unit": "ms"
     }Warning : Implicit Reduction is being added, given function is calculating sum(i5628, (A5620(i5627,i5628) * A5623(i5628,i5629))).
 Warning : Implicit Reduction is being added, given function is calculating sum(i5882, (A5874(i5881,i5882) * A5877(i5882,i5883))).
@@ -198,8 +198,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "mean",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 2.8233257005922496e+00,
-      "cpu_time": 2.8216128999999595e+00,
+      "real_time": 2.9603145012515597e+00,
+      "cpu_time": 2.9582500999999928e+00,
       "time_unit": "ms"
     },
     {
@@ -213,8 +213,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "median",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 2.7761454985011369e+00,
-      "cpu_time": 2.7742754999998676e+00,
+      "real_time": 2.7848495010402985e+00,
+      "cpu_time": 2.7828619999999971e+00,
       "time_unit": "ms"
     },
     {
@@ -228,8 +228,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "stddev",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 1.7507771349466675e-01,
-      "cpu_time": 1.7506293132182499e-01,
+      "real_time": 4.3928971897377495e-01,
+      "cpu_time": 4.3895547386178652e-01,
       "time_unit": "ms"
     },
     {
@@ -243,8 +243,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "cv",
       "aggregate_unit": "percentage",
       "iterations": 10,
-      "real_time": 6.2011164159324811e-02,
-      "cpu_time": 6.2043567819606835e-02,
+      "real_time": 1.4839292203178156e-01,
+      "cpu_time": 1.4838348990904709e-01,
       "time_unit": "ms"
     }Warning : Implicit Reduction is being added, given function is calculating sum(i8333, (A8325(i8332,i8333) * A8328(i8333,i8334))).
 Warning : Implicit Reduction is being added, given function is calculating sum(i8587, (A8579(i8586,i8587) * A8582(i8587,i8588))).
@@ -268,8 +268,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "mean",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 6.8283258005976677e+00,
-      "cpu_time": 6.8272688000000858e+00,
+      "real_time": 6.7801537094055675e+00,
+      "cpu_time": 6.7780912999999998e+00,
       "time_unit": "ms"
     },
     {
@@ -283,8 +283,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "median",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 6.8127269987598993e+00,
-      "cpu_time": 6.8111554999996660e+00,
+      "real_time": 6.7561945106717758e+00,
+      "cpu_time": 6.7501999999999285e+00,
       "time_unit": "ms"
     },
     {
@@ -298,8 +298,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "stddev",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 6.8041018996433181e-02,
-      "cpu_time": 6.8016357099532715e-02,
+      "real_time": 1.0779603010837555e-01,
+      "cpu_time": 1.0811960049264609e-01,
       "time_unit": "ms"
     },
     {
@@ -313,8 +313,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "cv",
       "aggregate_unit": "percentage",
       "iterations": 10,
-      "real_time": 9.9645243919787348e-03,
-      "cpu_time": 9.9624548398521903e-03,
+      "real_time": 1.5898759044184897e-02,
+      "cpu_time": 1.5951334336946166e-02,
       "time_unit": "ms"
     }Warning : Implicit Reduction is being added, given function is calculating sum(i11038, (A11030(i11037,i11038) * A11033(i11038,i11039))).
 Warning : Implicit Reduction is being added, given function is calculating sum(i11292, (A11284(i11291,i11292) * A11287(i11292,i11293))).
@@ -338,8 +338,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "mean",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 1.3381168596970383e+01,
-      "cpu_time": 1.3380402900000110e+01,
+      "real_time": 1.3270980100787710e+01,
+      "cpu_time": 1.3269909899999721e+01,
       "time_unit": "ms"
     },
     {
@@ -353,8 +353,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "median",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 1.3255827492685057e+01,
-      "cpu_time": 1.3254180499999711e+01,
+      "real_time": 1.3185695999709424e+01,
+      "cpu_time": 1.3184738500000572e+01,
       "time_unit": "ms"
     },
     {
@@ -368,8 +368,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "stddev",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 3.1128532742662807e-01,
-      "cpu_time": 3.1128854806925216e-01,
+      "real_time": 3.1046368829763221e-01,
+      "cpu_time": 3.1030518476487634e-01,
       "time_unit": "ms"
     },
     {
@@ -383,8 +383,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "cv",
       "aggregate_unit": "percentage",
       "iterations": 10,
-      "real_time": 2.3262940390505644e-02,
-      "cpu_time": 2.3264512316684395e-02,
+      "real_time": 2.3394179325097800e-02,
+      "cpu_time": 2.3384121452466142e-02,
       "time_unit": "ms"
     }Warning : Implicit Reduction is being added, given function is calculating sum(i13743, (A13735(i13742,i13743) * A13738(i13743,i13744))).
 Warning : Implicit Reduction is being added, given function is calculating sum(i13997, (A13989(i13996,i13997) * A13992(i13997,i13998))).
@@ -408,8 +408,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "mean",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 2.3329106000892356e+01,
-      "cpu_time": 2.3322650199999906e+01,
+      "real_time": 2.3113001603633165e+01,
+      "cpu_time": 2.3111172799999835e+01,
       "time_unit": "ms"
     },
     {
@@ -423,8 +423,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "median",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 2.3346393500105478e+01,
-      "cpu_time": 2.3345251500000330e+01,
+      "real_time": 2.3019972009933554e+01,
+      "cpu_time": 2.3015490499999736e+01,
       "time_unit": "ms"
     },
     {
@@ -438,8 +438,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "stddev",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 1.7457023554595694e-01,
-      "cpu_time": 1.7047944398022394e-01,
+      "real_time": 1.8301288533624643e-01,
+      "cpu_time": 1.8357783010127124e-01,
       "time_unit": "ms"
     },
     {
@@ -453,8 +453,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "cv",
       "aggregate_unit": "percentage",
       "iterations": 10,
-      "real_time": 7.4829372175375898e-03,
-      "cpu_time": 7.3096085787122357e-03,
+      "real_time": 7.9181790610648520e-03,
+      "cpu_time": 7.9432502923985123e-03,
       "time_unit": "ms"
     }Warning : Implicit Reduction is being added, given function is calculating sum(i16448, (A16440(i16447,i16448) * A16443(i16448,i16449))).
 Warning : Implicit Reduction is being added, given function is calculating sum(i16702, (A16694(i16701,i16702) * A16697(i16702,i16703))).
@@ -478,8 +478,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "mean",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 3.6768127899267711e+01,
-      "cpu_time": 3.6765495799999925e+01,
+      "real_time": 3.6765087996900547e+01,
+      "cpu_time": 3.6759547299999440e+01,
       "time_unit": "ms"
     },
     {
@@ -493,8 +493,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "median",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 3.6891420000756625e+01,
-      "cpu_time": 3.6891042000000596e+01,
+      "real_time": 3.6772081490198616e+01,
+      "cpu_time": 3.6771636500001037e+01,
       "time_unit": "ms"
     },
     {
@@ -508,8 +508,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "stddev",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 5.0072632428331165e-01,
-      "cpu_time": 5.0328432944755763e-01,
+      "real_time": 2.1818983455836491e-01,
+      "cpu_time": 2.1294009903655881e-01,
       "time_unit": "ms"
     },
     {
@@ -523,8 +523,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "cv",
       "aggregate_unit": "percentage",
       "iterations": 10,
-      "real_time": 1.3618488427127241e-02,
-      "cpu_time": 1.3689039641553226e-02,
+      "real_time": 5.9347018175710401e-03,
+      "cpu_time": 5.7927834991744328e-03,
       "time_unit": "ms"
     }Warning : Implicit Reduction is being added, given function is calculating sum(i19153, (A19145(i19152,i19153) * A19148(i19153,i19154))).
 Warning : Implicit Reduction is being added, given function is calculating sum(i19407, (A19399(i19406,i19407) * A19402(i19407,i19408))).
@@ -548,8 +548,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "mean",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 5.5633967999892775e+01,
-      "cpu_time": 5.5626914700000896e+01,
+      "real_time": 5.4997955000726506e+01,
+      "cpu_time": 5.4994673999999577e+01,
       "time_unit": "ms"
     },
     {
@@ -563,8 +563,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "median",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 5.5595005498616956e+01,
-      "cpu_time": 5.5594462499996666e+01,
+      "real_time": 5.4891954998311121e+01,
+      "cpu_time": 5.4891301000001384e+01,
       "time_unit": "ms"
     },
     {
@@ -578,8 +578,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "stddev",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 4.1526236619391366e-01,
-      "cpu_time": 4.0365568225609894e-01,
+      "real_time": 3.8069766417335171e-01,
+      "cpu_time": 3.8251137527368939e-01,
       "time_unit": "ms"
     },
     {
@@ -593,8 +593,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "cv",
       "aggregate_unit": "percentage",
       "iterations": 10,
-      "real_time": 7.4641874581858683e-03,
-      "cpu_time": 7.2564815868907508e-03,
+      "real_time": 6.9220330859269732e-03,
+      "cpu_time": 6.9554258158470474e-03,
       "time_unit": "ms"
     }Warning : Implicit Reduction is being added, given function is calculating sum(i21858, (A21850(i21857,i21858) * A21853(i21858,i21859))).
 Warning : Implicit Reduction is being added, given function is calculating sum(i22112, (A22104(i22111,i22112) * A22107(i22112,i22113))).
@@ -618,8 +618,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "mean",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 8.2818944800237659e+01,
-      "cpu_time": 8.2806152799998500e+01,
+      "real_time": 8.0483586603077143e+01,
+      "cpu_time": 8.0477701200000254e+01,
       "time_unit": "ms"
     },
     {
@@ -633,8 +633,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "median",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 8.0575795000186190e+01,
-      "cpu_time": 8.0575012999997142e+01,
+      "real_time": 7.9726664494955912e+01,
+      "cpu_time": 7.9716729499999417e+01,
       "time_unit": "ms"
     },
     {
@@ -648,8 +648,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "stddev",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 5.3470708382400236e+00,
-      "cpu_time": 5.3315217712038212e+00,
+      "real_time": 2.1072749342798192e+00,
+      "cpu_time": 2.1016665869220370e+00,
       "time_unit": "ms"
     },
     {
@@ -663,8 +663,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "cv",
       "aggregate_unit": "percentage",
       "iterations": 10,
-      "real_time": 6.4563377994459548e-02,
-      "cpu_time": 6.4385575116393007e-02,
+      "real_time": 2.6182666842027288e-02,
+      "cpu_time": 2.6114893387660907e-02,
       "time_unit": "ms"
     }Warning : Implicit Reduction is being added, given function is calculating sum(i24563, (A24555(i24562,i24563) * A24558(i24563,i24564))).
 Warning : Implicit Reduction is being added, given function is calculating sum(i24817, (A24809(i24816,i24817) * A24812(i24817,i24818))).
@@ -688,8 +688,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "mean",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 1.1121188480028650e+02,
-      "cpu_time": 1.1120355870000083e+02,
+      "real_time": 1.1498795549705392e+02,
+      "cpu_time": 1.1492181140000211e+02,
       "time_unit": "ms"
     },
     {
@@ -703,8 +703,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "median",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 1.1020769250171725e+02,
-      "cpu_time": 1.1019622799999952e+02,
+      "real_time": 1.1007183849869762e+02,
+      "cpu_time": 1.1005453399999965e+02,
       "time_unit": "ms"
     },
     {
@@ -718,8 +718,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "stddev",
       "aggregate_unit": "time",
       "iterations": 10,
-      "real_time": 3.2251926861912112e+00,
-      "cpu_time": 3.2225277257753469e+00,
+      "real_time": 8.9404163382110973e+00,
+      "cpu_time": 8.8490124782390556e+00,
       "time_unit": "ms"
     },
     {
@@ -733,9 +733,648 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "aggregate_name": "cv",
       "aggregate_unit": "percentage",
       "iterations": 10,
-      "real_time": 2.9000431851173004e-02,
-      "cpu_time": 2.8978638484663196e-02,
+      "real_time": 7.7750893992024728e-02,
+      "cpu_time": 7.7000287155575511e-02,
       "time_unit": "ms"
     }
   ]
 }
+{
+  "context": {
+    "date": "2023-03-06T23:52:12+00:00",
+    "host_name": "ip-172-31-2-241",
+    "executable": "/home/reviewer/mosaic/build/bin/./taco-bench",
+    "num_cpus": 4,
+    "mhz_per_cpu": 3100,
+    "cpu_scaling_enabled": false,
+    "caches": [
+      {
+        "type": "Data",
+        "level": 1,
+        "size": 32768,
+        "num_sharing": 2
+      },
+      {
+        "type": "Instruction",
+        "level": 1,
+        "size": 32768,
+        "num_sharing": 2
+      },
+      {
+        "type": "Unified",
+        "level": 2,
+        "size": 1048576,
+        "num_sharing": 2
+      },
+      {
+        "type": "Unified",
+        "level": 3,
+        "size": 37486592,
+        "num_sharing": 4
+      }
+    ],
+    "load_avg": [1.49805,1.11621,0.748535],
+    "library_build_type": "release"
+  },
+  "benchmarks": [
+!!!! temp dir !!!!!! /home/reviewer/temp/taco_tmp_1HH3Lw/
+Warning : Implicit Reduction is being added, given function is calculating sum(i218, (A210(i217,i218) * A213(i218,i219))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i472, (A464(i471,i472) * A467(i472,i473))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i726, (A718(i725,i726) * A721(i726,i727))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i980, (A972(i979,i980) * A975(i980,i981))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i1234, (A1226(i1233,i1234) * A1229(i1234,i1235))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i1488, (A1480(i1487,i1488) * A1483(i1488,i1489))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i1742, (A1734(i1741,i1742) * A1737(i1742,i1743))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i1996, (A1988(i1995,i1996) * A1991(i1996,i1997))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i2250, (A2242(i2249,i2250) * A2245(i2250,i2251))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i2504, (A2496(i2503,i2504) * A2499(i2504,i2505))).
+var1
+var2
+mat
+    {
+      "name": "bench_sddmm_gsl/100/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_gsl/100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 3.7605980469379574e-01,
+      "cpu_time": 3.7408920000001067e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gsl/100/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_gsl/100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.1427699791966006e-01,
+      "cpu_time": 1.1223850000001423e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gsl/100/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_gsl/100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 8.2665799632825243e-01,
+      "cpu_time": 8.2675287963249156e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gsl/100/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_gsl/100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 2.1982088646813858e+00,
+      "cpu_time": 2.2100420959291740e+00,
+      "time_unit": "ms"
+    }Warning : Implicit Reduction is being added, given function is calculating sum(i2923, (A2915(i2922,i2923) * A2918(i2923,i2924))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i3177, (A3169(i3176,i3177) * A3172(i3177,i3178))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i3431, (A3423(i3430,i3431) * A3426(i3431,i3432))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i3685, (A3677(i3684,i3685) * A3680(i3685,i3686))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i3939, (A3931(i3938,i3939) * A3934(i3939,i3940))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i4193, (A4185(i4192,i4193) * A4188(i4193,i4194))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i4447, (A4439(i4446,i4447) * A4442(i4447,i4448))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i4701, (A4693(i4700,i4701) * A4696(i4701,i4702))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i4955, (A4947(i4954,i4955) * A4950(i4955,i4956))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i5209, (A5201(i5208,i5209) * A5204(i5209,i5210))).
+var1
+var2
+mat
+,
+    {
+      "name": "bench_sddmm_gsl/300/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 1,
+      "run_name": "bench_sddmm_gsl/300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 8.7531699973624200e-01,
+      "cpu_time": 8.7305929999999532e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gsl/300/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 1,
+      "run_name": "bench_sddmm_gsl/300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 8.1690899241948500e-01,
+      "cpu_time": 8.1492050000001037e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gsl/300/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 1,
+      "run_name": "bench_sddmm_gsl/300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.3375625372871044e-01,
+      "cpu_time": 1.3344281271688155e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gsl/300/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 1,
+      "run_name": "bench_sddmm_gsl/300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 1.5280892952954764e-01,
+      "cpu_time": 1.5284507331504543e-01,
+      "time_unit": "ms"
+    }Warning : Implicit Reduction is being added, given function is calculating sum(i5628, (A5620(i5627,i5628) * A5623(i5628,i5629))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i5882, (A5874(i5881,i5882) * A5877(i5882,i5883))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i6136, (A6128(i6135,i6136) * A6131(i6136,i6137))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i6390, (A6382(i6389,i6390) * A6385(i6390,i6391))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i6644, (A6636(i6643,i6644) * A6639(i6644,i6645))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i6898, (A6890(i6897,i6898) * A6893(i6898,i6899))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i7152, (A7144(i7151,i7152) * A7147(i7152,i7153))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i7406, (A7398(i7405,i7406) * A7401(i7406,i7407))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i7660, (A7652(i7659,i7660) * A7655(i7660,i7661))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i7914, (A7906(i7913,i7914) * A7909(i7914,i7915))).
+var1
+var2
+mat
+,
+    {
+      "name": "bench_sddmm_gsl/500/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 2,
+      "run_name": "bench_sddmm_gsl/500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.9645278991665691e+00,
+      "cpu_time": 2.9627874999999975e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gsl/500/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 2,
+      "run_name": "bench_sddmm_gsl/500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.7701055078068748e+00,
+      "cpu_time": 2.7678180000000330e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gsl/500/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 2,
+      "run_name": "bench_sddmm_gsl/500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 4.7747649485865440e-01,
+      "cpu_time": 4.7737752495299918e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gsl/500/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 2,
+      "run_name": "bench_sddmm_gsl/500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 1.6106324888792226e-01,
+      "cpu_time": 1.6112445626053157e-01,
+      "time_unit": "ms"
+    }Warning : Implicit Reduction is being added, given function is calculating sum(i8333, (A8325(i8332,i8333) * A8328(i8333,i8334))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i8587, (A8579(i8586,i8587) * A8582(i8587,i8588))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i8841, (A8833(i8840,i8841) * A8836(i8841,i8842))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i9095, (A9087(i9094,i9095) * A9090(i9095,i9096))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i9349, (A9341(i9348,i9349) * A9344(i9349,i9350))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i9603, (A9595(i9602,i9603) * A9598(i9603,i9604))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i9857, (A9849(i9856,i9857) * A9852(i9857,i9858))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i10111, (A10103(i10110,i10111) * A10106(i10111,i10112))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i10365, (A10357(i10364,i10365) * A10360(i10365,i10366))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i10619, (A10611(i10618,i10619) * A10614(i10619,i10620))).
+var1
+var2
+mat
+,
+    {
+      "name": "bench_sddmm_gsl/700/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 3,
+      "run_name": "bench_sddmm_gsl/700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 7.1295032030320726e+00,
+      "cpu_time": 7.1281034000001853e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gsl/700/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 3,
+      "run_name": "bench_sddmm_gsl/700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 6.7570325045380741e+00,
+      "cpu_time": 6.7560589999999809e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gsl/700/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 3,
+      "run_name": "bench_sddmm_gsl/700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 6.7527512011264401e-01,
+      "cpu_time": 6.7508252561870963e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gsl/700/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 3,
+      "run_name": "bench_sddmm_gsl/700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 9.4715592500955653e-02,
+      "cpu_time": 9.4707173526508051e-02,
+      "time_unit": "ms"
+    }Warning : Implicit Reduction is being added, given function is calculating sum(i11038, (A11030(i11037,i11038) * A11033(i11038,i11039))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i11292, (A11284(i11291,i11292) * A11287(i11292,i11293))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i11546, (A11538(i11545,i11546) * A11541(i11546,i11547))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i11800, (A11792(i11799,i11800) * A11795(i11800,i11801))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i12054, (A12046(i12053,i12054) * A12049(i12054,i12055))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i12308, (A12300(i12307,i12308) * A12303(i12308,i12309))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i12562, (A12554(i12561,i12562) * A12557(i12562,i12563))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i12816, (A12808(i12815,i12816) * A12811(i12816,i12817))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i13070, (A13062(i13069,i13070) * A13065(i13070,i13071))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i13324, (A13316(i13323,i13324) * A13319(i13324,i13325))).
+var1
+var2
+mat
+,
+    {
+      "name": "bench_sddmm_gsl/900/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 4,
+      "run_name": "bench_sddmm_gsl/900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.3376956997672096e+01,
+      "cpu_time": 1.3375776700000051e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gsl/900/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 4,
+      "run_name": "bench_sddmm_gsl/900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.3192512997193262e+01,
+      "cpu_time": 1.3191735000000369e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gsl/900/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 4,
+      "run_name": "bench_sddmm_gsl/900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 4.6424583539087810e-01,
+      "cpu_time": 4.6420222874498779e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gsl/900/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 4,
+      "run_name": "bench_sddmm_gsl/900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 3.4704891065409547e-02,
+      "cpu_time": 3.4704693353993114e-02,
+      "time_unit": "ms"
+    }Warning : Implicit Reduction is being added, given function is calculating sum(i13743, (A13735(i13742,i13743) * A13738(i13743,i13744))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i13997, (A13989(i13996,i13997) * A13992(i13997,i13998))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i14251, (A14243(i14250,i14251) * A14246(i14251,i14252))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i14505, (A14497(i14504,i14505) * A14500(i14505,i14506))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i14759, (A14751(i14758,i14759) * A14754(i14759,i14760))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i15013, (A15005(i15012,i15013) * A15008(i15013,i15014))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i15267, (A15259(i15266,i15267) * A15262(i15267,i15268))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i15521, (A15513(i15520,i15521) * A15516(i15521,i15522))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i15775, (A15767(i15774,i15775) * A15770(i15775,i15776))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i16029, (A16021(i16028,i16029) * A16024(i16029,i16030))).
+var1
+var2
+mat
+,
+    {
+      "name": "bench_sddmm_gsl/1100/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 5,
+      "run_name": "bench_sddmm_gsl/1100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.3255626698664855e+01,
+      "cpu_time": 2.3249888100000149e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gsl/1100/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 5,
+      "run_name": "bench_sddmm_gsl/1100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.3100278493075166e+01,
+      "cpu_time": 2.3091444499999447e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gsl/1100/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 5,
+      "run_name": "bench_sddmm_gsl/1100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 4.2915178690838063e-01,
+      "cpu_time": 4.3103590770510924e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gsl/1100/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 5,
+      "run_name": "bench_sddmm_gsl/1100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 1.8453675425268972e-02,
+      "cpu_time": 1.8539268053729106e-02,
+      "time_unit": "ms"
+    }
