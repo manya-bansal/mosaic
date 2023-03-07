@@ -43,6 +43,7 @@ const string cHeaders =
   "#include \"mkl.h\"\n"
   "#include <cuda_runtime_api.h>\n"
   "#include <cusparse.h>\n"
+  "#include <time.h>\n"
  
   // "#include <Accelerate/Accelerate.h>\n"
   "#if _OPENMP\n"

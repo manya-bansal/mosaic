@@ -31,7 +31,7 @@ static std::string exec(const char* cmd) {
     return result;
 }
 
-static void bench_mm_add_mkl(benchmark::State& state, float SPARSITY, int dim) {
+static void bench_mm_add_stardust(benchmark::State& state, float SPARSITY, int dim) {
 
   int NUM_I = dim;
   int NUM_K = dim;
@@ -85,12 +85,12 @@ static void bench_mm_add_mkl(benchmark::State& state, float SPARSITY, int dim) {
   gsl_compile = false;
 }
 
-TACO_BENCH_ARGS(bench_mm_add_mkl, 0.00625, 0.00625, DIM_SIZE);
-TACO_BENCH_ARGS(bench_mm_add_mkl, 0.0125, 0.0125, DIM_SIZE);
-TACO_BENCH_ARGS(bench_mm_add_mkl, 0.025, 0.025, DIM_SIZE);
-TACO_BENCH_ARGS(bench_mm_add_mkl, 0.05, 0.05, DIM_SIZE);
-TACO_BENCH_ARGS(bench_mm_add_mkl, 0.1,  0.1, DIM_SIZE);
-TACO_BENCH_ARGS(bench_mm_add_mkl, 0.2,   0.2, DIM_SIZE);
-TACO_BENCH_ARGS(bench_mm_add_mkl, 0.4,    0.4, DIM_SIZE);
-TACO_BENCH_ARGS(bench_mm_add_mkl, 0.8,     0.8, DIM_SIZE);
-TACO_BENCH_ARGS(bench_mm_add_mkl, 1.0,     1.0, DIM_SIZE);
+TACO_BENCH_ARGS(bench_mm_add_stardust, 0.00625, 0.00625, DIM_SIZE);
+TACO_BENCH_ARGS(bench_mm_add_stardust, 0.0125, 0.0125, DIM_SIZE);
+TACO_BENCH_ARGS(bench_mm_add_stardust, 0.025, 0.025, DIM_SIZE);
+TACO_BENCH_ARGS(bench_mm_add_stardust, 0.05, 0.05, DIM_SIZE);
+TACO_BENCH_ARGS(bench_mm_add_stardust, 0.1,  0.1, DIM_SIZE);
+TACO_BENCH_ARGS(bench_mm_add_stardust, 0.2,   0.2, DIM_SIZE);
+TACO_BENCH_ARGS(bench_mm_add_stardust, 0.4,    0.4, DIM_SIZE);
+TACO_BENCH_ARGS(bench_mm_add_stardust, 0.8,     0.8, DIM_SIZE);
+TACO_BENCH_ARGS(bench_mm_add_stardust, 1.0,     1.0, DIM_SIZE);

@@ -27,6 +27,7 @@
 #include "taco/accelerator_interface/avx2_interface.h"
 #include "taco/accelerator_interface/dynamic_order_interface.h"
 #include "taco/accelerator_interface/mkl_interface.h"
+#include "taco/accelerator_interface/stardust_interface.h"
 
 
 using namespace taco;
@@ -2707,4 +2708,29 @@ TEST(interface, mklDot) {
    expected.compute();
 
    ASSERT_TENSOR_EQ(expected, A);
+}
+
+
+TEST(interface, stardustAdd) {
+
+   int NUM_I = 10;
+   int NUM_K = 10;
+   int NUM_J = 10;
+
+   Tensor<float> B("B", {NUM_I, NUM_K}, {taco::Dense, taco::Sparse});
+   Tensor<float> C("C", {NUM_I, NUM_J}, {taco::Dense, taco::Sparse});
+
+   IndexVar i("i"), j("j"), k("k");
+
+   IndexExpr accelerateExpr = B(i,j) + C(i, j);
+
+   Tensor<float> A("A", {NUM_I, NUM_K}, {Dense, Dense}, 0);
+   A(i,j) = accelerateExpr;
+   IndexStmt stmt = A.getAssignment().concretize();
+   stmt = stmt.accelerate(new StardustAdd(NUM_I, 0.2), accelerateExpr);
+
+   A.compile(stmt);
+   A.assemble();
+   A.compute();
+
 }

@@ -1377,4 +1377,4950 @@ mat
       "real_time": 1.8453675425268972e-02,
       "cpu_time": 1.8539268053729106e-02,
       "time_unit": "ms"
+    }Warning : Implicit Reduction is being added, given function is calculating sum(i16448, (A16440(i16447,i16448) * A16443(i16448,i16449))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i16702, (A16694(i16701,i16702) * A16697(i16702,i16703))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i16956, (A16948(i16955,i16956) * A16951(i16956,i16957))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i17210, (A17202(i17209,i17210) * A17205(i17210,i17211))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i17464, (A17456(i17463,i17464) * A17459(i17464,i17465))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i17718, (A17710(i17717,i17718) * A17713(i17718,i17719))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i17972, (A17964(i17971,i17972) * A17967(i17972,i17973))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i18226, (A18218(i18225,i18226) * A18221(i18226,i18227))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i18480, (A18472(i18479,i18480) * A18475(i18480,i18481))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i18734, (A18726(i18733,i18734) * A18729(i18734,i18735))).
+var1
+var2
+mat
+,
+    {
+      "name": "bench_sddmm_gsl/1300/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 6,
+      "run_name": "bench_sddmm_gsl/1300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 3.7229902303079150e+01,
+      "cpu_time": 3.7229099700000042e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gsl/1300/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 6,
+      "run_name": "bench_sddmm_gsl/1300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 3.6730339015775826e+01,
+      "cpu_time": 3.6729838999997710e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gsl/1300/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 6,
+      "run_name": "bench_sddmm_gsl/1300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.6050107546100716e+00,
+      "cpu_time": 1.6053585331073026e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gsl/1300/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 6,
+      "run_name": "bench_sddmm_gsl/1300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 4.3110796841315559e-02,
+      "cpu_time": 4.3121067821774398e-02,
+      "time_unit": "ms"
+    }Warning : Implicit Reduction is being added, given function is calculating sum(i19153, (A19145(i19152,i19153) * A19148(i19153,i19154))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i19407, (A19399(i19406,i19407) * A19402(i19407,i19408))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i19661, (A19653(i19660,i19661) * A19656(i19661,i19662))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i19915, (A19907(i19914,i19915) * A19910(i19915,i19916))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i20169, (A20161(i20168,i20169) * A20164(i20169,i20170))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i20423, (A20415(i20422,i20423) * A20418(i20423,i20424))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i20677, (A20669(i20676,i20677) * A20672(i20677,i20678))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i20931, (A20923(i20930,i20931) * A20926(i20931,i20932))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i21185, (A21177(i21184,i21185) * A21180(i21185,i21186))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i21439, (A21431(i21438,i21439) * A21434(i21439,i21440))).
+var1
+var2
+mat
+,
+    {
+      "name": "bench_sddmm_gsl/1500/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 7,
+      "run_name": "bench_sddmm_gsl/1500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 5.5666255495452788e+01,
+      "cpu_time": 5.5662693800000440e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gsl/1500/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 7,
+      "run_name": "bench_sddmm_gsl/1500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 5.5488711994257756e+01,
+      "cpu_time": 5.5482865500003697e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gsl/1500/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 7,
+      "run_name": "bench_sddmm_gsl/1500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 9.3505042211599443e-01,
+      "cpu_time": 9.3523691101541728e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gsl/1500/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 7,
+      "run_name": "bench_sddmm_gsl/1500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 1.6797437043207908e-02,
+      "cpu_time": 1.6801862201922573e-02,
+      "time_unit": "ms"
+    }Warning : Implicit Reduction is being added, given function is calculating sum(i21858, (A21850(i21857,i21858) * A21853(i21858,i21859))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i22112, (A22104(i22111,i22112) * A22107(i22112,i22113))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i22366, (A22358(i22365,i22366) * A22361(i22366,i22367))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i22620, (A22612(i22619,i22620) * A22615(i22620,i22621))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i22874, (A22866(i22873,i22874) * A22869(i22874,i22875))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i23128, (A23120(i23127,i23128) * A23123(i23128,i23129))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i23382, (A23374(i23381,i23382) * A23377(i23382,i23383))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i23636, (A23628(i23635,i23636) * A23631(i23636,i23637))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i23890, (A23882(i23889,i23890) * A23885(i23890,i23891))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i24144, (A24136(i24143,i24144) * A24139(i24144,i24145))).
+var1
+var2
+mat
+,
+    {
+      "name": "bench_sddmm_gsl/1700/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 8,
+      "run_name": "bench_sddmm_gsl/1700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 7.9153103100543376e+01,
+      "cpu_time": 7.9145532200001156e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gsl/1700/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 8,
+      "run_name": "bench_sddmm_gsl/1700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 7.9027667503396515e+01,
+      "cpu_time": 7.9005466499999955e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gsl/1700/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 8,
+      "run_name": "bench_sddmm_gsl/1700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 5.0197957110530322e-01,
+      "cpu_time": 5.0613719716032857e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gsl/1700/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 8,
+      "run_name": "bench_sddmm_gsl/1700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 6.3418811321606563e-03,
+      "cpu_time": 6.3950191892236862e-03,
+      "time_unit": "ms"
+    }Warning : Implicit Reduction is being added, given function is calculating sum(i24563, (A24555(i24562,i24563) * A24558(i24563,i24564))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i24817, (A24809(i24816,i24817) * A24812(i24817,i24818))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i25071, (A25063(i25070,i25071) * A25066(i25071,i25072))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i25325, (A25317(i25324,i25325) * A25320(i25325,i25326))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i25579, (A25571(i25578,i25579) * A25574(i25579,i25580))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i25833, (A25825(i25832,i25833) * A25828(i25833,i25834))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i26087, (A26079(i26086,i26087) * A26082(i26087,i26088))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i26341, (A26333(i26340,i26341) * A26336(i26341,i26342))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i26595, (A26587(i26594,i26595) * A26590(i26595,i26596))).
+var1
+var2
+mat
+Warning : Implicit Reduction is being added, given function is calculating sum(i26849, (A26841(i26848,i26849) * A26844(i26849,i26850))).
+var1
+var2
+mat
+,
+    {
+      "name": "bench_sddmm_gsl/1900/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 9,
+      "run_name": "bench_sddmm_gsl/1900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.0893617230467498e+02,
+      "cpu_time": 1.0893178880000391e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gsl/1900/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 9,
+      "run_name": "bench_sddmm_gsl/1900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.0863853651244426e+02,
+      "cpu_time": 1.0862826900000046e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gsl/1900/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 9,
+      "run_name": "bench_sddmm_gsl/1900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 9.2578507734052717e-01,
+      "cpu_time": 9.2844499412084713e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gsl/1900/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 9,
+      "run_name": "bench_sddmm_gsl/1900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 8.4984175389536537e-03,
+      "cpu_time": 8.5231777091758689e-03,
+      "time_unit": "ms"
+    }
+  ]
+}
+{
+  "context": {
+    "date": "2023-03-06T23:57:16+00:00",
+    "host_name": "ip-172-31-2-241",
+    "executable": "/home/reviewer/mosaic/build/bin/./taco-bench",
+    "num_cpus": 4,
+    "mhz_per_cpu": 3101,
+    "cpu_scaling_enabled": false,
+    "caches": [
+      {
+        "type": "Data",
+        "level": 1,
+        "size": 32768,
+        "num_sharing": 2
+      },
+      {
+        "type": "Instruction",
+        "level": 1,
+        "size": 32768,
+        "num_sharing": 2
+      },
+      {
+        "type": "Unified",
+        "level": 2,
+        "size": 1048576,
+        "num_sharing": 2
+      },
+      {
+        "type": "Unified",
+        "level": 3,
+        "size": 37486592,
+        "num_sharing": 4
+      }
+    ],
+    "load_avg": [1.02783,1.15625,0.899902],
+    "library_build_type": "release"
+  },
+  "benchmarks": [
+!!!! temp dir !!!!!! /home/reviewer/temp/taco_tmp_sVjD0m/
+    {
+      "name": "bench_sddmm_dot_blas/100/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_dot_blas/100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.0139950987650084e+00,
+      "cpu_time": 1.0123571999999901e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/100/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_dot_blas/100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 7.5160150299780071e-01,
+      "cpu_time": 7.5003749999998781e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/100/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_dot_blas/100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 8.2988265516728110e-01,
+      "cpu_time": 8.3005505234984933e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/100/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_dot_blas/100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 8.1842866516616675e-01,
+      "cpu_time": 8.1992309863540003e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/200/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 1,
+      "run_name": "bench_sddmm_dot_blas/200/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 4.6920004984713160e+00,
+      "cpu_time": 4.6903739999999914e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/200/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 1,
+      "run_name": "bench_sddmm_dot_blas/200/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 4.6460570010822266e+00,
+      "cpu_time": 4.6440955000000006e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/200/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 1,
+      "run_name": "bench_sddmm_dot_blas/200/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.6771830095414220e-01,
+      "cpu_time": 1.6781677109144424e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/200/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 1,
+      "run_name": "bench_sddmm_dot_blas/200/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 3.5745584641089845e-02,
+      "cpu_time": 3.5778974361414362e-02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/300/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 2,
+      "run_name": "bench_sddmm_dot_blas/300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.6532049197121523e+01,
+      "cpu_time": 1.6528819099999978e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/300/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 2,
+      "run_name": "bench_sddmm_dot_blas/300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.6108459501992911e+01,
+      "cpu_time": 1.6107104999999954e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/300/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 2,
+      "run_name": "bench_sddmm_dot_blas/300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.1739850192024981e+00,
+      "cpu_time": 1.1734777362143833e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/300/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 2,
+      "run_name": "bench_sddmm_dot_blas/300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 7.1012673940439669e-02,
+      "cpu_time": 7.0995860570243943e-02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/400/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 3,
+      "run_name": "bench_sddmm_dot_blas/400/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 4.5651394902961329e+01,
+      "cpu_time": 4.5645679700000002e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/400/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 3,
+      "run_name": "bench_sddmm_dot_blas/400/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 4.5655536006961484e+01,
+      "cpu_time": 4.5654957999999965e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/400/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 3,
+      "run_name": "bench_sddmm_dot_blas/400/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 7.7773446400141077e-01,
+      "cpu_time": 7.7769758827315383e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/400/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 3,
+      "run_name": "bench_sddmm_dot_blas/400/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 1.7036378968366649e-02,
+      "cpu_time": 1.7037704189848089e-02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/500/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 4,
+      "run_name": "bench_sddmm_dot_blas/500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.0650642099790275e+02,
+      "cpu_time": 1.0650440900000009e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/500/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 4,
+      "run_name": "bench_sddmm_dot_blas/500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.0546493699075654e+02,
+      "cpu_time": 1.0546432800000028e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/500/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 4,
+      "run_name": "bench_sddmm_dot_blas/500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 4.0459455498605390e+00,
+      "cpu_time": 4.0468458808406300e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/500/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 4,
+      "run_name": "bench_sddmm_dot_blas/500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 3.7987808734463141e-02,
+      "cpu_time": 3.7996979832455820e-02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/600/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 5,
+      "run_name": "bench_sddmm_dot_blas/600/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.1185716019826941e+02,
+      "cpu_time": 2.1184004439999998e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/600/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 5,
+      "run_name": "bench_sddmm_dot_blas/600/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.1114254999702098e+02,
+      "cpu_time": 2.1110733250000013e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/600/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 5,
+      "run_name": "bench_sddmm_dot_blas/600/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.6420820522314230e+00,
+      "cpu_time": 2.6352893392289349e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/600/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 5,
+      "run_name": "bench_sddmm_dot_blas/600/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 1.2471053844764060e-02,
+      "cpu_time": 1.2439996161693284e-02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/700/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 6,
+      "run_name": "bench_sddmm_dot_blas/700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 3.5274623120058095e+02,
+      "cpu_time": 3.5272052769999982e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/700/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 6,
+      "run_name": "bench_sddmm_dot_blas/700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 3.5225040400109719e+02,
+      "cpu_time": 3.5223600449999992e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/700/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 6,
+      "run_name": "bench_sddmm_dot_blas/700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 5.1839281414649063e+00,
+      "cpu_time": 5.1814037128601473e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/700/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 6,
+      "run_name": "bench_sddmm_dot_blas/700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 1.4695913614218563e-02,
+      "cpu_time": 1.4689827514850790e-02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/800/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 7,
+      "run_name": "bench_sddmm_dot_blas/800/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 5.3594627140118973e+02,
+      "cpu_time": 5.3590068639999890e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/800/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 7,
+      "run_name": "bench_sddmm_dot_blas/800/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 5.3766306600300595e+02,
+      "cpu_time": 5.3760077349999767e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/800/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 7,
+      "run_name": "bench_sddmm_dot_blas/800/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.0352328247313595e+01,
+      "cpu_time": 1.0364478328271371e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/800/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 7,
+      "run_name": "bench_sddmm_dot_blas/800/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 1.9315981470023554e-02,
+      "cpu_time": 1.9340296796215101e-02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/900/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 8,
+      "run_name": "bench_sddmm_dot_blas/900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 7.7810138799686695e+02,
+      "cpu_time": 7.7805122540000093e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/900/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 8,
+      "run_name": "bench_sddmm_dot_blas/900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 7.7407505300652701e+02,
+      "cpu_time": 7.7404258550000372e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/900/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 8,
+      "run_name": "bench_sddmm_dot_blas/900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 9.0458932081542596e+00,
+      "cpu_time": 9.0353391459458017e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/900/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 8,
+      "run_name": "bench_sddmm_dot_blas/900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 1.1625597059326521e-02,
+      "cpu_time": 1.1612781846466056e-02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1000/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 9,
+      "run_name": "bench_sddmm_dot_blas/1000/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.0821705484995618e+03,
+      "cpu_time": 1.0821035107999976e+03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1000/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 9,
+      "run_name": "bench_sddmm_dot_blas/1000/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.0786277455044910e+03,
+      "cpu_time": 1.0785596634999947e+03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1000/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 9,
+      "run_name": "bench_sddmm_dot_blas/1000/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.8446576846779653e+01,
+      "cpu_time": 1.8446239748897092e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1000/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 9,
+      "run_name": "bench_sddmm_dot_blas/1000/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 1.7045905446563835e-02,
+      "cpu_time": 1.7046649941334920e-02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1100/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 10,
+      "run_name": "bench_sddmm_dot_blas/1100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.4398301791996346e+03,
+      "cpu_time": 1.4397317004000010e+03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1100/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 10,
+      "run_name": "bench_sddmm_dot_blas/1100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.4376075714972103e+03,
+      "cpu_time": 1.4375045354999970e+03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1100/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 10,
+      "run_name": "bench_sddmm_dot_blas/1100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.6080209877904487e+01,
+      "cpu_time": 1.6089973225918765e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1100/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 10,
+      "run_name": "bench_sddmm_dot_blas/1100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 1.1168129485133500e-02,
+      "cpu_time": 1.1175674760407433e-02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1200/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 11,
+      "run_name": "bench_sddmm_dot_blas/1200/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.8448899473980418e+03,
+      "cpu_time": 1.8447659441000014e+03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1200/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 11,
+      "run_name": "bench_sddmm_dot_blas/1200/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.8342564404956647e+03,
+      "cpu_time": 1.8341668385000035e+03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1200/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 11,
+      "run_name": "bench_sddmm_dot_blas/1200/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 4.5415348264709479e+01,
+      "cpu_time": 4.5396811785006697e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1200/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 11,
+      "run_name": "bench_sddmm_dot_blas/1200/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 2.4616833285238202e-02,
+      "cpu_time": 2.4608439856663906e-02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1300/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 12,
+      "run_name": "bench_sddmm_dot_blas/1300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 3.7872921448011766e+03,
+      "cpu_time": 3.7870629799000017e+03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1300/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 12,
+      "run_name": "bench_sddmm_dot_blas/1300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 3.7854709110033582e+03,
+      "cpu_time": 3.7853087490000094e+03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1300/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 12,
+      "run_name": "bench_sddmm_dot_blas/1300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 5.3914900721540242e+01,
+      "cpu_time": 5.3890871981929436e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1300/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 12,
+      "run_name": "bench_sddmm_dot_blas/1300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 1.4235738533017408e-02,
+      "cpu_time": 1.4230255020304002e-02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1400/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 13,
+      "run_name": "bench_sddmm_dot_blas/1400/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 5.2566615037969314e+03,
+      "cpu_time": 5.2563915706000053e+03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1400/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 13,
+      "run_name": "bench_sddmm_dot_blas/1400/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 5.2570262799927150e+03,
+      "cpu_time": 5.2567968765000051e+03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1400/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 13,
+      "run_name": "bench_sddmm_dot_blas/1400/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 3.2731077210610962e+01,
+      "cpu_time": 3.2713999494577095e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1400/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 13,
+      "run_name": "bench_sddmm_dot_blas/1400/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 6.2265902392552802e-03,
+      "cpu_time": 6.2236610524894487e-03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1500/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 14,
+      "run_name": "bench_sddmm_dot_blas/1500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.1380135396901460e+04,
+      "cpu_time": 1.1379485117399994e+04,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1500/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 14,
+      "run_name": "bench_sddmm_dot_blas/1500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.1411583678993338e+04,
+      "cpu_time": 1.1410942684999980e+04,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1500/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 14,
+      "run_name": "bench_sddmm_dot_blas/1500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.1178452497576959e+02,
+      "cpu_time": 1.1169263295863854e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1500/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 14,
+      "run_name": "bench_sddmm_dot_blas/1500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 9.8227763622395770e-03,
+      "cpu_time": 9.8152624487247708e-03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1600/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 15,
+      "run_name": "bench_sddmm_dot_blas/1600/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.4240419106002082e+04,
+      "cpu_time": 2.4239315769300007e+04,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1600/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 15,
+      "run_name": "bench_sddmm_dot_blas/1600/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.4228108101000544e+04,
+      "cpu_time": 2.4227318385000046e+04,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1600/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 15,
+      "run_name": "bench_sddmm_dot_blas/1600/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.5594970475017698e+02,
+      "cpu_time": 1.5610868152386305e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1600/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 15,
+      "run_name": "bench_sddmm_dot_blas/1600/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 6.4334574442882816e-03,
+      "cpu_time": 6.4403089183557114e-03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1700/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 16,
+      "run_name": "bench_sddmm_dot_blas/1700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 3.5613761740803602e+04,
+      "cpu_time": 3.5612350619700046e+04,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1700/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 16,
+      "run_name": "bench_sddmm_dot_blas/1700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 3.5732028157006425e+04,
+      "cpu_time": 3.5730813510000080e+04,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1700/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 16,
+      "run_name": "bench_sddmm_dot_blas/1700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 6.2947243881758141e+02,
+      "cpu_time": 6.2928999231171315e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1700/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 16,
+      "run_name": "bench_sddmm_dot_blas/1700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 1.7674977538145842e-02,
+      "cpu_time": 1.7670554775555937e-02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1800/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 17,
+      "run_name": "bench_sddmm_dot_blas/1800/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 4.8451166165003087e+04,
+      "cpu_time": 4.8448547922800055e+04,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1800/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 17,
+      "run_name": "bench_sddmm_dot_blas/1800/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 4.8743426796005224e+04,
+      "cpu_time": 4.8741780004000131e+04,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1800/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 17,
+      "run_name": "bench_sddmm_dot_blas/1800/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.0446103297212687e+03,
+      "cpu_time": 1.0446886911193417e+03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1800/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 17,
+      "run_name": "bench_sddmm_dot_blas/1800/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 2.1560065781776879e-02,
+      "cpu_time": 2.1562848339314367e-02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1900/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 18,
+      "run_name": "bench_sddmm_dot_blas/1900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 6.5687916788598523e+04,
+      "cpu_time": 6.5683884646400082e+04,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1900/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 18,
+      "run_name": "bench_sddmm_dot_blas/1900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 6.5537081351001689e+04,
+      "cpu_time": 6.5532183140500027e+04,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1900/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 18,
+      "run_name": "bench_sddmm_dot_blas/1900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.6504725418150585e+03,
+      "cpu_time": 1.6500342892322399e+03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/1900/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 18,
+      "run_name": "bench_sddmm_dot_blas/1900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 2.5125968709385701e-02,
+      "cpu_time": 2.5120838971613300e-02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/2000/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 19,
+      "run_name": "bench_sddmm_dot_blas/2000/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 6.3755153479501314e+04,
+      "cpu_time": 6.3751961023200012e+04,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/2000/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 19,
+      "run_name": "bench_sddmm_dot_blas/2000/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 6.3088890513012302e+04,
+      "cpu_time": 6.3084341484000106e+04,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/2000/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 19,
+      "run_name": "bench_sddmm_dot_blas/2000/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.0324277632163225e+03,
+      "cpu_time": 2.0327617773756385e+03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_dot_blas/2000/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 19,
+      "run_name": "bench_sddmm_dot_blas/2000/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 3.1878642780928966e-02,
+      "cpu_time": 3.1885478419022985e-02,
+      "time_unit": "ms"
+    }
+  ]
+}
+{
+  "context": {
+    "date": "2023-03-07T00:48:50+00:00",
+    "host_name": "ip-172-31-2-241",
+    "executable": "/home/reviewer/mosaic/build/bin/./taco-bench",
+    "num_cpus": 4,
+    "mhz_per_cpu": 2500,
+    "cpu_scaling_enabled": false,
+    "caches": [
+      {
+        "type": "Data",
+        "level": 1,
+        "size": 32768,
+        "num_sharing": 2
+      },
+      {
+        "type": "Instruction",
+        "level": 1,
+        "size": 32768,
+        "num_sharing": 2
+      },
+      {
+        "type": "Unified",
+        "level": 2,
+        "size": 1048576,
+        "num_sharing": 2
+      },
+      {
+        "type": "Unified",
+        "level": 3,
+        "size": 37486592,
+        "num_sharing": 4
+      }
+    ],
+    "load_avg": [1.00244,1.00732,1],
+    "library_build_type": "release"
+  },
+  "benchmarks": [
+!!!! temp dir !!!!!! /home/reviewer/temp/taco_tmp_hA16r0/
+    {
+      "name": "bench_sddmm_taco/100/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_taco/100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.5731639869045469e-01,
+      "cpu_time": 1.5598890000000368e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/100/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_taco/100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.5379700198536739e-01,
+      "cpu_time": 1.5224199999999688e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/100/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_taco/100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 8.4577480573247276e-03,
+      "cpu_time": 8.3470474946378426e-03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/100/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_taco/100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 5.3762660013383014e-02,
+      "cpu_time": 5.3510522188679105e-02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/300/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 1,
+      "run_name": "bench_sddmm_taco/300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 4.9412510998081416e+00,
+      "cpu_time": 4.9378880999999994e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/300/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 1,
+      "run_name": "bench_sddmm_taco/300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 4.9411634972784668e+00,
+      "cpu_time": 4.9306949999999850e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/300/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 1,
+      "run_name": "bench_sddmm_taco/300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 4.0858153864539039e-02,
+      "cpu_time": 4.1496331030348277e-02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/300/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 1,
+      "run_name": "bench_sddmm_taco/300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 8.2687872037358057e-03,
+      "cpu_time": 8.4036596597537871e-03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/500/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 2,
+      "run_name": "bench_sddmm_taco/500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 3.4370169801695738e+01,
+      "cpu_time": 3.4367831600000088e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/500/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 2,
+      "run_name": "bench_sddmm_taco/500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 3.4317661498789676e+01,
+      "cpu_time": 3.4316455500000060e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/500/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 2,
+      "run_name": "bench_sddmm_taco/500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 6.4263119569669902e-01,
+      "cpu_time": 6.4331483926984623e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/500/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 2,
+      "run_name": "bench_sddmm_taco/500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 1.8697352948922389e-02,
+      "cpu_time": 1.8718516977074707e-02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/700/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 3,
+      "run_name": "bench_sddmm_taco/700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.1523543290386442e+02,
+      "cpu_time": 1.1522828440000001e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/700/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 3,
+      "run_name": "bench_sddmm_taco/700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.1470900250424165e+02,
+      "cpu_time": 1.1470802150000027e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/700/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 3,
+      "run_name": "bench_sddmm_taco/700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.0990391961018289e+00,
+      "cpu_time": 1.1011144030595597e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/700/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 3,
+      "run_name": "bench_sddmm_taco/700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 9.5373373311202509e-03,
+      "cpu_time": 9.5559385336085028e-03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/900/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 4,
+      "run_name": "bench_sddmm_taco/900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.4471473759622313e+02,
+      "cpu_time": 2.4470357119999971e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/900/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 4,
+      "run_name": "bench_sddmm_taco/900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.4525248449936043e+02,
+      "cpu_time": 2.4524410749999871e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/900/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 4,
+      "run_name": "bench_sddmm_taco/900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.0753764168345206e+00,
+      "cpu_time": 2.0758858849274189e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/900/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 4,
+      "run_name": "bench_sddmm_taco/900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 8.4807986524247300e-03,
+      "cpu_time": 8.4832676317206975e-03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/1100/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 5,
+      "run_name": "bench_sddmm_taco/1100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 4.4444231310626492e+02,
+      "cpu_time": 4.4442964020000079e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/1100/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 5,
+      "run_name": "bench_sddmm_taco/1100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 4.4589572950644651e+02,
+      "cpu_time": 4.4588369000000046e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/1100/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 5,
+      "run_name": "bench_sddmm_taco/1100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 4.2684636306564094e+00,
+      "cpu_time": 4.2698709822472720e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/1100/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 5,
+      "run_name": "bench_sddmm_taco/1100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 9.6040892254915244e-03,
+      "cpu_time": 9.6075297325483484e-03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/1300/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 6,
+      "run_name": "bench_sddmm_taco/1300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.0804694618971553e+03,
+      "cpu_time": 1.0804178002000001e+03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/1300/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 6,
+      "run_name": "bench_sddmm_taco/1300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.0794643104964052e+03,
+      "cpu_time": 1.0794109345000002e+03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/1300/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 6,
+      "run_name": "bench_sddmm_taco/1300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 5.1747584482421116e+00,
+      "cpu_time": 5.1882257360134085e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/1300/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 6,
+      "run_name": "bench_sddmm_taco/1300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 4.7893611348866346e-03,
+      "cpu_time": 4.8020550337591599e-03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/1500/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 7,
+      "run_name": "bench_sddmm_taco/1500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.4034321076993365e+03,
+      "cpu_time": 2.4033067249999986e+03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/1500/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 7,
+      "run_name": "bench_sddmm_taco/1500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.4026864554980421e+03,
+      "cpu_time": 2.4026220145000038e+03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/1500/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 7,
+      "run_name": "bench_sddmm_taco/1500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 3.2691462334225818e+00,
+      "cpu_time": 3.3214985860960473e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/1500/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 7,
+      "run_name": "bench_sddmm_taco/1500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 1.3601991181485639e-03,
+      "cpu_time": 1.3820535479490447e-03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/1700/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 8,
+      "run_name": "bench_sddmm_taco/1700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.0224431510100841e+04,
+      "cpu_time": 1.0223939699700004e+04,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/1700/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 8,
+      "run_name": "bench_sddmm_taco/1700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.0223973571497481e+04,
+      "cpu_time": 1.0223463335500015e+04,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/1700/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 8,
+      "run_name": "bench_sddmm_taco/1700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.0205584950079659e+01,
+      "cpu_time": 1.0219900533243488e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/1700/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 8,
+      "run_name": "bench_sddmm_taco/1700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 9.9815671316272597e-04,
+      "cpu_time": 9.9960493052823505e-04,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/1900/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 9,
+      "run_name": "bench_sddmm_taco/1900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.0518706024200950e+04,
+      "cpu_time": 2.0517840650900001e+04,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/1900/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 9,
+      "run_name": "bench_sddmm_taco/1900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.0487665339482191e+04,
+      "cpu_time": 2.0486825101999981e+04,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/1900/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 9,
+      "run_name": "bench_sddmm_taco/1900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 7.8044753092625257e+01,
+      "cpu_time": 7.8118998661924678e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_taco/1900/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 9,
+      "run_name": "bench_sddmm_taco/1900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 3.8035903921316856e-03,
+      "cpu_time": 3.8073694006634192e-03,
+      "time_unit": "ms"
+    }
+  ]
+}
+{
+  "context": {
+    "date": "2023-03-07T00:58:07+00:00",
+    "host_name": "ip-172-31-2-241",
+    "executable": "/home/reviewer/mosaic/build/bin/./taco-bench",
+    "num_cpus": 4,
+    "mhz_per_cpu": 2500,
+    "cpu_scaling_enabled": false,
+    "caches": [
+      {
+        "type": "Data",
+        "level": 1,
+        "size": 32768,
+        "num_sharing": 2
+      },
+      {
+        "type": "Instruction",
+        "level": 1,
+        "size": 32768,
+        "num_sharing": 2
+      },
+      {
+        "type": "Unified",
+        "level": 2,
+        "size": 1048576,
+        "num_sharing": 2
+      },
+      {
+        "type": "Unified",
+        "level": 3,
+        "size": 37486592,
+        "num_sharing": 4
+      }
+    ],
+    "load_avg": [1,1.00732,1],
+    "library_build_type": "release"
+  },
+  "benchmarks": [
+!!!! temp dir !!!!!! /home/reviewer/temp/taco_tmp_4f60so/
+Warning : Implicit Reduction is being added, given function is calculating sum(i218, (A210(i217,i218) * A213(i218,i219))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i472, (A464(i471,i472) * A467(i472,i473))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i726, (A718(i725,i726) * A721(i726,i727))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i980, (A972(i979,i980) * A975(i980,i981))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i1234, (A1226(i1233,i1234) * A1229(i1234,i1235))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i1488, (A1480(i1487,i1488) * A1483(i1488,i1489))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i1742, (A1734(i1741,i1742) * A1737(i1742,i1743))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i1996, (A1988(i1995,i1996) * A1991(i1996,i1997))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i2250, (A2242(i2249,i2250) * A2245(i2250,i2251))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i2504, (A2496(i2503,i2504) * A2499(i2504,i2505))).
+    {
+      "name": "bench_sddmm_blas/100/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_blas/100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 3.6422950070118537e-01,
+      "cpu_time": 3.6256370000000704e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_blas/100/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_blas/100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.0612201003823429e-01,
+      "cpu_time": 1.0432450000001647e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_blas/100/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_blas/100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 8.1533107158442797e-01,
+      "cpu_time": 8.1561143239972012e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_blas/100/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_blas/100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 2.2385091542964477e+00,
+      "cpu_time": 2.2495672688680757e+00,
+      "time_unit": "ms"
+    }Warning : Implicit Reduction is being added, given function is calculating sum(i2923, (A2915(i2922,i2923) * A2918(i2923,i2924))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i3177, (A3169(i3176,i3177) * A3172(i3177,i3178))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i3431, (A3423(i3430,i3431) * A3426(i3431,i3432))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i3685, (A3677(i3684,i3685) * A3680(i3685,i3686))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i3939, (A3931(i3938,i3939) * A3934(i3939,i3940))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i4193, (A4185(i4192,i4193) * A4188(i4193,i4194))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i4447, (A4439(i4446,i4447) * A4442(i4447,i4448))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i4701, (A4693(i4700,i4701) * A4696(i4701,i4702))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i4955, (A4947(i4954,i4955) * A4950(i4955,i4956))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i5209, (A5201(i5208,i5209) * A5204(i5209,i5210))).
+,
+    {
+      "name": "bench_sddmm_blas/300/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 1,
+      "run_name": "bench_sddmm_blas/300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 7.9189040261553600e-01,
+      "cpu_time": 7.9026460000000132e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_blas/300/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 1,
+      "run_name": "bench_sddmm_blas/300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 7.8591601049993187e-01,
+      "cpu_time": 7.8421399999997754e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_blas/300/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 1,
+      "run_name": "bench_sddmm_blas/300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 5.2289342689944215e-02,
+      "cpu_time": 5.2513913642419398e-02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_blas/300/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 1,
+      "run_name": "bench_sddmm_blas/300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 6.6031034745764910e-02,
+      "cpu_time": 6.6451051511632053e-02,
+      "time_unit": "ms"
+    }Warning : Implicit Reduction is being added, given function is calculating sum(i5628, (A5620(i5627,i5628) * A5623(i5628,i5629))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i5882, (A5874(i5881,i5882) * A5877(i5882,i5883))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i6136, (A6128(i6135,i6136) * A6131(i6136,i6137))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i6390, (A6382(i6389,i6390) * A6385(i6390,i6391))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i6644, (A6636(i6643,i6644) * A6639(i6644,i6645))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i6898, (A6890(i6897,i6898) * A6893(i6898,i6899))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i7152, (A7144(i7151,i7152) * A7147(i7152,i7153))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i7406, (A7398(i7405,i7406) * A7401(i7406,i7407))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i7660, (A7652(i7659,i7660) * A7655(i7660,i7661))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i7914, (A7906(i7913,i7914) * A7909(i7914,i7915))).
+,
+    {
+      "name": "bench_sddmm_blas/500/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 2,
+      "run_name": "bench_sddmm_blas/500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.7038637985242531e+00,
+      "cpu_time": 2.7025845000000270e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_blas/500/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 2,
+      "run_name": "bench_sddmm_blas/500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.6339089963585138e+00,
+      "cpu_time": 2.6322860000000947e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_blas/500/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 2,
+      "run_name": "bench_sddmm_blas/500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.6854857885251399e-01,
+      "cpu_time": 2.6850838000839317e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_blas/500/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 2,
+      "run_name": "bench_sddmm_blas/500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 9.9320305630440989e-02,
+      "cpu_time": 9.9352445782320761e-02,
+      "time_unit": "ms"
+    }Warning : Implicit Reduction is being added, given function is calculating sum(i8333, (A8325(i8332,i8333) * A8328(i8333,i8334))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i8587, (A8579(i8586,i8587) * A8582(i8587,i8588))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i8841, (A8833(i8840,i8841) * A8836(i8841,i8842))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i9095, (A9087(i9094,i9095) * A9090(i9095,i9096))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i9349, (A9341(i9348,i9349) * A9344(i9349,i9350))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i9603, (A9595(i9602,i9603) * A9598(i9603,i9604))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i9857, (A9849(i9856,i9857) * A9852(i9857,i9858))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i10111, (A10103(i10110,i10111) * A10106(i10111,i10112))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i10365, (A10357(i10364,i10365) * A10360(i10365,i10366))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i10619, (A10611(i10618,i10619) * A10614(i10619,i10620))).
+,
+    {
+      "name": "bench_sddmm_blas/700/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 3,
+      "run_name": "bench_sddmm_blas/700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 6.2727830023504794e+00,
+      "cpu_time": 6.2713886000001384e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_blas/700/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 3,
+      "run_name": "bench_sddmm_blas/700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 6.2188960146158934e+00,
+      "cpu_time": 6.2166325000001521e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_blas/700/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 3,
+      "run_name": "bench_sddmm_blas/700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.8418456793993737e-01,
+      "cpu_time": 1.8428003540267809e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_blas/700/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 3,
+      "run_name": "bench_sddmm_blas/700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 2.9362496338693912e-02,
+      "cpu_time": 2.9384247597521545e-02,
+      "time_unit": "ms"
+    }Warning : Implicit Reduction is being added, given function is calculating sum(i11038, (A11030(i11037,i11038) * A11033(i11038,i11039))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i11292, (A11284(i11291,i11292) * A11287(i11292,i11293))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i11546, (A11538(i11545,i11546) * A11541(i11546,i11547))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i11800, (A11792(i11799,i11800) * A11795(i11800,i11801))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i12054, (A12046(i12053,i12054) * A12049(i12054,i12055))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i12308, (A12300(i12307,i12308) * A12303(i12308,i12309))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i12562, (A12554(i12561,i12562) * A12557(i12562,i12563))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i12816, (A12808(i12815,i12816) * A12811(i12816,i12817))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i13070, (A13062(i13069,i13070) * A13065(i13070,i13071))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i13324, (A13316(i13323,i13324) * A13319(i13324,i13325))).
+,
+    {
+      "name": "bench_sddmm_blas/900/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 4,
+      "run_name": "bench_sddmm_blas/900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.2033334904117510e+01,
+      "cpu_time": 1.2032024699999777e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_blas/900/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 4,
+      "run_name": "bench_sddmm_blas/900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.2027525503071956e+01,
+      "cpu_time": 1.2026198499999641e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_blas/900/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 4,
+      "run_name": "bench_sddmm_blas/900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 4.1214584369166578e-02,
+      "cpu_time": 4.1118887257986736e-02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_blas/900/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 4,
+      "run_name": "bench_sddmm_blas/900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 3.4250342650285555e-03,
+      "cpu_time": 3.4174536940559551e-03,
+      "time_unit": "ms"
+    }Warning : Implicit Reduction is being added, given function is calculating sum(i13743, (A13735(i13742,i13743) * A13738(i13743,i13744))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i13997, (A13989(i13996,i13997) * A13992(i13997,i13998))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i14251, (A14243(i14250,i14251) * A14246(i14251,i14252))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i14505, (A14497(i14504,i14505) * A14500(i14505,i14506))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i14759, (A14751(i14758,i14759) * A14754(i14759,i14760))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i15013, (A15005(i15012,i15013) * A15008(i15013,i15014))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i15267, (A15259(i15266,i15267) * A15262(i15267,i15268))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i15521, (A15513(i15520,i15521) * A15516(i15521,i15522))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i15775, (A15767(i15774,i15775) * A15770(i15775,i15776))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i16029, (A16021(i16028,i16029) * A16024(i16029,i16030))).
+,
+    {
+      "name": "bench_sddmm_blas/1100/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 5,
+      "run_name": "bench_sddmm_blas/1100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.2534212100435980e+01,
+      "cpu_time": 2.2531689299999691e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_blas/1100/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 5,
+      "run_name": "bench_sddmm_blas/1100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.2534352494403720e+01,
+      "cpu_time": 2.2532913999999238e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_blas/1100/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 5,
+      "run_name": "bench_sddmm_blas/1100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 3.8039149717634425e-02,
+      "cpu_time": 3.7000717388771052e-02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_blas/1100/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 5,
+      "run_name": "bench_sddmm_blas/1100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 1.6880621140908879e-03,
+      "cpu_time": 1.6421634834442511e-03,
+      "time_unit": "ms"
+    }Warning : Implicit Reduction is being added, given function is calculating sum(i16448, (A16440(i16447,i16448) * A16443(i16448,i16449))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i16702, (A16694(i16701,i16702) * A16697(i16702,i16703))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i16956, (A16948(i16955,i16956) * A16951(i16956,i16957))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i17210, (A17202(i17209,i17210) * A17205(i17210,i17211))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i17464, (A17456(i17463,i17464) * A17459(i17464,i17465))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i17718, (A17710(i17717,i17718) * A17713(i17718,i17719))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i17972, (A17964(i17971,i17972) * A17967(i17972,i17973))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i18226, (A18218(i18225,i18226) * A18221(i18226,i18227))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i18480, (A18472(i18479,i18480) * A18475(i18480,i18481))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i18734, (A18726(i18733,i18734) * A18729(i18734,i18735))).
+,
+    {
+      "name": "bench_sddmm_blas/1300/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 6,
+      "run_name": "bench_sddmm_blas/1300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 3.5604188799334224e+01,
+      "cpu_time": 3.5602167999999779e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_blas/1300/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 6,
+      "run_name": "bench_sddmm_blas/1300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 3.5590274994319770e+01,
+      "cpu_time": 3.5589390000000165e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_blas/1300/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 6,
+      "run_name": "bench_sddmm_blas/1300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.3201706052477186e-01,
+      "cpu_time": 1.3123665111586394e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_blas/1300/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 6,
+      "run_name": "bench_sddmm_blas/1300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 3.7079081135318686e-03,
+      "cpu_time": 3.6861982988189018e-03,
+      "time_unit": "ms"
+    }Warning : Implicit Reduction is being added, given function is calculating sum(i19153, (A19145(i19152,i19153) * A19148(i19153,i19154))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i19407, (A19399(i19406,i19407) * A19402(i19407,i19408))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i19661, (A19653(i19660,i19661) * A19656(i19661,i19662))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i19915, (A19907(i19914,i19915) * A19910(i19915,i19916))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i20169, (A20161(i20168,i20169) * A20164(i20169,i20170))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i20423, (A20415(i20422,i20423) * A20418(i20423,i20424))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i20677, (A20669(i20676,i20677) * A20672(i20677,i20678))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i20931, (A20923(i20930,i20931) * A20926(i20931,i20932))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i21185, (A21177(i21184,i21185) * A21180(i21185,i21186))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i21439, (A21431(i21438,i21439) * A21434(i21439,i21440))).
+,
+    {
+      "name": "bench_sddmm_blas/1500/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 7,
+      "run_name": "bench_sddmm_blas/1500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 5.4131570000026841e+01,
+      "cpu_time": 5.4128657400000428e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_blas/1500/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 7,
+      "run_name": "bench_sddmm_blas/1500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 5.4112737998366356e+01,
+      "cpu_time": 5.4111673000001304e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_blas/1500/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 7,
+      "run_name": "bench_sddmm_blas/1500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.4803427868643957e-01,
+      "cpu_time": 2.4944272925783864e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_blas/1500/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 7,
+      "run_name": "bench_sddmm_blas/1500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 4.5820632707737194e-03,
+      "cpu_time": 4.6083302494370863e-03,
+      "time_unit": "ms"
+    }Warning : Implicit Reduction is being added, given function is calculating sum(i21858, (A21850(i21857,i21858) * A21853(i21858,i21859))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i22112, (A22104(i22111,i22112) * A22107(i22112,i22113))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i22366, (A22358(i22365,i22366) * A22361(i22366,i22367))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i22620, (A22612(i22619,i22620) * A22615(i22620,i22621))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i22874, (A22866(i22873,i22874) * A22869(i22874,i22875))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i23128, (A23120(i23127,i23128) * A23123(i23128,i23129))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i23382, (A23374(i23381,i23382) * A23377(i23382,i23383))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i23636, (A23628(i23635,i23636) * A23631(i23636,i23637))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i23890, (A23882(i23889,i23890) * A23885(i23890,i23891))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i24144, (A24136(i24143,i24144) * A24139(i24144,i24145))).
+,
+    {
+      "name": "bench_sddmm_blas/1700/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 8,
+      "run_name": "bench_sddmm_blas/1700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 7.8490484903159086e+01,
+      "cpu_time": 7.8482618500000711e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_blas/1700/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 8,
+      "run_name": "bench_sddmm_blas/1700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 7.8147797008568887e+01,
+      "cpu_time": 7.8140249500005865e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_blas/1700/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 8,
+      "run_name": "bench_sddmm_blas/1700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.4616504854925938e+00,
+      "cpu_time": 1.4601811436916134e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_blas/1700/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 8,
+      "run_name": "bench_sddmm_blas/1700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 1.8622008607743552e-02,
+      "cpu_time": 1.8605153237740153e-02,
+      "time_unit": "ms"
+    }Warning : Implicit Reduction is being added, given function is calculating sum(i24563, (A24555(i24562,i24563) * A24558(i24563,i24564))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i24817, (A24809(i24816,i24817) * A24812(i24817,i24818))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i25071, (A25063(i25070,i25071) * A25066(i25071,i25072))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i25325, (A25317(i25324,i25325) * A25320(i25325,i25326))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i25579, (A25571(i25578,i25579) * A25574(i25579,i25580))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i25833, (A25825(i25832,i25833) * A25828(i25833,i25834))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i26087, (A26079(i26086,i26087) * A26082(i26087,i26088))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i26341, (A26333(i26340,i26341) * A26336(i26341,i26342))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i26595, (A26587(i26594,i26595) * A26590(i26595,i26596))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i26849, (A26841(i26848,i26849) * A26844(i26849,i26850))).
+,
+    {
+      "name": "bench_sddmm_blas/1900/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 9,
+      "run_name": "bench_sddmm_blas/1900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.1007663349882932e+02,
+      "cpu_time": 1.1006815840000073e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_blas/1900/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 9,
+      "run_name": "bench_sddmm_blas/1900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.1004295800375985e+02,
+      "cpu_time": 1.1003521300000330e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_blas/1900/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 9,
+      "run_name": "bench_sddmm_blas/1900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 4.3994905292159608e-01,
+      "cpu_time": 4.4090112573823054e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_blas/1900/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 9,
+      "run_name": "bench_sddmm_blas/1900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 3.9967524345325741e-03,
+      "cpu_time": 4.0057100268357688e-03,
+      "time_unit": "ms"
+    }
+  ]
+}
+{
+  "context": {
+    "date": "2023-03-07T01:02:56+00:00",
+    "host_name": "ip-172-31-2-241",
+    "executable": "/home/reviewer/mosaic/build/bin/./taco-bench",
+    "num_cpus": 4,
+    "mhz_per_cpu": 2500,
+    "cpu_scaling_enabled": false,
+    "caches": [
+      {
+        "type": "Data",
+        "level": 1,
+        "size": 32768,
+        "num_sharing": 2
+      },
+      {
+        "type": "Instruction",
+        "level": 1,
+        "size": 32768,
+        "num_sharing": 2
+      },
+      {
+        "type": "Unified",
+        "level": 2,
+        "size": 1048576,
+        "num_sharing": 2
+      },
+      {
+        "type": "Unified",
+        "level": 3,
+        "size": 37486592,
+        "num_sharing": 4
+      }
+    ],
+    "load_avg": [1.18896,1.12793,1.04736],
+    "library_build_type": "release"
+  },
+  "benchmarks": [
+!!!! temp dir !!!!!! /home/reviewer/temp/taco_tmp_OI5nl7/
+Warning : Implicit Reduction is being added, given function is calculating sum(i218, (A210(i217,i218) * A213(i218,i219))).
+nt: 2
+Warning : Implicit Reduction is being added, given function is calculating sum(i478, (A470(i477,i478) * A473(i478,i479))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i738, (A730(i737,i738) * A733(i738,i739))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i998, (A990(i997,i998) * A993(i998,i999))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i1258, (A1250(i1257,i1258) * A1253(i1258,i1259))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i1518, (A1510(i1517,i1518) * A1513(i1518,i1519))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i1778, (A1770(i1777,i1778) * A1773(i1778,i1779))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i2038, (A2030(i2037,i2038) * A2033(i2038,i2039))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i2298, (A2290(i2297,i2298) * A2293(i2298,i2299))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i2558, (A2550(i2557,i2558) * A2553(i2558,i2559))).
+    {
+      "name": "bench_sddmm_tblis/100/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_tblis/100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 4.7076025977730760e+00,
+      "cpu_time": 6.3392549999999603e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_tblis/100/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_tblis/100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.5867401089053601e-01,
+      "cpu_time": 1.5695750000000591e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_tblis/100/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_tblis/100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.4393707575099990e+01,
+      "cpu_time": 1.5171728472151544e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_tblis/100/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_tblis/100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 3.0575451678756638e+00,
+      "cpu_time": 2.3932983406017958e+00,
+      "time_unit": "ms"
+    }Warning : Implicit Reduction is being added, given function is calculating sum(i2983, (A2975(i2982,i2983) * A2978(i2983,i2984))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i3243, (A3235(i3242,i3243) * A3238(i3243,i3244))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i3503, (A3495(i3502,i3503) * A3498(i3503,i3504))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i3763, (A3755(i3762,i3763) * A3758(i3763,i3764))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i4023, (A4015(i4022,i4023) * A4018(i4023,i4024))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i4283, (A4275(i4282,i4283) * A4278(i4283,i4284))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i4543, (A4535(i4542,i4543) * A4538(i4543,i4544))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i4803, (A4795(i4802,i4803) * A4798(i4803,i4804))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i5063, (A5055(i5062,i5063) * A5058(i5063,i5064))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i5323, (A5315(i5322,i5323) * A5318(i5323,i5324))).
+,
+    {
+      "name": "bench_sddmm_tblis/300/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 1,
+      "run_name": "bench_sddmm_tblis/300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.0834521963261068e+00,
+      "cpu_time": 1.0810273000000010e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_tblis/300/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 1,
+      "run_name": "bench_sddmm_tblis/300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.1749209879781120e+00,
+      "cpu_time": 1.1673435000000010e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_tblis/300/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 1,
+      "run_name": "bench_sddmm_tblis/300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.9968791277737830e-01,
+      "cpu_time": 1.9937411626446994e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_tblis/300/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 1,
+      "run_name": "bench_sddmm_tblis/300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 1.8430708198709903e-01,
+      "cpu_time": 1.8443023248762519e-01,
+      "time_unit": "ms"
+    }Warning : Implicit Reduction is being added, given function is calculating sum(i5748, (A5740(i5747,i5748) * A5743(i5748,i5749))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i6008, (A6000(i6007,i6008) * A6003(i6008,i6009))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i6268, (A6260(i6267,i6268) * A6263(i6268,i6269))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i6528, (A6520(i6527,i6528) * A6523(i6528,i6529))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i6788, (A6780(i6787,i6788) * A6783(i6788,i6789))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i7048, (A7040(i7047,i7048) * A7043(i7048,i7049))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i7308, (A7300(i7307,i7308) * A7303(i7308,i7309))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i7568, (A7560(i7567,i7568) * A7563(i7568,i7569))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i7828, (A7820(i7827,i7828) * A7823(i7828,i7829))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i8088, (A8080(i8087,i8088) * A8083(i8088,i8089))).
+,
+    {
+      "name": "bench_sddmm_tblis/500/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 2,
+      "run_name": "bench_sddmm_tblis/500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 3.9800694008590654e+00,
+      "cpu_time": 3.9772566999999315e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_tblis/500/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 2,
+      "run_name": "bench_sddmm_tblis/500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 4.3348254985176027e+00,
+      "cpu_time": 4.3328784999998033e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_tblis/500/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 2,
+      "run_name": "bench_sddmm_tblis/500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 7.7515381206115130e-01,
+      "cpu_time": 7.7464063674363615e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_tblis/500/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 2,
+      "run_name": "bench_sddmm_tblis/500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 1.9475886824833774e-01,
+      "cpu_time": 1.9476757352464816e-01,
+      "time_unit": "ms"
+    }Warning : Implicit Reduction is being added, given function is calculating sum(i8513, (A8505(i8512,i8513) * A8508(i8513,i8514))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i8773, (A8765(i8772,i8773) * A8768(i8773,i8774))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i9033, (A9025(i9032,i9033) * A9028(i9033,i9034))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i9293, (A9285(i9292,i9293) * A9288(i9293,i9294))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i9553, (A9545(i9552,i9553) * A9548(i9553,i9554))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i9813, (A9805(i9812,i9813) * A9808(i9813,i9814))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i10073, (A10065(i10072,i10073) * A10068(i10073,i10074))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i10333, (A10325(i10332,i10333) * A10328(i10333,i10334))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i10593, (A10585(i10592,i10593) * A10588(i10593,i10594))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i10853, (A10845(i10852,i10853) * A10848(i10853,i10854))).
+,
+    {
+      "name": "bench_sddmm_tblis/700/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 3,
+      "run_name": "bench_sddmm_tblis/700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 9.9189602056867443e+00,
+      "cpu_time": 9.9167752999998804e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_tblis/700/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 3,
+      "run_name": "bench_sddmm_tblis/700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.0851419006939977e+01,
+      "cpu_time": 1.0849975000000178e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_tblis/700/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 3,
+      "run_name": "bench_sddmm_tblis/700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.9893909546713533e+00,
+      "cpu_time": 1.9885499006967706e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_tblis/700/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 3,
+      "run_name": "bench_sddmm_tblis/700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 2.0056446577240974e-01,
+      "cpu_time": 2.0052384374351956e-01,
+      "time_unit": "ms"
+    }Warning : Implicit Reduction is being added, given function is calculating sum(i11278, (A11270(i11277,i11278) * A11273(i11278,i11279))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i11538, (A11530(i11537,i11538) * A11533(i11538,i11539))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i11798, (A11790(i11797,i11798) * A11793(i11798,i11799))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i12058, (A12050(i12057,i12058) * A12053(i12058,i12059))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i12318, (A12310(i12317,i12318) * A12313(i12318,i12319))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i12578, (A12570(i12577,i12578) * A12573(i12578,i12579))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i12838, (A12830(i12837,i12838) * A12833(i12838,i12839))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i13098, (A13090(i13097,i13098) * A13093(i13098,i13099))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i13358, (A13350(i13357,i13358) * A13353(i13358,i13359))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i13618, (A13610(i13617,i13618) * A13613(i13618,i13619))).
+,
+    {
+      "name": "bench_sddmm_tblis/900/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 4,
+      "run_name": "bench_sddmm_tblis/900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.5409895300399512e+01,
+      "cpu_time": 1.5408360300000101e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_tblis/900/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 4,
+      "run_name": "bench_sddmm_tblis/900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.2270824008737691e+01,
+      "cpu_time": 1.2270118500000038e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_tblis/900/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 4,
+      "run_name": "bench_sddmm_tblis/900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 4.6291537874238333e+00,
+      "cpu_time": 4.6284238946008029e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_tblis/900/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 4,
+      "run_name": "bench_sddmm_tblis/900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 3.0040137828216257e-01,
+      "cpu_time": 3.0038393472670633e-01,
+      "time_unit": "ms"
+    }Warning : Implicit Reduction is being added, given function is calculating sum(i14043, (A14035(i14042,i14043) * A14038(i14043,i14044))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i14303, (A14295(i14302,i14303) * A14298(i14303,i14304))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i14563, (A14555(i14562,i14563) * A14558(i14563,i14564))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i14823, (A14815(i14822,i14823) * A14818(i14823,i14824))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i15083, (A15075(i15082,i15083) * A15078(i15083,i15084))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i15343, (A15335(i15342,i15343) * A15338(i15343,i15344))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i15603, (A15595(i15602,i15603) * A15598(i15603,i15604))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i15863, (A15855(i15862,i15863) * A15858(i15863,i15864))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i16123, (A16115(i16122,i16123) * A16118(i16123,i16124))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i16383, (A16375(i16382,i16383) * A16378(i16383,i16384))).
+,
+    {
+      "name": "bench_sddmm_tblis/1100/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 5,
+      "run_name": "bench_sddmm_tblis/1100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.3157669500506017e+01,
+      "cpu_time": 2.3152909999999238e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_tblis/1100/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 5,
+      "run_name": "bench_sddmm_tblis/1100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.1297032508300617e+01,
+      "cpu_time": 2.1295663000000964e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_tblis/1100/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 5,
+      "run_name": "bench_sddmm_tblis/1100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 5.8534941749681231e+00,
+      "cpu_time": 5.8485496402416022e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_tblis/1100/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 5,
+      "run_name": "bench_sddmm_tblis/1100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 2.5276697963239431e-01,
+      "cpu_time": 2.5260538050041198e-01,
+      "time_unit": "ms"
+    }Warning : Implicit Reduction is being added, given function is calculating sum(i16808, (A16800(i16807,i16808) * A16803(i16808,i16809))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i17068, (A17060(i17067,i17068) * A17063(i17068,i17069))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i17328, (A17320(i17327,i17328) * A17323(i17328,i17329))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i17588, (A17580(i17587,i17588) * A17583(i17588,i17589))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i17848, (A17840(i17847,i17848) * A17843(i17848,i17849))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i18108, (A18100(i18107,i18108) * A18103(i18108,i18109))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i18368, (A18360(i18367,i18368) * A18363(i18368,i18369))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i18628, (A18620(i18627,i18628) * A18623(i18628,i18629))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i18888, (A18880(i18887,i18888) * A18883(i18888,i18889))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i19148, (A19140(i19147,i19148) * A19143(i19148,i19149))).
+,
+    {
+      "name": "bench_sddmm_tblis/1300/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 6,
+      "run_name": "bench_sddmm_tblis/1300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 3.8499090599361807e+01,
+      "cpu_time": 3.8495920499999421e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_tblis/1300/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 6,
+      "run_name": "bench_sddmm_tblis/1300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 3.4223183494759724e+01,
+      "cpu_time": 3.4221812499996673e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_tblis/1300/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 6,
+      "run_name": "bench_sddmm_tblis/1300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 8.9837842627218816e+00,
+      "cpu_time": 8.9790486333166477e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_tblis/1300/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 6,
+      "run_name": "bench_sddmm_tblis/1300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 2.3335055771085680e-01,
+      "cpu_time": 2.3324675749257073e-01,
+      "time_unit": "ms"
+    }Warning : Implicit Reduction is being added, given function is calculating sum(i19573, (A19565(i19572,i19573) * A19568(i19573,i19574))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i19833, (A19825(i19832,i19833) * A19828(i19833,i19834))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i20093, (A20085(i20092,i20093) * A20088(i20093,i20094))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i20353, (A20345(i20352,i20353) * A20348(i20353,i20354))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i20613, (A20605(i20612,i20613) * A20608(i20613,i20614))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i20873, (A20865(i20872,i20873) * A20868(i20873,i20874))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i21133, (A21125(i21132,i21133) * A21128(i21133,i21134))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i21393, (A21385(i21392,i21393) * A21388(i21393,i21394))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i21653, (A21645(i21652,i21653) * A21648(i21653,i21654))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i21913, (A21905(i21912,i21913) * A21908(i21913,i21914))).
+,
+    {
+      "name": "bench_sddmm_tblis/1500/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 7,
+      "run_name": "bench_sddmm_tblis/1500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 5.0861768599133939e+01,
+      "cpu_time": 5.0860660599999363e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_tblis/1500/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 7,
+      "run_name": "bench_sddmm_tblis/1500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 5.0825823498598766e+01,
+      "cpu_time": 5.0824878999998546e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_tblis/1500/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 7,
+      "run_name": "bench_sddmm_tblis/1500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 4.9085069939357517e-01,
+      "cpu_time": 4.9074946999215230e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_tblis/1500/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 7,
+      "run_name": "bench_sddmm_tblis/1500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 9.6506809124591308e-03,
+      "cpu_time": 9.6489008243860388e-03,
+      "time_unit": "ms"
+    }Warning : Implicit Reduction is being added, given function is calculating sum(i22338, (A22330(i22337,i22338) * A22333(i22338,i22339))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i22598, (A22590(i22597,i22598) * A22593(i22598,i22599))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i22858, (A22850(i22857,i22858) * A22853(i22858,i22859))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i23118, (A23110(i23117,i23118) * A23113(i23118,i23119))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i23378, (A23370(i23377,i23378) * A23373(i23378,i23379))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i23638, (A23630(i23637,i23638) * A23633(i23638,i23639))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i23898, (A23890(i23897,i23898) * A23893(i23898,i23899))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i24158, (A24150(i24157,i24158) * A24153(i24158,i24159))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i24418, (A24410(i24417,i24418) * A24413(i24418,i24419))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i24678, (A24670(i24677,i24678) * A24673(i24678,i24679))).
+,
+    {
+      "name": "bench_sddmm_tblis/1700/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 8,
+      "run_name": "bench_sddmm_tblis/1700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 7.8778055202565156e+01,
+      "cpu_time": 7.8766634700001248e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_tblis/1700/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 8,
+      "run_name": "bench_sddmm_tblis/1700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 7.2816993990272749e+01,
+      "cpu_time": 7.2816022000004921e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_tblis/1700/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 8,
+      "run_name": "bench_sddmm_tblis/1700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.2710660748529744e+01,
+      "cpu_time": 1.2699574203112890e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_tblis/1700/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 8,
+      "run_name": "bench_sddmm_tblis/1700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 1.6134773466857383e-01,
+      "cpu_time": 1.6123037694173176e-01,
+      "time_unit": "ms"
+    }Warning : Implicit Reduction is being added, given function is calculating sum(i25103, (A25095(i25102,i25103) * A25098(i25103,i25104))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i25363, (A25355(i25362,i25363) * A25358(i25363,i25364))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i25623, (A25615(i25622,i25623) * A25618(i25623,i25624))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i25883, (A25875(i25882,i25883) * A25878(i25883,i25884))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i26143, (A26135(i26142,i26143) * A26138(i26143,i26144))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i26403, (A26395(i26402,i26403) * A26398(i26403,i26404))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i26663, (A26655(i26662,i26663) * A26658(i26663,i26664))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i26923, (A26915(i26922,i26923) * A26918(i26923,i26924))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i27183, (A27175(i27182,i27183) * A27178(i27183,i27184))).
+Warning : Implicit Reduction is being added, given function is calculating sum(i27443, (A27435(i27442,i27443) * A27438(i27443,i27444))).
+,
+    {
+      "name": "bench_sddmm_tblis/1900/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 9,
+      "run_name": "bench_sddmm_tblis/1900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.0219098769593984e+02,
+      "cpu_time": 1.0217958369999636e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_tblis/1900/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 9,
+      "run_name": "bench_sddmm_tblis/1900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.0032699198927730e+02,
+      "cpu_time": 1.0031880699999363e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_tblis/1900/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 9,
+      "run_name": "bench_sddmm_tblis/1900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 4.2614326763425847e+00,
+      "cpu_time": 4.2521634717017172e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_tblis/1900/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 9,
+      "run_name": "bench_sddmm_tblis/1900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 4.1700670210000283e-02,
+      "cpu_time": 4.1614609472145160e-02,
+      "time_unit": "ms"
+    }
+  ]
+}
+{
+  "context": {
+    "date": "2023-03-07T01:07:49+00:00",
+    "host_name": "ip-172-31-2-241",
+    "executable": "/home/reviewer/mosaic/build/bin/./taco-bench",
+    "num_cpus": 4,
+    "mhz_per_cpu": 3100,
+    "cpu_scaling_enabled": false,
+    "caches": [
+      {
+        "type": "Data",
+        "level": 1,
+        "size": 32768,
+        "num_sharing": 2
+      },
+      {
+        "type": "Instruction",
+        "level": 1,
+        "size": 32768,
+        "num_sharing": 2
+      },
+      {
+        "type": "Unified",
+        "level": 2,
+        "size": 1048576,
+        "num_sharing": 2
+      },
+      {
+        "type": "Unified",
+        "level": 3,
+        "size": 37486592,
+        "num_sharing": 4
+      }
+    ],
+    "load_avg": [1.0542,1.07568,1.0415],
+    "library_build_type": "release"
+  },
+  "benchmarks": [
+!!!! temp dir !!!!!! /home/reviewer/temp/taco_tmp_EpjM9X/
+    {
+      "name": "bench_sddmm_gemv_blas/100/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_gemv_blas/100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.6719970954000019e+00,
+      "cpu_time": 1.6706852999999966e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/100/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_gemv_blas/100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.4059114910196513e+00,
+      "cpu_time": 1.4045190000000138e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/100/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_gemv_blas/100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 8.3261269989351927e-01,
+      "cpu_time": 8.3273305696698086e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/100/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_gemv_blas/100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 4.9797496788971896e-01,
+      "cpu_time": 4.9843801041822927e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/200/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 1,
+      "run_name": "bench_sddmm_gemv_blas/200/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.2186112701601816e+01,
+      "cpu_time": 1.2184857199999980e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/200/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 1,
+      "run_name": "bench_sddmm_gemv_blas/200/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.2207930994918570e+01,
+      "cpu_time": 1.2206480499999978e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/200/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 1,
+      "run_name": "bench_sddmm_gemv_blas/200/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.7421870729919445e-01,
+      "cpu_time": 1.7392873130471811e-01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/200/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 1,
+      "run_name": "bench_sddmm_gemv_blas/200/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 1.4296495655771679e-02,
+      "cpu_time": 1.4274170673474808e-02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/300/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 2,
+      "run_name": "bench_sddmm_gemv_blas/300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 9.3446451394993360e+01,
+      "cpu_time": 9.3443639799999985e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/300/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 2,
+      "run_name": "bench_sddmm_gemv_blas/300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 9.2498723497556057e+01,
+      "cpu_time": 9.2492542499999828e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/300/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 2,
+      "run_name": "bench_sddmm_gemv_blas/300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 3.9306719121886760e+00,
+      "cpu_time": 3.9321563309483012e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/300/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 2,
+      "run_name": "bench_sddmm_gemv_blas/300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 4.2063361995138014e-02,
+      "cpu_time": 4.2080513337926527e-02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/400/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 3,
+      "run_name": "bench_sddmm_gemv_blas/400/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.6168588099681074e+02,
+      "cpu_time": 2.6166495590000011e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/400/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 3,
+      "run_name": "bench_sddmm_gemv_blas/400/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.6183362099982332e+02,
+      "cpu_time": 2.6179015050000044e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/400/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 3,
+      "run_name": "bench_sddmm_gemv_blas/400/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 3.4562911506874392e+00,
+      "cpu_time": 3.4564678903584918e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/400/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 3,
+      "run_name": "bench_sddmm_gemv_blas/400/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 1.3207786134742067e-02,
+      "cpu_time": 1.3209517791444119e-02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/500/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 4,
+      "run_name": "bench_sddmm_gemv_blas/500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 5.0933298999880208e+02,
+      "cpu_time": 5.0931422829999957e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/500/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 4,
+      "run_name": "bench_sddmm_gemv_blas/500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 5.0718295700062299e+02,
+      "cpu_time": 5.0717126999999971e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/500/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 4,
+      "run_name": "bench_sddmm_gemv_blas/500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 6.7330029215311642e+00,
+      "cpu_time": 6.7318126590493517e+00,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/500/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 4,
+      "run_name": "bench_sddmm_gemv_blas/500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 1.3219255484603501e-02,
+      "cpu_time": 1.3217405454229992e-02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/600/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 5,
+      "run_name": "bench_sddmm_gemv_blas/600/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 8.3977122819778742e+02,
+      "cpu_time": 8.3972428789999924e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/600/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 5,
+      "run_name": "bench_sddmm_gemv_blas/600/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 8.3325932650041068e+02,
+      "cpu_time": 8.3321201199999882e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/600/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 5,
+      "run_name": "bench_sddmm_gemv_blas/600/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.3310123515920420e+01,
+      "cpu_time": 1.3308289234806423e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/600/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 5,
+      "run_name": "bench_sddmm_gemv_blas/600/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 1.5849701762806225e-02,
+      "cpu_time": 1.5848403370692161e-02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/700/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 6,
+      "run_name": "bench_sddmm_gemv_blas/700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.3101119796992862e+03,
+      "cpu_time": 1.3100395750000012e+03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/700/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 6,
+      "run_name": "bench_sddmm_gemv_blas/700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.3051595900033135e+03,
+      "cpu_time": 1.3050581235000020e+03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/700/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 6,
+      "run_name": "bench_sddmm_gemv_blas/700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.2476623978093949e+01,
+      "cpu_time": 1.2472568228683851e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/700/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 6,
+      "run_name": "bench_sddmm_gemv_blas/700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 9.5233263808165037e-03,
+      "cpu_time": 9.5207568280399769e-03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/800/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 7,
+      "run_name": "bench_sddmm_gemv_blas/800/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.0164056425986928e+03,
+      "cpu_time": 2.0163167259000013e+03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/800/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 7,
+      "run_name": "bench_sddmm_gemv_blas/800/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.0236406720068771e+03,
+      "cpu_time": 2.0235428560000023e+03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/800/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 7,
+      "run_name": "bench_sddmm_gemv_blas/800/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 3.4882721650433226e+01,
+      "cpu_time": 3.4846861690174066e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/800/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 7,
+      "run_name": "bench_sddmm_gemv_blas/800/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 1.7299456475174932e-02,
+      "cpu_time": 1.7282434472004816e-02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/900/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 8,
+      "run_name": "bench_sddmm_gemv_blas/900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 3.8723929036001209e+03,
+      "cpu_time": 3.8722145291999996e+03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/900/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 8,
+      "run_name": "bench_sddmm_gemv_blas/900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 3.8671576000051573e+03,
+      "cpu_time": 3.8669313484999998e+03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/900/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 8,
+      "run_name": "bench_sddmm_gemv_blas/900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.7364336503897583e+01,
+      "cpu_time": 1.7379587787588402e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/900/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 8,
+      "run_name": "bench_sddmm_gemv_blas/900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 4.4841360203284504e-03,
+      "cpu_time": 4.4882812293922754e-03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1000/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 9,
+      "run_name": "bench_sddmm_gemv_blas/1000/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.5071414367601392e+04,
+      "cpu_time": 1.5070734609800002e+04,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1000/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 9,
+      "run_name": "bench_sddmm_gemv_blas/1000/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.5064780393498950e+04,
+      "cpu_time": 1.5064346956000009e+04,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1000/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 9,
+      "run_name": "bench_sddmm_gemv_blas/1000/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.0159549364919439e+01,
+      "cpu_time": 2.0126229208563394e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1000/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 9,
+      "run_name": "bench_sddmm_gemv_blas/1000/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 1.3376016923969574e-03,
+      "cpu_time": 1.3354511063764583e-03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1100/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 10,
+      "run_name": "bench_sddmm_gemv_blas/1100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.0477390188601566e+04,
+      "cpu_time": 2.0476611681100010e+04,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1100/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 10,
+      "run_name": "bench_sddmm_gemv_blas/1100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.0524809505004669e+04,
+      "cpu_time": 2.0523541756499981e+04,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1100/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 10,
+      "run_name": "bench_sddmm_gemv_blas/1100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.3802588273299310e+02,
+      "cpu_time": 1.3792054161380284e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1100/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 10,
+      "run_name": "bench_sddmm_gemv_blas/1100/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 6.7404039998135669e-03,
+      "cpu_time": 6.7355158051419220e-03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1200/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 11,
+      "run_name": "bench_sddmm_gemv_blas/1200/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.6947174276299484e+04,
+      "cpu_time": 2.6945713627300003e+04,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1200/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 11,
+      "run_name": "bench_sddmm_gemv_blas/1200/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.6936976963494089e+04,
+      "cpu_time": 2.6935299143000011e+04,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1200/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 11,
+      "run_name": "bench_sddmm_gemv_blas/1200/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 8.1652274091141166e+01,
+      "cpu_time": 8.1863117166442748e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1200/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 11,
+      "run_name": "bench_sddmm_gemv_blas/1200/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 3.0300866893845629e-03,
+      "cpu_time": 3.0380756768491465e-03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1300/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 12,
+      "run_name": "bench_sddmm_gemv_blas/1300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 3.4046182048901392e+04,
+      "cpu_time": 3.4044531828699983e+04,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1300/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 12,
+      "run_name": "bench_sddmm_gemv_blas/1300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 3.4001106243995309e+04,
+      "cpu_time": 3.3999582427999943e+04,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1300/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 12,
+      "run_name": "bench_sddmm_gemv_blas/1300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 9.0133434619486621e+01,
+      "cpu_time": 9.0145862263777147e+01,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1300/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 12,
+      "run_name": "bench_sddmm_gemv_blas/1300/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 2.6473874365714688e-03,
+      "cpu_time": 2.6478808026310706e-03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1400/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 13,
+      "run_name": "bench_sddmm_gemv_blas/1400/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 4.2746428286404989e+04,
+      "cpu_time": 4.2743330247099977e+04,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1400/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 13,
+      "run_name": "bench_sddmm_gemv_blas/1400/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 4.2714765795506537e+04,
+      "cpu_time": 4.2712484859999902e+04,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1400/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 13,
+      "run_name": "bench_sddmm_gemv_blas/1400/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.1433258322405905e+02,
+      "cpu_time": 2.1376183819691823e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1400/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 13,
+      "run_name": "bench_sddmm_gemv_blas/1400/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 5.0140465956128796e-03,
+      "cpu_time": 5.0010571698825791e-03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1500/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 14,
+      "run_name": "bench_sddmm_gemv_blas/1500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 5.2251960399895324e+04,
+      "cpu_time": 5.2244019141700046e+04,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1500/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 14,
+      "run_name": "bench_sddmm_gemv_blas/1500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 5.2301338818993827e+04,
+      "cpu_time": 5.2297170048999993e+04,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1500/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 14,
+      "run_name": "bench_sddmm_gemv_blas/1500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.5631888749438093e+02,
+      "cpu_time": 1.5025814474612329e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1500/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 14,
+      "run_name": "bench_sddmm_gemv_blas/1500/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 2.9916367978931190e-03,
+      "cpu_time": 2.8760831807097794e-03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1600/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 15,
+      "run_name": "bench_sddmm_gemv_blas/1600/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 6.4223202457399748e+04,
+      "cpu_time": 6.4208723645000100e+04,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1600/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 15,
+      "run_name": "bench_sddmm_gemv_blas/1600/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 6.4247870129496732e+04,
+      "cpu_time": 6.4227753528999980e+04,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1600/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 15,
+      "run_name": "bench_sddmm_gemv_blas/1600/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 4.7315147683362557e+02,
+      "cpu_time": 4.6145194367541535e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1600/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 15,
+      "run_name": "bench_sddmm_gemv_blas/1600/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 7.3672980905533994e-03,
+      "cpu_time": 7.1867484273120006e-03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1700/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 16,
+      "run_name": "bench_sddmm_gemv_blas/1700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 7.6340451313402460e+04,
+      "cpu_time": 7.6333152443299827e+04,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1700/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 16,
+      "run_name": "bench_sddmm_gemv_blas/1700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 7.6177488910005195e+04,
+      "cpu_time": 7.6174801905499626e+04,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1700/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 16,
+      "run_name": "bench_sddmm_gemv_blas/1700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 4.1429021654921161e+02,
+      "cpu_time": 4.0654827692131346e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1700/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 16,
+      "run_name": "bench_sddmm_gemv_blas/1700/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 5.4268767006421690e-03,
+      "cpu_time": 5.3259725808297636e-03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1800/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 17,
+      "run_name": "bench_sddmm_gemv_blas/1800/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 9.1155036065298191e+04,
+      "cpu_time": 9.1150148735299939e+04,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1800/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 17,
+      "run_name": "bench_sddmm_gemv_blas/1800/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 9.1220145059494826e+04,
+      "cpu_time": 9.1214480630999795e+04,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1800/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 17,
+      "run_name": "bench_sddmm_gemv_blas/1800/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 3.4163936586469299e+02,
+      "cpu_time": 3.4012429945368166e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1800/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 17,
+      "run_name": "bench_sddmm_gemv_blas/1800/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 3.7478934857747446e-03,
+      "cpu_time": 3.7314727860883992e-03,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1900/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 18,
+      "run_name": "bench_sddmm_gemv_blas/1900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.0682168572600349e+05,
+      "cpu_time": 1.0681117084300022e+05,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1900/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 18,
+      "run_name": "bench_sddmm_gemv_blas/1900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.0679139127150849e+05,
+      "cpu_time": 1.0678432956849974e+05,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1900/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 18,
+      "run_name": "bench_sddmm_gemv_blas/1900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 2.3105310529171538e+02,
+      "cpu_time": 2.2831933556324347e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/1900/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 18,
+      "run_name": "bench_sddmm_gemv_blas/1900/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 2.1629793961908087e-03,
+      "cpu_time": 2.1375979100430038e-03,
+      "time_unit": "ms"
     }
