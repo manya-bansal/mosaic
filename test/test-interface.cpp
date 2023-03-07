@@ -785,17 +785,15 @@ TEST(interface, tblisSgemm) {
    IndexVar j("j");
    IndexVar k("k");
 
-   IndexExpr accelerateExpr = B(i, j) * C(j, k) + C(i,k);
+   IndexExpr accelerateExpr = B(i, j) * C(j, k) ;
    A(i, k) = accelerateExpr;
 
 
-   // IndexStmt stmt = A.getAssignment().concretize();
-   // stmt = stmt.accelerate(new TblisMultiply(), accelerateExpr);
-   A.registerAccelerator(new TblisMultiply());
-   // enable targeting
-   A.accelerateOn();
+   IndexStmt stmt = A.getAssignment().concretize();
+   stmt = stmt.accelerate(new TblisMultiply(), accelerateExpr);
+
    
-   A.compile();
+   A.compile(stmt);
    A.assemble();
    A.compute();
 
@@ -2735,7 +2733,7 @@ TEST(interface, stardustAdd) {
 
 }
 
-TEST(interface, endToEndMapper) {
+TEST(interface, endToEndMapper3) {
 
    int NUM_I = 10;
    int NUM_K = 10;
@@ -2743,9 +2741,9 @@ TEST(interface, endToEndMapper) {
 
    Tensor<float> A("A", {NUM_I, NUM_K, NUM_K}, {taco::Dense, taco::Dense, taco::Dense});
    Tensor<float> B("B", {NUM_I, NUM_K, NUM_K}, {taco::Dense, taco::Dense, taco::Dense});
-   Tensor<float> C1("C1", {NUM_I, NUM_J}, {taco::Dense, taco::Sparse});
-   Tensor<float> C2("C2", {NUM_I, NUM_J}, {taco::Dense, taco::Sparse});
-   Tensor<float> C3("C3", {NUM_I, NUM_J}, {taco::Dense, taco::Sparse});
+   Tensor<float> C1("C1", {NUM_I, NUM_J}, {taco::Dense, taco::Dense});
+   Tensor<float> C2("C2", {NUM_I, NUM_J}, {taco::Dense, taco::Dense});
+   Tensor<float> C3("C3", {NUM_I, NUM_J}, {taco::Dense, taco::Dense});
 
    IndexVar i("i"), j("j"), k("k"), l("l");
 
@@ -2761,5 +2759,34 @@ TEST(interface, endToEndMapper) {
    A.compile();
    A.assemble();
    A.compute();
+
+}
+
+TEST(interface, endToEndMapper4) {
+
+   int NUM_I = 10;
+   int NUM_K = 10;
+   int NUM_J = 10;
+
+   Tensor<float> A("A", {NUM_I, NUM_K, NUM_K, NUM_K}, {taco::Dense, taco::Dense, taco::Dense, taco::Dense});
+   Tensor<float> B("B", {NUM_I, NUM_K, NUM_K, NUM_K}, {taco::Sparse, taco::Dense, taco::Dense, taco::Dense});
+   Tensor<float> C1("C1", {NUM_I, NUM_J}, {taco::Dense, taco::Dense});
+   Tensor<float> C2("C2", {NUM_I, NUM_J}, {taco::Dense, taco::Dense});
+   Tensor<float> C3("C3", {NUM_I, NUM_J}, {taco::Dense, taco::Dense});
+
+   // IndexVar i("i"), j("j"), k("k"), l("l");
+
+   // A(i,j,k) = B(i,j,k) * C1(i,l) * C2(j,l) * C3(k,l);
+
+
+   // // register the description
+   // A.registerAccelerator(new Saxpy());
+   // A.registerAccelerator(new Sdot());
+   // // enable targeting
+   // A.accelerateOn();
+
+   // A.compile();
+   // A.assemble();
+   // A.compute();
 
 }
