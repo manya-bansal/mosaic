@@ -1175,4 +1175,66 @@
       "real_time": 2.1629793961908087e-03,
       "cpu_time": 2.1375979100430038e-03,
       "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/2000/iterations:1/repeats:10/real_time_mean",
+      "family_index": 0,
+      "per_family_instance_index": 19,
+      "run_name": "bench_sddmm_gemv_blas/2000/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "mean",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.2825463536729659e+05,
+      "cpu_time": 1.2824799728340023e+05,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/2000/iterations:1/repeats:10/real_time_median",
+      "family_index": 0,
+      "per_family_instance_index": 19,
+      "run_name": "bench_sddmm_gemv_blas/2000/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "median",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 1.2863716768449378e+05,
+      "cpu_time": 1.2863386375300025e+05,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/2000/iterations:1/repeats:10/real_time_stddev",
+      "family_index": 0,
+      "per_family_instance_index": 19,
+      "run_name": "bench_sddmm_gemv_blas/2000/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "stddev",
+      "aggregate_unit": "time",
+      "iterations": 10,
+      "real_time": 8.9652026341952296e+02,
+      "cpu_time": 8.9312039411958028e+02,
+      "time_unit": "ms"
+    },
+    {
+      "name": "bench_sddmm_gemv_blas/2000/iterations:1/repeats:10/real_time_cv",
+      "family_index": 0,
+      "per_family_instance_index": 19,
+      "run_name": "bench_sddmm_gemv_blas/2000/iterations:1/repeats:10/real_time",
+      "run_type": "aggregate",
+      "repetitions": 10,
+      "threads": 1,
+      "aggregate_name": "cv",
+      "aggregate_unit": "percentage",
+      "iterations": 10,
+      "real_time": 6.9901587638689366e-03,
+      "cpu_time": 6.9640104565997871e-03,
+      "time_unit": "ms"
     }
+  ]
+}

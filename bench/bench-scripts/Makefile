@@ -73,7 +73,7 @@ draw-fig18:
 draw-fig19:
 	python3 /home/reviewer/mosaic-benchmarks/run-figure.py \
 	--data_dir=/home/reviewer/mosaic/bench/bench-scripts/sddmm/result \
-	--type=vary_dim --systems=mkl,gsl,dot_blas,taco,tblis,gemv_blas \
+	--type=vary_dim --systems=mkl,gsl,dot_blas,taco,tblis,gemv_blas,blas \
 	--name=fig19 --start_dim=100 --step_dim=200
 	cp ./sddmm/result/fig19.pdf figs/
 

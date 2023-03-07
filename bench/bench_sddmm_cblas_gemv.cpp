@@ -78,5 +78,5 @@ static void bench_sddmm_gemv_blas(benchmark::State& state) {
   exec(eraseData.c_str());
 }
 
-TACO_BENCH(bench_sddmm_gemv_blas)->DenseRange(100, 2000, 100);
+TACO_BENCH(bench_sddmm_gemv_blas)->DenseRange(100, 2000, 200);
 
