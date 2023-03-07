@@ -2725,7 +2725,7 @@ TEST(interface, stardustAdd) {
    Tensor<float> A("A", {NUM_I, NUM_K}, {Dense, Dense}, 0);
    A(i,j) = accelerateExpr;
    IndexStmt stmt = A.getAssignment().concretize();
-   stmt = stmt.accelerate(new StardustAdd(NUM_I, 0.2), accelerateExpr);
+   stmt = stmt.accelerate(new StardustAdd("B_200_0_1"), accelerateExpr);
 
    A.compile(stmt);
    A.assemble();
@@ -2774,19 +2774,19 @@ TEST(interface, endToEndMapper4) {
    Tensor<float> C2("C2", {NUM_I, NUM_J}, {taco::Dense, taco::Dense});
    Tensor<float> C3("C3", {NUM_I, NUM_J}, {taco::Dense, taco::Dense});
 
-   // IndexVar i("i"), j("j"), k("k"), l("l");
+   IndexVar i("i"), j("j"), k("k"), m("m"), l("l");
 
-   // A(i,j,k) = B(i,j,k) * C1(i,l) * C2(j,l) * C3(k,l);
+   A(i,j,k,m) = B(i,j,k,m) * C1(i,l) * C2(j,l) * C3(k,l);
 
 
-   // // register the description
-   // A.registerAccelerator(new Saxpy());
-   // A.registerAccelerator(new Sdot());
-   // // enable targeting
-   // A.accelerateOn();
+   // register the description
+   A.registerAccelerator(new Saxpy());
+   A.registerAccelerator(new Sdot());
+   // enable targeting
+   A.accelerateOn();
 
-   // A.compile();
-   // A.assemble();
-   // A.compute();
+   A.compile();
+   A.assemble();
+   A.compute();
 
 }

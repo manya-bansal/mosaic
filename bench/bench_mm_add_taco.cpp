@@ -10,7 +10,7 @@
 #include "taco/accelerator_interface/gsl_interface.h"
 #include "taco/storage/file_io_mtx.h"
 
-#define DIM_SIZE 800
+#define DIM_SIZE 200
 
 using namespace taco;
 
@@ -58,8 +58,6 @@ static void bench_mm_add_taco(benchmark::State& state, float SPARSITY, int dim) 
   IndexVar i("i"), j("j"), k("k");
 
   IndexExpr accelerateExpr = B(i,j) + C(i, j);
-
-  // taco_uerror << "exit" << std::endl;
 
    for (auto _ : state) {
     // Setup.

@@ -50,10 +50,15 @@ static void bench_mm_add_stardust(benchmark::State& state, float SPARSITY, int d
   exec(generateData.c_str());
   std::string filename = "/home/reviewer/mosaic-benchmarks/data/spdata/mmAdd/B_"+ std::to_string(dim) + "_" +  ((SPARSITY == 1.0) ? "1.0" : ss.str()) + ".mtx";
   std::cout <<  filename << std::endl;
-   std::cout <<  ((SPARSITY == 1.0) ? "1.0" : ss.str())  << std::endl;
+  std::cout <<  ((SPARSITY == 1.0) ? "1.0" : ss.str())  << std::endl;
   B = castToType<float>("B", readMTX(filename, CSR));
   filename = "/home/reviewer/mosaic-benchmarks/data/spdata/mmAdd/C_"+ std::to_string(dim) + "_" +  ((SPARSITY == 1.0) ? "1.0" : ss.str()) + ".mtx"; 
   C = castToType<float>("C", readMTX(filename, CSR)); 
+
+
+  std::map<float, std::string> benchmarkToName = { {0.00625, "B_200_0_00625"}, 
+  {0.0125, "B_200_0_0125"}, {0.025, "B_200_0_025"}, {0.05, "B_200_0_05"}, {0.1, "B_200_0_1"},
+  {0.2, "B_200_0_2"}, {0.4, "B_200_0_4"}, {0.8, "B_200_0_8"}, {1.0, "B_200_1"}};
 
  
 
@@ -67,7 +72,7 @@ static void bench_mm_add_stardust(benchmark::State& state, float SPARSITY, int d
     Tensor<float> A("A", {NUM_I, NUM_K}, {Dense, Dense}, 0);
     A(i,j) = accelerateExpr;
     IndexStmt stmt = A.getAssignment().concretize();
-    stmt = stmt.accelerate(new MklAdd(), accelerateExpr);
+    stmt = stmt.accelerate(new StardustAdd(benchmarkToName[SPARSITY]), accelerateExpr, true);
 
 
     A.compile(stmt);
