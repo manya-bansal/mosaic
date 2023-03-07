@@ -1,5 +1,4 @@
-
-
+#!/bin/bash
 systems=("blas" "taco" "mkl" "gsl")
 
 for i in "${systems[@]}"

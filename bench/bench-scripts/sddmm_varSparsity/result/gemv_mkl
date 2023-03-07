@@ -1,10 +1,10 @@
 {
   "context": {
-    "date": "2023-03-06T23:34:35+00:00",
+    "date": "2023-03-07T06:43:35+00:00",
     "host_name": "ip-172-31-2-241",
     "executable": "/home/reviewer/mosaic/build/bin/./taco-bench",
     "num_cpus": 4,
-    "mhz_per_cpu": 3098,
+    "mhz_per_cpu": 3181,
     "cpu_scaling_enabled": false,
     "caches": [
       {
@@ -32,7 +32,121 @@
         "num_sharing": 4
       }
     ],
-    "load_avg": [0.168457,0.427734,0.406738],
+    "load_avg": [1.02979,5.86426,16.8281],
     "library_build_type": "release"
   },
   "benchmarks": [
+    {
+      "name": "bench_sddmm_varySparisty_gemv_mkl/0.00078125/iterations:1/real_time",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_gemv_mkl/0.00078125/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 1.2514009205899492e+08,
+      "cpu_time": 1.2513492302000000e+08,
+      "time_unit": "us"
+    },
+    {
+      "name": "bench_sddmm_varySparisty_gemv_mkl/0.0015625/iterations:1/real_time",
+      "family_index": 1,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_gemv_mkl/0.0015625/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 1.2482848945900333e+08,
+      "cpu_time": 1.2482531715300001e+08,
+      "time_unit": "us"
+    },
+    {
+      "name": "bench_sddmm_varySparisty_gemv_mkl/0.003125/iterations:1/real_time",
+      "family_index": 2,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_gemv_mkl/0.003125/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 1.2498271296100575e+08,
+      "cpu_time": 1.2497619111400002e+08,
+      "time_unit": "us"
+    },
+    {
+      "name": "bench_sddmm_varySparisty_gemv_mkl/0.00625/iterations:1/real_time",
+      "family_index": 3,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_gemv_mkl/0.00625/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 1.2511811717000091e+08,
+      "cpu_time": 1.2511527539999998e+08,
+      "time_unit": "us"
+    },
+    {
+      "name": "bench_sddmm_varySparisty_gemv_mkl/0.0125/iterations:1/real_time",
+      "family_index": 4,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_gemv_mkl/0.0125/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 1.2486094680700625e+08,
+      "cpu_time": 1.2485358121600007e+08,
+      "time_unit": "us"
+    },
+    {
+      "name": "bench_sddmm_varySparisty_gemv_mkl/0.025/iterations:1/real_time",
+      "family_index": 5,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_gemv_mkl/0.025/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 1.2527242497701082e+08,
+      "cpu_time": 1.2526451448400007e+08,
+      "time_unit": "us"
+    },
+    {
+      "name": "bench_sddmm_varySparisty_gemv_mkl/0.05/iterations:1/real_time",
+      "family_index": 6,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_gemv_mkl/0.05/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 1.2523149802199623e+08,
+      "cpu_time": 1.2522925082300003e+08,
+      "time_unit": "us"
+    },
+    {
+      "name": "bench_sddmm_varySparisty_gemv_mkl/0.1/iterations:1/real_time",
+      "family_index": 7,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_gemv_mkl/0.1/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 1.2475456413000938e+08,
+      "cpu_time": 1.2475180887900001e+08,
+      "time_unit": "us"
+    }
+  ]
+}

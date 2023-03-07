@@ -2734,3 +2734,32 @@ TEST(interface, stardustAdd) {
    A.compute();
 
 }
+
+TEST(interface, endToEndMapper) {
+
+   int NUM_I = 10;
+   int NUM_K = 10;
+   int NUM_J = 10;
+
+   Tensor<float> A("A", {NUM_I, NUM_K, NUM_K}, {taco::Dense, taco::Dense, taco::Dense});
+   Tensor<float> B("B", {NUM_I, NUM_K, NUM_K}, {taco::Dense, taco::Dense, taco::Dense});
+   Tensor<float> C1("C1", {NUM_I, NUM_J}, {taco::Dense, taco::Sparse});
+   Tensor<float> C2("C2", {NUM_I, NUM_J}, {taco::Dense, taco::Sparse});
+   Tensor<float> C3("C3", {NUM_I, NUM_J}, {taco::Dense, taco::Sparse});
+
+   IndexVar i("i"), j("j"), k("k"), l("l");
+
+   A(i,j,k) = B(i,j,k) * C1(i,l) * C2(j,l) * C3(k,l);
+
+
+   // register the description
+   A.registerAccelerator(new Saxpy());
+   A.registerAccelerator(new Sdot());
+   // enable targeting
+   A.accelerateOn();
+
+   A.compile();
+   A.assemble();
+   A.compute();
+
+}

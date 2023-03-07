@@ -815,7 +815,7 @@ static void addIdentityRewrite(IndexStmt stmt, std::map<IndexExpr, std::vector<I
 
   // a = a + 0
   // a = a * 1
-  // a = a - 1
+  // a = a - 0
 
   match(stmt,                                            
    std::function<void(const AccessNode*,Matcher*)>([&](const AccessNode* op,
@@ -1022,30 +1022,6 @@ static void simplifyNegatives(IndexStmt stmt, std::map<IndexExpr, std::vector<In
     })
 
     );
-}
-
-
-std::vector<IndexStmt> generateEquivalentStmts(IndexStmt stmt){
-  std::vector<IndexStmt> possibleRewrites= {};
-  std::vector<IndexStmt> currentRewrites= {}; 
-
-  std::map<IndexExpr, std::vector<IndexExpr>> exprToreplace;
-
-  addIdentityRewrite(stmt, exprToreplace);
-  addCommutativityRewrite(stmt, exprToreplace);
-  addDistributivityRewrites(stmt, exprToreplace);
-  takeCommonTermsOut(stmt, exprToreplace); 
-
-  cout << "stmt : " << stmt << endl;
-
-  for (auto const& it : exprToreplace){
-    cout << it.first << " REWRITES : " << endl;
-    for (auto expr: it.second){
-      cout << "\t" << expr << endl; 
-    }
-  }
-
-  return {};
 }
 
 struct Equals : public IndexNotationVisitorStrict {
@@ -4657,56 +4633,158 @@ IndexStmt IndexStmt::accelerate(FunctionInterface functionInterface, IndexExpr e
   return stmt; 
 }
 
+// IndexStmt IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<FunctionInterface> functionInterfaces) const{
+
+//   std::stack<std::tuple<Access, ConcreteAccelerateCodeGenerator, FunctionInterface, ArgumentMap>> varCodeGen;
+//   // std::map<ConcreteAccelerateCodeGenerator, FunctionInterface> abstractInterface;
+
+//   if (!isa<Assignment>(stmt)) {
+//     cout << "Cannot autoschedule this expression since it is not an assignment" << endl;
+//     return stmt;
+//   }
+
+//   IndexStmt stmtRewrite = stmt;
+//   for (auto descripton: functionInterfaces){
+//     AcceleratorStmt referenceStmt = descripton.getNode()->getStmt();
+    
+//     if (!isa<AcceleratorAssignment>(referenceStmt)){
+//       taco_uerror << "Reference statement in function interface must be an assignemnt" << endl;
+//     }
+
+//     AcceleratorAssignment assign = to<AcceleratorAssignment>(referenceStmt);
+//     AcceleratorAssignment reduxRefStmt = makeReductionNotation(assign);
+//     std::vector<IndexExpr> matchedExprs = allMatchedOpPatterns(to<Assignment>(stmt).getRhs(), reduxRefStmt.getRhs());
+//     ArgumentMap argumentMap;
+
+//     for (auto expr: matchedExprs){
+//       argumentMap = hasPreciseMatch(expr, reduxRefStmt.getRhs());
+//       if (argumentMap.possible){
+//         auto access = replaceTemporary(stmt, expr, reduxRefStmt, argumentMap);
+//         std::map<IndexExpr,IndexExpr> subsitution = {{expr, access}};
+//         stmtRewrite =  replace(stmtRewrite, subsitution);
+//         auto codeGen = getConcreteCodeGenerator(expr, access, argumentMap, descripton);
+//         varCodeGen.push(std::make_tuple(access, codeGen, descripton, argumentMap));
+//         // abstractInterface[codeGen] = descripton;
+//         // TODO: need to change this break to enable multiple matches
+//         break;
+//         }
+//       }
+//   }
+  
+//   stmtRewrite = makeConcreteNotation(stmtRewrite);
+
+//   while (!varCodeGen.empty()){
+//     auto tensorCodeGen = varCodeGen.top();
+//     stmtRewrite = rewriteStmt(stmtRewrite, std::get<0>(tensorCodeGen), std::get<1>(tensorCodeGen), std::get<2>(tensorCodeGen), std::get<3>(tensorCodeGen));
+//     varCodeGen.pop();
+//   }
+
+//   // taco_uerror << stmtRewrite << endl;
+
+//   return stmtRewrite;
+// }
+
+std::vector<IndexStmt> generateEquivalentStmts(IndexStmt stmt){
+  std::map<IndexExpr, std::vector<IndexExpr>> exprToreplace;
+  std::vector<IndexStmt>  possibleRewrites;
+  addIdentityRewrite(stmt, exprToreplace);
+  addCommutativityRewrite(stmt, exprToreplace);
+  addDistributivityRewrites(stmt, exprToreplace);
+  takeCommonTermsOut(stmt, exprToreplace); 
+
+  // cout << "stmt : " << stmt << endl;
+
+  for (auto const& it : exprToreplace){
+    for (auto expr: it.second){
+      std::map<IndexExpr, IndexExpr> substitution;
+      substitution[it.first] = expr;
+      possibleRewrites.push_back(replace(stmt, substitution));
+    }
+  }
+
+  return possibleRewrites;
+
+}
+
+std::vector<IndexStmt> generateEquivalentStmts(IndexStmt stmt, int depth){
+
+  
+  std::vector<IndexStmt>  possibleRewrites = {stmt};
+  int indexRewritesNotExplored = 0;  
+  // generate possible rewrites upto a given depth
+  for (int j = 0; j < depth; j++){
+    cout << "depth " << i << endl;
+    for (int i = indexRewritesNotExplored; i < possibleRewrites.size(); i++){
+      cout << "calling " << i << endl;
+
+      std::vector<IndexStmt> rewritesGenerated = generateEquivalentStmts(possibleRewrites[i]);
+      indexRewritesNotExplored += rewritesGenerated.size();
+      possibleRewrites.insert(possibleRewrites.end(), rewritesGenerated.begin(), rewritesGenerated.end());
+    }
+  }
+
+
+  cout << "stmt : " << possibleRewrites.size() << endl;
+
+  // for (auto const& it : possibleRewrites){
+  //   std::cout << it << std::endl;
+  // }
+
+  return {};
+}
+
 IndexStmt IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<FunctionInterface> functionInterfaces) const{
 
-  std::stack<std::tuple<Access, ConcreteAccelerateCodeGenerator, FunctionInterface, ArgumentMap>> varCodeGen;
-  // std::map<ConcreteAccelerateCodeGenerator, FunctionInterface> abstractInterface;
+  generateEquivalentStmts(stmt, 1);
+  taco_uerror << "Stop";
 
-  if (!isa<Assignment>(stmt)) {
-    cout << "Cannot autoschedule this expression since it is not an assignment" << endl;
-    return stmt;
-  }
+  // std::stack<std::tuple<Access, ConcreteAccelerateCodeGenerator, FunctionInterface, ArgumentMap>> varCodeGen;
+  // // std::map<ConcreteAccelerateCodeGenerator, FunctionInterface> abstractInterface;
 
-  IndexStmt stmtRewrite = stmt;
-  for (auto descripton: functionInterfaces){
-    AcceleratorStmt referenceStmt = descripton.getNode()->getStmt();
+  // if (!isa<Assignment>(stmt)) {
+  //   cout << "Cannot autoschedule this expression since it is not an assignment" << endl;
+  //   return stmt;
+  // }
+
+  // IndexStmt stmtRewrite = stmt;
+  // for (auto descripton: functionInterfaces){
+  //   AcceleratorStmt referenceStmt = descripton.getNode()->getStmt();
     
-    if (!isa<AcceleratorAssignment>(referenceStmt)){
-      taco_uerror << "Reference statement in function interface must be an assignemnt" << endl;
-    }
+  //   if (!isa<AcceleratorAssignment>(referenceStmt)){
+  //     taco_uerror << "Reference statement in function interface must be an assignemnt" << endl;
+  //   }
 
-    AcceleratorAssignment assign = to<AcceleratorAssignment>(referenceStmt);
-    AcceleratorAssignment reduxRefStmt = makeReductionNotation(assign);
-    std::vector<IndexExpr> matchedExprs = allMatchedOpPatterns(to<Assignment>(stmt).getRhs(), reduxRefStmt.getRhs());
-    ArgumentMap argumentMap;
+  //   AcceleratorAssignment assign = to<AcceleratorAssignment>(referenceStmt);
+  //   AcceleratorAssignment reduxRefStmt = makeReductionNotation(assign);
+  //   std::vector<IndexExpr> matchedExprs = allMatchedOpPatterns(to<Assignment>(stmt).getRhs(), reduxRefStmt.getRhs());
+  //   ArgumentMap argumentMap;
 
-    for (auto expr: matchedExprs){
-      argumentMap = hasPreciseMatch(expr, reduxRefStmt.getRhs());
-      if (argumentMap.possible){
-        auto access = replaceTemporary(stmt, expr, reduxRefStmt, argumentMap);
-        std::map<IndexExpr,IndexExpr> subsitution = {{expr, access}};
-        stmtRewrite =  replace(stmtRewrite, subsitution);
-        auto codeGen = getConcreteCodeGenerator(expr, access, argumentMap, descripton);
-        varCodeGen.push(std::make_tuple(access, codeGen, descripton, argumentMap));
-        // abstractInterface[codeGen] = descripton;
-        // TODO: need to change this break to enable multiple matches
-        break;
-        }
-      }
-  }
+  //   for (auto expr: matchedExprs){
+  //     argumentMap = hasPreciseMatch(expr, reduxRefStmt.getRhs());
+  //     if (argumentMap.possible){
+  //       auto access = replaceTemporary(stmt, expr, reduxRefStmt, argumentMap);
+  //       std::map<IndexExpr,IndexExpr> subsitution = {{expr, access}};
+  //       stmtRewrite =  replace(stmtRewrite, subsitution);
+  //       auto codeGen = getConcreteCodeGenerator(expr, access, argumentMap, descripton);
+  //       varCodeGen.push(std::make_tuple(access, codeGen, descripton, argumentMap));
+  //       // abstractInterface[codeGen] = descripton;
+  //       // TODO: need to change this break to enable multiple matches
+  //       break;
+  //       }
+  //     }
+  // }
   
-  stmtRewrite = makeConcreteNotation(stmtRewrite);
+  // stmtRewrite = makeConcreteNotation(stmtRewrite);
 
-  while (!varCodeGen.empty()){
-    auto tensorCodeGen = varCodeGen.top();
-    stmtRewrite = rewriteStmt(stmtRewrite, std::get<0>(tensorCodeGen), std::get<1>(tensorCodeGen), std::get<2>(tensorCodeGen), std::get<3>(tensorCodeGen));
-    varCodeGen.pop();
-  }
+  // while (!varCodeGen.empty()){
+  //   auto tensorCodeGen = varCodeGen.top();
+  //   stmtRewrite = rewriteStmt(stmtRewrite, std::get<0>(tensorCodeGen), std::get<1>(tensorCodeGen), std::get<2>(tensorCodeGen), std::get<3>(tensorCodeGen));
+  //   varCodeGen.pop();
+  // }
 
-  // taco_uerror << stmtRewrite << endl;
-
-  return stmtRewrite;
+  // return stmtRewrite;
 }
+
 
 IndexStmt makeConcreteNotation(IndexStmt stmt) {
 

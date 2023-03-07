@@ -27,11 +27,11 @@ TEST(generateEquivExpressions, addExpr) {
 
    IndexStmt stmt = actualc(i) = actuala(i) + actualb(i) + actualb(i);
 
-   generateEquivalentStmts(stmt);
+   std::cout << util::join(generateEquivalentStmts(stmt)) << std::endl;
 
    stmt = actualc(i) = (actuala(i) + actualb(i));
 
-   generateEquivalentStmts(stmt);
+  std::cout << util::join(generateEquivalentStmts(stmt)) << std::endl;
 
 }
 
@@ -48,7 +48,7 @@ TEST(generateEquivExpressions, subExpr) {
 
    IndexStmt stmt = actualc(i) = actuala(i) - actualb(i);
 
-   generateEquivalentStmts(stmt);
+  std::cout << util::join(generateEquivalentStmts(stmt)) << std::endl;
 
 }
 
@@ -66,11 +66,11 @@ TEST(generateEquivExpressions, addMulExpr) {
 
    IndexStmt stmt = actualc(i) = actuala(i) + actualb(i) * 5;
 
-   generateEquivalentStmts(stmt);
+  std::cout << util::join(generateEquivalentStmts(stmt)) << std::endl;
 
    stmt = actualc(i) = (actuala(i) + actualb(i)) * 5;
 
-   generateEquivalentStmts(stmt);
+  std::cout << util::join(generateEquivalentStmts(stmt)) << std::endl;
 
 }
 
@@ -88,7 +88,7 @@ TEST(generateEquivExpressions, mulExpr) {
 
    IndexStmt stmt = actualc(i) = actuala(i) * actualb(i) * 5;
 
-   generateEquivalentStmts(stmt);
+  std::cout << util::join(generateEquivalentStmts(stmt)) << std::endl;
 
 }
 
@@ -107,11 +107,11 @@ TEST(generateEquivExpressions, divExpr) {
 
    IndexStmt stmt = actualc(i) = (actuala(i) + actualb(i)) / 5;
 
-   generateEquivalentStmts(stmt);
+  std::cout << util::join(generateEquivalentStmts(stmt)) << std::endl;
 
    stmt = actualc(i) = (actuala(i) * actualb(i)) / 5;
 
-    generateEquivalentStmts(stmt);
+   std::cout << util::join(generateEquivalentStmts(stmt)) << std::endl;
 
 }
 
@@ -127,17 +127,17 @@ TEST(generateEquivExpressions, takeCommonTerms) {
 
 
    IndexStmt stmt = actualc(i) = (actuala(i)*5 + actualb(i)*5);
-   generateEquivalentStmts(stmt);
+  std::cout << util::join(generateEquivalentStmts(stmt)) << std::endl;
 
     stmt = actualc(i) = (actuala(i)/5 + actualb(i)/5);
-    generateEquivalentStmts(stmt);
+   std::cout << util::join(generateEquivalentStmts(stmt)) << std::endl;
 
 
     stmt = actualc(i) = (actuala(i)/5 - actualb(i)/5);
-    generateEquivalentStmts(stmt);
+   std::cout << util::join(generateEquivalentStmts(stmt)) << std::endl;
 
     stmt = actualc(i) = (actuala(i)*5 - actualb(i)*5);
-    generateEquivalentStmts(stmt);
+   std::cout << util::join(generateEquivalentStmts(stmt)) << std::endl;
 
 
 }
@@ -154,6 +154,6 @@ TEST(generateEquivExpressions, takeCommonTerms) {
 
 
 //    IndexStmt stmt = actualc(i) = (actuala(i) + (-actualb(i));
-//    generateEquivalentStmts(stmt);
+//   std::cout << util::join(generateEquivalentStmts(stmt)) << std::endl;
 
 // }

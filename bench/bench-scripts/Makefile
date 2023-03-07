@@ -21,7 +21,7 @@ run-fig18:
 	./mmadd/bench.sh
 
 run-fig19:
-	{ time ./sddmm/bench.sh ; } > ./sddmm/time.txt
+	./sddmm/bench.sh
 
 run-fig20:
 	{ time ./blockedSparse_4T/bench.sh ; } > ./blockedSparse_4T/time.txt
