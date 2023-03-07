@@ -26,6 +26,7 @@
 #include "taco/index_notation/index_notation_printer.h"
 #include "taco/accelerator_notation/accelerate_search.h"
 #include "taco/accelerator_notation/accelerator_notation_nodes.h"
+#include "taco/accelerator_notation/code_gen_dynamic_order.h"
 #include "taco/ir/ir.h"
 #include "taco/codegen/module.h"
 #include "taco/tensor.h"
@@ -4580,6 +4581,18 @@ IndexStmt IndexStmt::accelerate(FunctionInterface functionInterface, IndexExpr e
     argumentMap = hasPreciseMatch(exprToAccelerate, assign.getRhs());
     if (argumentMap.possible){
        std::cout << "Warning : Implicit Reduction is being added, given function is calculating " << assignRedux.getRhs() << "." << std::endl;
+       // Generate code to check against SMT query.
+        if (functionInterface.getNode()->getConstraints().defined()){
+          std::map<IndexVar, int> currentDims;
+          for (auto entry : exprToAccelerate.getIndexVarDomains()){
+            currentDims[entry.first] = (int) entry.second.getSize();
+          }
+          GenerateSMTCode condition(functionInterface.getNode()->getConstraints(), {}, currentDims, true);
+          // If we cannot satisfy query even with tilings, skip.
+          if (!condition.isSat()){
+            taco_uerror << "Cannot satify dynamic constraints" << endl;
+          };
+        }
     }else{
       taco_uerror << "Expressions " << assign.getRhs() << " and " << exprToAccelerate << " do not match." << endl;
     }
@@ -4700,6 +4713,18 @@ IndexStmt IndexStmt::helperCheckForMatches(IndexStmt stmt, std::vector<FunctionI
     for (auto expr: matchedExprs){
       argumentMap = hasPreciseMatch(expr, reduxRefStmt.getRhs());
       if (argumentMap.possible){
+        // Generate STMT query if a constraint exists
+        // True indicates that we are interested in finding tilings.
+        if (descripton.getNode()->getConstraints().defined()){
+          std::map<IndexVar, int> currentDims;
+          for (auto entry : expr.getIndexVarDomains()){
+            currentDims[entry.first] = (int) entry.second.getSize();
+          }
+          GenerateSMTCode condition(descripton.getNode()->getConstraints(), {}, currentDims, true);
+
+          // If we cannot satisfy query even with tilings, skip.
+          if (!condition.isSat()) continue;
+        }
         auto access = replaceTemporary(stmt, expr, reduxRefStmt, argumentMap);
         std::map<IndexExpr,IndexExpr> subsitution = {{expr, access}};
         stmtRewrite =  replace(stmtRewrite, subsitution);
