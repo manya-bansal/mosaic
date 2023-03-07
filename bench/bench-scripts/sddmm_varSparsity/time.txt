@@ -1,6 +1,6 @@
 {
   "context": {
-    "date": "2023-03-07T22:11:49+00:00",
+    "date": "2023-03-07T23:21:29+00:00",
     "host_name": "ip-172-31-14-87",
     "executable": "/home/reviewer/mosaic/build/bin/./taco-bench",
     "num_cpus": 64,
@@ -32,11 +32,11 @@
         "num_sharing": 32
       }
     ],
-    "load_avg": [0,0.192383,0.210938],
+    "load_avg": [0,0.0678711,0.328613],
     "library_build_type": "release"
   },
   "benchmarks": [
-!!!! temp dir !!!!!! /home/reviewer/temp/taco_tmp_HuKFTV/
+!!!! temp dir !!!!!! /home/reviewer/temp/taco_tmp_TpGwyn/
 here
 start
     {
@@ -49,8 +49,8 @@ start
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 6.5971274337000065e+07,
-      "cpu_time": 6.5967784791000001e+07,
+      "real_time": 6.7281169577001497e+07,
+      "cpu_time": 6.7279137892999992e+07,
       "time_unit": "us"
     }here
 start
@@ -65,8 +65,8 @@ start
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 6.4199751735000066e+07,
-      "cpu_time": 6.4195670551999979e+07,
+      "real_time": 6.4374865411000431e+07,
+      "cpu_time": 6.4373452093000010e+07,
       "time_unit": "us"
     }here
 start
@@ -81,8 +81,8 @@ start
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 6.3972867271000721e+07,
-      "cpu_time": 6.3967813949000001e+07,
+      "real_time": 6.4376272676998273e+07,
+      "cpu_time": 6.4373718361000016e+07,
       "time_unit": "us"
     }here
 start
@@ -97,8 +97,8 @@ start
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 6.5518274584000207e+07,
-      "cpu_time": 6.5512807055999987e+07,
+      "real_time": 6.5437445609000862e+07,
+      "cpu_time": 6.5435423786999963e+07,
       "time_unit": "us"
     }here
 start
@@ -113,8 +113,8 @@ start
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 6.4999849846999496e+07,
-      "cpu_time": 6.4996829692999937e+07,
+      "real_time": 6.5744740605001427e+07,
+      "cpu_time": 6.5739571565999992e+07,
       "time_unit": "us"
     }here
 start
@@ -129,8 +129,8 @@ start
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 6.6600640808000207e+07,
-      "cpu_time": 6.6595448454000004e+07,
+      "real_time": 6.7134710199998155e+07,
+      "cpu_time": 6.7128086444000021e+07,
       "time_unit": "us"
     }here
 start
@@ -145,8 +145,8 @@ start
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 6.4467188027999327e+07,
-      "cpu_time": 6.4461394408999979e+07,
+      "real_time": 6.5024343037001014e+07,
+      "cpu_time": 6.5018969051000059e+07,
       "time_unit": "us"
     }here
 start
@@ -161,15 +161,15 @@ start
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 6.6760018866999418e+07,
-      "cpu_time": 6.6754399397000045e+07,
+      "real_time": 6.5421437565999441e+07,
+      "cpu_time": 6.5416486597000018e+07,
       "time_unit": "us"
     }
   ]
 }
 {
   "context": {
-    "date": "2023-03-07T22:20:51+00:00",
+    "date": "2023-03-07T23:30:33+00:00",
     "host_name": "ip-172-31-14-87",
     "executable": "/home/reviewer/mosaic/build/bin/./taco-bench",
     "num_cpus": 64,
@@ -201,11 +201,11 @@ start
         "num_sharing": 32
       }
     ],
-    "load_avg": [1.56982,1.60742,0.912109],
+    "load_avg": [1.17773,1.04102,0.751465],
     "library_build_type": "release"
   },
   "benchmarks": [
-!!!! temp dir !!!!!! /home/reviewer/temp/taco_tmp_tRVmwk/
+!!!! temp dir !!!!!! /home/reviewer/temp/taco_tmp_bxlrfg/
 Warning : Implicit Reduction is being added, given function is calculating sum(i218, (A210(i217,i218) * A213(i218,i219))).
     {
       "name": "bench_sddmm_varySparisty_mkl/0.00078125/iterations:1/real_time",
@@ -217,8 +217,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 2.0169283399991400e+05,
-      "cpu_time": 1.2736894600000026e+05,
+      "real_time": 1.2375294299999950e+05,
+      "cpu_time": 1.2375227100000008e+05,
       "time_unit": "us"
     }Warning : Implicit Reduction is being added, given function is calculating sum(i472, (A464(i471,i472) * A467(i472,i473))).
 ,
@@ -232,8 +232,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 1.2708075800037477e+05,
-      "cpu_time": 1.2706877299999997e+05,
+      "real_time": 1.2431293600093341e+05,
+      "cpu_time": 1.2430406799999982e+05,
       "time_unit": "us"
     }Warning : Implicit Reduction is being added, given function is calculating sum(i726, (A718(i725,i726) * A721(i726,i727))).
 ,
@@ -247,8 +247,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 1.3038778499958426e+05,
-      "cpu_time": 1.3037849099999921e+05,
+      "real_time": 1.2518752299911284e+05,
+      "cpu_time": 1.2518058199999960e+05,
       "time_unit": "us"
     }Warning : Implicit Reduction is being added, given function is calculating sum(i980, (A972(i979,i980) * A975(i980,i981))).
 ,
@@ -262,8 +262,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 1.2948954800049250e+05,
-      "cpu_time": 1.2948908100000089e+05,
+      "real_time": 1.2835832600285357e+05,
+      "cpu_time": 1.2832077399999964e+05,
       "time_unit": "us"
     }Warning : Implicit Reduction is being added, given function is calculating sum(i1234, (A1226(i1233,i1234) * A1229(i1234,i1235))).
 ,
@@ -277,8 +277,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 1.3786032199914189e+05,
-      "cpu_time": 1.3782498900000029e+05,
+      "real_time": 1.3481225999930757e+05,
+      "cpu_time": 1.3481206899999964e+05,
       "time_unit": "us"
     }Warning : Implicit Reduction is being added, given function is calculating sum(i1488, (A1480(i1487,i1488) * A1483(i1488,i1489))).
 ,
@@ -292,8 +292,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 1.3896301600016159e+05,
-      "cpu_time": 1.3896330900000109e+05,
+      "real_time": 1.3656597899898770e+05,
+      "cpu_time": 1.3654425400000214e+05,
       "time_unit": "us"
     }Warning : Implicit Reduction is being added, given function is calculating sum(i1742, (A1734(i1741,i1742) * A1737(i1742,i1743))).
 ,
@@ -307,8 +307,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 1.2745308099965769e+05,
-      "cpu_time": 1.2744556599999868e+05,
+      "real_time": 1.2461010400147643e+05,
+      "cpu_time": 1.2459950199999881e+05,
       "time_unit": "us"
     }Warning : Implicit Reduction is being added, given function is calculating sum(i1996, (A1988(i1995,i1996) * A1991(i1996,i1997))).
 ,
@@ -322,15 +322,15 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 1.3457948499944905e+05,
-      "cpu_time": 1.3457938699999871e+05,
+      "real_time": 1.3148998100041354e+05,
+      "cpu_time": 1.3148970399999982e+05,
       "time_unit": "us"
     }
   ]
 }
 {
   "context": {
-    "date": "2023-03-07T22:21:17+00:00",
+    "date": "2023-03-07T23:30:59+00:00",
     "host_name": "ip-172-31-14-87",
     "executable": "/home/reviewer/mosaic/build/bin/./taco-bench",
     "num_cpus": 64,
@@ -362,11 +362,11 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
         "num_sharing": 32
       }
     ],
-    "load_avg": [5.64404,2.56934,1.24902],
+    "load_avg": [1.10645,1.03516,0.760254],
     "library_build_type": "release"
   },
   "benchmarks": [
-!!!! temp dir !!!!!! /home/reviewer/temp/taco_tmp_7Cai0j/
+!!!! temp dir !!!!!! /home/reviewer/temp/taco_tmp_WiYSbl/
     {
       "name": "bench_sddmm_varySparisty_taco/0.00078125/iterations:1/real_time",
       "family_index": 0,
@@ -377,8 +377,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 4.1315774000395322e+04,
-      "cpu_time": 4.1314725000000108e+04,
+      "real_time": 4.2696663000242552e+04,
+      "cpu_time": 4.2679164999999797e+04,
       "time_unit": "us"
     },
     {
@@ -391,8 +391,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 6.6264662000321550e+04,
-      "cpu_time": 6.6264182999999917e+04,
+      "real_time": 6.7263580001963419e+04,
+      "cpu_time": 6.7262956999999617e+04,
       "time_unit": "us"
     },
     {
@@ -405,8 +405,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 1.1901093899996340e+05,
-      "cpu_time": 1.1901097099999980e+05,
+      "real_time": 1.2561233700034791e+05,
+      "cpu_time": 1.2558728900000027e+05,
       "time_unit": "us"
     },
     {
@@ -419,8 +419,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 2.1332980000079260e+05,
-      "cpu_time": 2.1333097799999922e+05,
+      "real_time": 2.2109983599875704e+05,
+      "cpu_time": 2.2110064599999913e+05,
       "time_unit": "us"
     },
     {
@@ -433,8 +433,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 4.0896248300032312e+05,
-      "cpu_time": 4.0896397599999903e+05,
+      "real_time": 3.8106159800008754e+05,
+      "cpu_time": 3.8102375499999931e+05,
       "time_unit": "us"
     },
     {
@@ -447,8 +447,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 6.6735675099971564e+05,
-      "cpu_time": 6.6736039200000081e+05,
+      "real_time": 6.8194529100037471e+05,
+      "cpu_time": 6.8193693499999947e+05,
       "time_unit": "us"
     },
     {
@@ -461,8 +461,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 1.1022755169997253e+06,
-      "cpu_time": 1.1022225280000004e+06,
+      "real_time": 1.1376712960009172e+06,
+      "cpu_time": 1.1376094860000005e+06,
       "time_unit": "us"
     },
     {
@@ -475,15 +475,15 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 1.3910274359996037e+06,
-      "cpu_time": 1.3909326080000000e+06,
+      "real_time": 1.4245989270002609e+06,
+      "cpu_time": 1.4245462860000001e+06,
       "time_unit": "us"
     }
   ]
 }
 {
   "context": {
-    "date": "2023-03-07T22:21:41+00:00",
+    "date": "2023-03-07T23:31:23+00:00",
     "host_name": "ip-172-31-14-87",
     "executable": "/home/reviewer/mosaic/build/bin/./taco-bench",
     "num_cpus": 64,
@@ -515,11 +515,11 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
         "num_sharing": 32
       }
     ],
-    "load_avg": [8.04834,3.45312,1.58008],
+    "load_avg": [5.7168,2.06055,1.10205],
     "library_build_type": "release"
   },
   "benchmarks": [
-!!!! temp dir !!!!!! /home/reviewer/temp/taco_tmp_vA04vG/
+!!!! temp dir !!!!!! /home/reviewer/temp/taco_tmp_uTvL9Y/
 Warning : Implicit Reduction is being added, given function is calculating sum(i218, (A210(i217,i218) * A213(i218,i219))).
     {
       "name": "bench_sddmm_varySparisty_blas/0.00078125/iterations:1/real_time",
@@ -531,8 +531,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 1.3164703399979771e+05,
-      "cpu_time": 1.3163945700000014e+05,
+      "real_time": 1.2531603199931851e+05,
+      "cpu_time": 1.2530813300000010e+05,
       "time_unit": "us"
     }Warning : Implicit Reduction is being added, given function is calculating sum(i472, (A464(i471,i472) * A467(i472,i473))).
 ,
@@ -546,8 +546,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 1.2752623100004712e+05,
-      "cpu_time": 1.2751987400000032e+05,
+      "real_time": 1.2131069099996239e+05,
+      "cpu_time": 1.2130351999999967e+05,
       "time_unit": "us"
     }Warning : Implicit Reduction is being added, given function is calculating sum(i726, (A718(i725,i726) * A721(i726,i727))).
 ,
@@ -561,8 +561,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 1.2793396600045526e+05,
-      "cpu_time": 1.2792637400000029e+05,
+      "real_time": 1.3102534300014668e+05,
+      "cpu_time": 1.3102515299999951e+05,
       "time_unit": "us"
     }Warning : Implicit Reduction is being added, given function is calculating sum(i980, (A972(i979,i980) * A975(i980,i981))).
 ,
@@ -576,8 +576,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 1.2978911000027438e+05,
-      "cpu_time": 1.2975421199999993e+05,
+      "real_time": 1.2366497400216758e+05,
+      "cpu_time": 1.2365545900000008e+05,
       "time_unit": "us"
     }Warning : Implicit Reduction is being added, given function is calculating sum(i1234, (A1226(i1233,i1234) * A1229(i1234,i1235))).
 ,
@@ -591,8 +591,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 1.3669256100001803e+05,
-      "cpu_time": 1.3664693300000063e+05,
+      "real_time": 1.5077989899873501e+05,
+      "cpu_time": 1.5072368600000007e+05,
       "time_unit": "us"
     }Warning : Implicit Reduction is being added, given function is calculating sum(i1488, (A1480(i1487,i1488) * A1483(i1488,i1489))).
 ,
@@ -606,8 +606,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 1.3142839999909484e+05,
-      "cpu_time": 1.3142862399999978e+05,
+      "real_time": 1.4209023500006879e+05,
+      "cpu_time": 1.4207687400000068e+05,
       "time_unit": "us"
     }Warning : Implicit Reduction is being added, given function is calculating sum(i1742, (A1734(i1741,i1742) * A1737(i1742,i1743))).
 ,
@@ -621,8 +621,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 1.3465382800040970e+05,
-      "cpu_time": 1.3460132699999859e+05,
+      "real_time": 1.2521838300017407e+05,
+      "cpu_time": 1.2521814899999839e+05,
       "time_unit": "us"
     }Warning : Implicit Reduction is being added, given function is calculating sum(i1996, (A1988(i1995,i1996) * A1991(i1996,i1997))).
 ,
@@ -636,15 +636,15 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 1.3281917900076223e+05,
-      "cpu_time": 1.3281825099999979e+05,
+      "real_time": 1.2542864799979725e+05,
+      "cpu_time": 1.2541987300000202e+05,
       "time_unit": "us"
     }
   ]
 }
 {
   "context": {
-    "date": "2023-03-07T22:22:08+00:00",
+    "date": "2023-03-07T23:31:49+00:00",
     "host_name": "ip-172-31-14-87",
     "executable": "/home/reviewer/mosaic/build/bin/./taco-bench",
     "num_cpus": 64,
@@ -676,11 +676,11 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
         "num_sharing": 32
       }
     ],
-    "load_avg": [5.64258,3.25488,1.56299],
+    "load_avg": [3.85742,1.95752,1.09619],
     "library_build_type": "release"
   },
   "benchmarks": [
-!!!! temp dir !!!!!! /home/reviewer/temp/taco_tmp_w3nTKb/
+!!!! temp dir !!!!!! /home/reviewer/temp/taco_tmp_T8xXZD/
     {
       "name": "bench_sddmm_varySparisty_gemv_mkl/0.00078125/iterations:1/real_time",
       "family_index": 0,
@@ -691,8 +691,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 1.2661133660199994e+08,
-      "cpu_time": 1.2660834262199999e+08,
+      "real_time": 1.2611240078999799e+08,
+      "cpu_time": 1.2610874489600000e+08,
       "time_unit": "us"
     },
     {
@@ -705,8 +705,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 1.2868427148299998e+08,
-      "cpu_time": 1.2868070657300001e+08,
+      "real_time": 1.2526819022799827e+08,
+      "cpu_time": 1.2526305278700002e+08,
       "time_unit": "us"
     },
     {
@@ -719,8 +719,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 1.2734272997999960e+08,
-      "cpu_time": 1.2733282485300003e+08,
+      "real_time": 1.2572770412199861e+08,
+      "cpu_time": 1.2572027032600002e+08,
       "time_unit": "us"
     },
     {
@@ -733,8 +733,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 1.2715987065299942e+08,
-      "cpu_time": 1.2714700765599997e+08,
+      "real_time": 1.2737225080600001e+08,
+      "cpu_time": 1.2736152172100003e+08,
       "time_unit": "us"
     },
     {
@@ -747,8 +747,8 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 1.2901308528500067e+08,
-      "cpu_time": 1.2900081179299991e+08,
+      "real_time": 1.2731180607499845e+08,
+      "cpu_time": 1.2730216824699999e+08,
       "time_unit": "us"
     },
     {
@@ -761,7 +761,7 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 1.2877568605600026e+08,
-      "cpu_time": 1.2876249872400013e+08,
+      "real_time": 1.2641636126100093e+08,
+      "cpu_time": 1.2640615559000002e+08,
       "time_unit": "us"
     }

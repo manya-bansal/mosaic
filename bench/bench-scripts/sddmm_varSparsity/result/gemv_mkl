@@ -1,6 +1,6 @@
 {
   "context": {
-    "date": "2023-03-07T22:22:08+00:00",
+    "date": "2023-03-07T23:31:49+00:00",
     "host_name": "ip-172-31-14-87",
     "executable": "/home/reviewer/mosaic/build/bin/./taco-bench",
     "num_cpus": 64,
@@ -32,7 +32,7 @@
         "num_sharing": 32
       }
     ],
-    "load_avg": [5.64258,3.25488,1.56299],
+    "load_avg": [3.85742,1.95752,1.09619],
     "library_build_type": "release"
   },
   "benchmarks": [
@@ -46,8 +46,8 @@
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 1.2661133660199994e+08,
-      "cpu_time": 1.2660834262199999e+08,
+      "real_time": 1.2611240078999799e+08,
+      "cpu_time": 1.2610874489600000e+08,
       "time_unit": "us"
     },
     {
@@ -60,8 +60,8 @@
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 1.2868427148299998e+08,
-      "cpu_time": 1.2868070657300001e+08,
+      "real_time": 1.2526819022799827e+08,
+      "cpu_time": 1.2526305278700002e+08,
       "time_unit": "us"
     },
     {
@@ -74,8 +74,8 @@
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 1.2734272997999960e+08,
-      "cpu_time": 1.2733282485300003e+08,
+      "real_time": 1.2572770412199861e+08,
+      "cpu_time": 1.2572027032600002e+08,
       "time_unit": "us"
     },
     {
@@ -88,8 +88,8 @@
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 1.2715987065299942e+08,
-      "cpu_time": 1.2714700765599997e+08,
+      "real_time": 1.2737225080600001e+08,
+      "cpu_time": 1.2736152172100003e+08,
       "time_unit": "us"
     },
     {
@@ -102,8 +102,8 @@
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 1.2901308528500067e+08,
-      "cpu_time": 1.2900081179299991e+08,
+      "real_time": 1.2731180607499845e+08,
+      "cpu_time": 1.2730216824699999e+08,
       "time_unit": "us"
     },
     {
@@ -116,7 +116,7 @@
       "repetition_index": 0,
       "threads": 1,
       "iterations": 1,
-      "real_time": 1.2877568605600026e+08,
-      "cpu_time": 1.2876249872400013e+08,
+      "real_time": 1.2641636126100093e+08,
+      "cpu_time": 1.2640615559000002e+08,
       "time_unit": "us"
     }
