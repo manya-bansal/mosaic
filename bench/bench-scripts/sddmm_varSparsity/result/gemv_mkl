@@ -119,4 +119,34 @@
       "real_time": 1.2641636126100093e+08,
       "cpu_time": 1.2640615559000002e+08,
       "time_unit": "us"
+    },
+    {
+      "name": "bench_sddmm_varySparisty_gemv_mkl/0.05/iterations:1/real_time",
+      "family_index": 6,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_gemv_mkl/0.05/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 1.2690156695900078e+08,
+      "cpu_time": 1.2689074036000000e+08,
+      "time_unit": "us"
+    },
+    {
+      "name": "bench_sddmm_varySparisty_gemv_mkl/0.1/iterations:1/real_time",
+      "family_index": 7,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_gemv_mkl/0.1/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 1.2602473242099950e+08,
+      "cpu_time": 1.2601796008400004e+08,
+      "time_unit": "us"
     }
+  ]
+}

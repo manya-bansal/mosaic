@@ -764,4 +764,294 @@ Warning : Implicit Reduction is being added, given function is calculating sum(i
       "real_time": 1.2641636126100093e+08,
       "cpu_time": 1.2640615559000002e+08,
       "time_unit": "us"
+    },
+    {
+      "name": "bench_sddmm_varySparisty_gemv_mkl/0.05/iterations:1/real_time",
+      "family_index": 6,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_gemv_mkl/0.05/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 1.2690156695900078e+08,
+      "cpu_time": 1.2689074036000000e+08,
+      "time_unit": "us"
+    },
+    {
+      "name": "bench_sddmm_varySparisty_gemv_mkl/0.1/iterations:1/real_time",
+      "family_index": 7,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_gemv_mkl/0.1/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 1.2602473242099950e+08,
+      "cpu_time": 1.2601796008400004e+08,
+      "time_unit": "us"
+    }
+  ]
+}
+{
+  "context": {
+    "date": "2023-03-07T23:49:00+00:00",
+    "host_name": "ip-172-31-14-87",
+    "executable": "/home/reviewer/mosaic/build/bin/./taco-bench",
+    "num_cpus": 64,
+    "mhz_per_cpu": 2500,
+    "cpu_scaling_enabled": false,
+    "caches": [
+      {
+        "type": "Data",
+        "level": 1,
+        "size": 32768,
+        "num_sharing": 2
+      },
+      {
+        "type": "Instruction",
+        "level": 1,
+        "size": 32768,
+        "num_sharing": 2
+      },
+      {
+        "type": "Unified",
+        "level": 2,
+        "size": 1048576,
+        "num_sharing": 2
+      },
+      {
+        "type": "Unified",
+        "level": 3,
+        "size": 37486592,
+        "num_sharing": 32
+      }
+    ],
+    "load_avg": [1.37695,1.25098,1.17773],
+    "library_build_type": "release"
+  },
+  "benchmarks": [
+!!!! temp dir !!!!!! /home/reviewer/temp/taco_tmp_kqoujB/
+Warning : Implicit Reduction is being added, given function is calculating sum(i218, (A210(i217,i218) * A213(i218,i219))).
+nt: 32
+    {
+      "name": "bench_sddmm_varySparisty_tblis/0.00078125/iterations:1/real_time",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_tblis/0.00078125/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 5.5022139998982311e+04,
+      "cpu_time": 3.2553049999999974e+04,
+      "time_unit": "us"
+    }Warning : Implicit Reduction is being added, given function is calculating sum(i478, (A470(i477,i478) * A473(i478,i479))).
+,
+    {
+      "name": "bench_sddmm_varySparisty_tblis/0.0015625/iterations:1/real_time",
+      "family_index": 1,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_tblis/0.0015625/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 1.9095708999884664e+04,
+      "cpu_time": 1.9085110000000237e+04,
+      "time_unit": "us"
+    }Warning : Implicit Reduction is being added, given function is calculating sum(i738, (A730(i737,i738) * A733(i738,i739))).
+,
+    {
+      "name": "bench_sddmm_varySparisty_tblis/0.003125/iterations:1/real_time",
+      "family_index": 2,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_tblis/0.003125/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 2.2545644002093468e+04,
+      "cpu_time": 2.2503473999999635e+04,
+      "time_unit": "us"
+    }Warning : Implicit Reduction is being added, given function is calculating sum(i998, (A990(i997,i998) * A993(i998,i999))).
+,
+    {
+      "name": "bench_sddmm_varySparisty_tblis/0.00625/iterations:1/real_time",
+      "family_index": 3,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_tblis/0.00625/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 2.6463149002665887e+04,
+      "cpu_time": 2.6463218999999150e+04,
+      "time_unit": "us"
+    }Warning : Implicit Reduction is being added, given function is calculating sum(i1258, (A1250(i1257,i1258) * A1253(i1258,i1259))).
+,
+    {
+      "name": "bench_sddmm_varySparisty_tblis/0.0125/iterations:1/real_time",
+      "family_index": 4,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_tblis/0.0125/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 3.4096600998964277e+04,
+      "cpu_time": 3.4008857000000782e+04,
+      "time_unit": "us"
+    }Warning : Implicit Reduction is being added, given function is calculating sum(i1518, (A1510(i1517,i1518) * A1513(i1518,i1519))).
+,
+    {
+      "name": "bench_sddmm_varySparisty_tblis/0.025/iterations:1/real_time",
+      "family_index": 5,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_tblis/0.025/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 2.1781016001114040e+04,
+      "cpu_time": 2.1779651999999318e+04,
+      "time_unit": "us"
+    }Warning : Implicit Reduction is being added, given function is calculating sum(i1778, (A1770(i1777,i1778) * A1773(i1778,i1779))).
+,
+    {
+      "name": "bench_sddmm_varySparisty_tblis/0.05/iterations:1/real_time",
+      "family_index": 6,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_tblis/0.05/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 2.2139656999570434e+04,
+      "cpu_time": 2.2139510999998889e+04,
+      "time_unit": "us"
+    }Warning : Implicit Reduction is being added, given function is calculating sum(i2038, (A2030(i2037,i2038) * A2033(i2038,i2039))).
+,
+    {
+      "name": "bench_sddmm_varySparisty_tblis/0.1/iterations:1/real_time",
+      "family_index": 7,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_tblis/0.1/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 2.2241696000492084e+04,
+      "cpu_time": 2.2233524999998976e+04,
+      "time_unit": "us"
+    }
+  ]
+}
+{
+  "context": {
+    "date": "2023-03-07T23:49:26+00:00",
+    "host_name": "ip-172-31-14-87",
+    "executable": "/home/reviewer/mosaic/build/bin/./taco-bench",
+    "num_cpus": 64,
+    "mhz_per_cpu": 2500,
+    "cpu_scaling_enabled": false,
+    "caches": [
+      {
+        "type": "Data",
+        "level": 1,
+        "size": 32768,
+        "num_sharing": 2
+      },
+      {
+        "type": "Instruction",
+        "level": 1,
+        "size": 32768,
+        "num_sharing": 2
+      },
+      {
+        "type": "Unified",
+        "level": 2,
+        "size": 1048576,
+        "num_sharing": 2
+      },
+      {
+        "type": "Unified",
+        "level": 3,
+        "size": 37486592,
+        "num_sharing": 32
+      }
+    ],
+    "load_avg": [1.38965,1.2627,1.18408],
+    "library_build_type": "release"
+  },
+  "benchmarks": [
+!!!! temp dir !!!!!! /home/reviewer/temp/taco_tmp_gx2VTG/
+var1
+var2
+mat
+    {
+      "name": "bench_sddmm_varySparisty_gemv_gsl/0.00078125/iterations:1/real_time",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_gemv_gsl/0.00078125/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 1.2571356205799930e+08,
+      "cpu_time": 1.2571021193200000e+08,
+      "time_unit": "us"
+    },
+    {
+      "name": "bench_sddmm_varySparisty_gemv_gsl/0.0015625/iterations:1/real_time",
+      "family_index": 1,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_gemv_gsl/0.0015625/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 1.2594669171200076e+08,
+      "cpu_time": 1.2594222745100001e+08,
+      "time_unit": "us"
+    },
+    {
+      "name": "bench_sddmm_varySparisty_gemv_gsl/0.003125/iterations:1/real_time",
+      "family_index": 2,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_gemv_gsl/0.003125/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 1.2353559446499822e+08,
+      "cpu_time": 1.2353055328599995e+08,
+      "time_unit": "us"
+    },
+    {
+      "name": "bench_sddmm_varySparisty_gemv_gsl/0.00625/iterations:1/real_time",
+      "family_index": 3,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_gemv_gsl/0.00625/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 1.2830823571899964e+08,
+      "cpu_time": 1.2830367506600004e+08,
+      "time_unit": "us"
     }
