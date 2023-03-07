@@ -324,10 +324,7 @@ TEST (accelerateNotation, testLinearStardust){
   IndexStmt newStmt = stmt.tile(new TileSaxpy(), accelerateExpr, {{i,  1}});
   auto end1 = std::chrono::high_resolution_clock::now();
 
-  std::cout << "Time taken to Run Linear Search for Stardust: "
-          << std::chrono::duration_cast<std::chrono::microseconds>(end1 - start1).count() << "us" << std::endl;
   double count = 0;
-
   // for (int j = 0; j < 10; j++){
   auto start = std::chrono::high_resolution_clock::now();
   // Starting the random Search
