@@ -87,5 +87,6 @@ static void bench_blockedSparse4T_5_gsl(benchmark::State& state) {
 
 }
 
-TACO_BENCH(bench_blockedSparse4T_5_gsl)->DenseRange(10, 100, 5);
+// Stop at 70 because gsl ooms.
+TACO_BENCH(bench_blockedSparse4T_5_gsl)->DenseRange(10, 70, 10);
 

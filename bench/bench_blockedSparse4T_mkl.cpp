@@ -86,5 +86,5 @@ static void bench_blockedSparse4T_mkl(benchmark::State& state) {
 
 }
 
-TACO_BENCH(bench_blockedSparse4T_mkl)->DenseRange(10, 100, 5);
+TACO_BENCH(bench_blockedSparse4T_mkl)->DenseRange(10, 100, 10);
 

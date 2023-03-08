@@ -91,4 +91,62 @@
       "real_time": 1.2830823571899964e+08,
       "cpu_time": 1.2830367506600004e+08,
       "time_unit": "us"
+    },
+    {
+      "name": "bench_sddmm_varySparisty_gemv_gsl/0.0125/iterations:1/real_time",
+      "family_index": 4,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_gemv_gsl/0.0125/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 1.2563909489099933e+08,
+      "cpu_time": 1.2563000078400001e+08,
+      "time_unit": "us"
+    },
+    {
+      "name": "bench_sddmm_varySparisty_gemv_gsl/0.025/iterations:1/real_time",
+      "family_index": 5,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_gemv_gsl/0.025/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 1.2496603351900013e+08,
+      "cpu_time": 1.2495442525500004e+08,
+      "time_unit": "us"
+    },
+    {
+      "name": "bench_sddmm_varySparisty_gemv_gsl/0.05/iterations:1/real_time",
+      "family_index": 6,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_gemv_gsl/0.05/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 1.2575360697200085e+08,
+      "cpu_time": 1.2574343963900003e+08,
+      "time_unit": "us"
+    },
+    {
+      "name": "bench_sddmm_varySparisty_gemv_gsl/0.1/iterations:1/real_time",
+      "family_index": 7,
+      "per_family_instance_index": 0,
+      "run_name": "bench_sddmm_varySparisty_gemv_gsl/0.1/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 1.2680158600600043e+08,
+      "cpu_time": 1.2679324407499996e+08,
+      "time_unit": "us"
     }
+  ]
+}
