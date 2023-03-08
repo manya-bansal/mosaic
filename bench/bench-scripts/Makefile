@@ -16,7 +16,7 @@ run-unit-test:
 
 # Each of these scripts inlcudes a list of systems that the benchmark runs in.
 # Please change the list of systems to correspond with the systems that are
-# currently downloaded on your machine.
+# currently downloaded on your computer.
 
 
 run-fig13:
