@@ -1,0 +1,1 @@
+export PATH_TO_MOSAIC_ARTIFACT=/home/reviewer/
