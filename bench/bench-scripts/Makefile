@@ -21,10 +21,10 @@ run-unit-test:
 	$(PATH_TO_MOSAIC_ARTIFACT)/mosaic/build/bin/taco-test interface
 
 run-fig13:
-	/gemv/bench.sh
+	./gemv/bench.sh
 
 run-fig14:
-	/symmgemv/bench.sh
+	./symmgemv/bench.sh
 
 run-fig15:
 	./spmv/bench.sh
@@ -123,3 +123,8 @@ run-fig22:
 
 draw-fig22:
 	@echo "No graph to generate here, pls call make run-fig22 to look at the command directly."
+
+stardust-csv: set-up-env
+	sh $(PATH_TO_MOSAIC_ARTIFACT)/taco-to-spatial/scripts/gen_csv_mosaic.sh
+
+
