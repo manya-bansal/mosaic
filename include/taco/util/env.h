@@ -28,6 +28,8 @@ inline std::string getTmpdir() {
   if (cachedtmpdir == ""){
     // use posix logic for finding a temp dir
     auto tmpdir = getFromEnv("TMPDIR", "/tmp/");
+
+    tmpdir = "/home/ubuntu/temp";
     
     // if the directory does not have a trailing slash, add one
     if (tmpdir.back() != '/') {
@@ -61,9 +63,9 @@ inline std::string getTmpdir() {
     cachedtmpdir = tacotmpdir;
     std::cout << "!!!! temp dir !!!!!! " << tacotmpdir << std::endl;
     //cleanup unless we are in debug mode
-    #ifndef TACO_DEBUG
-      atexit(cachedtmpdirCleanup);
-    #endif
+    // #ifndef TACO_DEBUG
+    //   atexit(cachedtmpdirCleanup);
+    // #endif
   }
   // std::cout << cachedtmpdir << std::endl;
   return cachedtmpdir;

@@ -40,7 +40,7 @@ static void bench_sddmm_mkl(benchmark::State& state) {
   char const *ret = getenv("PATH_TO_MOSAIC_ARTIFACT");
   if (!ret) {
     taco_uerror << "Please set the environment variable PATH_TO_MOSAIC_ARTIFACT."
-    << "To do so, run (in the mosaic/bench/bench-scripts/ dir): source mosaic_env_var.sh.";
+    << "To do so, run (in the mosaic-artifact/scripts dir): source mosaic_env_var.sh.";
   }
 
  std::string path_to_artifact = std::string(ret);
