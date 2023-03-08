@@ -27,8 +27,6 @@ static std::vector<std::string> customSplit(std::string str, char separator) {
 }
 
 
-static std::string stardustDataDir = "/home/reviewer/mosaic-benchmarks/stardust-runs/"; 
-
 class StardustAdd : public AbstractFunctionInterface{
     public: 
         StardustAdd(const std::string& name) : x(TensorObject(Type(taco::Float32, {Dimension(), Dimension()}), CSR)),
@@ -42,8 +40,16 @@ class StardustAdd : public AbstractFunctionInterface{
         // IndexExpr getLHS() const override {return x(i);}
         AcceleratorStmt getStmt() const override {return z(i, j) = x(i, j) + y(i, j);}
         std::vector<Argument> getArguments() const override {
-            std::ifstream infile(stardustDataDir + "spmv_plus2.csv");
-            std::string line;
+
+        char const *ret = getenv("PATH_TO_MOSAIC_ARTIFACT");
+            if (!ret) {
+                taco_uerror << "Please set the environment variable PATH_TO_MOSAIC_ARTIFACT."
+                << "To do so, run (in the mosaic/bench/bench-scripts/ dir): source mosaic_env_var.sh.";
+            }
+        std::string stardustDataDir = std::string(ret) + "mosaic-benchmarks/stardust-runs";
+        std::ifstream infile(stardustDataDir + "spmv_plus2.csv");
+        std::string line;
+
             while (getline(infile, line,'\n')){
                 std::vector<std::string> words = customSplit(line, ',');
                 if (words.size() < 9){
@@ -86,6 +92,12 @@ class StardustSpmv : public AbstractFunctionInterface{
                   name(name) {};
         AcceleratorStmt getStmt() const override {return y(i) = x(i, j)*s(j);}
         std::vector<Argument> getArguments() const override {
+            char const *ret = getenv("PATH_TO_MOSAIC_ARTIFACT");
+            if (!ret) {
+                taco_uerror << "Please set the environment variable PATH_TO_MOSAIC_ARTIFACT."
+                << "To do so, run (in the mosaic/bench/bench-scripts/ dir): source mosaic_env_var.sh.";
+            }
+            std::string stardustDataDir = std::string(ret) + "mosaic-benchmarks/stardust-runs";
             std::ifstream infile(stardustDataDir + "spmv_plus2.csv");
             std::string line;
             while (getline(infile, line,'\n')){

@@ -153,69 +153,77 @@ string Module::compile() {
     "-o " + fullpath + " -lm";
 
 
+char const *ret = getenv("PATH_TO_MOSAIC_ARTIFACT");
+  if (!ret) {
+    taco_uerror << "Please set the environment variable PATH_TO_MOSAIC_ARTIFACT."
+    << "To do so, run (in the mosaic/bench/bench-scripts/ dir): source mosaic_env_var.sh.";
+  }
+
+  std::string path_to_artifact = std::string(ret);
+
 
   // GSL has its own implementatio of cblas, 
   // we need to include the correct one depending on what 
   // we are compiling 
   if (gsl_compile){
     cmd +=  " -I/usr/include/mkl"
-            " -I/home/reviewer/tensor_algebra_systems_lib/cuda-wrappers/"
-            " -I/home/reviewer/tensor_algebra_systems_lib/mkl/"
+            " -I" + path_to_artifact + "/tensor_algebra_systems_lib/cuda-wrappers/"
+            " -I" + path_to_artifact + "/tensor_algebra_systems_lib/mkl/"
             " -I/opt/nvidia/hpc_sdk/Linux_x86_64/22.9/math_libs/11.7/targets/x86_64-linux/include/"
             " -I/usr/local/cuda-11.8/targets/x86_64-linux/include/"
-            " -I/home/reviewer/tensor_algebra_systems_lib/tblis/include"
-           " -I/home/reviewer/tensor_algebra_systems_lib/tblis/include/tblis"
-           " -I/home/reviewer/tensor_algebra_systems_lib/gsl/include" 
-           " -I/home/reviewer/tensor_algebra_systems_lib/tensor/include/"
-           " -I/home/reviewer/tensor_algebra_systems_lib/tensor/include/tensor"
-           " -L/home/reviewer/tensor_algebra_systems_lib/tblis/lib"
-           " -L/home/reviewer/tensor_algebra_systems_lib/gsl/lib"
-           " -L/home/reviewer/tensor_algebra_systems_lib/tensor/lib"
-           " -Wl,-R/home/reviewer/tensor_algebra_systems_lib/tblis/lib -l:libtblis.so.0.0.0 "
-           " -Wl,-R/home/reviewer/tensor_algebra_systems_lib/gsl/lib -l:libgsl.so.27.0.0"
+            " -I" + path_to_artifact + "/tensor_algebra_systems_lib/tblis/include"
+           " -I" + path_to_artifact + "/tensor_algebra_systems_lib/tblis/include/tblis"
+           " -I" + path_to_artifact + "/tensor_algebra_systems_lib/gsl/include" 
+           " -I" + path_to_artifact + "/tensor_algebra_systems_lib/tensor/include/"
+           " -I" + path_to_artifact + "/tensor_algebra_systems_lib/tensor/include/tensor"
+           " -L" + path_to_artifact + "/tensor_algebra_systems_lib/tblis/lib"
+           " -L" + path_to_artifact + "/tensor_algebra_systems_lib/gsl/lib"
+           " -L" + path_to_artifact + "/tensor_algebra_systems_lib/tensor/lib"
+           " -Wl,-R" + path_to_artifact + "/tensor_algebra_systems_lib/tblis/lib -l:libtblis.so.0.0.0 "
+           " -Wl,-R" + path_to_artifact + "/tensor_algebra_systems_lib/gsl/lib -l:libgsl.so.27.0.0"
            " -L/usr/lib/intel64 -Wl,-R/usr/lib/mkl/intel64"
            " -L/usr/local/cuda-11.8/targets/x86_64-linux/lib/"
            " -L/usr/lib/x86_64-linux-gnu/"
            " -Wl,-R/usr/lib/x86_64-linux-gnu/"
            " -Wl,-R/usr/local/cuda-11.8/targets/x86_64-linux/lib/"
            " -Wl,--no-as-needed -lmkl_intel_lp64 -lmkl_sequential -lmkl_avx512 -lmkl_core -lpthread -lm -ldl "
-           " -Wl,-R/home/reviewer/tensor_algebra_systems_lib/tensor/lib -l:libtensor.so.0.0.0 -l:libatlas.so.3.10.3 -lcudart -lcusparse";
+           " -Wl,-R" + path_to_artifact + "/tensor_algebra_systems_lib/tensor/lib -l:libtensor.so.0.0.0 -l:libatlas.so.3.10.3 -lcudart -lcusparse";
   }
   else if(mkl_compile){
     cmd += " -I/usr/include/mkl"
-          " -I/home/reviewer/tensor_algebra_systems_lib/cuda-wrappers/"
-          " -I/home/reviewer/tensor_algebra_systems_lib/mkl/"
+          " -I" + path_to_artifact + "/tensor_algebra_systems_lib/cuda-wrappers/"
+          " -I" + path_to_artifact + "/tensor_algebra_systems_lib/mkl/"
           " -I/opt/nvidia/hpc_sdk/Linux_x86_64/22.9/math_libs/11.7/targets/x86_64-linux/include/"
             " -I/usr/local/cuda-11.8/targets/x86_64-linux/include/"
-           " -I/home/reviewer/tensor_algebra_systems_lib/tblis/include"
-           " -I/home/reviewer/tensor_algebra_systems_lib/tblis/include/tblis"
-           " -I/home/reviewer/tensor_algebra_systems_lib/gsl/include" 
-           " -I/home/reviewer/tensor_algebra_systems_lib/tensor/include/"
-           " -I/home/reviewer/tensor_algebra_systems_lib/tensor/include/tensor"
+           " -I" + path_to_artifact + "/tensor_algebra_systems_lib/tblis/include"
+           " -I" + path_to_artifact + "/tensor_algebra_systems_lib/tblis/include/tblis"
+           " -I" + path_to_artifact + "/tensor_algebra_systems_lib/gsl/include" 
+           " -I" + path_to_artifact + "/tensor_algebra_systems_lib/tensor/include/"
+           " -I" + path_to_artifact + "/tensor_algebra_systems_lib/tensor/include/tensor"
            " -L/usr/lib/intel64 -Wl,-R/usr/lib/mkl/intel64"
-           " -L/home/reviewer/tensor_algebra_systems_lib/tblis/lib"
+           " -L" + path_to_artifact + "/tensor_algebra_systems_lib/tblis/lib"
            " -L/usr/local/cuda-11.8/targets/x86_64-linux/lib/"
            " -Wl,-R/usr/local/cuda-11.8/targets/x86_64-linux/lib/"
-           " -Wl,-R/home/reviewer/tensor_algebra_systems_lib/tblis/lib"
+           " -Wl,-R" + path_to_artifact + "/tensor_algebra_systems_lib/tblis/lib"
            " -Wl,--no-as-needed -lmkl_intel_lp64 -lmkl_sequential -lmkl_avx512 -lmkl_core -lpthread -lm -ldl -l:libtblis.so.0.0.0 -lcudart -lcusparse";
   }
   else {
     cmd +=  " -I/usr/include/mkl"
-             " -I/home/reviewer/tensor_algebra_systems_lib/cuda-wrappers/"
-             " -I/home/reviewer/tensor_algebra_systems_lib/mkl/"
+             " -I" + path_to_artifact + "/tensor_algebra_systems_lib/cuda-wrappers/"
+             " -I" + path_to_artifact + "/tensor_algebra_systems_lib/mkl/"
             " -mavx2"
              " -I/opt/nvidia/hpc_sdk/Linux_x86_64/22.9/math_libs/11.7/targets/x86_64-linux/include/"
             " -I/usr/local/cuda-11.8/targets/x86_64-linux/include/"
-           " -I/home/reviewer/tensor_algebra_systems_lib/tblis/include"
-           " -I/home/reviewer/tensor_algebra_systems_lib/tblis/include/tblis"
-           " -I/home/reviewer/tensor_algebra_systems_lib/gsl/include" 
-           " -I/home/reviewer/tensor_algebra_systems_lib/tensor/include/"
-           " -I/home/reviewer/tensor_algebra_systems_lib/tensor/include/tensor"
-           " -L/home/reviewer/tensor_algebra_systems_lib/tblis/lib"
+           " -I" + path_to_artifact + "/tensor_algebra_systems_lib/tblis/include"
+           " -I" + path_to_artifact + "/tensor_algebra_systems_lib/tblis/include/tblis"
+           " -I" + path_to_artifact + "/tensor_algebra_systems_lib/gsl/include" 
+           " -I" + path_to_artifact + "/tensor_algebra_systems_lib/tensor/include/"
+           " -I" + path_to_artifact + "/tensor_algebra_systems_lib/tensor/include/tensor"
+           " -L" + path_to_artifact + "/tensor_algebra_systems_lib/tblis/lib"
            " -L/usr/local/cuda-11.8/targets/x86_64-linux/lib/"
            " -Wl,-R/usr/local/cuda-11.8/targets/x86_64-linux/lib/"
            " -L/usr/lib/intel64 -Wl,-R/usr/lib/mkl/intel64"
-           " -Wl,-R/home/reviewer/tensor_algebra_systems_lib/tblis/lib -l:libtblis.so.0.0.0 -lopenblas -lcudart -lcusparse"
+           " -Wl,-R" + path_to_artifact + "/tensor_algebra_systems_lib/tblis/lib -l:libtblis.so.0.0.0 -lopenblas -lcudart -lcusparse"
            " -Wl,--no-as-needed -lmkl_intel_lp64 -lmkl_sequential -lmkl_avx512 -lmkl_core -lpthread -lm -ldl";
   }
 

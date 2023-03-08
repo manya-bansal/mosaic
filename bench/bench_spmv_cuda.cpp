@@ -29,11 +29,19 @@ static void bench_spmv_cuda(benchmark::State& state) {
     Tensor<float> B("B", {dim, dim}, CSR);
     Tensor<float> C("C", {dim}, Format{Dense});
 
-    std::string generateData = "python3 /home/reviewer/mosaic-benchmarks/data/data_gen.py --bench spmv --dim ";
+    char const *ret = getenv("PATH_TO_MOSAIC_ARTIFACT");
+  if (!ret) {
+    taco_uerror << "Please set the environment variable PATH_TO_MOSAIC_ARTIFACT."
+    << "To do so, run (in the mosaic/bench/bench-scripts/ dir): source mosaic_env_var.sh.";
+  }
+
+ std::string path_to_artifact = std::string(ret);
+
+  std::string generateData = "python3  " + path_to_artifact + "/data/data_gen.py --bench spmv --dim ";
     generateData += std::to_string(dim);
-    generateData += " --nnz 0.2 --out_dir /home/reviewer/mosaic-benchmarks/data/spdata/";
+    generateData += " --nnz 0.2 --out_dir " + path_to_artifact + "/data/spdata/";
     exec(generateData.c_str());
-    std::string filename = "/home/reviewer/mosaic-benchmarks/data/spdata/spmv/B_" + std::to_string(dim) + "_0.2.mtx";
+    std::string filename = "" + path_to_artifact + "/data/spdata/spmv/B_" + std::to_string(dim) + "_0.2.mtx";
     B = castToType<float>("B", readMTX(filename, CSR));
 
     for (int i = 0; i < dim; i++) {
@@ -60,7 +68,7 @@ static void bench_spmv_cuda(benchmark::State& state) {
     state.ResumeTiming();
     pair.first(func.data());
   }
-  std::string eraseData = "rm -rf /home/reviewer/mosaic-benchmarks/data/spdata/spmv/B_" + std::to_string(dim) + "_0.2.mtx";
+  std::string eraseData = "rm -rf " + path_to_artifact + "/data/spdata/spmv/B_" + std::to_string(dim) + "_0.2.mtx";
   exec(eraseData.c_str());
 }
 

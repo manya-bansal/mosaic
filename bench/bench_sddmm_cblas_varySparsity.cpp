@@ -38,14 +38,22 @@ static void bench_sddmm_varySparisty_blas(benchmark::State& state, float SPARSIT
 
 
 
-  std::string generateData = "python3 /home/reviewer/mosaic-benchmarks/data/data_gen.py --bench sddmm_sp --dim ";
+  char const *ret = getenv("PATH_TO_MOSAIC_ARTIFACT");
+  if (!ret) {
+    taco_uerror << "Please set the environment variable PATH_TO_MOSAIC_ARTIFACT."
+    << "To do so, run (in the mosaic/bench/bench-scripts/ dir): source mosaic_env_var.sh.";
+  }
+
+ std::string path_to_artifact = std::string(ret);
+
+  std::string generateData = "python3  " + path_to_artifact + "/data/data_gen.py --bench sddmm_sp --dim ";
   generateData += std::to_string(dim);
   generateData += " --nnz ";
     std::ostringstream ss;
   ss << SPARSITY;generateData += ss.str();
-  generateData += " --out_dir /home/reviewer/mosaic-benchmarks/data/spdata/";
+  generateData += " --out_dir " + path_to_artifact + "/data/spdata/";
   exec(generateData.c_str());
-  std::string filename = "/home/reviewer/mosaic-benchmarks/data/spdata/sddmm_sp/B_"+ std::to_string(dim) + "_" + ss.str() + ".mtx";
+  std::string filename = "" + path_to_artifact + "/data/spdata/sddmm_sp/B_"+ std::to_string(dim) + "_" + ss.str() + ".mtx";
   B = castToType<float>("B", readMTX(filename, CSR));
 
   for (int i = 0; i < dim; i++) {
@@ -79,7 +87,7 @@ static void bench_sddmm_varySparisty_blas(benchmark::State& state, float SPARSIT
     state.ResumeTiming();
     pair.first(func.data());
   }
-  std::string eraseData = "rm -rf /home/reviewer/mosaic-benchmarks/data/spdata/sddmm_sp/B_" + std::to_string(dim) + "_" + ss.str() + ".mtx";
+  std::string eraseData = "rm -rf " + path_to_artifact + "/data/spdata/sddmm_sp/B_" + std::to_string(dim) + "_" + ss.str() + ".mtx";
   exec(eraseData.c_str());
 }
 

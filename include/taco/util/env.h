@@ -29,8 +29,6 @@ inline std::string getTmpdir() {
     // use posix logic for finding a temp dir
     auto tmpdir = getFromEnv("TMPDIR", "/tmp/");
     
-    tmpdir = "/home/reviewer/temp";
-
     // if the directory does not have a trailing slash, add one
     if (tmpdir.back() != '/') {
       tmpdir += '/';
