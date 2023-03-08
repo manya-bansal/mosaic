@@ -1,0 +1,166 @@
+{
+  "context": {
+    "date": "2023-03-08T00:39:01+00:00",
+    "host_name": "ip-172-31-14-87",
+    "executable": "/home/reviewer/mosaic/build/bin/./taco-bench",
+    "num_cpus": 64,
+    "mhz_per_cpu": 2500,
+    "cpu_scaling_enabled": false,
+    "caches": [
+      {
+        "type": "Data",
+        "level": 1,
+        "size": 32768,
+        "num_sharing": 2
+      },
+      {
+        "type": "Instruction",
+        "level": 1,
+        "size": 32768,
+        "num_sharing": 2
+      },
+      {
+        "type": "Unified",
+        "level": 2,
+        "size": 1048576,
+        "num_sharing": 2
+      },
+      {
+        "type": "Unified",
+        "level": 3,
+        "size": 37486592,
+        "num_sharing": 32
+      }
+    ],
+    "load_avg": [11.3877,3.27832,1.65625],
+    "library_build_type": "release"
+  },
+  "benchmarks": [
+    {
+      "name": "bench_mm_add_mkl/0.00625/iterations:1/real_time",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "bench_mm_add_mkl/0.00625/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 2.8217069993843324e+03,
+      "cpu_time": 2.8198660000000041e+03,
+      "time_unit": "us"
+    },
+    {
+      "name": "bench_mm_add_mkl/0.0125/iterations:1/real_time",
+      "family_index": 1,
+      "per_family_instance_index": 0,
+      "run_name": "bench_mm_add_mkl/0.0125/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 1.4567700054612942e+02,
+      "cpu_time": 1.4394100000002240e+02,
+      "time_unit": "us"
+    },
+    {
+      "name": "bench_mm_add_mkl/0.025/iterations:1/real_time",
+      "family_index": 2,
+      "per_family_instance_index": 0,
+      "run_name": "bench_mm_add_mkl/0.025/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 8.5086001490708441e+01,
+      "cpu_time": 8.3266999999997978e+01,
+      "time_unit": "us"
+    },
+    {
+      "name": "bench_mm_add_mkl/0.05/iterations:1/real_time",
+      "family_index": 3,
+      "per_family_instance_index": 0,
+      "run_name": "bench_mm_add_mkl/0.05/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 1.3749000027019065e+02,
+      "cpu_time": 1.3604100000000341e+02,
+      "time_unit": "us"
+    },
+    {
+      "name": "bench_mm_add_mkl/0.1/iterations:1/real_time",
+      "family_index": 4,
+      "per_family_instance_index": 0,
+      "run_name": "bench_mm_add_mkl/0.1/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 1.9976600015070289e+02,
+      "cpu_time": 1.9080800000000065e+02,
+      "time_unit": "us"
+    },
+    {
+      "name": "bench_mm_add_mkl/0.2/iterations:1/real_time",
+      "family_index": 5,
+      "per_family_instance_index": 0,
+      "run_name": "bench_mm_add_mkl/0.2/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 1.4386899965757038e+02,
+      "cpu_time": 1.4199199999999357e+02,
+      "time_unit": "us"
+    },
+    {
+      "name": "bench_mm_add_mkl/0.4/iterations:1/real_time",
+      "family_index": 6,
+      "per_family_instance_index": 0,
+      "run_name": "bench_mm_add_mkl/0.4/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 6.3339999542222358e+01,
+      "cpu_time": 6.1002000000004443e+01,
+      "time_unit": "us"
+    },
+    {
+      "name": "bench_mm_add_mkl/0.8/iterations:1/real_time",
+      "family_index": 7,
+      "per_family_instance_index": 0,
+      "run_name": "bench_mm_add_mkl/0.8/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 7.4566998591762967e+01,
+      "cpu_time": 7.2084999999999511e+01,
+      "time_unit": "us"
+    },
+    {
+      "name": "bench_mm_add_mkl/1.0/iterations:1/real_time",
+      "family_index": 8,
+      "per_family_instance_index": 0,
+      "run_name": "bench_mm_add_mkl/1.0/iterations:1/real_time",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 6.1173001085990109e+01,
+      "cpu_time": 5.8821000000014443e+01,
+      "time_unit": "us"
+    }
+  ]
+}

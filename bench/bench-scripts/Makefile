@@ -23,7 +23,7 @@ run-fig16:
 	./sddmm_varSparsity/bench.sh
 
 run-fig17:
-	{ time ./blockedSparse_4T_5/bench.sh ; } > ./blockedSparse_4T_5/time.txt
+	./blockedSparse_4T_5/bench.sh
 
 run-fig18:
 	./mmadd/bench.sh
@@ -32,7 +32,7 @@ run-fig19:
 	./sddmm/bench.sh
 
 run-fig20:
-	{ time ./blockedSparse_4T/bench.sh ; } > ./blockedSparse_4T/time.txt
+	./blockedSparse_4T/bench.sh
 
 run-fig21:
 	./ttv/bench.sh
@@ -71,7 +71,7 @@ draw-fig17:
 	python3 /home/reviewer/mosaic-benchmarks/run-figure.py \
 	--data_dir=/home/reviewer/mosaic/bench/bench-scripts/blockedSparse_4T_5/result \
 	--type=vary_dim --systems=mkl,gsl,taco,blas \
-	--name=fig15 --start_dim=10 --step_dim=10
+	--name=fig17 --start_dim=10 --step_dim=10
 	cp ./blockedSparse_4T_5/result/fig17.pdf figs/
 
 draw-fig18:
@@ -93,7 +93,7 @@ draw-fig20:
 	python3 /home/reviewer/mosaic-benchmarks/run-figure.py \
 	--data_dir=/home/reviewer/mosaic/bench/bench-scripts/blockedSparse_4T/result \
 	--type=vary_dim --systems=mkl,gsl,taco,blas \
-	--name=fig15 --start_dim=10 --step_dim=10
+	--name=fig20 --start_dim=10 --step_dim=10
 	cp ./blockedSparse_4T/result/fig20.pdf figs/
 
 draw-fig21:
