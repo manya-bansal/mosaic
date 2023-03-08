@@ -45,12 +45,12 @@ static void bench_sddmm_mkl(benchmark::State& state) {
 
  std::string path_to_artifact = std::string(ret);
 
-  std::string generateData = "python3  " + path_to_artifact + "/data/data_gen.py --bench sddmm_dim --dim ";
+  std::string generateData = "python3  " + path_to_artifact + "/mosaic-benchmarks/data/data_gen.py --bench sddmm_dim --dim ";
   generateData += std::to_string(dim);
   generateData += " --nnz 0.4";
-  generateData += " --out_dir " + path_to_artifact + "/data/spdata/";
+  generateData += " --out_dir " + path_to_artifact + "/mosaic-benchmarks/data/spdata/";
   exec(generateData.c_str());
-  std::string filename = "" + path_to_artifact + "/data/spdata/sddmm_dim/B_"+ std::to_string(dim) + "_0.4"  + ".mtx";
+  std::string filename = "" + path_to_artifact + "/mosaic-benchmarks/data/spdata/sddmm_dim/B_"+ std::to_string(dim) + "_0.4"  + ".mtx";
   B = castToType<float>("B", readMTX(filename, CSR));
 
   for (int i = 0; i < dim; i++) {
@@ -84,7 +84,7 @@ static void bench_sddmm_mkl(benchmark::State& state) {
     state.ResumeTiming();
     pair.first(func.data());
   }
-  std::string eraseData = "rm -rf " + path_to_artifact + "/data/spdata/sddmm_dim/B_" + std::to_string(dim) + "_0.4"+ ".mtx";
+  std::string eraseData = "rm -rf " + path_to_artifact + "/mosaic-benchmarks/data/spdata/sddmm_dim/B_" + std::to_string(dim) + "_0.4"+ ".mtx";
   exec(eraseData.c_str());
 }
 

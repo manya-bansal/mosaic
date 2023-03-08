@@ -50,17 +50,17 @@ static void bench_mm_add_mkl(benchmark::State& state, float SPARSITY, int dim) {
 
  std::string path_to_artifact = std::string(ret);
 
-  std::string generateData = "python3  " + path_to_artifact + "/data/data_gen.py --bench mmAdd --dim ";
+  std::string generateData = "python3  " + path_to_artifact + "/mosaic-benchmarks/data/data_gen.py --bench mmAdd --dim ";
   generateData += std::to_string(dim);
   generateData += " --nnz ";
   generateData += ((SPARSITY == 1) ? "1.0" : ss.str());
-  generateData += " --out_dir " + path_to_artifact + "/data/spdata/";
+  generateData += " --out_dir " + path_to_artifact + "/mosaic-benchmarks/data/spdata/";
   exec(generateData.c_str());
-  std::string filename = "" + path_to_artifact + "/data/spdata/mmAdd/B_"+ std::to_string(dim) + "_" +  ((SPARSITY == 1.0) ? "1.0" : ss.str()) + ".mtx";
+  std::string filename = "" + path_to_artifact + "/mosaic-benchmarks/data/spdata/mmAdd/B_"+ std::to_string(dim) + "_" +  ((SPARSITY == 1.0) ? "1.0" : ss.str()) + ".mtx";
   std::cout <<  filename << std::endl;
    std::cout <<  ((SPARSITY == 1.0) ? "1.0" : ss.str())  << std::endl;
   B = castToType<float>("B", readMTX(filename, CSR));
-  filename = "" + path_to_artifact + "/data/spdata/mmAdd/C_"+ std::to_string(dim) + "_" +  ((SPARSITY == 1.0) ? "1.0" : ss.str()) + ".mtx"; 
+  filename = "" + path_to_artifact + "/mosaic-benchmarks/data/spdata/mmAdd/C_"+ std::to_string(dim) + "_" +  ((SPARSITY == 1.0) ? "1.0" : ss.str()) + ".mtx"; 
   C = castToType<float>("C", readMTX(filename, CSR)); 
 
  
@@ -86,9 +86,9 @@ static void bench_mm_add_mkl(benchmark::State& state, float SPARSITY, int dim) {
     pair.first(func.data());
   }
   gsl_compile = false;
-  std::string eraseData = "rm -rf " + path_to_artifact + "/data/spdata/mmAdd/B_" + std::to_string(dim) + "_" +  ((SPARSITY == 1.0) ? "1.0" : ss.str()) + ".mtx";
+  std::string eraseData = "rm -rf " + path_to_artifact + "/mosaic-benchmarks/data/spdata/mmAdd/B_" + std::to_string(dim) + "_" +  ((SPARSITY == 1.0) ? "1.0" : ss.str()) + ".mtx";
   exec(eraseData.c_str());
-  eraseData = "rm -rf " + path_to_artifact + "/data/spdata/mmAdd/C_" + std::to_string(dim) + "_" + ((SPARSITY == 1.0) ? "1.0" : ss.str()) + ".mtx";
+  eraseData = "rm -rf " + path_to_artifact + "/mosaic-benchmarks/data/spdata/mmAdd/C_" + std::to_string(dim) + "_" + ((SPARSITY == 1.0) ? "1.0" : ss.str()) + ".mtx";
   exec(eraseData.c_str());
   gsl_compile = false;
 }

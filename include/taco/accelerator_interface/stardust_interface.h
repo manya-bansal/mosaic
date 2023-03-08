@@ -46,7 +46,7 @@ class StardustAdd : public AbstractFunctionInterface{
                 taco_uerror << "Please set the environment variable PATH_TO_MOSAIC_ARTIFACT."
                 << "To do so, run (in the mosaic/bench/bench-scripts/ dir): source mosaic_env_var.sh.";
             }
-        std::string stardustDataDir = std::string(ret) + "mosaic-benchmarks/stardust-runs";
+        std::string stardustDataDir = std::string(ret) + "/mosaic-benchmarks/stardust-runs/";
         std::ifstream infile(stardustDataDir + "spmv_plus2.csv");
         std::string line;
 
@@ -97,7 +97,7 @@ class StardustSpmv : public AbstractFunctionInterface{
                 taco_uerror << "Please set the environment variable PATH_TO_MOSAIC_ARTIFACT."
                 << "To do so, run (in the mosaic/bench/bench-scripts/ dir): source mosaic_env_var.sh.";
             }
-            std::string stardustDataDir = std::string(ret) + "mosaic-benchmarks/stardust-runs";
+            std::string stardustDataDir = std::string(ret) + "/mosaic-benchmarks/stardust-runs/";
             std::ifstream infile(stardustDataDir + "spmv_plus2.csv");
             std::string line;
             while (getline(infile, line,'\n')){

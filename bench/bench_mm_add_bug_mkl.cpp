@@ -31,7 +31,7 @@ static std::string exec(const char* cmd) {
     return result;
 }
 
-static void bench_mm_add_stardust(benchmark::State& state, float SPARSITY, int dim) {
+static void bench_mm_add_bug_mkl(benchmark::State& state, float SPARSITY, int dim) {
 
   int NUM_I = dim;
   int NUM_K = dim;
@@ -58,15 +58,10 @@ static void bench_mm_add_stardust(benchmark::State& state, float SPARSITY, int d
   exec(generateData.c_str());
   std::string filename = "" + path_to_artifact + "/mosaic-benchmarks/data/spdata/mmAdd/B_"+ std::to_string(dim) + "_" +  ((SPARSITY == 1.0) ? "1.0" : ss.str()) + ".mtx";
   std::cout <<  filename << std::endl;
-  std::cout <<  ((SPARSITY == 1.0) ? "1.0" : ss.str())  << std::endl;
+   std::cout <<  ((SPARSITY == 1.0) ? "1.0" : ss.str())  << std::endl;
   B = castToType<float>("B", readMTX(filename, CSR));
   filename = "" + path_to_artifact + "/mosaic-benchmarks/data/spdata/mmAdd/C_"+ std::to_string(dim) + "_" +  ((SPARSITY == 1.0) ? "1.0" : ss.str()) + ".mtx"; 
   C = castToType<float>("C", readMTX(filename, CSR)); 
-
-
-  std::map<float, std::string> benchmarkToName = { {0.00625, "B_200_0_00625"}, 
-  {0.0125, "B_200_0_0125"}, {0.025, "B_200_0_025"}, {0.05, "B_200_0_05"}, {0.1, "B_200_0_1"},
-  {0.2, "B_200_0_2"}, {0.4, "B_200_0_4"}, {0.8, "B_200_0_8"}, {1.0, "B_200_1"}};
 
  
 
@@ -80,10 +75,11 @@ static void bench_mm_add_stardust(benchmark::State& state, float SPARSITY, int d
     Tensor<float> A("A", {NUM_I, NUM_K}, {Dense, Dense}, 0);
     A(i,j) = accelerateExpr;
     IndexStmt stmt = A.getAssignment().concretize();
-    stmt = stmt.accelerate(new StardustAdd(benchmarkToName[SPARSITY]), accelerateExpr, true);
+    stmt = stmt.accelerate(new MklAdd(), accelerateExpr);
 
-
-    A.compile(stmt);
+    // The bug was here. To actually generate the MKL we need to call A.compile(stmt)
+    // but we called A.compile().
+    A.compile();
     A.assemble();
     auto func = A.compute_split();
     auto pair = A.returnFuncPackedRaw(func);
@@ -98,12 +94,12 @@ static void bench_mm_add_stardust(benchmark::State& state, float SPARSITY, int d
   gsl_compile = false;
 }
 
-TACO_BENCH_ARGS(bench_mm_add_stardust, 0.00625, 0.00625, DIM_SIZE);
-TACO_BENCH_ARGS(bench_mm_add_stardust, 0.0125, 0.0125, DIM_SIZE);
-TACO_BENCH_ARGS(bench_mm_add_stardust, 0.025, 0.025, DIM_SIZE);
-TACO_BENCH_ARGS(bench_mm_add_stardust, 0.05, 0.05, DIM_SIZE);
-TACO_BENCH_ARGS(bench_mm_add_stardust, 0.1,  0.1, DIM_SIZE);
-TACO_BENCH_ARGS(bench_mm_add_stardust, 0.2,   0.2, DIM_SIZE);
-TACO_BENCH_ARGS(bench_mm_add_stardust, 0.4,    0.4, DIM_SIZE);
-TACO_BENCH_ARGS(bench_mm_add_stardust, 0.8,     0.8, DIM_SIZE);
-TACO_BENCH_ARGS(bench_mm_add_stardust, 1.0,     1.0, DIM_SIZE);
+TACO_BENCH_ARGS(bench_mm_add_bug_mkl, 0.00625, 0.00625, DIM_SIZE);
+TACO_BENCH_ARGS(bench_mm_add_bug_mkl, 0.0125, 0.0125, DIM_SIZE);
+TACO_BENCH_ARGS(bench_mm_add_bug_mkl, 0.025, 0.025, DIM_SIZE);
+TACO_BENCH_ARGS(bench_mm_add_bug_mkl, 0.05, 0.05, DIM_SIZE);
+TACO_BENCH_ARGS(bench_mm_add_bug_mkl, 0.1,  0.1, DIM_SIZE);
+TACO_BENCH_ARGS(bench_mm_add_bug_mkl, 0.2,   0.2, DIM_SIZE);
+TACO_BENCH_ARGS(bench_mm_add_bug_mkl, 0.4,    0.4, DIM_SIZE);
+TACO_BENCH_ARGS(bench_mm_add_bug_mkl, 0.8,     0.8, DIM_SIZE);
+TACO_BENCH_ARGS(bench_mm_add_bug_mkl, 1.0,     1.0, DIM_SIZE);

@@ -50,14 +50,14 @@ static void bench_sddmm_varySparisty_dot_gsl(benchmark::State& state, float SPAR
 
  std::string path_to_artifact = std::string(ret);
 
-  std::string generateData = "python3  " + path_to_artifact + "/data/data_gen.py --bench sddmm_sp --dim ";
+  std::string generateData = "python3  " + path_to_artifact + "/mosaic-benchmarks/data/data_gen.py --bench sddmm_sp --dim ";
   generateData += std::to_string(dim);
   generateData += " --nnz ";
     std::ostringstream ss;
   ss << SPARSITY;generateData += ss.str();
-  generateData += " --out_dir " + path_to_artifact + "/data/spdata/";
+  generateData += " --out_dir " + path_to_artifact + "/mosaic-benchmarks/data/spdata/";
   exec(generateData.c_str());
-  std::string filename = "" + path_to_artifact + "/data/spdata/sddmm_sp/B_"+ std::to_string(dim) + "_" + ss.str() + ".mtx";
+  std::string filename = "" + path_to_artifact + "/mosaic-benchmarks/data/spdata/sddmm_sp/B_"+ std::to_string(dim) + "_" + ss.str() + ".mtx";
   B = castToType<float>("B", readMTX(filename, CSR));
 
   for (int i = 0; i < dim; i++) {
@@ -90,7 +90,7 @@ static void bench_sddmm_varySparisty_dot_gsl(benchmark::State& state, float SPAR
     state.ResumeTiming();
     pair.first(func.data());
   }
-  std::string eraseData = "rm -rf " + path_to_artifact + "/data/spdata/sddmm_sp/B_" + std::to_string(dim) + "_" +  ss.str()  + ".mtx";
+  std::string eraseData = "rm -rf " + path_to_artifact + "/mosaic-benchmarks/data/spdata/sddmm_sp/B_" + std::to_string(dim) + "_" +  ss.str()  + ".mtx";
   exec(eraseData.c_str());
   gsl_compile = false;
 }

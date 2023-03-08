@@ -87,7 +87,7 @@ draw-fig17:
 draw-fig18:
 	python3 $(PATH_TO_MOSAIC_ARTIFACT)/mosaic-benchmarks/run-figure.py \
 	--data_dir=$(PATH_TO_MOSAIC_ARTIFACT)/mosaic/bench/bench-scripts/mmadd/result \
-	--type=vary_sparse --systems=mkl,taco --stardust=Plus2CSR \
+	--type=vary_sparse --systems=mkl,taco,bug_mkl --stardust=Plus2CSR \
 	--name=fig18 --sparsity=0.00625,0.0125,0.025,0.05,0.1,0.2,0.4,0.8,1.0
 	cp ./mmadd/result/fig18.pdf figs/
 
