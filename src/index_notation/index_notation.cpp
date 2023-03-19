@@ -2295,7 +2295,8 @@ IndexStmt IndexStmt::concretizeAccelerated(const std::vector<FunctionInterface>&
     stmt = makeReductionNotation(stmt);
   }
 
-  stmt = autoAccelerate(stmt, functionInterface)[0];
+  std::vector<IndexStmt> stmts =  autoAccelerate(stmt, functionInterface);
+  stmt = stmts[0];
 
   if (isReductionNotation(stmt)) {
     stmt = makeConcreteNotation(stmt);
@@ -4646,12 +4647,84 @@ IndexStmt IndexStmt::accelerate(FunctionInterface functionInterface, IndexExpr e
   return stmt; 
 }
 
+IndexExpr IndexStmt::tryIndicesConstant(AcceleratorExpr toMatch, IndexExpr expr, bool& success) const {
+  
+  // The operator pattern of toMatch and expr must be the same.
+  for (auto matchingTensor: getMatchingTensors(expr, toMatch)){
+    if (isa<Access>(matchingTensor.first) && isa<AcceleratorAccess>(matchingTensor.second)){
+      Access access = to<Access>(matchingTensor.first);
+      AcceleratorAccess accelAccess = to<AcceleratorAccess>(matchingTensor.second);
+
+      if (access.getTensorVar().getOrder() <= accelAccess.getTensorObject().getOrder()){
+        success = false;
+        return IndexExpr();
+      }
+  
+    }
+    if (isa<Literal>(matchingTensor.first) && isa<AcceleratorAccess>(matchingTensor.second)){
+      success = false;
+      return IndexExpr();
+    }
+  }
+
+  success = true;
+  return expr;
+
+}
+
+IndexExpr IndexStmt::tryPromotion(AcceleratorExpr toMatch, IndexExpr expr, bool& success) const{
+
+  // The operator pattern of toMatch and expr must be the same.
+  for (auto matchingTensor: getMatchingTensors(expr, toMatch)){
+    if (isa<Access>(matchingTensor.first) && isa<AcceleratorAccess>(matchingTensor.second)){
+      Access access = to<Access>(matchingTensor.first);
+      AcceleratorAccess accelAccess = to<AcceleratorAccess>(matchingTensor.second);
+
+      if (access.getTensorVar().getOrder() >= accelAccess.getTensorObject().getOrder()){
+        success = false;
+        return IndexExpr();
+      }
+  
+    }
+    if (isa<Access>(matchingTensor.first) && isa<AcceleratorLiteral>(matchingTensor.second)){
+      success = false;
+      return IndexExpr();
+    }
+  }
+  success = true;
+  return expr;
+}
 
 
 std::vector<IndexStmt> generateEquivalentStmts(IndexStmt stmt){
   std::map<IndexExpr, std::vector<IndexExpr>> exprToreplace;
   std::vector<IndexStmt>  possibleRewrites;
+  
   addIdentityRewrite(stmt, exprToreplace);
+  addCommutativityRewrite(stmt, exprToreplace);
+  addDistributivityRewrites(stmt, exprToreplace);
+  takeCommonTermsOut(stmt, exprToreplace); 
+
+
+  for (auto const& it : exprToreplace){
+    for (auto expr: it.second){
+      std::map<IndexExpr, IndexExpr> substitution;
+      substitution[it.first] = expr;
+      possibleRewrites.push_back(replace(stmt, substitution));
+    }
+  }
+
+  return possibleRewrites;
+
+}
+
+
+std::vector<IndexStmt> generateEquivalentStmts(IndexStmt stmt, bool distinguish, bool identity){
+  std::map<IndexExpr, std::vector<IndexExpr>> exprToreplace;
+  std::vector<IndexStmt>  possibleRewrites;
+  // if (identity){
+    addIdentityRewrite(stmt, exprToreplace);
+  // }
   addCommutativityRewrite(stmt, exprToreplace);
   addDistributivityRewrites(stmt, exprToreplace);
   takeCommonTermsOut(stmt, exprToreplace); 
@@ -4678,7 +4751,13 @@ std::vector<IndexStmt> generateEquivalentStmts(IndexStmt stmt, int depth){
   for (int j = 0; j < depth; j++){
     int current_size = possibleRewrites.size();
     for (; indexRewritesNotExplored < current_size; indexRewritesNotExplored++){
-      std::vector<IndexStmt> rewritesGenerated = generateEquivalentStmts(possibleRewrites[indexRewritesNotExplored]);
+      std::vector<IndexStmt> rewritesGenerated;
+      if (depth <= 2){
+        rewritesGenerated = generateEquivalentStmts(possibleRewrites[indexRewritesNotExplored], true, true);
+      }
+      else{
+       rewritesGenerated = generateEquivalentStmts(possibleRewrites[indexRewritesNotExplored], true, false);
+      }
       possibleRewrites.insert(possibleRewrites.end(), rewritesGenerated.begin(), rewritesGenerated.end());
     }
    
@@ -4687,7 +4766,7 @@ std::vector<IndexStmt> generateEquivalentStmts(IndexStmt stmt, int depth){
   return possibleRewrites;
 }
 
-IndexStmt IndexStmt::helperCheckForMatches(IndexStmt stmt, std::vector<FunctionInterface> functionInterfaces) const{
+IndexStmt IndexStmt::helperCheckForMatches(IndexStmt stmt, std::vector<FunctionInterface> functionInterfaces, std::set<std::pair<IndexExpr, std::string>>& expressions) const{
 
   std::stack<std::tuple<Access, ConcreteAccelerateCodeGenerator, FunctionInterface, ArgumentMap>> varCodeGen;
   // std::map<ConcreteAccelerateCodeGenerator, FunctionInterface> abstractInterface;
@@ -4713,6 +4792,8 @@ IndexStmt IndexStmt::helperCheckForMatches(IndexStmt stmt, std::vector<FunctionI
     for (auto expr: matchedExprs){
       argumentMap = hasPreciseMatch(expr, reduxRefStmt.getRhs());
       if (argumentMap.possible){
+        // Use function name as a proxy to count distinct mappings.
+        expressions.insert({expr, descripton.getNode()->getFunctionName()});
         // Generate STMT query if a constraint exists
         // True indicates that we are interested in finding tilings.
         if (descripton.getNode()->getConstraints().defined()){
@@ -4730,7 +4811,21 @@ IndexStmt IndexStmt::helperCheckForMatches(IndexStmt stmt, std::vector<FunctionI
         stmtRewrite =  replace(stmtRewrite, subsitution);
         auto codeGen = getConcreteCodeGenerator(expr, access, argumentMap, descripton);
         varCodeGen.push(std::make_tuple(access, codeGen, descripton, argumentMap));
-        break;
+        // break;
+        }else{
+          // Try to hold some index vars constant.
+          bool successConstant = false;
+          tryIndicesConstant(reduxRefStmt.getRhs(), expr, successConstant);
+          if (successConstant){
+            expressions.insert({expr, descripton.getNode()->getFunctionName()});
+            return *this;
+          }
+          bool successPromote = false;
+          tryPromotion(reduxRefStmt.getRhs(), expr, successPromote);
+          if (successPromote){
+            expressions.insert({expr, descripton.getNode()->getFunctionName()});
+            return  *this;
+          }
         }
       }
   }
@@ -4748,13 +4843,25 @@ IndexStmt IndexStmt::helperCheckForMatches(IndexStmt stmt, std::vector<FunctionI
 
 std::vector<IndexStmt> IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<FunctionInterface> functionInterfaces) const{
 
+  auto start1 = std::chrono::high_resolution_clock::now();
+
   std::vector<IndexStmt> possibleRewrites = generateEquivalentStmts(stmt, 3);
   std::vector<IndexStmt> possibleStmts;
   std::stack<std::tuple<Access, ConcreteAccelerateCodeGenerator, FunctionInterface, ArgumentMap>> varCodeGen;
 
+  std::set<std::pair<IndexExpr, std::string>> expressions;
   for (int i = 0; i < possibleRewrites.size(); i++){
-      possibleStmts.push_back(helperCheckForMatches(possibleRewrites[i], functionInterfaces));
+      possibleStmts.push_back(helperCheckForMatches(possibleRewrites[i], functionInterfaces, expressions));
   }
+
+  auto end1 = std::chrono::high_resolution_clock::now();
+
+  auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end1 - start1);
+
+   std::cout << "Time taken to Run Completely: "
+          << float(duration.count())/float(1000000) << "s" << std::endl;
+
+
 
   return possibleStmts;
 }
