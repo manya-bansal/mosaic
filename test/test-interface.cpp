@@ -2790,3 +2790,56 @@ TEST(interface, endToEndMapper4) {
    A.compute();
 
 }
+
+TEST(interface, nonSqaureSdmmMkl){
+  int NUM_I = 3;
+  int NUM_K = 1;
+  int NUM_J = 2;
+
+  float SPARSITY = .3;
+  
+  Tensor<float> B("B", {NUM_I, NUM_K}, CSR);
+  Tensor<float> C("C", {NUM_I, NUM_J}, {Dense, Dense});
+  Tensor<float> D("D", {NUM_J, NUM_K}, {Dense, Dense});
+  Tensor<float> A("A", {NUM_I, NUM_K}, {Dense, Dense}, 0);
+  Tensor<float> expected("expected", {NUM_I, NUM_K}, {Dense, Dense});
+
+  for (int i = 0; i < NUM_I; i++) {
+    for (int j = 0; j < NUM_J; j++) {
+      C.insert({i, j}, (float) i+j);
+    }
+  }
+
+   for (int j = 0; j < NUM_J; j++) {
+    for (int k = 0; k < NUM_K; k++) {
+      D.insert({j, k}, (float) j+k);
+    }
+  }
+
+  for (int i = 0; i < NUM_I; i++) {
+    for (int k = 0; k < NUM_K; k++) {
+      float rand_float = (float)rand()/(float)(RAND_MAX);
+      if (rand_float < SPARSITY) {
+        B.insert({i, k}, (float) ((int) (rand_float*3/SPARSITY)));
+      }
+    }
+  }
+
+  B.pack();
+  C.pack();
+  D.pack();
+
+  IndexVar i("i"), j("j"), k("k");
+
+  IndexExpr accelerateExpr = C(i,j) * D(j,k);
+
+  A(i,k) =  accelerateExpr;
+
+  IndexStmt stmt = A.getAssignment().concretize();
+  stmt = stmt.accelerate(new MatrixMultiply(), accelerateExpr);
+
+   A.compile(stmt);
+   A.assemble();
+   A.compute();
+
+}

@@ -419,6 +419,6 @@ TEST (accelerateNotation, testLinearAVX){
   auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
   count = duration.count();
   // Dvide by 1000000 to convert microseconds into seconds.
-  std::cout << "Time taken to Run Linear Search for Stardust: "
+  std::cout << "Time taken to Run Linear Search for AVX: "
           << float(count)/float(1000000) << "s" << std::endl;
 }

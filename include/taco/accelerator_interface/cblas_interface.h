@@ -110,7 +110,7 @@ class Sgemm : public AbstractFunctionInterface{
         AcceleratorStmt getStmt() const override {return z(i, k) = x(i, j) * y(j, k) + z(i,k);} 
         std::vector<Argument> getArguments() const override {
                                                 return 
-                                                {   new StringLiteral("CblasRowMajor"),
+                                                {   new StringLiteral("CblasColMajor"),
                                                     new StringLiteral("CblasNoTrans"),
                                                     new StringLiteral("CblasNoTrans"),
                                                     new DimArg(i), 
