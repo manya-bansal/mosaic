@@ -4748,7 +4748,7 @@ IndexStmt IndexStmt::helperCheckForMatches(IndexStmt stmt, std::vector<FunctionI
 
 std::vector<IndexStmt> IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<FunctionInterface> functionInterfaces) const{
 
-  std::vector<IndexStmt> possibleRewrites = generateEquivalentStmts(stmt, 2);
+  std::vector<IndexStmt> possibleRewrites = generateEquivalentStmts(stmt, 3);
   std::vector<IndexStmt> possibleStmts;
   std::stack<std::tuple<Access, ConcreteAccelerateCodeGenerator, FunctionInterface, ArgumentMap>> varCodeGen;
 
