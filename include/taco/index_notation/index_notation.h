@@ -618,7 +618,7 @@ public:
   IndexStmt concretizeAccelerated(const std::vector<FunctionInterface>& functionInterface) const;
 
   std::vector<IndexStmt> autoAccelerate(IndexStmt stmt, std::vector<FunctionInterface> functionInterface) const;
-  IndexStmt helperCheckForMatches(IndexStmt stmt, std::vector<FunctionInterface> functionInterfaces, std::set<std::pair<IndexExpr, std::string>>& expressions) const;
+  IndexStmt helperCheckForMatches(IndexStmt stmt, std::vector<FunctionInterface> functionInterfaces, std::set<std::pair<std::string, std::string>>& expressions) const;
   IndexExpr tryIndicesConstant(AcceleratorExpr toMatch, IndexExpr stmt, bool& success) const;
   IndexExpr tryPromotion(AcceleratorExpr toMatch, IndexExpr stmt, bool& success) const;
 

@@ -4766,7 +4766,7 @@ std::vector<IndexStmt> generateEquivalentStmts(IndexStmt stmt, int depth){
   return possibleRewrites;
 }
 
-IndexStmt IndexStmt::helperCheckForMatches(IndexStmt stmt, std::vector<FunctionInterface> functionInterfaces, std::set<std::pair<IndexExpr, std::string>>& expressions) const{
+IndexStmt IndexStmt::helperCheckForMatches(IndexStmt stmt, std::vector<FunctionInterface> functionInterfaces, std::set<std::pair<std::string, std::string>>& expressions) const{
 
   std::stack<std::tuple<Access, ConcreteAccelerateCodeGenerator, FunctionInterface, ArgumentMap>> varCodeGen;
   // std::map<ConcreteAccelerateCodeGenerator, FunctionInterface> abstractInterface;
@@ -4790,10 +4790,10 @@ IndexStmt IndexStmt::helperCheckForMatches(IndexStmt stmt, std::vector<FunctionI
     ArgumentMap argumentMap;
 
     for (auto expr: matchedExprs){
+      std::cout << expr << std::endl;
       argumentMap = hasPreciseMatch(expr, reduxRefStmt.getRhs());
       if (argumentMap.possible){
         // Use function name as a proxy to count distinct mappings.
-        expressions.insert({expr, descripton.getNode()->getFunctionName()});
         // Generate STMT query if a constraint exists
         // True indicates that we are interested in finding tilings.
         if (descripton.getNode()->getConstraints().defined()){
@@ -4801,34 +4801,41 @@ IndexStmt IndexStmt::helperCheckForMatches(IndexStmt stmt, std::vector<FunctionI
           for (auto entry : expr.getIndexVarDomains()){
             currentDims[entry.first] = (int) entry.second.getSize();
           }
+          // std::cout << "Check" << util::join(currentDims) << std::endl;
           GenerateSMTCode condition(descripton.getNode()->getConstraints(), {}, currentDims, true);
 
           // If we cannot satisfy query even with tilings, skip.
           if (!condition.isSat()) continue;
         }
-        auto access = replaceTemporary(stmt, expr, reduxRefStmt, argumentMap);
-        std::map<IndexExpr,IndexExpr> subsitution = {{expr, access}};
-        stmtRewrite =  replace(stmtRewrite, subsitution);
-        auto codeGen = getConcreteCodeGenerator(expr, access, argumentMap, descripton);
-        varCodeGen.push(std::make_tuple(access, codeGen, descripton, argumentMap));
-        // break;
-        }else{
-          // Try to hold some index vars constant.
-          bool successConstant = false;
-          tryIndicesConstant(reduxRefStmt.getRhs(), expr, successConstant);
-          if (successConstant){
-            expressions.insert({expr, descripton.getNode()->getFunctionName()});
-            return *this;
-          }
-          bool successPromote = false;
-          tryPromotion(reduxRefStmt.getRhs(), expr, successPromote);
-          if (successPromote){
-            expressions.insert({expr, descripton.getNode()->getFunctionName()});
-            return  *this;
-          }
+
+        stringstream ss; 
+        std::cout << "Matched" << std::endl;
+        continue;
+        // auto access = replaceTemporary(stmt, expr, reduxRefStmt, argumentMap);
+        // std::map<IndexExpr,IndexExpr> subsitution = {{expr, access}};
+        // stmtRewrite =  replace(stmtRewrite, subsitution);
+        // auto codeGen = getConcreteCodeGenerator(expr, access, argumentMap, descripton);
+        // varCodeGen.push(std::make_tuple(access, codeGen, descripton, argumentMap));
+        // // break;
+        // }else{
+        //   // Try to hold some index vars constant.
+        //   bool successConstant = false;
+        //   tryIndicesConstant(reduxRefStmt.getRhs(), expr, successConstant);
+        //   if (successConstant){
+        //     expressions.insert({expr, descripton.getNode()->getFunctionName()});
+        //     return *this;
+        //   }
+        //   bool successPromote = false;
+        //   tryPromotion(reduxRefStmt.getRhs(), expr, successPromote);
+        //   if (successPromote){
+        //     expressions.insert({expr, descripton.getNode()->getFunctionName()});
+        //     return  *this;
+        //   }
         }
       }
   }
+
+  taco_uerror << "Exit" << std::endl;
   
   stmtRewrite = makeConcreteNotation(stmtRewrite);
 
@@ -4845,14 +4852,16 @@ std::vector<IndexStmt> IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<Fun
 
   auto start1 = std::chrono::high_resolution_clock::now();
 
-  std::vector<IndexStmt> possibleRewrites = generateEquivalentStmts(stmt, 3);
+  // std::vector<IndexStmt> possibleRewrites = generateEquivalentStmts(stmt, 3);
   std::vector<IndexStmt> possibleStmts;
-  std::stack<std::tuple<Access, ConcreteAccelerateCodeGenerator, FunctionInterface, ArgumentMap>> varCodeGen;
 
-  std::set<std::pair<IndexExpr, std::string>> expressions;
-  for (int i = 0; i < possibleRewrites.size(); i++){
-      possibleStmts.push_back(helperCheckForMatches(possibleRewrites[i], functionInterfaces, expressions));
-  }
+  std::set<std::pair<std::string, std::string>> expressions;
+  helperCheckForMatches(stmt, functionInterfaces, expressions);
+
+  // std::set<std::pair<IndexExpr, std::string>> expressions;
+  // for (int i = 0; i < possibleRewrites.size(); i++){
+  //     possibleStmts.push_back(helperCheckForMatches(possibleRewrites[i], functionInterfaces, expressions));
+  // }
 
   auto end1 = std::chrono::high_resolution_clock::now();
 

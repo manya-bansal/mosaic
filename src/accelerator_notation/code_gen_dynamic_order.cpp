@@ -138,8 +138,6 @@ std::string GenerateSMTCode::runSMT(){
     std::string result =  exec("python3 SMTpython.py");
     stop = std::chrono::high_resolution_clock::now();
     duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-    std::cout << "Time taken to run function: "
-         << duration.count() << " s" << std::endl;
     // system("rm -rf SMTpython.py");
     return result; 
 }
