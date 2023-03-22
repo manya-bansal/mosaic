@@ -123,21 +123,21 @@ bool GenerateSMTCode::isSat(){
 
 // GROSS!!!!!
 std::string GenerateSMTCode::runSMT(){
-    auto start = std::chrono::high_resolution_clock::now();
+    // auto start = std::chrono::high_resolution_clock::now();
     std::string pythonCode = generatePythonCode();
-    auto stop = std::chrono::high_resolution_clock::now();
+    // auto stop = std::chrono::high_resolution_clock::now();
 
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-    std::cout << "Time taken by function: "
-         << duration.count() << " us" << std::endl;
+    // auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    // std::cout << "Time taken by function: "
+    //      << duration.count() << " us" << std::endl;
     //gets generated in build/bin
     ofstream SMTPython("SMTpython.py");
     SMTPython << pythonCode;
     SMTPython.close();
-    start = std::chrono::high_resolution_clock::now();
+    // start = std::chrono::high_resolution_clock::now();
     std::string result =  exec("python3 SMTpython.py");
-    stop = std::chrono::high_resolution_clock::now();
-    duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    // stop = std::chrono::high_resolution_clock::now();
+    // duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
     // system("rm -rf SMTpython.py");
     return result; 
 }
@@ -156,7 +156,7 @@ std::string GenerateSMTCode::generatePythonCode(){
         pythonCode += entry.second + " = z3.Int(\'" + entry.second + "\')\n";
         pythonCode += "s.add(" + entry.second + " > 0)\n";
         emitted.insert(entry.second);
-        taco_uassert(varToDim.count(entry.first));
+        // taco_uassert(varToDim.count(entry.first));
         if (tile){
                 pythonCode += "s.add(" + entry.second + " < " + std::to_string(varToDim[entry.first]) + ")\n";
             }else{

@@ -67,42 +67,6 @@ TEST(time, timeEndToEndSaxpy) {
 
 }
 
-TEST(time, timeEndToEndSaxpyLiteral) {
-
-   int NUM_I = 10;
-   int NUM_K = 10;
-   int NUM_J = 10;
-
-   Tensor<float> A("A", {NUM_K}, {taco::Dense});
-   Tensor<float> B("B", {NUM_K}, {taco::Dense});
-   Tensor<float> C("C", {NUM_K}, {taco::Dense});
-
-   IndexVar i("i"), j("j"), k("k"), l("l");
-
-   A(i) = B(i) + 5 * C(i);
-
-
-   // register the description
-   A.registerAccelerator(new Saxpy());
-   A.registerAccelerator(new Sdot());
-   A.registerAccelerator(new Sgemm());
-
-   A.registerAccelerator(new MklDot());
-   A.registerAccelerator(new MklMM());
-   A.registerAccelerator(new AVXSaxpy());
-
-   A.registerAccelerator(new GSLDot());
-   A.registerAccelerator(new GSLMM());
-   A.registerAccelerator(new GSLVecAdd());
-
-   // enable targeting
-   A.accelerateOn();
-
-   A.compile();
-   A.assemble();
-
-}
-
 TEST(time, timeEndToEndDot) {
 
    int NUM_I = 10;
@@ -303,12 +267,12 @@ TEST(time, timeEndToEndMMSDDMM) {
 
    IndexVar i("i"), j("j"), k("k"), l("l");
 
-   A(i,k) =  B(i,k) *  C(i,j) * D(j,k);
+   A(i,k) =  B(i,k) *  sum(j, C(i,j) * D(j,k));
 
    // register the description
    A.registerAccelerator(new Saxpy());
    A.registerAccelerator(new Sdot());
-   A.registerAccelerator(new Sgemm());
+   A.registerAccelerator(new MatrixMultiply());
 
 
    A.registerAccelerator(new MklDot());

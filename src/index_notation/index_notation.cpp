@@ -4766,6 +4766,38 @@ std::vector<IndexStmt> generateEquivalentStmts(IndexStmt stmt, int depth){
   return possibleRewrites;
 }
 
+static void makeCombiUtil(vector<vector<int> >& ans,
+    vector<int>& tmp, int n, int left, int k)
+{
+    // Pushing this vector to a vector of vector
+    if (k == 0) {
+        ans.push_back(tmp);
+        return;
+    }
+ 
+    // i iterates from left to n. First time
+    // left will be 1
+    for (int i = left; i <= n; ++i)
+    {
+        tmp.push_back(i);
+        makeCombiUtil(ans, tmp, n, i + 1, k - 1);
+ 
+        // Popping out last inserted element
+        // from the vector
+        tmp.pop_back();
+    }
+}
+ 
+// Prints all combinations of size k of numbers
+// from 1 to n.
+static vector<vector<int> > makeCombi(int n, int k)
+{
+    vector<vector<int> > ans;
+    vector<int> tmp;
+    makeCombiUtil(ans, tmp, n, 1, k);
+    return ans;
+}
+
 IndexStmt IndexStmt::helperCheckForMatches(IndexStmt stmt, std::vector<FunctionInterface> functionInterfaces, std::set<std::pair<std::string, std::string>>& expressions) const{
 
   std::stack<std::tuple<Access, ConcreteAccelerateCodeGenerator, FunctionInterface, ArgumentMap>> varCodeGen;
@@ -4792,50 +4824,67 @@ IndexStmt IndexStmt::helperCheckForMatches(IndexStmt stmt, std::vector<FunctionI
     for (auto expr: matchedExprs){
       std::cout << expr << std::endl;
       argumentMap = hasPreciseMatch(expr, reduxRefStmt.getRhs());
+      stringstream ss; 
+      ss << expr; 
       if (argumentMap.possible){
-        // Use function name as a proxy to count distinct mappings.
         // Generate STMT query if a constraint exists
         // True indicates that we are interested in finding tilings.
         if (descripton.getNode()->getConstraints().defined()){
           std::map<IndexVar, int> currentDims;
           for (auto entry : expr.getIndexVarDomains()){
-            currentDims[entry.first] = (int) entry.second.getSize();
+            currentDims[argumentMap.indexVars[entry.first]] = (int) entry.second.getSize();
           }
-          // std::cout << "Check" << util::join(currentDims) << std::endl;
+          std::cout << "Check" << util::join(currentDims) << std::endl;
           GenerateSMTCode condition(descripton.getNode()->getConstraints(), {}, currentDims, true);
 
           // If we cannot satisfy query even with tilings, skip.
-          if (!condition.isSat()) continue;
+          if (!condition.isSat()){
+          }
         }
 
-        stringstream ss; 
-        std::cout << "Matched" << std::endl;
-        continue;
-        // auto access = replaceTemporary(stmt, expr, reduxRefStmt, argumentMap);
-        // std::map<IndexExpr,IndexExpr> subsitution = {{expr, access}};
-        // stmtRewrite =  replace(stmtRewrite, subsitution);
-        // auto codeGen = getConcreteCodeGenerator(expr, access, argumentMap, descripton);
-        // varCodeGen.push(std::make_tuple(access, codeGen, descripton, argumentMap));
+        std::cout << descripton.getNode()->getFunctionName() << std::endl;
+        expressions.insert({ss.str(), descripton.getNode()->getFunctionName()});
+        auto access = replaceTemporary(stmt, expr, reduxRefStmt, argumentMap);
+        std::map<IndexExpr,IndexExpr> subsitution = {{expr, access}};
+        stmtRewrite =  replace(stmtRewrite, subsitution);
+        auto codeGen = getConcreteCodeGenerator(expr, access, argumentMap, descripton);
+        varCodeGen.push(std::make_tuple(access, codeGen, descripton, argumentMap));
         // // break;
-        // }else{
-        //   // Try to hold some index vars constant.
-        //   bool successConstant = false;
-        //   tryIndicesConstant(reduxRefStmt.getRhs(), expr, successConstant);
-        //   if (successConstant){
-        //     expressions.insert({expr, descripton.getNode()->getFunctionName()});
-        //     return *this;
-        //   }
-        //   bool successPromote = false;
-        //   tryPromotion(reduxRefStmt.getRhs(), expr, successPromote);
-        //   if (successPromote){
-        //     expressions.insert({expr, descripton.getNode()->getFunctionName()});
-        //     return  *this;
-        //   }
+        }else{
+          std::vector<IndexVar> allVars = taco::getIndexVars(expr);
+          // std::cout << "Start" << std::endl;
+          // expressions.insert({ss.str(), descripton.getNode()->getFunctionName()});
+          bool found = false;
+          for (int i = 0; i < allVars.size(); i++){
+            // std::cout << "starting" << std::endl;
+            // We want to stop when we have found the minimum number of indices
+            // to hold constant.
+            if (found){
+              break;
+            }
+            auto samples = makeCombi(i, allVars.size());
+            for (auto sample: samples){
+              std::vector<IndexVar> holdConstant;
+              for (auto s: sample){
+                holdConstant.push_back(allVars[s]);
+              }
+               std::cout << util::join(holdConstant) << std::endl;
+              auto tensorVars = toMatchVars(expr, holdConstant);
+              IndexExpr e = replace(expr, tensorVars);
+              std::cout << e << std::endl;
+              ArgumentMap argumentMapConst = hasPreciseMatch(e, reduxRefStmt.getRhs());
+              if (argumentMapConst.possible){
+                found = true;
+                std::cout << "Found";
+                expressions.insert({ss.str(), descripton.getNode()->getFunctionName()});
+              }
+            }
+          }
+
+
         }
       }
   }
-
-  taco_uerror << "Exit" << std::endl;
   
   stmtRewrite = makeConcreteNotation(stmtRewrite);
 
@@ -4854,8 +4903,11 @@ std::vector<IndexStmt> IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<Fun
 
   // std::vector<IndexStmt> possibleRewrites = generateEquivalentStmts(stmt, 3);
   std::vector<IndexStmt> possibleStmts;
+  possibleStmts.push_back(makeConcreteNotation(stmt));
 
   std::set<std::pair<std::string, std::string>> expressions;
+  // Account for the case where there are no mappings.
+  expressions.insert({"", ""});
   helperCheckForMatches(stmt, functionInterfaces, expressions);
 
   // std::set<std::pair<IndexExpr, std::string>> expressions;
@@ -4867,8 +4919,14 @@ std::vector<IndexStmt> IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<Fun
 
   auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end1 - start1);
 
-   std::cout << "Time taken to Run Completely: "
-          << float(duration.count())/float(1000000) << "s" << std::endl;
+  std::cout << "Time taken to Run Completely: "
+        << float(duration.count())/float(1000000) << "s" << std::endl;
+
+  std::cout << "Total Number: "
+        << expressions.size() << std::endl;
+  for (auto mappings: expressions){
+    std::cout << mappings.first << " " << mappings.second << std::endl;
+  }
 
 
 
