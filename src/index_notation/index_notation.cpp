@@ -4822,10 +4822,12 @@ IndexStmt IndexStmt::helperCheckForMatches(IndexStmt stmt, std::vector<FunctionI
     ArgumentMap argumentMap;
 
     for (auto expr: matchedExprs){
-      std::cout << expr << std::endl;
-      argumentMap = hasPreciseMatch(expr, reduxRefStmt.getRhs());
+      
       stringstream ss; 
       ss << expr; 
+
+      if (expressions.count({ss.str(), descripton.getNode()->getFunctionName()})) continue;
+      argumentMap = hasPreciseMatch(expr, reduxRefStmt.getRhs());
       if (argumentMap.possible){
         // Generate STMT query if a constraint exists
         // True indicates that we are interested in finding tilings.
@@ -4853,8 +4855,9 @@ IndexStmt IndexStmt::helperCheckForMatches(IndexStmt stmt, std::vector<FunctionI
         }else{
           std::vector<IndexVar> allVars = taco::getIndexVars(expr);
           // std::cout << "Start" << std::endl;
-          // expressions.insert({ss.str(), descripton.getNode()->getFunctionName()});
+          expressions.insert({ss.str(), descripton.getNode()->getFunctionName()});
           bool found = false;
+
           for (int i = 0; i < allVars.size(); i++){
             // std::cout << "starting" << std::endl;
             // We want to stop when we have found the minimum number of indices
@@ -4901,7 +4904,7 @@ std::vector<IndexStmt> IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<Fun
 
   auto start1 = std::chrono::high_resolution_clock::now();
 
-  // std::vector<IndexStmt> possibleRewrites = generateEquivalentStmts(stmt, 3);
+  std::vector<IndexStmt> possibleRewrites = generateEquivalentStmts(stmt, 3);
   std::vector<IndexStmt> possibleStmts;
   possibleStmts.push_back(makeConcreteNotation(stmt));
 
@@ -4910,10 +4913,9 @@ std::vector<IndexStmt> IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<Fun
   expressions.insert({"", ""});
   helperCheckForMatches(stmt, functionInterfaces, expressions);
 
-  // std::set<std::pair<IndexExpr, std::string>> expressions;
-  // for (int i = 0; i < possibleRewrites.size(); i++){
-  //     possibleStmts.push_back(helperCheckForMatches(possibleRewrites[i], functionInterfaces, expressions));
-  // }
+  for (int i = 0; i < possibleRewrites.size(); i++){
+      possibleStmts.push_back(helperCheckForMatches(possibleRewrites[i], functionInterfaces, expressions));
+  }
 
   auto end1 = std::chrono::high_resolution_clock::now();
 

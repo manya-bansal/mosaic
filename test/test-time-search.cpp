@@ -51,13 +51,13 @@ TEST(time, timeEndToEndSaxpy) {
    A.registerAccelerator(new Sgemm());
 
 
-   // A.registerAccelerator(new MklDot());
-   // A.registerAccelerator(new MklMM());
+   A.registerAccelerator(new MklDot());
+   A.registerAccelerator(new MklMM());
    A.registerAccelerator(new AVXSaxpy());
 
-   // A.registerAccelerator(new GSLDot());
-   // A.registerAccelerator(new GSLMM());
-   // A.registerAccelerator(new GSLVecAdd());
+   A.registerAccelerator(new GSLDot());
+   A.registerAccelerator(new GSLMM());
+   A.registerAccelerator(new GSLVecAdd());
 
    // enable targeting
    A.accelerateOn();
