@@ -4829,6 +4829,7 @@ IndexStmt IndexStmt::helperCheckForMatches(IndexStmt stmt, std::vector<FunctionI
       if (expressions.count({ss.str(), descripton.getNode()->getFunctionName()})) continue;
       argumentMap = hasPreciseMatch(expr, reduxRefStmt.getRhs());
       if (argumentMap.possible){
+        expressions.insert({ss.str(), descripton.getNode()->getFunctionName()});
         // Generate STMT query if a constraint exists
         // True indicates that we are interested in finding tilings.
         if (descripton.getNode()->getConstraints().defined()){
@@ -4836,55 +4837,66 @@ IndexStmt IndexStmt::helperCheckForMatches(IndexStmt stmt, std::vector<FunctionI
           for (auto entry : expr.getIndexVarDomains()){
             currentDims[argumentMap.indexVars[entry.first]] = (int) entry.second.getSize();
           }
-          std::cout << "Check" << util::join(currentDims) << std::endl;
+          // std::cout << "Check" << util::join(currentDims) << std::endl;
           GenerateSMTCode condition(descripton.getNode()->getConstraints(), {}, currentDims, true);
 
           // If we cannot satisfy query even with tilings, skip.
           if (!condition.isSat()){
+            continue;
           }
         }
 
-        std::cout << descripton.getNode()->getFunctionName() << std::endl;
-        expressions.insert({ss.str(), descripton.getNode()->getFunctionName()});
+        // std::cout << descripton.getNode()->getFunctionName() << std::endl;
         auto access = replaceTemporary(stmt, expr, reduxRefStmt, argumentMap);
         std::map<IndexExpr,IndexExpr> subsitution = {{expr, access}};
         stmtRewrite =  replace(stmtRewrite, subsitution);
         auto codeGen = getConcreteCodeGenerator(expr, access, argumentMap, descripton);
-        varCodeGen.push(std::make_tuple(access, codeGen, descripton, argumentMap));
+        // varCodeGen.push(std::make_tuple(access, codeGen, descripton, argumentMap));
         // // break;
         }else{
           std::vector<IndexVar> allVars = taco::getIndexVars(expr);
-          // std::cout << "Start" << std::endl;
-          expressions.insert({ss.str(), descripton.getNode()->getFunctionName()});
+          // expressions.insert({ss.str(), descripton.getNode()->getFunctionName()});
           bool found = false;
 
           for (int i = 0; i < allVars.size(); i++){
             // std::cout << "starting" << std::endl;
             // We want to stop when we have found the minimum number of indices
             // to hold constant.
-            if (found){
-              break;
-            }
-            auto samples = makeCombi(i, allVars.size());
+            auto samples = makeCombi(allVars.size(), i);
             for (auto sample: samples){
               std::vector<IndexVar> holdConstant;
               for (auto s: sample){
-                holdConstant.push_back(allVars[s]);
+                holdConstant.push_back(allVars[s-1]);
               }
-               std::cout << util::join(holdConstant) << std::endl;
-              auto tensorVars = toMatchVars(expr, holdConstant);
-              IndexExpr e = replace(expr, tensorVars);
-              std::cout << e << std::endl;
+              // std::cout << util::join(holdConstant) << std::endl;
+              auto tensorVarsnew = toMatchVars(expr, holdConstant);
+              IndexExpr e = replace(expr, tensorVarsnew);
+
+              // std::cout << e << std::endl;
               ArgumentMap argumentMapConst = hasPreciseMatch(e, reduxRefStmt.getRhs());
               if (argumentMapConst.possible){
                 found = true;
-                std::cout << "Found";
                 expressions.insert({ss.str(), descripton.getNode()->getFunctionName()});
-              }
-            }
+
+                if (descripton.getNode()->getConstraints().defined()){
+                  std::map<IndexVar, int> currentDims;
+                  for (auto entry : e.getIndexVarDomains()){
+                    currentDims[argumentMap.indexVars[entry.first]] = (int) entry.second.getSize();
+                  }
+                  // std::cout << "Check" << util::join(currentDims) << std::endl;
+                  GenerateSMTCode condition(descripton.getNode()->getConstraints(), {}, currentDims, true);
+
+                  // If we cannot satisfy query even with tilings, skip.
+                  if (!condition.isSat()){
+                    continue;
+                  }
+                }
+               }
+             }
+          if (found){
+            break;
           }
-
-
+         }
         }
       }
   }
@@ -4917,6 +4929,8 @@ std::vector<IndexStmt> IndexStmt::autoAccelerate(IndexStmt stmt, std::vector<Fun
       possibleStmts.push_back(helperCheckForMatches(possibleRewrites[i], functionInterfaces, expressions));
   }
 
+
+  // std::cout << " check ";
   auto end1 = std::chrono::high_resolution_clock::now();
 
   auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end1 - start1);

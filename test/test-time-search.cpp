@@ -48,16 +48,16 @@ TEST(time, timeEndToEndSaxpy) {
    // register the description
    A.registerAccelerator(new Saxpy());
    A.registerAccelerator(new Sdot());
-   A.registerAccelerator(new Sgemm());
+   A.registerAccelerator(new MatrixMultiply());
 
 
-   A.registerAccelerator(new MklDot());
-   A.registerAccelerator(new MklMM());
-   A.registerAccelerator(new AVXSaxpy());
+   // A.registerAccelerator(new MklDot());
+   // A.registerAccelerator(new MklMM());
+   // A.registerAccelerator(new AVXSaxpy());
 
-   A.registerAccelerator(new GSLDot());
-   A.registerAccelerator(new GSLMM());
-   A.registerAccelerator(new GSLVecAdd());
+   // A.registerAccelerator(new GSLDot());
+   // A.registerAccelerator(new GSLMM());
+   // A.registerAccelerator(new GSLVecAdd());
 
    // enable targeting
    A.accelerateOn();
@@ -85,16 +85,16 @@ TEST(time, timeEndToEndDot) {
    // register the description
    A.registerAccelerator(new Saxpy());
    A.registerAccelerator(new Sdot());
-   A.registerAccelerator(new Sgemm());
+   A.registerAccelerator(new MatrixMultiply());
 
 
-   A.registerAccelerator(new MklDot());
-   A.registerAccelerator(new MklMM());
-   A.registerAccelerator(new AVXSaxpy());
+   // A.registerAccelerator(new MklDot());
+   // A.registerAccelerator(new MklMM());
+   // A.registerAccelerator(new AVXSaxpy());
 
-   A.registerAccelerator(new GSLDot());
-   A.registerAccelerator(new GSLMM());
-   A.registerAccelerator(new GSLVecAdd());
+   // A.registerAccelerator(new GSLDot());
+   // A.registerAccelerator(new GSLMM());
+   // A.registerAccelerator(new GSLVecAdd());
    
 
    // enable targeting
@@ -123,16 +123,16 @@ TEST(time, timeEndToEndGemv) {
    // register the description
    A.registerAccelerator(new Saxpy());
    A.registerAccelerator(new Sdot());
-   A.registerAccelerator(new Sgemm());
+   A.registerAccelerator(new MatrixMultiply());
 
 
-   A.registerAccelerator(new MklDot());
-   A.registerAccelerator(new MklMM());
-   A.registerAccelerator(new AVXSaxpy());
+   // A.registerAccelerator(new MklDot());
+   // A.registerAccelerator(new MklMM());
+   // A.registerAccelerator(new AVXSaxpy());
 
-   A.registerAccelerator(new GSLDot());
-   A.registerAccelerator(new GSLMM());
-   A.registerAccelerator(new GSLVecAdd());
+   // A.registerAccelerator(new GSLDot());
+   // A.registerAccelerator(new GSLMM());
+   // A.registerAccelerator(new GSLVecAdd());
    
    // enable targeting
    A.accelerateOn();
@@ -160,7 +160,7 @@ TEST(time, timeEndToEndTTM) {
    // register the description
    A.registerAccelerator(new Saxpy());
    A.registerAccelerator(new Sdot());
-   A.registerAccelerator(new Sgemm());
+   A.registerAccelerator(new MatrixMultiply());
 
 
    A.registerAccelerator(new MklDot());
@@ -197,16 +197,16 @@ TEST(time, timeEndToEndPlus3) {
    // register the description
    A.registerAccelerator(new Saxpy());
    A.registerAccelerator(new Sdot());
-   A.registerAccelerator(new Sgemm());
+   A.registerAccelerator(new MatrixMultiply());
 
 
-   A.registerAccelerator(new MklDot());
-   A.registerAccelerator(new MklMM());
-   A.registerAccelerator(new AVXSaxpy());
+   // A.registerAccelerator(new MklDot());
+   // A.registerAccelerator(new MklMM());
+   // A.registerAccelerator(new AVXSaxpy());
 
-   A.registerAccelerator(new GSLDot());
-   A.registerAccelerator(new GSLMM());
-   A.registerAccelerator(new GSLVecAdd());
+   // A.registerAccelerator(new GSLDot());
+   // A.registerAccelerator(new GSLMM());
+   // A.registerAccelerator(new GSLVecAdd());
    
    // enable targeting
    A.accelerateOn();
@@ -229,22 +229,22 @@ TEST(time, timeEndToEndMMScalar) {
 
    IndexVar i("i"), j("j"), k("k"), l("l");
 
-   A(i,k) = 5 * B(i,j) * C(j, k) + 5 * C(i,k);
+   A(i,k) = sum(j, B(i,j) * C(j, k)) + C(i,k);
 
 
    // register the description
    A.registerAccelerator(new Saxpy());
    A.registerAccelerator(new Sdot());
-   A.registerAccelerator(new Sgemm());
+   A.registerAccelerator(new MatrixMultiply());
 
 
-   A.registerAccelerator(new MklDot());
-   A.registerAccelerator(new MklMM());
-   A.registerAccelerator(new AVXSaxpy());
+   // A.registerAccelerator(new MklDot());
+   // A.registerAccelerator(new MklMM());
+   // A.registerAccelerator(new AVXSaxpy());
 
-   A.registerAccelerator(new GSLDot());
-   A.registerAccelerator(new GSLMM());
-   A.registerAccelerator(new GSLVecAdd());
+   // A.registerAccelerator(new GSLDot());
+   // A.registerAccelerator(new GSLMM());
+   // A.registerAccelerator(new GSLVecAdd());
    
    // enable targeting
    A.accelerateOn();
