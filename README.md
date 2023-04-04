@@ -140,7 +140,7 @@ Here, one can note the ```callBefore``` and ```callAfter``` functionality in
 action. One can also see how library-specific objects can be used as arguments
 through the use of ```DeclVar```.
 
-### Scheduling a Call to cblas\_saxpy
+## Scheduling a Call to cblas\_saxpy
 
 To ```map``` or  ```bind``` a call to the ```Saxpy``` functions, use the
 ```accelerate``` (aliased) scheduling command. Note that the ```accelerate```
@@ -158,7 +158,7 @@ argument. Next, call ```accelerateOn``` command that chooses a schedule to
 apply. Because our paper does not select best mapping i.e. we do not auto-tune
 our mappings, we automatically apply the first schedule.
 
-### Exploring the Code
+## Exploring the Code
 
 Here, we provide pointers to places in the code that implement key
 functionality:
@@ -168,7 +168,7 @@ functionality:
    ```mosaic/include/taco/accelerator_notation/code_gen_dynamic_order.h``` and
    the corresponding implementation in
    ```mosaic/src/accelerator_notation/code_gen_dynamic_order.cpp```
-3. Defintion of the function capability language, aliased as ```DynamicStmt```
+3. Definition of the function capability language, aliased as ```DynamicStmt```
    in the code:
    ```mosaic/include/taco/accelerator_notation/accelerator_notation.h``` and
    corresponding implementation in
@@ -182,3 +182,31 @@ functionality:
    ```mosaic/include/taco/index_notation/index_notation.h``` and the
    corresponding implementation in
    ```mosaic/src/index_notation/index_notation.cpp```. 
+
+# Mosaic and TACO
+
+Mosaic is built on top of [TACO's](https://github.com/tensor-compiler/taco). The
+system overview of Mosaic is provided below with new contributions highlighted
+in blue.
+
+![System Overview](img/mosaic-overview.jpg)
+
+Each new contribution can be found in the following section of the code:
+
+- External Function Interface (Section 4):
+  ```mosaic/src/accelerator_notation/accelerator_notation.cpp```.
+- Automatic Search (Section 6): ```mosaic/src/index_notation/index_notation.cpp``` (includes
+    previous code from TACO as well) and
+  ```mosaic/include/taco/accelerator_notation/accelerate_search.h```.
+- Scheduling Language (Section 5) (Mixed with TACOs):
+  ```mosaic/src/accelerator_notation/provenance_graph.cpp``` (the
+  ```accelerate``` command in particular) and
+  ```mosaic/include/taco/index_notation/index_notation.h```.
+- Validate Bindings (Section 5.1):
+  ```mosaic/include/taco/accelerator_notation/code_gen_dynamic_order.h```.
+- Generating external function code (Section 7) (Mixed with TACOs):
+  ```mosaic/src/taco/lower/lower.cpp```,
+  ```mosaic/src/taco/lower/lowerer_impl.cpp``` and
+  ```mosaic/src/taco/ir/ir.cpp```.
+
+
