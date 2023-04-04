@@ -29,9 +29,8 @@ static std::string exec(const char* cmd) {
     return result;
 }
 
-static void bench_blockedSparse4T_5_gsl(benchmark::State& state) {
-    gsl_compile = true;
-   
+static void bench_blockedSparse4T_5_bug_mkl(benchmark::State& state) {
+
    int dim = state.range(0);
   
    Tensor<float> B("B", {dim, dim, dim, dim}, Format{Sparse, Dense, Sparse, Dense});
@@ -39,7 +38,7 @@ static void bench_blockedSparse4T_5_gsl(benchmark::State& state) {
 
    std::mt19937 mt(0); 
    
-   float SPARSITY = .05;
+   float SPARSITY = .2;
    for (int i = 0; i < dim; i++) {
     for (int k = 0; k < dim; k++) {
       const float randnum = mt();
@@ -73,8 +72,9 @@ static void bench_blockedSparse4T_5_gsl(benchmark::State& state) {
     Tensor<float> A("A", {dim, dim, dim, dim}, Format{Dense, Dense, Dense, Dense});
     TensorVar precomputed("precomputed", Type(taco::Float32, {Dimension(dim), Dimension(dim), Dimension(dim), Dimension(dim)}), Format{Dense, Dense, Dense, Dense});
     A(i, k, m, n) = accelerateExpr;
-    IndexStmt stmt = A.getAssignment().concretize();  
-    stmt = stmt.holdConstant(new GSLMM(), accelerateExpr, {j, m, i}, precomputed(i, k, m, n));  
+    IndexStmt stmt = A.getAssignment().concretize();
+    stmt = stmt.holdConstant(new MklMM(), accelerateExpr, {j, m, i}, precomputed(i, k, m, n));
+    
 
     A.compile(stmt);
     A.assemble();
@@ -83,10 +83,8 @@ static void bench_blockedSparse4T_5_gsl(benchmark::State& state) {
     state.ResumeTiming();
     pair.first(func.data());
   }
-    gsl_compile = false;
 
 }
 
-// Stop at 70 because gsl ooms.
-TACO_BENCH(bench_blockedSparse4T_5_gsl)->DenseRange(10, 70, 10);
+TACO_BENCH(bench_blockedSparse4T_5_bug_mkl)->DenseRange(10, 100, 10);
 

@@ -14,7 +14,7 @@
 
 using namespace taco;
 
-#define DIM_SIZE 4000
+#define DIM_SIZE 10000
 
 static void bench_coo_csr_spmm_taco_coo(benchmark::State& state, float SPARSITY, int dim) {
 

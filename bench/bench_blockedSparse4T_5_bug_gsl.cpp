@@ -29,7 +29,7 @@ static std::string exec(const char* cmd) {
     return result;
 }
 
-static void bench_blockedSparse4T_5_gsl(benchmark::State& state) {
+static void bench_blockedSparse4T_5_bug_gsl(benchmark::State& state) {
     gsl_compile = true;
    
    int dim = state.range(0);
@@ -39,7 +39,7 @@ static void bench_blockedSparse4T_5_gsl(benchmark::State& state) {
 
    std::mt19937 mt(0); 
    
-   float SPARSITY = .05;
+   float SPARSITY = .2;
    for (int i = 0; i < dim; i++) {
     for (int k = 0; k < dim; k++) {
       const float randnum = mt();
@@ -88,5 +88,5 @@ static void bench_blockedSparse4T_5_gsl(benchmark::State& state) {
 }
 
 // Stop at 70 because gsl ooms.
-TACO_BENCH(bench_blockedSparse4T_5_gsl)->DenseRange(10, 70, 10);
+TACO_BENCH(bench_blockedSparse4T_5_bug_gsl)->DenseRange(10, 70, 10);
 

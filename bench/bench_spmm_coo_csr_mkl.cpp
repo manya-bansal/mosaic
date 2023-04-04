@@ -11,7 +11,7 @@
 #include "taco/accelerator_interface/mkl_interface.h"
 #include "taco/storage/file_io_mtx.h"
 
-#define DIM_SIZE 4000
+#define DIM_SIZE 10000
 
 using namespace taco;
 

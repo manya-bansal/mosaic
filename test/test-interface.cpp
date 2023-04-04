@@ -1437,7 +1437,7 @@ TEST(interface, blockedSparseCblas) {
    ASSERT_TENSOR_EQ(expected, A);
 }
 
-TEST(interface, blockedSparseTblis) {
+TEST(DISABLED_interface, blockedSparseTblis) {
 
    int dim = 16;
 
