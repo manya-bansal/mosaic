@@ -18,9 +18,11 @@ class TensorVar;
 template <typename CType>
 class Tensor;
 
-
+// Different types of internal arguments provided through Mosaic.
 enum ArgType {DIM, TENSORVAR, TENSOR_OBJECT, TENSOR, EXPR, LITERAL, USER_DEFINED, DECLVAR, UNKNOWN, DIMLIST, DATA_ARRAY, STRING, DECLVAR_ADDR, TENSOR_ADDR, TENSOR_NAME, CAST};
 
+
+// TransferTypeArgs is the parent class that all internal arguments inherit from.
 struct TransferTypeArgs : public util::Manageable<TransferTypeArgs>{
 
     TransferTypeArgs() : argType(UNKNOWN) {}
@@ -37,6 +39,7 @@ struct TransferTypeArgs : public util::Manageable<TransferTypeArgs>{
     ArgType argType;
 };
 
+// The Argument class is a pointer to a TransferTypeArgs object.
 class Argument : public util::IntrusivePtr<const TransferTypeArgs> {
   public: 
     Argument(TransferTypeArgs * arg) : IntrusivePtr(arg) {}
@@ -57,6 +60,8 @@ class Argument : public util::IntrusivePtr<const TransferTypeArgs> {
 
 std::ostream& operator<<(std::ostream&,  const Argument&);
 
+// Internal argument used to pass the TensorVar object as an argument to an
+// external function.
 struct TensorVarArg : public TransferTypeArgs{
     explicit TensorVarArg(const TensorVar& t) : TransferTypeArgs(TENSORVAR), t(t) {}
 
@@ -67,6 +72,8 @@ struct TensorVarArg : public TransferTypeArgs{
     TensorVar t; 
 };
 
+// Internal argument used to pass the TensorObject object as an argument to an
+// external function.
 struct TensorObjectArg : public TransferTypeArgs{
     explicit TensorObjectArg(const TensorObject& t) : TransferTypeArgs(TENSOR_OBJECT), t(t) {}
     
@@ -76,6 +83,8 @@ struct TensorObjectArg : public TransferTypeArgs{
     TensorVar tvar;
 };
 
+// Internal argument used to pass an expression written in TACO's code gen IR to
+// an external function.
 struct irExprArg : public TransferTypeArgs{
     explicit irExprArg(const ir::Expr& irExpr) : TransferTypeArgs(EXPR), irExpr(irExpr) {}
 
@@ -84,6 +93,7 @@ struct irExprArg : public TransferTypeArgs{
     ir::Expr irExpr; 
 };
 
+// Internal argument used to pass the complete dimension list to an external function.
 struct DimList : public TransferTypeArgs{
     explicit DimList(const TensorObject& t) : TransferTypeArgs(DIMLIST), t(t) {}
     explicit DimList(const TensorVar& tvar) : TransferTypeArgs(DIMLIST), tvar(tvar) {}
@@ -92,6 +102,8 @@ struct DimList : public TransferTypeArgs{
     TensorVar tvar;
 };
 
+// Internal argument used to pass the values array of a tensor to an external
+// function.
 struct DataArray : public TransferTypeArgs{
     explicit DataArray(const TensorObject& t) : TransferTypeArgs(DATA_ARRAY), t(t) {}
     explicit DataArray(const TensorVar& tvar) : TransferTypeArgs(DATA_ARRAY), tvar(tvar) {}
@@ -100,18 +112,23 @@ struct DataArray : public TransferTypeArgs{
     TensorVar tvar;
 };
 
+// Internal argument used to pass string literals to an external function.
 struct StringLiteral : public TransferTypeArgs{
     explicit StringLiteral(const std::string& s) : TransferTypeArgs(STRING), s(s) {}
     std::ostream& print(std::ostream& os) const override;
     std::string s; 
 };
 
+// Internal argument used to pass the size of the dimension that an index
+// variable is used to index into.
 class Dim{
   public:
     explicit Dim(const IndexVar& indexVar) : indexVar(indexVar) {}
     IndexVar indexVar;
 };
 
+// Internal argument used to pass the size of the dimension that an index
+// variable is used to index into.
 struct DimArg : public TransferTypeArgs{
     explicit DimArg(const Dim& dim): TransferTypeArgs(DIM), indexVar(dim.indexVar) {}
     explicit DimArg(const IndexVar& indexVar): TransferTypeArgs(DIM), indexVar(indexVar) {}
@@ -121,6 +138,8 @@ struct DimArg : public TransferTypeArgs{
     IndexVar indexVar;
 };
 
+// Internal argument used to pass the name of a user-declared object to an
+// external function.
 struct  DeclVar {
     DeclVar(const std::string& typeString, const std::string& name) : typeString(typeString), name(name) {}
     explicit DeclVar(const std::string& typeString) : DeclVar(typeString, util::uniqueName('v')) {} 
@@ -134,6 +153,8 @@ struct  DeclVar {
 
 };
 
+// Internal argument used to pass the address of a TACO tensor variable to an
+// external function.
 struct  AddrTensorVar : public TransferTypeArgs{
     explicit AddrTensorVar(const TensorObject& var): TransferTypeArgs(TENSOR_ADDR), var(var) {}
     explicit AddrTensorVar(const TensorVar& tvar): TransferTypeArgs(TENSOR_ADDR), tvar(tvar) {}
@@ -142,6 +163,8 @@ struct  AddrTensorVar : public TransferTypeArgs{
 
 };
 
+// Internal argument used to pass name of a tensor variable to an external
+// function.
 struct  TensorName : public TransferTypeArgs{
     explicit TensorName(const TensorObject& var): TransferTypeArgs(TENSOR_NAME), var(var) {}
     explicit TensorName(const TensorVar& tvar): TransferTypeArgs(TENSOR_NAME), tvar(tvar) {}
@@ -150,6 +173,8 @@ struct  TensorName : public TransferTypeArgs{
 
 };
 
+// Internal argument used to pass the address of a user-declared object to an
+// external function.
 struct AddrDeclVarArg : public TransferTypeArgs {
 
   explicit AddrDeclVarArg(const DeclVar& var): TransferTypeArgs(DECLVAR_ADDR), var(var) {}
@@ -158,6 +183,8 @@ struct AddrDeclVarArg : public TransferTypeArgs {
 
 };
 
+// Internal argument used to pass name of a user-declared object to an external
+// function.
 struct DeclVarArg : public TransferTypeArgs {
 
   explicit DeclVarArg(const DeclVar& var): TransferTypeArgs(DECLVAR), var(var) {}
@@ -166,6 +193,8 @@ struct DeclVarArg : public TransferTypeArgs {
 
 };
 
+// Internal argument used to pass a taco tensor object to an external
+// function.
 struct TensorArg : public TransferTypeArgs{
     template <typename CType>
     explicit TensorArg(const Tensor<CType>& tensor) : 
@@ -176,6 +205,8 @@ struct TensorArg : public TransferTypeArgs{
     ir::Expr irExpr; 
 };
 
+// Internal argument used to a number literal argument to an external
+// function. 
 struct LiteralArg : public TransferTypeArgs{
     template <typename T> 
     LiteralArg(Datatype datatype, T val) 
@@ -198,6 +229,8 @@ struct LiteralArg : public TransferTypeArgs{
     Datatype datatype;
 };
 
+// Internal argument used to a cast an argument to another type before passing
+// it into an external function.
 struct CastArg : public TransferTypeArgs{
   CastArg(const Argument& argument, const std::string& cast) : TransferTypeArgs(CAST), argument(argument), cast(cast) {}
  
@@ -205,6 +238,8 @@ struct CastArg : public TransferTypeArgs{
   std::string cast;
 };
 
+
+// TransferWithArgs packs the function name, return type and argument of an external function.
 struct TransferWithArgs : public TransferTypeArgs{
     TransferWithArgs() = default;
 
@@ -237,6 +272,8 @@ struct TransferWithArgs : public TransferTypeArgs{
 
 std::ostream& operator<<(std::ostream&, const TransferWithArgs&);
 
+// The following functions are internally to add an argument to the argument
+// vector. Users should not need to interact with these.
 inline void addArg(std::vector<Argument>& argument, const TensorVar& t) { argument.push_back(new TensorVarArg(t)); }
 inline void addArg(std::vector<Argument>& argument, const TensorObject& t) { argument.push_back(new TensorObjectArg(t)); }
 inline void addArg(std::vector<Argument>& argument, const Argument&  arg) { argument.push_back(arg); }
@@ -260,7 +297,11 @@ void addArg(std::vector<Argument>& argument, T first, Next...next){
     addArg(argument, (next)...); 
 }
 
-
+// TransferLoad objects can be used to define functions that must be called
+// before calling the external function. Use cases of TranferLoad include
+// initializing specialized memories, packing data into function-specific data
+// structures and user-defined formats, allocating additional memory, and
+// configuring meta-data values.
 class TransferLoad{
   public:
     TransferLoad() = default;
@@ -291,6 +332,10 @@ class TransferLoad{
     std::string returnType; 
 };
 
+// TransferStore objects can be used to define functions that must be called
+// after calling the external function. Use cases of TransferStore include
+// checking for error codes, unpacking data from function-specific data
+// structures and user-defined formats, and freeing allocated memory. 
 class TransferStore{
   public:
     TransferStore() = default;
@@ -332,7 +377,9 @@ class TransferType{
 
 };
 
-
+// ForeignFunctionDescription provides the same functionality as the
+// AbstractFunctionInterface class as an object as opposed to an abstract
+// virtual class.
 class ForeignFunctionDescription {
   public: 
     ForeignFunctionDescription() = default;
@@ -361,10 +408,14 @@ class ForeignFunctionDescription {
     ForeignFunctionDescription( const std::string& functionName, const std::string& returnType, const taco::IndexExpr& lhs, const taco::IndexExpr& rhs, const std::vector<Argument>& args)
                                 : functionName(functionName), returnType(returnType), lhs(lhs), rhs(rhs), args(args) {}
 
+    // Get the RHS of the expression that the external function computes. 
     taco::IndexExpr getExpr() const {return rhs;};
+    // Get the arguments of the external function.
     std::vector<Argument> getArgs() const {return args;};
+    // Get the LHS of the expression that the external function computes.
     taco::IndexExpr getLHS() const      {return lhs;};
 
+    // Overloaded the () operator to automatically populated the args var. 
     template <typename Exprs> 
     ForeignFunctionDescription operator()(Exprs expr)
     {  std::vector<Argument> argument;
@@ -372,6 +423,7 @@ class ForeignFunctionDescription {
       return ForeignFunctionDescription(functionName, returnType, lhs, rhs, argument, temporaries, checker);
     }
 
+    // Overloaded the () operator to automatically populated the args var. 
     template <typename FirstT, typename ...Args>
     ForeignFunctionDescription operator()(FirstT first, Args...remaining){
         std::vector<Argument> argument;
@@ -393,6 +445,9 @@ class ForeignFunctionDescription {
 std::ostream& operator<<(std::ostream&, const ForeignFunctionDescription&);
 
 
+// The AcceleratorDescription is an outdated design for adding external
+// functions. See the AbstractFunctionInterface class to add a new external
+// function interface.
 class AcceleratorDescription {
   public:
     AcceleratorDescription(const std::vector<ForeignFunctionDescription>& funcDescriptions) : funcDescriptions(funcDescriptions) {};
@@ -408,10 +463,12 @@ class AcceleratorDescription {
 
 };
 
+// The ConcreteAccelerateCodeGenerator is used during code generation and has
+// the actual tensors used in the user-defined computation replaced as the
+// arguments. Users of Mosaic do not need to interact with this class. See
+// AbstractFunctionInterface to define an external function.
 class ConcreteAccelerateCodeGenerator {
   public: 
-    // TODO: Add some error checking here so users 
-    // dont pass in any legal IndexExpr
     ConcreteAccelerateCodeGenerator() = default;
 
     ConcreteAccelerateCodeGenerator(const std::string& functionName, const std::string& returnType, const taco::IndexExpr& lhs, const taco::IndexExpr& rhs, const std::vector<Argument>& args, 
@@ -421,7 +478,7 @@ class ConcreteAccelerateCodeGenerator {
     ConcreteAccelerateCodeGenerator(const std::string& functionName, const std::string& returnType, taco::IndexExpr lhs, taco::IndexExpr rhs, const std::vector<Argument>& callBefore,
                                     const std::vector<Argument>& callAfter)
                                     : functionName(functionName), returnType(returnType), lhs(lhs), rhs(rhs), callBefore(callBefore), callAfter(callAfter) {}
-  
+
     taco::IndexExpr getExpr() const     {return rhs;};
     taco::IndexExpr getLHS() const      {return lhs;};
     taco::IndexExpr getRHS() const      {return rhs;};
@@ -445,7 +502,6 @@ class ConcreteAccelerateCodeGenerator {
         return ConcreteAccelerateCodeGenerator(functionName, returnType, lhs, rhs, argument, callBefore, callAfter);
     }
 
-    // ConcreteAccelerateCodeGenerator& operator=(const ConcreteAccelerateCodeGenerator& concreteAccelerateCodeGenerator);
   private:
       std::string functionName;
       std::string returnType;
@@ -458,7 +514,6 @@ class ConcreteAccelerateCodeGenerator {
 };
 
 std::ostream& operator<<(std::ostream&,  const ConcreteAccelerateCodeGenerator&);
-
 
 class FunctionInterface : public util::IntrusivePtr<const AbstractFunctionInterface> {
   public: 
@@ -475,17 +530,32 @@ struct AbstractFunctionInterface :  public util::Manageable<AbstractFunctionInte
     AbstractFunctionInterface() = default;
     virtual ~AbstractFunctionInterface() = default;
 
+    // Specify the semantics of the external function.
     virtual taco::AcceleratorStmt getStmt()    const  = 0; 
+
+    // Get arguments of the function as a vector.
     virtual std::vector<Argument> getArguments() const= 0;
+
+    // Provide return type as a string.
     virtual std::string getReturnType()   const = 0;
+
+    // Provide function name as a string.
     virtual std::string getFunctionName() const = 0;
+
+    // Specify constraints on index variable or dynamic index variable lists
+    // used to index into tensor objects.
     virtual DynamicStmt getConstraints() const {return DynamicStmt();}
-    /// call any functions before main function (useful to call "void"
-    /// functions)
+
+    // Functions to call before generating a call to the function actually
+    // performs the computation. 
     virtual std::vector<Argument> callBefore() const {return {};}
-    /// call any functions after main function (useful for error checking)
+    
+    // Functions to call after generating a call to the function actually
+    // performs the computation.
     virtual std::vector<Argument> callAfter() const {return {};}
 
+    // General-purpose C++ function that can encode any other constraints that
+    // the AcceleratorStmt and DynamicStmt cannot encode. 
     virtual bool checkerFunction(IndexStmt stmt) const {return true;}
     
 
