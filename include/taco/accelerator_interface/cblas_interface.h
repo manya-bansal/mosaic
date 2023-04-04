@@ -8,13 +8,22 @@
 
 using namespace taco;
 
+// Inherit from AbstractFunctionInterface class to define an external interface.
 class Saxpy : public AbstractFunctionInterface{
     public: 
+        // Initialize x and y to be a one-dimensional tensor i.e. a vector, and 
+        // i to be an index variable. These objects will be used to define the 
+        // semantics of the Saxpy function.
         Saxpy() : x(TensorObject(Type(taco::Float32, {Dimension()}), dense)),
                   y(TensorObject(Type(taco::Float32, {Dimension()}), dense)),
                   i(IndexVar()) {};
-
+        
+        // Specify the semantics of the  Saxpy function. getStmt() is used to 
+        // enure only valid function bindings get generated. Note that the
+        // Saxpy function stores its output into one of its arguments.
         taco::AcceleratorStmt getStmt() const override{ return x(i) = x(i) + y(i);}
+
+        // Specify the arguments of the Saxpy function as a vector of Arguments. 
         std::vector<Argument> getArguments() const override {return 
                                                 {
                                                     new DimArg(i), 
@@ -24,8 +33,15 @@ class Saxpy : public AbstractFunctionInterface{
                                                     new TensorObjectArg(x), 
                                                     new LiteralArg(Datatype(taco::UInt32), 1)
                                                 };}
+        
+        // Specify the return type of the Saxpy function as a string.
         std::string getReturnType() const override {return "void";}
+
+        // Specify the name of the Saxpy function as a string.
         std::string getFunctionName() const override{return "cblas_saxpy";}
+
+        // There are no additional constraints associated wth the Saxpy function,
+        // therefore, the checker function simply returns true.
         bool checkerFunction(IndexStmt stmt) const override{return true;}
 
     private: 
