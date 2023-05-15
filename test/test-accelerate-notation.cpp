@@ -1,5 +1,7 @@
 #include "test.h"
 #include "taco/accelerator_notation/accelerator_notation.h"
+#include "taco/accelerator_interface/tile_interface.h"
+#include "taco/accelerator_interface/cblas_interface.h"
 #include "taco/index_notation/index_notation.h"
 #include "taco/accelerator_notation/accelerator_notation_nodes.h"
 #include "taco/accelerator_notation/code_gen_dynamic_order.h"
@@ -145,11 +147,9 @@ TEST(accelerateNotation, makeReductionNotation) {
                      makeReductionNotation(a(i)=B(i,j)*c(j)));
 }
 
-
-
 TEST(accelerateNotation, testCCLTimeAVX) {
 
-    auto start = std::chrono::high_resolution_clock::now();
+    
 
     DynamicOrder dynamicOrder;
     DynamicIndexIterator interator(dynamicOrder);
@@ -162,17 +162,11 @@ TEST(accelerateNotation, testCCLTimeAVX) {
     dimRef[var] = 10;
 
     GenerateSMTCode condition(forall(interator, dynamicOrder(interator) == 4), mapRef, dimRef, true);
+
+    // We have instrumented the runSMT function to report the time to run the 
+    // query not generate it.
     condition.runSMT();
     ASSERT_TRUE(condition.isSat());
-
-    auto stop = std::chrono::high_resolution_clock::now();
-
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-    std::cout << "Time taken by function here: "
-        << duration.count() << " us" << std::endl;
-
-
-    condition.getTilings();
 
 }
 
@@ -195,154 +189,257 @@ TEST(accelerateNotation, testCCLTimeStardust) {
     GenerateSMTCode condition( ((DynamicExpr(var) * DynamicExpr(var2) * DynamicExpr(var3) * DynamicExpr(var4)) == 65536),
     mapRef, dimRef, true);
 
-    std::cout << util::join(condition.getTilings()) << std::endl;
+    // We have instrumented the runSMT function to report the time to run the 
+    // query not generate it.
+    condition.runSMT();
+    ASSERT_TRUE(condition.isSat());
 
 }
-
-
-
 
 bool checker_function(int tile){
   if (tile < 16) return true;
   return false;
 }
 
-int tryall(int num)
-{
-    for (int i = 0; i < num; i++){
-      usleep(326);
-    }
-}
 
-void findIndex(int last, IndexStmt stmt, std::vector<IndexVar> vars, IndexExpr accelerateExpr)
-{   
-  for (auto var: vars){
-    for (int i = 0; i < last; i++){
-      usleep(326);
-      if (checker_function(i)){
-        tryall(14);
-        return;
-      }
-    }
+TEST (accelerateNotation, testRandomStardust){
+
+  // Set up code for the computation we want to schedule. 
+
+  Tensor<float> A("A", {16}, Format{Dense});
+  Tensor<float> expected("expected", {16}, Format{Dense});
+  Tensor<float> B("B", {16}, Format{Dense});
+  Tensor<float> C("C", {16}, Format{Dense});
+  IndexVar i("i");
+
+  for (int i = 0; i < 16; i++) {
+    C.insert({i}, (float) i);
+    B.insert({i}, (float) i);
   }
-    
-}
 
-int randomSearch(int last){
+  C.pack();
+  B.pack();
 
-  std::mt19937 rng(9);
-  std::uniform_int_distribution<int> gen(1, last); // uniform, unbiased
+  IndexExpr accelerateExpr = B(i) + C(i);
+  A(i) = accelerateExpr;
+  IndexStmt stmt = A.getAssignment().concretize();
 
-  std:set<int> seen;
+  double count = 0;
 
-  int r = gen(rng);
-  int i = 0;
-  while (!checker_function(r)){
-    i++;
-    seen.insert(r);
-    while (seen.count(r) == 1){
-      r = gen(rng);
+  for (int j = 0; j < 10; j++){
+    auto start = std::chrono::high_resolution_clock::now();
+    // Starting the random Search
+    std::mt19937 rng(time(nullptr));
+    // uniform, unbiased. Bound by twice the capabilty of Stardust.
+    std::uniform_int_distribution<int> gen(1, 65536*2); 
+
+    int r1 = gen(rng);
+
+    // Find at least one tiling that works.
+    while (r1 > 65536){
+      // Schedule the computation
+      IndexStmt newStmt = stmt.tile(new TileSaxpy(), accelerateExpr, {{i,  r1}});
+      r1 = gen(rng);
     }
+
+    // Now start linear search to maximize tile size.
+    while (r1 < 65536){
+      // Schedule the computation
+      IndexStmt newStmt = stmt.tile(new TileSaxpy(), accelerateExpr, {{i,  r1}});
+      r1++;
+    }
+
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    count += duration.count();
   }
-  std::cout << r << std::endl;
-  return i;
+
+  // Divide by 10 to average over 10 runs and then divide by 1000000
+  // to convert microseconds into seconds.
+  std::cout << "Time taken to Run Random Search for Stardust: "
+          << float(count)/float(1000000 * 10) << "s" << std::endl;
+
 }
 
+bool check_stardust(int r1){
+  if (r1 < 65536) return true;
+  return false;
 
-TEST (accelerateNotation, testCheckerFunction){
+}
+TEST (accelerateNotation, testLinearStardust){
 
-  // binary search over 0-65536
-  //   Tensor<float> A("A", {16}, Format{Dense});
-  //  Tensor<float> expected("expected", {16}, Format{Dense});
-  //  Tensor<float> B("B", {16}, Format{Dense});
-  //  Tensor<float> C("C", {16}, Format{Dense});
-  //  IndexVar i("i");
+  // Set up code for the computation we want to schedule. 
+  Tensor<float> A("A", {16}, Format{Dense});
+  Tensor<float> expected("expected", {16}, Format{Dense});
+  Tensor<float> B("B", {16}, Format{Dense});
+  Tensor<float> C("C", {16}, Format{Dense});
+  IndexVar i("i");
 
-  //  for (int i = 0; i < 16; i++) {
-  //     C.insert({i}, (float) i);
-  //     B.insert({i}, (float) i);
-  //  }
+  for (int i = 0; i < 16; i++) {
+    C.insert({i}, (float) i);
+    B.insert({i}, (float) i);
+  }
 
-  //  C.pack();
-  //  B.pack();
+  C.pack();
+  B.pack();
 
-  //  IndexExpr accelerateExpr = B(i) + C(i);
-  //  A(i) = accelerateExpr;
-  //  IndexStmt stmt = A.getAssignment().concretize();
-  //  stmt = stmt.tile(new TileSaxpy(), accelerateExpr, {{i,  4}});
+  IndexExpr accelerateExpr = B(i) + C(i);
+  A(i) = accelerateExpr;
+  IndexStmt stmt = A.getAssignment().concretize();
 
-  //   auto start = std::chrono::high_resolution_clock::now();
-  //   findIndex(65536, stmt, {i}, accelerateExpr);
-  //     auto stop = std::chrono::high_resolution_clock::now();
+  // Time how long it takes to schedule one time, we will delay to account for
+  // the cost of computation while scheduling. 
+  auto start1 = std::chrono::high_resolution_clock::now();
+  IndexStmt newStmt = stmt.tile(new TileSaxpy(), accelerateExpr, {{i,  1}});
+  auto end1 = std::chrono::high_resolution_clock::now();
 
-  //   auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-  //   std::cout << "Time taken by function: "
-  //         << duration.count() << " us" << std::endl;
-  
+  double count = 0;
+  // for (int j = 0; j < 10; j++){
   auto start = std::chrono::high_resolution_clock::now();
-  int i = randomSearch(65536);
+  // Starting the random Search
+  std::mt19937 rng(time(nullptr));
+  // uniform, unbiased. Bound by twice the capabilty of Stardust.
+  std::uniform_int_distribution<int> gen(1, 65536*2); 
+
+
+  // Now start linear search.
+  int r1 = 0;
+  // Continue until to maximimum tile size is reached.
+  while (check_stardust(r1)){
+    // We delay to account for the time it takes to schedule the computation.
+    // See up for timing logic.
+    usleep(std::chrono::duration_cast<std::chrono::microseconds>(end1 - start1).count());
+    r1++;
+  }
+
   auto stop = std::chrono::high_resolution_clock::now();
-
   auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-  std::cout << "Time taken by function: "
-        << duration.count() << " us" << std::endl;
+  count = duration.count();
+  // Dvide by 1000000 to convert microseconds into seconds.
+  std::cout << "Time taken to Run Linear Search for Stardust: "
+          << float(count)/float(1000000) << "s" << std::endl;
+}
 
-  std::cout << i << std::endl;
+TEST (accelerateNotation, testRandomAVX){
 
+  // Set up code for the computation we want to schedule. 
+
+  Tensor<float> A("A", {16}, Format{Dense});
+  Tensor<float> expected("expected", {16}, Format{Dense});
+  Tensor<float> B("B", {16}, Format{Dense});
+  Tensor<float> C("C", {16}, Format{Dense});
+  IndexVar i("i");
+
+  for (int i = 0; i < 16; i++) {
+    C.insert({i}, (float) i);
+    B.insert({i}, (float) i);
+  }
+
+  C.pack();
+  B.pack();
+
+  IndexExpr accelerateExpr = B(i) + C(i);
+  A(i) = accelerateExpr;
+  IndexStmt stmt = A.getAssignment().concretize();
+
+  // Time how long it takes to schedule one time, we will delay to account for
+  // the cost of computation while scheduling. 
+  auto start1 = std::chrono::high_resolution_clock::now();
+  IndexStmt newStmt = stmt.tile(new TileSaxpy(), accelerateExpr, {{i,  1}});
+  auto end1 = std::chrono::high_resolution_clock::now();
+
+  double count = 0;
+
+  // for (int j = 0; j < 10; j++){
+    auto start = std::chrono::high_resolution_clock::now();
+    // Starting the random Search
+    std::mt19937 rng(10);
+    // uniform, unbiased. Bound by twice the capabilty of Stardust.
+    std::uniform_int_distribution<int> gen(1, 65536*2); 
+
+    int r1 = gen(rng);
+    int j = 0;
+    // Find at least one tiling that works.
+    while (r1 > 4){
+      // We delay to account for the time it takes to schedule the computation.
+      // See up for timing logic.
+      usleep(std::chrono::duration_cast<std::chrono::microseconds>(end1 - start1).count());
+      j++;
+      r1 = gen(rng);
+    }
+    std::cout << r1 << std::endl;
+    std::cout << j << std::endl;
+    // Now start linear search to maximize tile size.
+    while (r1 != 4){
+      // We delay to account for the time it takes to schedule the computation.
+      // See up for timing logic.
+      usleep(std::chrono::duration_cast<std::chrono::microseconds>(end1 - start1).count());
+      r1++;
+    }
+
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    count += duration.count();
+  // }
+
+  // Divide by 10 to average over 10 runs and then divide by 1000000
+  // to convert microseconds into seconds.
+  std::cout << "Time taken to Run Random Search for AVX: "
+          << float(count)/float(1000000) << "s" << std::endl;
 
 }
 
 
-TEST (accelerateNotation, timeEndToEnd){
+TEST (accelerateNotation, testLinearAVX){
 
-  // binary search over 0-65536
-   Tensor<float> A("A", {16, 16}, Format{Dense, Dense});
-   Tensor<float> B("B", {16, 16}, Format{Dense, Dense});
-   Tensor<float> C("C", {16, 16}, Format{Dense, Dense});
-   Tensor<float> D("D", {16, 16}, CSR);
-   IndexVar i("i");
-   IndexVar j("j");
-   IndexVar k("k");
+  // Set up code for the computation we want to schedule. 
+  Tensor<float> A("A", {16}, Format{Dense});
+  Tensor<float> expected("expected", {16}, Format{Dense});
+  Tensor<float> B("B", {16}, Format{Dense});
+  Tensor<float> C("C", {16}, Format{Dense});
+  IndexVar i("i");
 
+  for (int i = 0; i < 16; i++) {
+    C.insert({i}, (float) i);
+    B.insert({i}, (float) i);
+  }
 
-  IndexExpr accelerateExpr = B(i, j) * C(j, k);
-  A(i, k) = accelerateExpr;
+  C.pack();
+  B.pack();
 
-  std::vector<FunctionInterface> interfaces =  {
-                         new MatrixMultiply()
-                          // new CudaSpmv(), new GSLVecAdd(), new MklSgemv(),
-                          // new SparseMklSgemv(), new SparseMklMM(), new MklSymmgemv(),
-                          // new MklMM(), new MklDot(), new MklAdd(), new SparseMklMMCOOCSR(), 
-                          // new TblisMultiply(), new TblisTTM(), new TblisDot(), 
-                          // new TblisSaxpy(), new TblisPlus(), new TblisGemv(), 
-                          // new TblisTTV(), new GslTensorPlus()
-  };
+  IndexExpr accelerateExpr = B(i) + C(i);
+  A(i) = accelerateExpr;
+  IndexStmt stmt = A.getAssignment().concretize();
 
-  //  std::vector<FunctionInterface> interfaces =  {
-  //                         new MatrixMultiply()
-  // };
+  // Time how long it takes to schedule one time, we will delay to account for
+  // the cost of computation while scheduling. 
+  auto start1 = std::chrono::high_resolution_clock::now();
+  IndexStmt newStmt = stmt.tile(new TileSaxpy(), accelerateExpr, {{i,  1}});
+  auto end1 = std::chrono::high_resolution_clock::now();
 
-  cout << "Registering #" << interfaces.size() << " Interfaces!!";
-
-  A.registerAccelerators(interfaces);
-
-  A.accelerateOn();
-
-  A.compile();
-  A.assemble();
-  A.compute();
+  double count = 0;
+  // for (int j = 0; j < 10; j++){
+  auto start = std::chrono::high_resolution_clock::now();
+  // Starting the random Search
+  std::mt19937 rng(time(nullptr));
+  // uniform, unbiased. Bound by twice the capabilty of Stardust.
+  std::uniform_int_distribution<int> gen(1, 65536*2); 
 
 
-  // auto start = std::chrono::high_resolution_clock::now();
-  // int i = randomSearch(65536);
-  // auto stop = std::chrono::high_resolution_clock::now();
+  // Now start linear search.
+  int r1 = 0;
+  // Continue until to maximimum tile size is reached.
+  while (r1<4){
+    // We delay to account for the time it takes to schedule the computation.
+    // See up for timing logic.
+    usleep(std::chrono::duration_cast<std::chrono::microseconds>(end1 - start1).count());
+    r1++;
+  }
 
-  // auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-  // std::cout << "Time taken by function: "
-  //       << duration.count() << " us" << std::endl;
-
-  // std::cout << i << std::endl;
-
-
+  auto stop = std::chrono::high_resolution_clock::now();
+  auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+  count = duration.count();
+  // Dvide by 1000000 to convert microseconds into seconds.
+  std::cout << "Time taken to Run Linear Search for AVX: "
+          << float(count)/float(1000000) << "s" << std::endl;
 }
-

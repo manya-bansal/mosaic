@@ -9,6 +9,7 @@
 #include "taco/accelerator_interface/tblis_interface.h"
 #include "taco/accelerator_interface/gsl_interface.h"
 #include "taco/accelerator_interface/mkl_interface.h"
+#include "taco/accelerator_interface/stardust_interface.h"
 #include "taco/storage/file_io_mtx.h"
 
 #define DIM_SIZE 200
@@ -41,17 +42,25 @@ static void bench_mm_add_mkl(benchmark::State& state, float SPARSITY, int dim) {
 
   std::ostringstream ss;
   ss << SPARSITY;
-  std::string generateData = "python3 /home/ubuntu/mosaic/data/data_gen.py --bench mmAdd --dim ";
+  char const *ret = getenv("PATH_TO_MOSAIC_ARTIFACT");
+  if (!ret) {
+    taco_uerror << "Please set the environment variable PATH_TO_MOSAIC_ARTIFACT."
+    << "To do so, run (in the mosaic/bench/bench-scripts/ dir): source mosaic_env_var.sh.";
+  }
+
+ std::string path_to_artifact = std::string(ret);
+
+  std::string generateData = "python3  " + path_to_artifact + "/mosaic-benchmarks/data/data_gen.py --bench mmAdd --dim ";
   generateData += std::to_string(dim);
   generateData += " --nnz ";
   generateData += ((SPARSITY == 1) ? "1.0" : ss.str());
-  generateData += " --out_dir /home/ubuntu/mosaic/data/spdata/";
+  generateData += " --out_dir " + path_to_artifact + "/mosaic-benchmarks/data/spdata/";
   exec(generateData.c_str());
-  std::string filename = "/home/ubuntu/mosaic/data/spdata/mmAdd/B_"+ std::to_string(dim) + "_" +  ((SPARSITY == 1.0) ? "1.0" : ss.str()) + ".mtx";
+  std::string filename = "" + path_to_artifact + "/mosaic-benchmarks/data/spdata/mmAdd/B_"+ std::to_string(dim) + "_" +  ((SPARSITY == 1.0) ? "1.0" : ss.str()) + ".mtx";
   std::cout <<  filename << std::endl;
    std::cout <<  ((SPARSITY == 1.0) ? "1.0" : ss.str())  << std::endl;
   B = castToType<float>("B", readMTX(filename, CSR));
-  filename = "/home/ubuntu/mosaic/data/spdata/mmAdd/C_"+ std::to_string(dim) + "_" +  ((SPARSITY == 1.0) ? "1.0" : ss.str()) + ".mtx"; 
+  filename = "" + path_to_artifact + "/mosaic-benchmarks/data/spdata/mmAdd/C_"+ std::to_string(dim) + "_" +  ((SPARSITY == 1.0) ? "1.0" : ss.str()) + ".mtx"; 
   C = castToType<float>("C", readMTX(filename, CSR)); 
 
  
@@ -68,7 +77,8 @@ static void bench_mm_add_mkl(benchmark::State& state, float SPARSITY, int dim) {
     IndexStmt stmt = A.getAssignment().concretize();
     stmt = stmt.accelerate(new MklAdd(), accelerateExpr);
 
-    A.compile();
+
+    A.compile(stmt);
     A.assemble();
     auto func = A.compute_split();
     auto pair = A.returnFuncPackedRaw(func);
@@ -76,9 +86,9 @@ static void bench_mm_add_mkl(benchmark::State& state, float SPARSITY, int dim) {
     pair.first(func.data());
   }
   gsl_compile = false;
-  std::string eraseData = "rm -rf /home/ubuntu/mosaic/data/spdata/mmAdd/B_" + std::to_string(dim) + "_" +  ((SPARSITY == 1.0) ? "1.0" : ss.str()) + ".mtx";
+  std::string eraseData = "rm -rf " + path_to_artifact + "/mosaic-benchmarks/data/spdata/mmAdd/B_" + std::to_string(dim) + "_" +  ((SPARSITY == 1.0) ? "1.0" : ss.str()) + ".mtx";
   exec(eraseData.c_str());
-  eraseData = "rm -rf /home/ubuntu/mosaic/data/spdata/mmAdd/C_" + std::to_string(dim) + "_" + ((SPARSITY == 1.0) ? "1.0" : ss.str()) + ".mtx";
+  eraseData = "rm -rf " + path_to_artifact + "/mosaic-benchmarks/data/spdata/mmAdd/C_" + std::to_string(dim) + "_" + ((SPARSITY == 1.0) ? "1.0" : ss.str()) + ".mtx";
   exec(eraseData.c_str());
   gsl_compile = false;
 }
@@ -92,4 +102,3 @@ TACO_BENCH_ARGS(bench_mm_add_mkl, 0.2,   0.2, DIM_SIZE);
 TACO_BENCH_ARGS(bench_mm_add_mkl, 0.4,    0.4, DIM_SIZE);
 TACO_BENCH_ARGS(bench_mm_add_mkl, 0.8,     0.8, DIM_SIZE);
 TACO_BENCH_ARGS(bench_mm_add_mkl, 1.0,     1.0, DIM_SIZE);
-

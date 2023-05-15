@@ -35,6 +35,9 @@ bool hasOpMatch(IndexExpr e1, AcceleratorExpr e2);
 
 ArgumentMap hasPreciseMatch(IndexExpr e1, AcceleratorExpr e2);
 
+std::map<IndexExpr, AcceleratorExpr> getMatchingTensors(IndexExpr e1, AcceleratorExpr e2);
+
+
 }
 
 #endif

@@ -64,4 +64,3 @@ static void bench_ttv_gsl(benchmark::State& state) {
 }
 
 TACO_BENCH(bench_ttv_gsl)->DenseRange(10, 100, 10);
-

@@ -47,9 +47,11 @@ static void bench_ttv_tblis(benchmark::State& state) {
     state.PauseTiming();
     Tensor<float> A("A", {dim, dim}, {Dense, Dense});
     A(i, j) = accelerateExpr;
+
     IndexStmt stmt = A.getAssignment().concretize();
-    stmt = stmt.accelerate(new TblisTTV(), accelerateExpr, true);
-    A.compile();
+   stmt = stmt.holdConstant(new TblisGemv(), accelerateExpr, {i}, precomputed(i, j));
+
+    A.compile(stmt);
     A.assemble();
     state.ResumeTiming();
     A.compute();
@@ -57,4 +59,3 @@ static void bench_ttv_tblis(benchmark::State& state) {
 }
 
 TACO_BENCH(bench_ttv_tblis)->DenseRange(10, 100, 10);
-

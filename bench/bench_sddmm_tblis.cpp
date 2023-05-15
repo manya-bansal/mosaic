@@ -36,12 +36,20 @@ static void bench_sddmm_tblis(benchmark::State& state) {
   Tensor<float> C("C", {NUM_I, NUM_J}, {Dense, Dense});
   Tensor<float> D("D", {NUM_J, NUM_K}, {Dense, Dense});
 
-  std::string generateData = "python3 /home/ubuntu/mosaic/data/data_gen.py --bench sddmm_dim --dim ";
+  char const *ret = getenv("PATH_TO_MOSAIC_ARTIFACT");
+  if (!ret) {
+    taco_uerror << "Please set the environment variable PATH_TO_MOSAIC_ARTIFACT."
+    << "To do so, run (in the mosaic/bench/bench-scripts/ dir): source mosaic_env_var.sh.";
+  }
+
+ std::string path_to_artifact = std::string(ret);
+
+  std::string generateData = "python3  " + path_to_artifact + "/mosaic-benchmarks/data/data_gen.py --bench sddmm_dim --dim ";
   generateData += std::to_string(dim);
   generateData += " --nnz 0.4";
-  generateData += " --out_dir /home/ubuntu/mosaic/data/spdata/";
+  generateData += " --out_dir " + path_to_artifact + "/mosaic-benchmarks/data/spdata/";
   exec(generateData.c_str());
-  std::string filename = "/home/ubuntu/mosaic/data/spdata/sddmm_dim/B_"+ std::to_string(dim) + "_0.4"  + ".mtx";
+  std::string filename = "" + path_to_artifact + "/mosaic-benchmarks/data/spdata/sddmm_dim/B_"+ std::to_string(dim) + "_0.4"  + ".mtx";
   B = castToType<float>("B", readMTX(filename, CSR));
 
   for (int i = 0; i < dim; i++) {
@@ -75,7 +83,7 @@ static void bench_sddmm_tblis(benchmark::State& state) {
     state.ResumeTiming();
     pair.first(func.data());
   }
-  std::string eraseData = "rm -rf /home/ubuntu/mosaic/data/spdata/sddmm_dim/B_" + std::to_string(dim) + "_0.4"+ ".mtx";
+  std::string eraseData = "rm -rf " + path_to_artifact + "/mosaic-benchmarks/data/spdata/sddmm_dim/B_" + std::to_string(dim) + "_0.4"+ ".mtx";
   exec(eraseData.c_str());
 }
 

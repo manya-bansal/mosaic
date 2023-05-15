@@ -131,15 +131,17 @@ public:
                     x(TensorObject(Type(taco::Float32, {Dimension(), Dimension()}),  Format{Dense, Dense})),
                     y(TensorObject(Type(taco::Float32, {Dimension(), Dimension()}),  Format{Dense, Dense})),
                     z(TensorObject(Type(taco::Float32, {Dimension(), Dimension()}),  Format{Dense, Dense})),
-                    i(IndexVar()),
-                    j(IndexVar()),
-                    k(IndexVar()) {};
+                    m(IndexVar()),
+                    k(IndexVar()),
+                    n(IndexVar()) {};
 
-        AcceleratorStmt getStmt() const override {return z(i, k) = x(i, j) * y(j, k);}
+        AcceleratorStmt getStmt() const override {return z(m, n) = x(m, k) * y(k, n);}
         std::vector<Argument> getArguments() const override {
                                                 return 
                                                 {
-                                                    new DimArg(i), 
+                                                    new DimArg(m), 
+                                                    new DimArg(n), 
+                                                    new DimArg(k), 
                                                     new TensorObjectArg(x),
                                                     new TensorObjectArg(y),
                                                     new TensorObjectArg(z),
@@ -151,9 +153,9 @@ public:
         TensorObject x;
         TensorObject y;
         TensorObject z;
-        IndexVar i;
-        IndexVar j;
+        IndexVar m;
         IndexVar k;
+        IndexVar n;
 };
 
 class MklDot : public AbstractFunctionInterface{
@@ -211,7 +213,7 @@ class MklAdd : public AbstractFunctionInterface{
 };
 
 class SparseMklMMCOOCSR : public AbstractFunctionInterface{
-public:
+  public:
     SparseMklMMCOOCSR() : 
                     x(TensorObject(Type(taco::Float32, {Dimension(), Dimension()}),  COO(2))),
                     y(TensorObject(Type(taco::Float32, {Dimension(), Dimension()}),  Format{Dense, Dense})),

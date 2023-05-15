@@ -33,6 +33,7 @@ class AVXSaxpy : public AbstractFunctionInterface{
                                          var2 = _mm256_load_ps(y),
                                          result = _mm256_add_ps(var, var2)};
                                 }
+        DynamicStmt getConstraints() const override {return DynamicExpr(i) ==  8;}
 
     private: 
         TensorObject x;

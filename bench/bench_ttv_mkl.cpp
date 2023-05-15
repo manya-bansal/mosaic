@@ -60,4 +60,3 @@ static void bench_ttv_mkl(benchmark::State& state) {
 }
 
 TACO_BENCH(bench_ttv_mkl)->DenseRange(10, 100, 10);
-

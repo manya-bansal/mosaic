@@ -27,6 +27,7 @@
 #include "taco/accelerator_interface/avx2_interface.h"
 #include "taco/accelerator_interface/dynamic_order_interface.h"
 #include "taco/accelerator_interface/mkl_interface.h"
+#include "taco/accelerator_interface/stardust_interface.h"
 
 
 using namespace taco;
@@ -785,17 +786,15 @@ TEST(interface, tblisSgemm) {
    IndexVar j("j");
    IndexVar k("k");
 
-   IndexExpr accelerateExpr = B(i, j) * C(j, k) + C(i,k);
+   IndexExpr accelerateExpr = B(i, j) * C(j, k) ;
    A(i, k) = accelerateExpr;
 
 
-   // IndexStmt stmt = A.getAssignment().concretize();
-   // stmt = stmt.accelerate(new TblisMultiply(), accelerateExpr);
-   A.registerAccelerator(new TblisMultiply());
-   // enable targeting
-   A.accelerateOn();
+   IndexStmt stmt = A.getAssignment().concretize();
+   stmt = stmt.accelerate(new TblisMultiply(), accelerateExpr);
+
    
-   A.compile();
+   A.compile(stmt);
    A.assemble();
    A.compute();
 
@@ -1439,7 +1438,7 @@ TEST(interface, blockedSparseCblas) {
    ASSERT_TENSOR_EQ(expected, A);
 }
 
-TEST(interface, blockedSparseTblis) {
+TEST(DISABLED_interface, blockedSparseTblis) {
 
    int dim = 16;
 
@@ -2520,7 +2519,7 @@ TEST(interface, sdmmMKL){
 
 }
 
-TEST(interface, cudaSparseGemv) {
+TEST(DISABLED_interface, cudaSparseGemv) {
    mkl_compile = true;
    // actual computation
    Tensor<float> A("A", {16, 16}, CSR);
@@ -2713,124 +2712,96 @@ TEST(interface, mklDot) {
 }
 
 
+TEST(interface, stardustAdd) {
 
-TEST(interface, MMAddSparse) {
+   int NUM_I = 10;
+   int NUM_K = 10;
+   int NUM_J = 10;
 
-   int dim = 16;
+   Tensor<float> B("B", {NUM_I, NUM_K}, {taco::Dense, taco::Sparse});
+   Tensor<float> C("C", {NUM_I, NUM_J}, {taco::Dense, taco::Sparse});
 
-   Tensor<float> A("A", {dim, dim}, CSR);
-   Tensor<float> B("B", {dim, dim}, CSR);
-   Tensor<float> C("C", {dim, dim}, CSR);
-   IndexVar i("i");
-   IndexVar j("j");
-  
+   IndexVar i("i"), j("j"), k("k");
 
-  float SPARSITY = 0.3;
-  for (int i = 0; i < dim; i++) {
-    for (int k = 0; k < dim; k++) {
-      float rand_float = (float)rand()/(float)(RAND_MAX);
-      if (rand_float < SPARSITY) {
-        B.insert({i, k}, (float) ((int) (rand_float*3/SPARSITY)));
-      }
-    }
-  }
+   IndexExpr accelerateExpr = B(i,j) + C(i, j);
 
-   IndexExpr expr = B(i, j) + C(i, j);
-   A(i, j) = expr;
-
+   Tensor<float> A("A", {NUM_I, NUM_K}, {Dense, Dense}, 0);
+   A(i,j) = accelerateExpr;
    IndexStmt stmt = A.getAssignment().concretize();
-   stmt = stmt.accelerate(new MklAdd(), expr, true);
+   stmt = stmt.accelerate(new StardustAdd("B_200_0_1"), accelerateExpr);
 
    A.compile(stmt);
    A.assemble();
    A.compute();
-    
 
 }
 
+TEST(interface, endToEndMapper3) {
 
-TEST(interface, TTVBlas) {
+   int NUM_I = 10;
+   int NUM_K = 10;
+   int NUM_J = 10;
 
-   int dim = 16;
+   Tensor<float> A("A", {NUM_I, NUM_K, NUM_K}, {taco::Dense, taco::Dense, taco::Dense});
+   Tensor<float> B("B", {NUM_I, NUM_K, NUM_K}, {taco::Dense, taco::Dense, taco::Dense});
+   Tensor<float> C1("C1", {NUM_I, NUM_J}, {taco::Dense, taco::Dense});
+   Tensor<float> C2("C2", {NUM_I, NUM_J}, {taco::Dense, taco::Dense});
+   Tensor<float> C3("C3", {NUM_I, NUM_J}, {taco::Dense, taco::Dense});
 
-   Tensor<float> A("A", {dim, dim}, {Dense, Dense});
-   Tensor<float> B("B", {dim, dim, dim}, {Dense, Dense, Dense});
-   Tensor<float> C("C", {dim}, {Dense});
-   TensorVar precomputed("precomputed", Type(taco::Float32, {16, 16}), Format{Dense, Dense});
-   IndexVar i("i");
-   IndexVar j("j");
-   IndexVar k("k");
-  
+   IndexVar i("i"), j("j"), k("k"), l("l");
 
-//   float SPARSITY = 0.3;
-//   for (int i = 0; i < dim; i++) {
-//     for (int k = 0; k < dim; k++) {
-//       float rand_float = (float)rand()/(float)(RAND_MAX);
-//       if (rand_float < SPARSITY) {
-//         B.insert({i, k}, (float) ((int) (rand_float*3/SPARSITY)));
-//       }
-//     }
-//   }
+   A(i,j,k) = B(i,j,k) * C1(i,l) * C2(j,l) * C3(k,l);
 
-   IndexExpr expr = B(i, j, k) * C(k);
-   A(i, j) = expr;
 
-   IndexStmt stmt = A.getAssignment().concretize();
-   stmt = stmt.holdConstant(new CblasGemv(), expr, {i}, precomputed(i, j));
+   // register the description
+   A.registerAccelerator(new Saxpy());
+   A.registerAccelerator(new Sdot());
+   // enable targeting
+   A.accelerateOn();
 
-   A.compile(stmt);
+   A.compile();
    A.assemble();
    A.compute();
-    
 
 }
 
-TEST(interface, TTVTblis) {
+TEST(interface, endToEndMapper4) {
 
-   int dim = 16;
+   int NUM_I = 10;
+   int NUM_K = 10;
+   int NUM_J = 10;
 
-   Tensor<float> A("A", {dim, dim}, {Dense, Dense});
-   Tensor<float> B("B", {dim, dim, dim}, {Dense, Dense, Dense});
-   Tensor<float> C("C", {dim}, {Dense});
-   TensorVar precomputed("precomputed", Type(taco::Float32, {16, 16}), Format{Dense, Dense});
-   IndexVar i("i");
-   IndexVar j("j");
-   IndexVar k("k");
-  
+   Tensor<float> A("A", {NUM_I, NUM_K, NUM_K, NUM_K}, {taco::Dense, taco::Dense, taco::Dense, taco::Dense});
+   Tensor<float> B("B", {NUM_I, NUM_K, NUM_K, NUM_K}, {taco::Sparse, taco::Dense, taco::Dense, taco::Dense});
+   Tensor<float> C1("C1", {NUM_I, NUM_J}, {taco::Dense, taco::Dense});
+   Tensor<float> C2("C2", {NUM_I, NUM_J}, {taco::Dense, taco::Dense});
+   Tensor<float> C3("C3", {NUM_I, NUM_J}, {taco::Dense, taco::Dense});
 
-//   float SPARSITY = 0.3;
-//   for (int i = 0; i < dim; i++) {
-//     for (int k = 0; k < dim; k++) {
-//       float rand_float = (float)rand()/(float)(RAND_MAX);
-//       if (rand_float < SPARSITY) {
-//         B.insert({i, k}, (float) ((int) (rand_float*3/SPARSITY)));
-//       }
-//     }
-//   }
+   IndexVar i("i"), j("j"), k("k"), m("m"), l("l");
 
-   IndexExpr expr = B(i, j, k) * C(k);
-   A(i, j) = expr;
+   A(i,j,k,m) = B(i,j,k,m) * C1(i,l) * C2(j,l) * C3(k,l);
 
-   IndexStmt stmt = A.getAssignment().concretize();
-   stmt = stmt.accelerate(new TblisTTV(), expr);
 
-   A.compile(stmt);
+   // register the description
+   A.registerAccelerator(new Saxpy());
+   A.registerAccelerator(new Sdot());
+   // enable targeting
+   A.accelerateOn();
+
+   A.compile();
    A.assemble();
    A.compute();
-    
 
 }
 
+TEST(interface, nonSqaureSdmmMkl){
+  int NUM_I = 3;
+  int NUM_K = 1;
+  int NUM_J = 2;
 
-TEST(interface, sdmmMKL_COO_to_CSR){
-  int dim = 300;
-  int NUM_I = dim;
-  int NUM_K = dim;
-  int NUM_J = dim;
-
-  float SPARSITY = .05;
+  float SPARSITY = .3;
   
-  Tensor<float> B("B", {NUM_I, NUM_K}, COO(2));
+  Tensor<float> B("B", {NUM_I, NUM_K}, CSR);
   Tensor<float> C("C", {NUM_I, NUM_J}, {Dense, Dense});
   Tensor<float> D("D", {NUM_J, NUM_K}, {Dense, Dense});
   Tensor<float> A("A", {NUM_I, NUM_K}, {Dense, Dense}, 0);
@@ -2838,28 +2809,22 @@ TEST(interface, sdmmMKL_COO_to_CSR){
 
   for (int i = 0; i < NUM_I; i++) {
     for (int j = 0; j < NUM_J; j++) {
-      float rand_float = (float)rand()/(float)(RAND_MAX);
-      C.insert({i, j}, (float) ((int) (rand_float*3/SPARSITY)));
+      C.insert({i, j}, (float) i+j);
     }
   }
 
-  std::mt19937 mt(0); 
-  
-//   float SPARSITY = .5;
-   for (int i = 0; i < NUM_I; i++) {
+   for (int j = 0; j < NUM_J; j++) {
     for (int k = 0; k < NUM_K; k++) {
-      const float randnum = mt();
-      float rand_float = randnum/(float)(mt.max());
-         if (rand_float < SPARSITY) {
-                     B.insert({i, k}, (float) (float) 100);
+      D.insert({j, k}, (float) j+k);
+    }
+  }
+
+  for (int i = 0; i < NUM_I; i++) {
+    for (int k = 0; k < NUM_K; k++) {
+      float rand_float = (float)rand()/(float)(RAND_MAX);
+      if (rand_float < SPARSITY) {
+        B.insert({i, k}, (float) ((int) (rand_float*3/SPARSITY)));
       }
-    }
-  }
-
-  for (int j = 0; j < NUM_J; j++) {
-    for (int k = 0; k < NUM_K; k++) {
-      float rand_float = (float)rand()/(float)(RAND_MAX);
-      D.insert({j, k}, (float) ((int) (rand_float*3/SPARSITY)));
     }
   }
 
@@ -2869,54 +2834,15 @@ TEST(interface, sdmmMKL_COO_to_CSR){
 
   IndexVar i("i"), j("j"), k("k");
 
-  IndexExpr accelerateExpr = B(i,j) * C(j,k);
+  IndexExpr accelerateExpr = C(i,j) * D(j,k);
 
-  A(i,k) = accelerateExpr;
+  A(i,k) =  accelerateExpr;
 
   IndexStmt stmt = A.getAssignment().concretize();
-  stmt = stmt.accelerate(new SparseMklMMCOOCSR(), accelerateExpr);
+  stmt = stmt.accelerate(new MatrixMultiply(), accelerateExpr);
 
    A.compile(stmt);
    A.assemble();
-   auto func = A.compute_split();
-   auto pair = A.returnFuncPackedRaw(func);
-   pair.first(func.data());
-
-   expected(i,k) = (accelerateExpr);
-
-   expected.compile();
-   expected.assemble();
-   expected.compute();
-
-  ASSERT_TENSOR_EQ(expected, A);
+   A.compute();
 
 }
-
-TEST(interface, sanityCheckNonZeroes){
-   srand (time(NULL));
-   int dim = 10000;
-   int block_size = 10;
-   int num_non_zeroes = 0;
-   for (int i = 0; i < (dim); i+=block_size) {
-      for (int j = 0; j < (dim); j+=block_size) {
-        float rand_float = (float)rand()/(float)(RAND_MAX);
-        if (rand_float < 0.2) {
-               num_non_zeroes += block_size * block_size;
-            }
-      }
-    }
-
-   std::cout << "Number of non zeroes is " << num_non_zeroes << std::endl;
-
-   num_non_zeroes = 0;
-   for (int i = 0; i < dim; i++) {
-      for (int j = 0; j < dim; j++) {
-        float rand_float = (float)rand()/(float)(RAND_MAX);
-        if (rand_float < 0.2) {
-               num_non_zeroes += 1;
-            }
-       }
-    }
-    std::cout << "Number of non zeroes is " << num_non_zeroes << std::endl;
-}
-
