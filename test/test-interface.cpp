@@ -2839,7 +2839,7 @@ TEST(interface, nonSqaureSdmmMkl){
   A(i,k) =  accelerateExpr;
 
   IndexStmt stmt = A.getAssignment().concretize();
-  stmt = stmt.accelerate(new MatrixMultiply(), accelerateExpr);
+  stmt = stmt.accelerate(new MklMM(), accelerateExpr);
 
    A.compile(stmt);
    A.assemble();
