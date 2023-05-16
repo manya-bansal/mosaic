@@ -158,7 +158,10 @@ string Module::compile() {
   // we need to include the correct one depending on what 
   // we are compiling 
   if (gsl_compile){
-    cmd += " -I/home/manya227/tensor-algebra-systems/tblis/include"
+    cmd += " -fPIC"
+           " -I/home/manya227/mosaic-artifact/tensor_algebra_systems_lib"
+           " -I/home/manya227/tensor-algebra-systems/tblis/include"
+           " -I/home/manya227/spblas_0_8"
            " -I/home/manya227/tensor-algebra-systems/tblis/include/tblis"
            " -I/home/manya227/tensor-algebra-systems/gsl/include" 
            " -I/opt/intel/compilers_and_libraries/linux/mkl/include"
@@ -167,6 +170,7 @@ string Module::compile() {
            " -L/home/manya227/tensor-algebra-systems/tblis/lib"
            " -L/home/manya227/tensor-algebra-systems/gsl/lib"
            " -L/home/manya227/tensor-algebra-systems/tensor-gsl/lib"
+           " /home/manya227/spblas_0_8/libsparseblas.a"
            " -L/opt/intel/compilers_and_libraries/linux/mkl/lib/intel64/"
            " -Wl,-R/home/manya227/tensor-algebra-systems/tblis/lib -l:libtblis.so.0.0.0 "
            " -Wl,-R/home/manya227/tensor-algebra-systems/gsl/lib -l:libgsl.so.25.1.0"
@@ -176,8 +180,10 @@ string Module::compile() {
           
   }
   else {
-    cmd += " -mavx2"
+    cmd += " -mavx2 -fPIC"
+           " -I/home/manya227/mosaic-artifact/tensor_algebra_systems_lib"
            " -I/home/manya227/tensor-algebra-systems/tblis/include"
+           " -I/home/manya227/spblas_0_8"
            " -I/home/manya227/tensor-algebra-systems/tblis/include/tblis"
            " -I/home/manya227/tensor-algebra-systems/cblas"
            " -I/opt/intel/compilers_and_libraries/linux/mkl/include"
@@ -187,8 +193,11 @@ string Module::compile() {
            " -L/home/manya227/tensor-algebra-systems/cblas"
            " -L/home/manya227/tensor-algebra-systems/tblis/lib"
            " -L/opt/intel/compilers_and_libraries/linux/mkl/lib/intel64/"
+           " /home/manya227/spblas_0_8/libsparseblas.a"
+           " -L/home/manya227/tensor-algebra-systems/gsl/lib"
            " -Wl,-R/home/manya227/tensor-algebra-systems/cblas -l:libblas.so.3.7.1" 
            " -Wl,-R/home/manya227/tensor-algebra-systems/tblis/lib -l:libtblis.so.0.0.0 "
+           " -Wl,-R/home/manya227/tensor-algebra-systems/gsl/lib -l:libgsl.so.25.1.0"
           //  " -Wl,-R/opt/intel/compilers_and_libraries/linux/mkl/lib/intel64/ -l:libmkl_intel_lp64.so"
             " -Wl,-R/opt/intel/compilers_and_libraries/linux/mkl/lib/intel64/ -lmkl_intel_thread -lmkl_rt -lmkl_core -l:libmkl_intel_lp64.so";
           //  " -lmkl_sequential -lmkl_avx512 -lmkl_core -lpthread -lm -ldl -lmkl_avx2 -lmkl_def -lmkl_rt";

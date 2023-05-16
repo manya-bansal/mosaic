@@ -310,6 +310,30 @@ class CblasSymmetricGemV : public AbstractFunctionInterface{
 
 };
 
+class UblasSpMV : public AbstractFunctionInterface{
+    public: 
+        UblasSpMV() : x(TensorObject(Type(taco::Float64, {Dimension(), Dimension()}), Format{Dense, Sparse})), 
+                  y(TensorObject(Type(taco::Float64, {Dimension()}), dense)),
+                  s(TensorObject(Type(taco::Float64, {Dimension()}), dense)),
+                  i(IndexVar()),
+                  j(IndexVar()) {};
+        AcceleratorStmt getStmt() const override {return y(i) = x(i, j)*s(j);}
+        std::vector<Argument> getArguments() const override {return 
+                                                {
+                                                    new TensorName(x),
+                                                    new TensorObjectArg(s),
+                                                    new TensorObjectArg(y),
+                                                };}
+        std::string getReturnType() const override {return "void";}
+        std::string getFunctionName() const override {return "ublas_spmv";}
+    private: 
+        TensorObject x;
+        TensorObject y;
+        TensorObject s;
+        IndexVar i;
+        IndexVar j;
+};
+
 
 
 #endif 

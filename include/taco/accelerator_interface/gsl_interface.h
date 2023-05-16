@@ -301,4 +301,31 @@ class GSLSymmetricGemv : public AbstractFunctionInterface{
 };
 
 
+class GslSpMV : public AbstractFunctionInterface{
+    public: 
+        GslSpMV() : x(TensorObject(Type(taco::Float64, {Dimension(), Dimension()}), Format{Dense, Sparse})), 
+                  y(TensorObject(Type(taco::Float64, {Dimension()}), dense)),
+                  s(TensorObject(Type(taco::Float64, {Dimension()}), dense)),
+                  i(IndexVar()),
+                  j(IndexVar()) {};
+        AcceleratorStmt getStmt() const override {return y(i) = x(i, j)*s(j);}
+        std::vector<Argument> getArguments() const override {return 
+                                                {
+                                                    new TensorName(x),
+                                                    new DimArg(i),
+                                                    new DimArg(j),
+                                                    new TensorObjectArg(s),
+                                                    new TensorObjectArg(y),
+                                                };}
+        std::string getReturnType() const override {return "void";}
+        std::string getFunctionName() const override {return "gsl_spmv";}
+    private: 
+        TensorObject x;
+        TensorObject y;
+        TensorObject s;
+        IndexVar i;
+        IndexVar j;
+};
+
+
 #endif 

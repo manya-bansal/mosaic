@@ -2846,3 +2846,161 @@ TEST(interface, nonSqaureSdmmMkl){
    A.compute();
 
 }
+
+
+TEST(interface, GslSpMVTest) {
+   gsl_compile = true;
+   // actual computation
+   Tensor<double> A("A", {16, 156}, CSR);
+   Tensor<double> b("b", {156}, Format{Dense});
+   Tensor<double> d("d", {16}, Format{Dense});
+
+   float SPARSITY = 0.1;
+
+   for (int i = 0; i < 16; i++) {
+      for (int j = 0; j < 16; j++) {
+         float rand_float = (float)rand()/(float)(RAND_MAX);
+         if (rand_float < SPARSITY) {
+            A.insert({i, j}, (double) i + j);
+         } 
+      }
+   }
+
+   A.pack();
+
+   for (int i = 0; i < 16; i++) {
+      b.insert({i}, (double) i);
+   }
+
+   b.pack();
+
+   Tensor<double> expected("expected", {16}, Format{Dense});
+
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar k("k");
+
+   IndexExpr accelerateExpr = A(i, j) * b(j);
+   d(i) = accelerateExpr;
+
+
+   IndexStmt stmt = d.getAssignment().concretize();
+   stmt = stmt.accelerate(new GslSpMV(), accelerateExpr, true);
+   d.compile(stmt);
+   d.assemble();
+   d.compute();
+
+   expected(i) = accelerateExpr;
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+   ASSERT_TENSOR_EQ(expected, d);
+   mkl_compile = false;
+
+}
+
+TEST(interface, MklSpMVTest) {
+   gsl_compile = true;
+   // actual computation
+   Tensor<double> A("A", {16, 156}, CSR);
+   Tensor<double> b("b", {156}, Format{Dense});
+   Tensor<double> d("d", {16}, Format{Dense});
+
+   float SPARSITY = 0.1;
+
+   for (int i = 0; i < 16; i++) {
+      for (int j = 0; j < 16; j++) {
+         float rand_float = (float)rand()/(float)(RAND_MAX);
+         if (rand_float < SPARSITY) {
+            A.insert({i, j}, (double) i + j);
+         } 
+      }
+   }
+
+   A.pack();
+
+   for (int i = 0; i < 16; i++) {
+      b.insert({i}, (double) i);
+   }
+
+   b.pack();
+
+   Tensor<double> expected("expected", {16}, Format{Dense});
+
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar k("k");
+
+   IndexExpr accelerateExpr = A(i, j) * b(j);
+   d(i) = accelerateExpr;
+
+
+   IndexStmt stmt = d.getAssignment().concretize();
+   stmt = stmt.accelerate(new SparseMklSgemvDouble(), accelerateExpr, true);
+   d.compile(stmt);
+   d.assemble();
+   d.compute();
+
+   expected(i) = accelerateExpr;
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+   ASSERT_TENSOR_EQ(expected, d);
+   mkl_compile = false;
+
+}
+
+
+TEST(interface, BlasSpMVTest) {
+   gsl_compile = true;
+   // actual computation
+   Tensor<double> A("A", {16, 156}, CSR);
+   Tensor<double> b("b", {156}, Format{Dense});
+   Tensor<double> d("d", {16}, Format{Dense});
+
+   float SPARSITY = 0.1;
+
+   for (int i = 0; i < 16; i++) {
+      for (int j = 0; j < 16; j++) {
+         float rand_float = (float)rand()/(float)(RAND_MAX);
+         if (rand_float < SPARSITY) {
+            A.insert({i, j}, (double) i + j);
+         } 
+      }
+   }
+
+   A.pack();
+
+   for (int i = 0; i < 16; i++) {
+      b.insert({i}, (double) i);
+   }
+
+   b.pack();
+
+   Tensor<double> expected("expected", {16}, Format{Dense});
+
+   IndexVar i("i");
+   IndexVar j("j");
+   IndexVar k("k");
+
+   IndexExpr accelerateExpr = A(i, j) * b(j);
+   d(i) = accelerateExpr;
+
+
+   IndexStmt stmt = d.getAssignment().concretize();
+   stmt = stmt.accelerate(new UblasSpMV(), accelerateExpr, true);
+   d.compile(stmt);
+   d.assemble();
+   d.compute();
+
+   expected(i) = accelerateExpr;
+   expected.compile();
+   expected.assemble();
+   expected.compute();
+
+   ASSERT_TENSOR_EQ(expected, d);
+   mkl_compile = false;
+
+}
