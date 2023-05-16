@@ -42,7 +42,8 @@
 
 #define TACO_BENCH_ARGS(bench, name, ...)       \
   BENCHMARK_CAPTURE(bench, name, __VA_ARGS__)   \
-  ->Unit(benchmark::kMicrosecond)               \
+  ->Unit(benchmark::kMillisecond)               \
+  ->Repetitions(10)                             \
   ->Iterations(1)                               \
   ->ReportAggregatesOnly(true)                  \
   ->UseRealTime()
