@@ -14,7 +14,7 @@
 
 #include "taco/storage/file_io_mtx.h"
 
-#define DIM_SIZE 1000
+#define DIM_SIZE 3000
 
 using namespace taco;
 

@@ -3,8 +3,15 @@
 
 #include "taco/tensor.h"
 #include "taco/format.h"
+
+
+
 #include "taco/index_notation/index_notation.h"
+#include "taco/accelerator_interface/cblas_interface.h"
+#include "taco/accelerator_interface/tblis_interface.h"
 #include "taco/accelerator_interface/mkl_interface.h"
+#include "taco/accelerator_interface/tensor_interface.h"
+
 #include "taco/storage/file_io_mtx.h"
 
 using namespace taco;
@@ -24,23 +31,32 @@ static std::string exec(const char* cmd) {
 
 static void bench_spmv_double_mkl(benchmark::State& state) {
     int dim = state.range(0);
+
+    float sparsity = 1.0  / (float) (1 << (state.range(1)));
    
     Tensor<double> B("B", {dim, dim}, CSR);
     Tensor<double> C("C", {dim}, Format{Dense});
 
     char const *ret = getenv("PATH_TO_MOSAIC_ARTIFACT");
-  if (!ret) {
-    taco_uerror << "Please set the environment variable PATH_TO_MOSAIC_ARTIFACT."
-    << "To do so, run (in the mosaic/bench/bench-scripts/ dir): source mosaic_env_var.sh.";
-  }
+    
+    if (!ret) {
+      taco_uerror << "Please set the environment variable PATH_TO_MOSAIC_ARTIFACT."
+      << "To do so, run (in the mosaic/bench/bench-scripts/ dir): source mosaic_env_var.sh.";
+    }
 
- std::string path_to_artifact = std::string(ret);
+    std::string path_to_artifact = std::string(ret);
 
-  std::string generateData = "python3  " + path_to_artifact + "/mosaic-benchmarks/data/data_gen.py --bench spmv --dim ";
+    std::string generateData = "python3  " + path_to_artifact + "/mosaic-benchmarks/data/data_gen.py --bench spmv --dim ";
     generateData += std::to_string(dim);
-    generateData += " --nnz 0.2 --out_dir " + path_to_artifact + "/mosaic-benchmarks/data/spdata/";
+
+    generateData += " --nnz ";
+    std::ostringstream ss;
+    ss << sparsity;
+    generateData += ss.str();
+
+    generateData += " --out_dir " + path_to_artifact + "/mosaic-benchmarks/data/spdata/";
     exec(generateData.c_str());
-    std::string filename = "" + path_to_artifact + "/mosaic-benchmarks/data/spdata/spmv/B_" + std::to_string(dim) + "_0.2.mtx";
+    std::string filename = "" + path_to_artifact + "/mosaic-benchmarks/data/spdata/spmv/B_" + std::to_string(dim) + "_" + ss.str() + ".mtx";
     B = castToType<double>("B", readMTX(filename, CSR));
 
     for (int i = 0; i < dim; i++) {
@@ -67,9 +83,9 @@ static void bench_spmv_double_mkl(benchmark::State& state) {
     state.ResumeTiming();
     pair.first(func.data());
   }
-  std::string eraseData = "rm -rf " + path_to_artifact + "/mosaic-benchmarks/data/spdata/spmv/B_" + std::to_string(dim) + "_0.2.mtx";
+  std::string eraseData = "rm -rf " + path_to_artifact + "/mosaic-benchmarks/data/spdata/spmv/B_" + std::to_string(dim) + "_" + ss.str() + ".mtx";
   exec(eraseData.c_str());
 }
 
-TACO_BENCH(bench_spmv_double_mkl)->DenseRange(100, 3000, 200);
+TACO_BENCH(bench_spmv_double_mkl)->ArgsProduct({benchmark::CreateDenseRange(100, 2500, 200), benchmark::CreateDenseRange(2, 2, 1)});
 

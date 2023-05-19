@@ -14,7 +14,7 @@
 
 #include "taco/storage/file_io_mtx.h"
 
-#define DIM_SIZE 1000
+#define DIM_SIZE 3000
 
 using namespace taco;
 
@@ -49,7 +49,8 @@ static void bench_spmv_double_sp_blas(benchmark::State& state, float SPARSITY, i
 
     generateData += " --nnz ";
     std::ostringstream ss;
-    ss << SPARSITY;generateData += ss.str();
+    ss << SPARSITY;
+    generateData += ss.str();
     generateData += " --out_dir " + path_to_artifact + "/mosaic-benchmarks/data/spdata/";
 
     exec(generateData.c_str());
